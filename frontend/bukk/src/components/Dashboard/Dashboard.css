@@ -1,0 +1,12 @@
+#content {
+  position: fixed;
+  min-width: calc(100% - 200px);
+  margin-left: 214px;
+  top: 63px;
+  bottom: -25px;
+  padding: 20px;
+  overflow-y: scroll;
+  z-index: 98;
+  height: calc(100vh - 63px);
+  background-color: #fafafa;
+}

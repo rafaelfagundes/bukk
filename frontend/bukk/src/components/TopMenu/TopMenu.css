@@ -1,0 +1,12 @@
+.TopMenu {
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3) !important;
+  position: fixed;
+  width: calc(100% + 5px);
+  top: 0px;
+  z-index: 100;
+}
+
+#notifications,
+#user-menu {
+  margin-top: 15px;
+}

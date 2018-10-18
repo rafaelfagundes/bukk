@@ -1,0 +1,19 @@
+.SideMenu {
+  text-align: left;
+  position: fixed;
+  top: 63px;
+  left: 0px;
+  background-color: #313048 !important;
+  height: 100vh;
+  width: 200px !important;
+  box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.3) !important;
+  z-index: 99;
+  border-radius: 0px !important;
+  box-sizing: border-box !important;
+}
+
+.ui.vertical.menu .item > i.icon {
+  float: left;
+  margin: 0 0.7em 0 0;
+  opacity: 0.8;
+}
