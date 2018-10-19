@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import { NavLink } from "react-router-dom";
-import { Menu, Dropdown, Icon, Input } from "semantic-ui-react";
+import { Menu, Icon, Input } from "semantic-ui-react";
 import "./SideMenu.css";
 
 class SideMenu extends Component {
