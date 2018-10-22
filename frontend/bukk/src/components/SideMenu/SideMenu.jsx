@@ -42,6 +42,7 @@ class SideMenu extends Component {
         </Menu.Item>
 
         <Menu.Item
+          href="/clientes"
           name="Clientes"
           active={activeItem === "Clientes"}
           onClick={this.handleItemClick}

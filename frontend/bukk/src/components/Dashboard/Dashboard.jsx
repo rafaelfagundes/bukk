@@ -5,6 +5,7 @@ import TopMenu from "../TopMenu/TopMenu";
 import SideMenu from "../SideMenu/SideMenu";
 import Overview from "../Overview/Overview";
 import Reports from "../Reports/Reports";
+import Clients from "../Clients/Clients";
 import "./Dashboard.css";
 
 const Dashboard = () => (
@@ -19,6 +20,7 @@ const Dashboard = () => (
               <Switch>
                 <Route path="/" exact component={Overview} />
                 <Route path="/relatorios" component={Reports} />
+                <Route path="/clientes" component={Clients} />
               </Switch>
             </BrowserRouter>
           </div>

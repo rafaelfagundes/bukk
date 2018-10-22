@@ -24,7 +24,7 @@ class Overview extends Component {
         <DashboardHeader
           icon="dashboard"
           title="Geral"
-          subtitle="Informações de sua empresa"
+          subtitle="Informações sobre sua empresa"
         />
         <LineChart
           width={250}
