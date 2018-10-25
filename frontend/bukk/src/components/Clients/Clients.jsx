@@ -2,7 +2,8 @@ import React, { Component } from "react";
 import { Input, Button } from "semantic-ui-react";
 import DashboardHeader from "../BukkUI/DashboardHeader/DashboardHeader";
 import { connect } from "react-redux";
-import { addClient } from "./clientActions";
+import { addClient, allClients } from "./clientActions";
+import axios from "axios";
 
 const mapStateToProps = state => {
   return {
@@ -12,7 +13,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    addClient: client => dispatch(addClient(client))
+    addClient: client => dispatch(addClient(client)),
+    allClients: clients => dispatch(allClients(clients))
   };
 };
 
@@ -23,9 +25,35 @@ class Clients extends Component {
     lastName: ""
   };
 
+  componentDidMount() {
+    axios
+      .get("http://192.168.3.123:4000/api/v1/clients/")
+      .then(response => {
+        this.props.allClients(response.data);
+      })
+      .catch(error => {
+        // handle error
+        console.log(error);
+      })
+      .then(() => {
+        // always executed
+      });
+  }
+
   handleSubmit = e => {
     e.preventDefault();
-    this.props.addClient(this.state);
+    axios
+      .post("http://192.168.3.123:4000/api/v1/clients/", this.state)
+      .then(response => {
+        this.props.addClient(this.state);
+      })
+      .catch(error => {
+        // handle error
+        console.log(error);
+      })
+      .then(() => {
+        // always executed
+      });
   };
 
   handleChange = e => {
@@ -33,7 +61,7 @@ class Clients extends Component {
   };
 
   render() {
-    const { clients } = this.state;
+    const { clients } = this.props;
     return (
       <div className="clients">
         <DashboardHeader
@@ -45,7 +73,7 @@ class Clients extends Component {
           {clients &&
             clients.map(client => {
               return (
-                <li id={"client_" + client.id} key={client.id}>
+                <li id={"client_" + client.email} key={client.email}>
                   {client.firstName} {client.lastName} - {client.email}
                 </li>
               );
@@ -56,7 +84,7 @@ class Clients extends Component {
           <Input placeholder="Email" id="email" onChange={this.handleChange} />
           <Input
             placeholder="Nome"
-            id="fistName"
+            id="firstName"
             onChange={this.handleChange}
           />
           <Input
@@ -64,7 +92,6 @@ class Clients extends Component {
             id="lastName"
             onChange={this.handleChange}
           />
-          <Input placeholder="ID" id="id" onChange={this.handleChange} />
           <Button type="submit">Add Client</Button>
         </form>
       </div>

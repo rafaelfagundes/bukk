@@ -1,19 +1,18 @@
-const initState = {
-  clients: [
-    { id: "1", email: "john@gmail.com", firstName: "John", lastName: "Silva" },
-    { id: "2", email: "mary@gmail.com", firstName: "Mary", lastName: "Silva" },
-    { id: "3", email: "tom@gmail.com", firstName: "Tom", lastName: "Silva" },
-    { id: "4", email: "max@gmail.com", firstName: "Max", lastName: "Silva" }
-  ]
+import assign from "lodash/assign";
+
+const initialState = {
+  clients: []
 };
 
-const clientReducer = (state = initState, action) => {
+const clientReducer = (state = initialState, action) => {
   switch (action.type) {
     case "ADD_CLIENT":
-      // do something
-      console.log("created client");
-      break;
-
+      return assign({}, state, {
+        clients: [...state.clients, action.client]
+      });
+    case "GET_ALL_CLIENTS":
+      console.log("GET_ALL_CLIENTS clientReducer.js");
+      return assign({}, state, action);
     default:
       break;
   }
