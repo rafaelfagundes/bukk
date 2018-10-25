@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import { Input, Button } from "semantic-ui-react";
-import DashboardHeader from "../BukkUI//DashboardHeader/DashboardHeader";
+import DashboardHeader from "../BukkUI/DashboardHeader/DashboardHeader";
 import { connect } from "react-redux";
-import { addClient } from "../../store/actions/clientActions";
+import { addClient } from "./clientActions";
 
 const mapStateToProps = state => {
   return {
