@@ -1,20 +1,29 @@
 const express = require("express");
 const router = express.Router();
+const Client = require("./client");
 
 router.get("/clients", (req, res) => {
-  res.send({ type: "GET" });
+  Client.find({}).then(clients => {
+    res.send(clients);
+  });
 });
 
 router.post("/clients", (req, res) => {
-  res.send({ type: "POST" });
+  Client.create(req.body).then(client => {
+    res.send(client);
+  });
 });
 
 router.put("/clients/:id", (req, res) => {
-  res.send({ type: "PUT" });
+  Client.updateOne({ _id: req.params.id }, req.body).then(result => {
+    res.send(result);
+  });
 });
 
 router.delete("/clients/:id", (req, res) => {
-  res.send({ type: "DELETE" });
+  Client.deleteOne({ _id: req.params.id }).then(result => {
+    res.send(result);
+  });
 });
 
 module.exports = router;
