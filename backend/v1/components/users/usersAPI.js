@@ -3,7 +3,9 @@ const router = express.Router();
 const User = require("./user");
 
 router.get("/users", (req, res) => {
-  res.send({ type: "GET" });
+  User.find({}).then(users => {
+    res.send(users);
+  });
 });
 
 router.post("/users", (req, res) => {
@@ -13,11 +15,16 @@ router.post("/users", (req, res) => {
 });
 
 router.put("/users/:id", (req, res) => {
-  res.send({ type: "PUT" });
+  User.updateOne({ _id: req.params.id }, req.body).then(result => {
+    res.send(result);
+  });
 });
 
 router.delete("/users/:id", (req, res) => {
-  res.send({ type: "DELETE" });
+  console.log(req.params.id);
+  User.deleteOne({ _id: req.params.id }).then(result => {
+    res.send(result);
+  });
 });
 
 module.exports = router;

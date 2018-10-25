@@ -5,7 +5,10 @@ const usersRoutes = require("./components/users/usersAPI");
 const clientsRoutes = require("./components/clients/clientsAPI");
 
 // mongoose setup
-mongoose.connect("mongodb://localhost/bukk");
+mongoose.connect(
+  "mongodb://localhost/bukk",
+  { useNewUrlParser: true }
+);
 mongoose.Promise = global.Promise;
 
 // setup express app
@@ -20,5 +23,5 @@ app.use("/api/v1", [usersRoutes, clientsRoutes]);
 // listen for requests
 const PORT = 4000;
 app.listen(process.env.port || PORT, () => {
-  console.log("listen to resquests on port " + PORT);
+  console.log("Listen to resquests on port: " + PORT);
 });
