@@ -18,9 +18,9 @@ const Dashboard = () => (
           <div id="content">
             <BrowserRouter>
               <Switch>
-                <Route path="/" exact component={Overview} />
-                <Route path="/relatorios" component={Reports} />
-                <Route path="/clientes" component={Clients} />
+                <Route path="/dashboard/" exact component={Overview} />
+                <Route path="/dashboard/relatorios" component={Reports} />
+                <Route path="/dashboard/clientes" component={Clients} />
               </Switch>
             </BrowserRouter>
           </div>

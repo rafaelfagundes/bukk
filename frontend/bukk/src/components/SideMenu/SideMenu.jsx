@@ -15,7 +15,7 @@ class SideMenu extends Component {
           <Input iconPosition="left" icon="search" placeholder="Procurar..." />
         </Menu.Item>
         <Menu.Item
-          href="/"
+          href="/dashboard/"
           name="Geral"
           active={activeItem === "Geral"}
           onClick={this.handleItemClick}
@@ -24,7 +24,7 @@ class SideMenu extends Component {
           Geral
         </Menu.Item>
         <Menu.Item
-          href="/relatorios"
+          href="/dashboard/relatorios"
           name="Relatórios"
           active={activeItem === "Relatórios"}
           onClick={this.handleItemClick}
@@ -42,7 +42,7 @@ class SideMenu extends Component {
         </Menu.Item>
 
         <Menu.Item
-          href="/clientes"
+          href="/dashboard/clientes"
           name="Clientes"
           active={activeItem === "Clientes"}
           onClick={this.handleItemClick}
