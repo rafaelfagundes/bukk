@@ -1,5 +1,90 @@
 .Booker {
-  background-color: #eee;
-  max-width: 700px;
+  width: 700px;
   margin: 0 auto;
+  font-family: "Lato", "Segoe UI", sans-serif;
+}
+
+.booker-header {
+  position: relative;
+  height: 80px;
+  background: #2185d0;
+}
+
+.booker-header-logo {
+  max-width: 150px;
+  max-height: 40px;
+  top: 50%;
+  transform: translateY(-20px);
+  left: 25px;
+}
+
+.booker-header-label {
+  position: absolute;
+  width: 75px;
+  height: 28px;
+  background: #f0c121;
+  box-shadow: 0px 0px 10px 5px rgba(0, 0, 0, 0.15);
+  line-height: 28px;
+  right: 25px;
+  top: 50%;
+  transform: translateY(-14px);
+  border-radius: 28px;
+  color: #333333;
+  font-family: Lato;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.booker-footer {
+  background-color: #fff;
+  box-sizing: border-box;
+  padding: 10px 0;
+  margin: 20px;
+  border-top: 1px solid #eeeeee;
+  z-index: 1;
+  position: relative;
+}
+
+.booker-footer-page-numbers {
+  position: relative;
+  width: 125px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  height: 36px;
+  line-height: 36px;
+}
+
+.booker-footer-page-numbers::before {
+  box-sizing: border-box;
+  position: absolute;
+  width: 125px;
+  height: 1px;
+  content: "";
+  background-color: #2185d0;
+  top: 17px;
+  z-index: -1;
+}
+
+.booker-footer-page-number {
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  border: 1px solid #2185d0;
+  background: #fff;
+  color: #2185d0;
+  font-size: 13px;
+  line-height: 25px;
+  border-radius: 25px;
+  box-sizing: border-box;
+  margin-right: 25px;
+}
+
+.booker-footer-page-number:last-child {
+  margin-right: 0px;
+}
+
+.booker-footer-page-number__active {
+  background: #2185d0;
+  color: #ffffff;
+  font-weight: 700;
 }
