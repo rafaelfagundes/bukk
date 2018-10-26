@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 // import PropTypes from "prop-types";
 import "./Overview.css";
-import DashboardHeader from "../BukkUI/DashboardHeader/DashboardHeader";
+import DashboardHeader from "../DashboardHeader/DashboardHeader";
 import { LineChart, XAxis, Tooltip, CartesianGrid, Line } from "recharts";
 
 class Overview extends Component {

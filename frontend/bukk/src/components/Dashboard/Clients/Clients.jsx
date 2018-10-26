@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Input, Button } from "semantic-ui-react";
-import DashboardHeader from "../BukkUI/DashboardHeader/DashboardHeader";
+import DashboardHeader from "../DashboardHeader/DashboardHeader";
 import { connect } from "react-redux";
 import { addClient, allClients } from "./clientActions";
 import axios from "axios";
