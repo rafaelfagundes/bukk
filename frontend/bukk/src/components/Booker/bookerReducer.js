@@ -1,7 +1,7 @@
 import assign from "lodash/assign";
 
 const initialState = {
-  page: "1",
+  page: "2",
   totalValue: 0.0,
   numPages: 3
 };

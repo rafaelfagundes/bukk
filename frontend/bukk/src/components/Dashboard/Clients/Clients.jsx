@@ -4,6 +4,7 @@ import DashboardHeader from "../DashboardHeader/DashboardHeader";
 import { connect } from "react-redux";
 import { addClient, allClients } from "./clientActions";
 import axios from "axios";
+import config from "../../../config";
 
 const mapStateToProps = state => {
   return {
@@ -27,7 +28,7 @@ class Clients extends Component {
 
   componentDidMount() {
     axios
-      .get("http://192.168.3.123:4000/api/v1/clients/")
+      .get(config.api + "/clients/")
       .then(response => {
         this.props.allClients(response.data);
       })
@@ -43,7 +44,7 @@ class Clients extends Component {
   handleSubmit = e => {
     e.preventDefault();
     axios
-      .post("http://192.168.3.123:4000/api/v1/clients/", this.state)
+      .post(config.api + "/clients/", this.state)
       .then(response => {
         this.props.addClient(this.state);
       })

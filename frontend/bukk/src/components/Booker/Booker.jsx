@@ -1,9 +1,12 @@
 import React, { Component } from "react";
-import { Grid, Header, Image, Button } from "semantic-ui-react";
+import { Grid, Image, Button } from "semantic-ui-react";
 import "./Booker.css";
 import { connect } from "react-redux";
 import { setPage } from "./bookerActions";
 import Breadcrumbs from "./Breadcrumbs/Breadcrumbs";
+import PersonalInfoPage from "./PersonalInfoPage/PersonalInfoPage";
+import DateTimePage from "./DateTimePage/DateTimePage";
+import ConfirmationPage from "./ConfirmationPage/ConfirmationPage";
 
 const mapStateToProps = state => {
   return {
@@ -42,9 +45,9 @@ class Booker extends Component {
                 )}
               </div>
               <div className="booker-main">
-                {this.props.page === "1" && <Header as="h1">1</Header>}
-                {this.props.page === "2" && <Header as="h1">2</Header>}
-                {this.props.page === "3" && <Header as="h1">3</Header>}
+                {this.props.page === "1" && <DateTimePage />}
+                {this.props.page === "2" && <PersonalInfoPage />}
+                {this.props.page === "3" && <ConfirmationPage />}
               </div>
               <div className="booker-footer">
                 {this.props.page === "1" && (
