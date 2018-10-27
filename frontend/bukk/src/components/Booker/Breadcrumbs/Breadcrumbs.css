@@ -32,6 +32,7 @@
   box-sizing: border-box;
   margin-right: 25px;
   transition: all 0.3s ease;
+  text-align: center;
 }
 
 .breadcrumbs-page-number:last-child {
