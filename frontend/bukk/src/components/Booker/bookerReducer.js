@@ -2,7 +2,8 @@ import assign from "lodash/assign";
 
 const initialState = {
   page: "1",
-  totalValue: 0.0
+  totalValue: 0.0,
+  numPages: 3
 };
 
 const bookerReducer = (state = initialState, action) => {

@@ -1,0 +1,45 @@
+.breadcrumbs-page-numbers {
+  position: relative;
+  width: 125px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  height: 36px;
+  line-height: 36px;
+  cursor: default;
+}
+
+.breadcrumbs-page-numbers::before {
+  box-sizing: border-box;
+  position: absolute;
+  width: 125px;
+  height: 1px;
+  content: "";
+  background-color: #2185d0;
+  top: 17px;
+  z-index: -1;
+}
+
+.breadcrumbs-page-number {
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  border: 1px solid #2185d0;
+  background: #fff;
+  color: #2185d0;
+  font-size: 13px;
+  line-height: 25px;
+  border-radius: 25px;
+  box-sizing: border-box;
+  margin-right: 25px;
+  transition: all 0.3s ease;
+}
+
+.breadcrumbs-page-number:last-child {
+  margin-right: 0px;
+}
+
+.breadcrumbs-page-number__active {
+  background: #2185d0;
+  color: #ffffff;
+  font-weight: 700;
+}

@@ -2,6 +2,10 @@
   width: 700px;
   margin: 0 auto;
   font-family: "Lato", "Segoe UI", sans-serif;
+  border: 1px solid #eeeeee;
+  border-top: none;
+  box-sizing: border-box;
+  user-select: none;
 }
 
 .booker-header {
@@ -30,16 +34,20 @@
   transform: translateY(-14px);
   border-radius: 28px;
   color: #333333;
-  font-family: Lato;
   font-size: 14px;
   font-weight: 700;
+}
+
+.booker-main {
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 .booker-footer {
   background-color: #fff;
   box-sizing: border-box;
   padding: 10px 0;
-  margin: 20px;
+  margin: 0 20px;
   border-top: 1px solid #eeeeee;
   z-index: 1;
   position: relative;
@@ -52,6 +60,7 @@
   box-sizing: border-box;
   height: 36px;
   line-height: 36px;
+  cursor: default;
 }
 
 .booker-footer-page-numbers::before {
@@ -77,6 +86,7 @@
   border-radius: 25px;
   box-sizing: border-box;
   margin-right: 25px;
+  transition: all 0.3s ease;
 }
 
 .booker-footer-page-number:last-child {

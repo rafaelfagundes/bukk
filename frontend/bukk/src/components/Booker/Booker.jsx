@@ -3,10 +3,12 @@ import { Grid, Header, Image, Button } from "semantic-ui-react";
 import "./Booker.css";
 import { connect } from "react-redux";
 import { setPage } from "./bookerActions";
+import Breadcrumbs from "./Breadcrumbs/Breadcrumbs";
 
 const mapStateToProps = state => {
   return {
     page: state.booker.page,
+    numPages: state.booker.numPages,
     totalValue: state.booker.totalValue
   };
 };
@@ -33,9 +35,11 @@ class Booker extends Component {
                   src={require("./img/logo.png")}
                   className="booker-header-logo"
                 />
-                <div className="booker-header-label">
-                  R$ {this.props.totalValue}
-                </div>
+                {this.props.page !== "3" && (
+                  <div className="booker-header-label">
+                    R$ {this.props.totalValue}
+                  </div>
+                )}
               </div>
               <div className="booker-main">
                 {this.props.page === "1" && <Header as="h1">1</Header>}
@@ -53,13 +57,10 @@ class Booker extends Component {
                     >
                       Próximo
                     </Button>
-                    <div className="booker-footer-page-numbers">
-                      <span className="booker-footer-page-number booker-footer-page-number__active">
-                        1
-                      </span>
-                      <span className="booker-footer-page-number">2</span>
-                      <span className="booker-footer-page-number">3</span>
-                    </div>
+                    <Breadcrumbs
+                      pages={this.props.numPages}
+                      currentPage={this.props.page}
+                    />
                   </React.Fragment>
                 )}
                 {this.props.page === "2" && (
@@ -79,13 +80,10 @@ class Booker extends Component {
                     >
                       Próximo
                     </Button>
-                    <div className="booker-footer-page-numbers">
-                      <span className="booker-footer-page-number">1</span>
-                      <span className="booker-footer-page-number booker-footer-page-number__active">
-                        2
-                      </span>
-                      <span className="booker-footer-page-number">3</span>
-                    </div>
+                    <Breadcrumbs
+                      pages={this.props.numPages}
+                      currentPage={this.props.page}
+                    />
                   </React.Fragment>
                 )}
                 {this.props.page === "3" && (
@@ -100,13 +98,10 @@ class Booker extends Component {
                     <Button color="green" size="large" floated="right">
                       Confirmar
                     </Button>
-                    <div className="booker-footer-page-numbers">
-                      <span className="booker-footer-page-number">1</span>
-                      <span className="booker-footer-page-number">2</span>
-                      <span className="booker-footer-page-number booker-footer-page-number__active">
-                        3
-                      </span>
-                    </div>
+                    <Breadcrumbs
+                      pages={this.props.numPages}
+                      currentPage={this.props.page}
+                    />
                   </React.Fragment>
                 )}
               </div>
