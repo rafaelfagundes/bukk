@@ -1,0 +1,29 @@
+{
+  "connection": "default",
+  "collectionName": "client",
+  "info": {
+    "name": "client",
+    "description": "Client model"
+  },
+  "options": {
+    "timestamps": true
+  },
+  "attributes": {
+    "email": {
+      "default": "",
+      "unique": true,
+      "type": "email",
+      "required": true
+    },
+    "firstName": {
+      "default": "",
+      "type": "string",
+      "required": true
+    },
+    "lastName": {
+      "default": "",
+      "type": "string",
+      "required": true
+    }
+  }
+}
