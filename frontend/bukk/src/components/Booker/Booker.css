@@ -8,6 +8,10 @@
   user-select: none;
 }
 
+.pt30px {
+  padding-top: 31px;
+}
+
 .booker-header {
   position: relative;
   height: 80px;

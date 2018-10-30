@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Header, Form } from "semantic-ui-react";
+import { Header, Form, Icon } from "semantic-ui-react";
 
 class PersonalInfoPage extends Component {
   render() {
@@ -18,9 +18,19 @@ class PersonalInfoPage extends Component {
           </Form.Group>
           <Form.Group>
             <Form.Input label="Telefone" placeholder="Telefone" width={6} />
+            <Form.Checkbox
+              toggle
+              inline
+              label="É um número WhatsApp?"
+              className="pt30px"
+            />
+            <Icon
+              name="whatsapp"
+              color="green"
+              className="pt30px"
+              size="large"
+            />
           </Form.Group>
-          <Form.Checkbox toggle inline label="WhatsApp ativado nesse número?" />
-
           <Form.Group>
             <Form.TextArea
               label="Observações / Notas"
