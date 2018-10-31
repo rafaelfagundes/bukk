@@ -44,13 +44,3 @@ class Breadcrumbs extends Component {
 }
 
 export default Breadcrumbs;
-
-/*
-<div className="breadcrumbs-page-numbers">
-        <span className="breadcrumbs-page-number breadcrumbs-page-number__active">
-          1
-        </span>
-        <span className="breadcrumbs-page-number">2</span>
-        <span className="breadcrumbs-page-number">3</span>
-      </div>
-      */

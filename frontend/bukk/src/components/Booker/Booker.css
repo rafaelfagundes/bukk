@@ -12,6 +12,21 @@
   padding-top: 31px;
 }
 
+.booker-title-what {
+  margin-top: 0px !important;
+  margin-bottom: 20px !important;
+}
+
+.booker-title-when {
+  margin-top: 40px !important;
+  margin-bottom: 20px !important;
+}
+
+.booker-title-who {
+  margin-top: 40px !important;
+  margin-bottom: 20px !important;
+}
+
 .booker-header {
   position: relative;
   height: 80px;
