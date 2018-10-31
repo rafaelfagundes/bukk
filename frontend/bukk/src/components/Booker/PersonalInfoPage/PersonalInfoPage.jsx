@@ -5,7 +5,7 @@ class PersonalInfoPage extends Component {
   render() {
     return (
       <div className="PersonalInfoPage">
-        <Header as="h4" color="blue">
+        <Header as="h3" color="blue">
           Preencha seus dados pessoais
         </Header>
         <Form>

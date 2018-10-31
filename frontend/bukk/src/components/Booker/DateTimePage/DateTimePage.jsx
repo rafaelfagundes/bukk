@@ -1,9 +1,10 @@
 import React, { Component } from "react";
 import { Header, Form } from "semantic-ui-react";
 import Specialist from "../Specialist/Specialist";
+import TimePills from "../TimePills/TimePills";
 import DatePicker from "react-datepicker";
 import moment from "moment";
-import "react-datepicker/dist/react-datepicker.css";
+import "./DatePicker.css";
 
 class DateTimePage extends Component {
   constructor(props) {
@@ -75,8 +76,6 @@ class DateTimePage extends Component {
     return day !== 0 && day !== 6;
   };
 
-  componentDidMount() {}
-
   render() {
     return (
       <div className="DateTimePage">
@@ -89,6 +88,7 @@ class DateTimePage extends Component {
             placeholder="Serviços"
             search
             selection
+            width={8}
             options={[
               {
                 key: "CCM",
@@ -110,6 +110,22 @@ class DateTimePage extends Component {
             minDate={moment()}
             excludeDates={[moment(), moment("03/11/2018", "DD/MM/YYYY")]}
             filterDate={this.isWeekday}
+          />
+
+          <TimePills
+            startTime="8"
+            endTime="18"
+            minTimeFrame="15"
+            excludeTimes={[
+              "12:00",
+              "12:15",
+              "12:30",
+              "12:45",
+              "13:00",
+              "13:15",
+              "13:30",
+              "13:45"
+            ]}
           />
 
           <Header as="h3" color="blue" className="booker-title-who">
