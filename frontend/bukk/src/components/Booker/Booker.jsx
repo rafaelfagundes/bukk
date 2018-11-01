@@ -98,7 +98,7 @@ class Booker extends Component {
                     >
                       Voltar
                     </Button>
-                    <Button color="green" size="large" floated="right">
+                    <Button color="green" floated="right">
                       Confirmar
                     </Button>
                     <Breadcrumbs

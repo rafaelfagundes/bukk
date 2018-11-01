@@ -1,0 +1,86 @@
+.ServiceListItem {
+  position: relative;
+  background-color: #f9f9f9;
+  width: 100%;
+  border-radius: 4px;
+  padding: 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 25px;
+}
+
+.service-photo-container {
+  border-right: 1px solid #ddd;
+  padding-right: 20px;
+}
+
+.service-photo-container-photo {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  box-sizing: border-box;
+  border: 2px solid #eee;
+}
+
+.service-details-container {
+  min-width: 397px;
+  padding-left: 20px;
+}
+
+#service-details-container-desc {
+  color: #555;
+  font-weight: 400;
+  font-size: 24px;
+  margin: 0;
+  line-height: 24px;
+}
+
+#service-details-container-name {
+  font-size: 14px;
+  font-weight: 400;
+  color: #444;
+  margin: 0;
+  font-style: italic;
+  margin-bottom: 9px;
+  line-height: 20px;
+}
+
+.service-details-container p {
+  font-size: 16px;
+  line-height: 24px;
+  margin: 0;
+  color: #666;
+}
+
+.service-price-container {
+  background-color: #2693e7;
+  width: 100px;
+  height: 100px;
+  border-radius: 4px;
+  text-align: center;
+  vertical-align: middle;
+  color: white;
+}
+
+.service-price-container-currency {
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 22px;
+  margin: 20px 0 0 0 !important;
+}
+.service-price-container-price {
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 43px;
+  position: relative;
+  transform: translateX(-10px);
+}
+
+.service-price-container-price__digits {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 43px;
+  position: absolute;
+  top: -6px;
+}
