@@ -6,7 +6,9 @@ const Spacer = props => {
       style={{
         display: "inline-block",
         width: "100%",
-        height: props.height + "px"
+        height: props.height + "px",
+        clear: "both",
+        position: "relative"
       }}
     />
   );

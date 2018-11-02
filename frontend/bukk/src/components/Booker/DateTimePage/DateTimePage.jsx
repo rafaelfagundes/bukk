@@ -1,7 +1,8 @@
 import React, { Component } from "react";
-import { Header, Form } from "semantic-ui-react";
+import { Header, Form, Button, Icon } from "semantic-ui-react";
 import Specialist from "../Specialist/Specialist";
 import TimePills from "../TimePills/TimePills";
+import Spacer from "../Spacer/Spacer";
 import DatePicker from "react-datepicker";
 import moment from "moment";
 import "./DatePicker.css";
@@ -163,6 +164,13 @@ class DateTimePage extends Component {
               image="http://i.pravatar.cc/150?img=45"
               desc="Nail Stylist"
             />
+          </div>
+          <Spacer height="30" />
+          <div className="ui one column center aligned grid">
+            <Button labelPosition="left" icon color="green">
+              Adicionar um serviço
+              <Icon name="plus" />
+            </Button>
           </div>
         </Form>
       </div>
