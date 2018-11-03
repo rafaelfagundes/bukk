@@ -15,3 +15,12 @@ export const setTimeTable = timeTable => {
     });
   };
 };
+
+export const setTime = appointment => {
+  return (dispatch, getState) => {
+    dispatch({
+      type: "SET_TIME",
+      appointment
+    });
+  };
+};

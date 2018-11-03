@@ -5,7 +5,9 @@ import { connect } from "react-redux";
 
 const mapStateToProps = state => {
   return {
-    timeTable: state.booker.timeTable
+    timeTable: state.booker.timeTable,
+    currentService: state.booker.currentService,
+    appointment: state.booker.appointment
   };
 };
 
@@ -14,8 +16,8 @@ class TimePills extends Component {
     return (
       <div className="TimePillsContainer">
         <div className="TimePills">
-          {this.props.timeTable.map(time => (
-            <Pill key={time} time={time} />
+          {this.props.timeTable.map(item => (
+            <Pill key={item.time + item.selected} item={item} />
           ))}
         </div>
       </div>

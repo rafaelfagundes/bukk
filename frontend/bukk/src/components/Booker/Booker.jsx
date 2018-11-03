@@ -10,13 +10,14 @@ import ConfirmationPage from "./ConfirmationPage/ConfirmationPage";
 
 const mapStateToProps = state => {
   return {
-    page: state.booker.page,
-    numPages: state.booker.numPages,
-    totalValue: state.booker.totalValue,
-    excludeTimes: state.booker.excludeTimes,
-    startTime: state.booker.startTime,
+    appointment: state.booker.appointment,
     endTime: state.booker.endTime,
-    minTimeFrame: state.booker.minTimeFrame
+    excludeTimes: state.booker.excludeTimes,
+    minTimeFrame: state.booker.minTimeFrame,
+    numPages: state.booker.numPages,
+    page: state.booker.page,
+    startTime: state.booker.startTime,
+    totalValue: state.booker.totalValue
   };
 };
 
@@ -38,16 +39,18 @@ class Booker extends Component {
       i++
     ) {
       for (j = 0; j < 60 / Number(this.props.minTimeFrame); j++) {
-        localTimeTable.push(
-          i + ":" + (j === 0 ? "00" : Number(this.props.minTimeFrame) * j)
-        );
+        localTimeTable.push({
+          time:
+            i + ":" + (j === 0 ? "00" : Number(this.props.minTimeFrame) * j),
+          selected: false
+        });
       }
     }
 
-    for (let index = 0; index < this.props.excludeTimes.length; index++) {
-      const element = this.props.excludeTimes[index];
-      localTimeTable.splice(localTimeTable.indexOf(element), 1);
-    }
+    // for (let index = 0; index < this.props.excludeTimes.length; index++) {
+    //   const element = this.props.excludeTimes[index];
+    //   localTimeTable.splice(localTimeTable.indexOf(element), 1);
+    // }
 
     this.props.setTimeTable(localTimeTable);
   }
