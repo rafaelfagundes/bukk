@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Grid, Image, Button } from "semantic-ui-react";
 import "./Booker.css";
 import { connect } from "react-redux";
-import { setPage, setTimeTable } from "./bookerActions";
+import { setPage } from "./bookerActions";
 import Breadcrumbs from "./Breadcrumbs/Breadcrumbs";
 import PersonalInfoPage from "./PersonalInfoPage/PersonalInfoPage";
 import DateTimePage from "./DateTimePage/DateTimePage";
@@ -23,42 +23,11 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    setPage: page => dispatch(setPage(page)),
-    setTimeTable: timeTable => dispatch(setTimeTable(timeTable))
+    setPage: page => dispatch(setPage(page))
   };
 };
 
 class Booker extends Component {
-  populateTimeTable() {
-    var localTimeTable = [],
-      i,
-      j;
-    for (
-      i = Number(this.props.startTime);
-      i < Number(this.props.endTime);
-      i++
-    ) {
-      for (j = 0; j < 60 / Number(this.props.minTimeFrame); j++) {
-        localTimeTable.push({
-          time:
-            i + ":" + (j === 0 ? "00" : Number(this.props.minTimeFrame) * j),
-          selected: false
-        });
-      }
-    }
-
-    // for (let index = 0; index < this.props.excludeTimes.length; index++) {
-    //   const element = this.props.excludeTimes[index];
-    //   localTimeTable.splice(localTimeTable.indexOf(element), 1);
-    // }
-
-    this.props.setTimeTable(localTimeTable);
-  }
-
-  componentWillMount() {
-    this.populateTimeTable();
-  }
-
   handlePagination = e => {
     this.props.setPage(e.target.value);
   };

@@ -3,7 +3,6 @@
 }
 
 .TimePills {
-  /* background-color: #ddd; */
   width: 370px;
   margin-left: 30px;
   position: absolute;
@@ -15,4 +14,9 @@
   width: 50px;
   margin: 0px 0px 10px 10px !important;
   text-align: center;
+  cursor: pointer;
+}
+
+.TimePills > .label:hover {
+  background-color: #dbdbdb;
 }
