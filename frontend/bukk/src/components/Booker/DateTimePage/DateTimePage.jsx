@@ -91,6 +91,7 @@ class DateTimePage extends Component {
             selection
             width={8}
             options={[
+              // TODO: put in reducer file
               {
                 key: "CCM",
                 value: "CCM01",

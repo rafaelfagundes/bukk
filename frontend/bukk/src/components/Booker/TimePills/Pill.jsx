@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-
+// TODO: convert into stateless
 class Pill extends Component {
   render() {
     return (
