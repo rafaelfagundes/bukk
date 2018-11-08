@@ -1,8 +1,11 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
+const passport = require("passport");
+
 const usersRoutes = require("./components/users/usersAPI");
 const clientsRoutes = require("./components/clients/clientsAPI");
+
 const keys = require("./config/keys");
 
 // config consts
@@ -37,6 +40,10 @@ app.use(function(req, res, next) {
 
 // body parser
 app.use(bodyParser.json());
+
+// passport middleware
+app.use(passport.initialize());
+require("./config/passport")(passport);
 
 // routes
 app.use(BASE_URL, [usersRoutes, clientsRoutes]);

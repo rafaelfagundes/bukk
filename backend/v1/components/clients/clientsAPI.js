@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const Client = require("./client");
+const Client = require("./Client");
 
 router.get("/clients", (req, res) => {
   Client.find({}).then(clients => {
