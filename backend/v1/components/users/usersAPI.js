@@ -6,6 +6,9 @@ const jwt = require("jsonwebtoken");
 const keys = require("../../config/keys");
 const passport = require("passport");
 
+const userValidation = require("./userValidation");
+const userLoginValidation = require("./userLoginValidation");
+
 // @route GET api/v1/users
 // @desc Get all users
 // @access Private
@@ -15,25 +18,25 @@ router.get("/users", (req, res) => {
   });
 });
 
-// @route POST api/v1/users
-// @desc Get all users
-// @access Public
-router.post("/users", (req, res) => {
-  User.create(req.body).then(user => {
-    res.send(user);
-  });
-});
-
 // @route POST api/v1/users/register
 // @desc Register an user
 // @access Public
 router.post("/users/register", (req, res) => {
+  const { errors, isValid } = userValidation(req.body);
+
+  if (!isValid) {
+    res.status(400); // BAD REQUEST
+    return res.send({ errors });
+  }
+
   User.findOne({
     $or: [{ email: req.body.email }, { username: req.body.username }]
   }).then(user => {
     if (user) {
+      errors.user = "O usuário já está cadastrado";
+
       res.status(409); // CONFLICT
-      res.send({ msg: "O usuário já existe" });
+      res.send(errors);
     } else {
       let newUser = req.body;
       bcrypt.genSalt(10, (err, salt) => {
@@ -55,15 +58,25 @@ router.post("/users/register", (req, res) => {
 // @desc Login user / Returning JWT Token
 // @access Public
 router.post("/users/login", (req, res) => {
+  const { errors, isValid } = userLoginValidation(req.body);
+
+  if (!isValid) {
+    res.status(400); // BAD REQUEST
+    return res.send({ errors });
+  }
+
   const { email, password } = req.body;
   if (email === "" || password === "") {
     res.status(400); // BAD REQUEST
     res.send({ msg: "Usuário e/ou senha não foram preenchidos" });
   } else {
-    User.findOne({ email }).then(user => {
+    User.findOne({
+      $or: [{ email: req.body.username }, { username: req.body.username }]
+    }).then(user => {
       if (!user) {
+        errors.user = "Usuário não cadastrado";
         res.status(404); // NOT FOUND
-        res.send({ msg: "Usuário não cadastrado" });
+        res.send(errors);
       } else {
         bcrypt.compare(password, user.password).then(isMatch => {
           if (isMatch) {
@@ -88,8 +101,9 @@ router.post("/users/login", (req, res) => {
               }
             );
           } else {
+            errors.password = "Senha incorreta";
             res.status(400); // BAD REQUEST
-            res.send({ msg: "Senha incorreta" });
+            res.send(errors);
           }
         });
       }
