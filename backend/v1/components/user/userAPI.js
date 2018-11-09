@@ -1,15 +1,16 @@
 const express = require("express");
 const router = express.Router();
-const User = require("./User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const keys = require("../../config/keys");
 const passport = require("passport");
 
+const User = require("./User");
+
 const userValidation = require("./userValidation");
 const userLoginValidation = require("./userLoginValidation");
 
-// @route GET api/v1/user
+// @route GET api/v1/user/all
 // @desc Get all users
 // @access Private
 router.get("/user/all", (req, res) => {

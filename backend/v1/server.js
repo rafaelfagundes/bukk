@@ -3,8 +3,9 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const passport = require("passport");
 
-const usersRoutes = require("./components/user/userAPI");
-const clientsRoutes = require("./components/client/clientAPI");
+const userRoutes = require("./components/user/userAPI");
+const clientRoutes = require("./components/client/clientAPI");
+const profileRoutes = require("./components/profile/profileAPI");
 
 const keys = require("./config/keys");
 
@@ -46,7 +47,7 @@ app.use(passport.initialize());
 require("./config/passport")(passport);
 
 // routes
-app.use(BASE_URL, [usersRoutes, clientsRoutes]);
+app.use(BASE_URL, [userRoutes, clientRoutes, profileRoutes]);
 
 app.listen(process.env.port || PORT, () => {
   console.log(`👂  Listen to requests on port ${process.env.port || PORT}`);
