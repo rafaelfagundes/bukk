@@ -9,19 +9,19 @@ const passport = require("passport");
 const userValidation = require("./userValidation");
 const userLoginValidation = require("./userLoginValidation");
 
-// @route GET api/v1/users
+// @route GET api/v1/user
 // @desc Get all users
 // @access Private
-router.get("/users", (req, res) => {
+router.get("/user/all", (req, res) => {
   User.find({}).then(users => {
     res.send(users);
   });
 });
 
-// @route POST api/v1/users/register
+// @route POST api/v1/user/register
 // @desc Register an user
 // @access Public
-router.post("/users/register", (req, res) => {
+router.post("/user/register", (req, res) => {
   const { errors, isValid } = userValidation(req.body);
 
   if (!isValid) {
@@ -54,10 +54,10 @@ router.post("/users/register", (req, res) => {
   });
 });
 
-// @route POST api/v1/users/login
+// @route POST api/v1/user/login
 // @desc Login user / Returning JWT Token
 // @access Public
-router.post("/users/login", (req, res) => {
+router.post("/user/login", (req, res) => {
   const { errors, isValid } = userLoginValidation(req.body);
 
   if (!isValid) {
@@ -111,30 +111,30 @@ router.post("/users/login", (req, res) => {
   }
 });
 
-// @route PUT api/v1/users
+// @route PUT api/v1/user
 // @desc Update specific user
 // @access Public
-router.put("/users/:id", (req, res) => {
+router.put("/user/:id", (req, res) => {
   User.updateOne({ _id: req.params.id }, req.body).then(result => {
     res.send(result);
   });
 });
 
-// @route PUT api/v1/users
+// @route PUT api/v1/user
 // @desc Delete specific user
 // @access Private
-router.delete("/users/:id", (req, res) => {
+router.delete("/user/:id", (req, res) => {
   console.log(req.params.id);
   User.deleteOne({ _id: req.params.id }).then(result => {
     res.send(result);
   });
 });
 
-// @route GET api/v1/users/current
+// @route GET api/v1/user/current
 // @desc Retrieve current user
 // @access Private
 router.get(
-  "/users/current",
+  "/user/current",
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
     res.send(req.user);

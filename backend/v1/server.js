@@ -3,8 +3,8 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const passport = require("passport");
 
-const usersRoutes = require("./components/users/usersAPI");
-const clientsRoutes = require("./components/clients/clientsAPI");
+const usersRoutes = require("./components/user/userAPI");
+const clientsRoutes = require("./components/client/clientAPI");
 
 const keys = require("./config/keys");
 
