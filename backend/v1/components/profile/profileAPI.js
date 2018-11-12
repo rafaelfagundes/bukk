@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const jwt = require("jsonwebtoken");
+// const jwt = require("jsonwebtoken");
 const passport = require("passport");
 
 const Profile = require("./Profile");
-const User = require("../user/User");
+// const User = require("../user/User");
 
 // @route GET api/v1/profile
 // @desc Get current user profile
@@ -22,7 +22,7 @@ router.get(
         res.send(errors);
       } else {
         res.status(200);
-        res.send({ ok: "OK" });
+        res.send(profile);
       }
     });
   }
@@ -36,7 +36,7 @@ router.get(
   "/profile/create",
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
-    const errors = {};
+    const errors = {}; // TODO: validation
     const profileFields = req.body;
     profileFields.user = req.user;
     Profile.findOne({ user: req.user.id }).then(profile => {
