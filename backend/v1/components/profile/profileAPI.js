@@ -39,9 +39,23 @@ router.get(
     const errors = {};
     const profileFields = req.body;
     profileFields.user = req.user;
-
-    res.status(200);
-    res.send(profileFields);
+    Profile.findOne({ user: req.user.id }).then(profile => {
+      if (profile) {
+        Profile.findOneAndUpdate(
+          { user: req.user.id },
+          { $set: profileFields },
+          { new: true }
+        ).then(profile => {
+          res.status(200); // OK
+          res.send(profile);
+        });
+      } else {
+        Profile.create(profileFields).then(profile => {
+          res.status(200); // OK
+          res.send(profile);
+        });
+      }
+    });
   }
 );
 
