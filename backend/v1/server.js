@@ -1,4 +1,5 @@
 const express = require("express");
+const morgan = require("morgan");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const passport = require("passport");
@@ -6,6 +7,7 @@ const passport = require("passport");
 const userRoutes = require("./components/user/userAPI");
 const clientRoutes = require("./components/client/clientAPI");
 const profileRoutes = require("./components/profile/profileAPI");
+const mailRoutes = require("./components/mail/mailAPI");
 
 const keys = require("./config/keys");
 
@@ -19,6 +21,9 @@ console.log("BUKK SERVER\n" + "-".repeat(80) + "\n");
 
 // setup express app
 const app = express();
+
+// morgan
+app.use(morgan("dev"));
 
 // mongoose setup
 mongoose
@@ -47,7 +52,7 @@ app.use(passport.initialize());
 require("./config/passport")(passport);
 
 // routes
-app.use(BASE_URL, [userRoutes, clientRoutes, profileRoutes]);
+app.use(BASE_URL, [userRoutes, clientRoutes, profileRoutes, mailRoutes]);
 
 app.listen(process.env.port || PORT, () => {
   console.log(`👂  Listen to requests on port ${process.env.port || PORT}`);
