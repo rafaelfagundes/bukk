@@ -14,13 +14,19 @@ const UserSchema = new Schema({
   },
   email: { type: String, required: [true, "O email é obrigatório"] },
   password: { type: String, required: [true, "A senha é obrigatória"] },
-  created: { type: Date, default: Date.now },
+  created: { type: Date, default: Date.now, required: true },
   role: {
     type: String,
     enum: ["company", "owner", "manager", "supervisor", "employee"],
-    default: "company"
+    default: "company",
+    required: true
+  },
+  company: {
+    type: Schema.Types.ObjectId,
+    ref: "company",
+    required: true
   }
 });
 
-const User = mongoose.model("user", UserSchema);
+const User = mongoose.model("User", UserSchema);
 module.exports = User;

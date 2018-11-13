@@ -1,16 +1,13 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-// Profile Schema & Model
-const ProfileSchema = new Schema({
-  user: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
-    required: true
-  },
-  gender: { type: String, required: true, enum: ["M", "F"] },
-  birthday: { type: Date },
-  title: { type: String },
+// Company Schema & Model
+const CompanySchema = new Schema({
+  companyName: { type: String }, // Razão Social
+  tradingName: { type: String, required: true }, // Nome Fantasia
+  companyNickname: { type: String }, // Optional name to show on interface
+  cpfCnpj: { type: String, required: true },
+  businessType: { type: String, required: true, enum: ["física", "jurídica"] }, // Pessoa Física, Pessoa Jurídica
   address: {
     street: {
       type: String,
@@ -52,6 +49,15 @@ const ProfileSchema = new Schema({
       socialId: { type: String }
     }
   ],
+  workingDays: [
+    {
+      weekDay: {
+        type: String,
+        enum: ["sun", "mon", "tue", "wed", "thu", "fri", "sat"]
+      },
+      workingHours: [{ start: String, end: String }]
+    }
+  ],
   phone: [
     {
       number: { type: String },
@@ -62,8 +68,9 @@ const ProfileSchema = new Schema({
       },
       whatsAppEnabled: { type: Boolean }
     }
-  ]
+  ],
+  created: { type: Date, required: true, default: Date.now }
 });
 
-const Profile = mongoose.model("Profile", ProfileSchema);
-module.exports = Profile;
+const Company = mongoose.model("Company", CompanySchema);
+module.exports = Company;
