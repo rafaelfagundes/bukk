@@ -19,6 +19,21 @@ router.get("/user/all", (req, res) => {
   });
 });
 
+// @route GET api/v1/user/:id
+// @desc Get all users
+// @access Private
+router.get("/user/:id", (req, res) => {
+  User.findOne({ _id: req.params.id }).then(user => {
+    if (user) {
+      res.status(200);
+      res.send(user);
+    } else {
+      res.status(404);
+      res.send({ error: "Usuário não encontrado" });
+    }
+  });
+});
+
 // @route POST api/v1/user/register
 // @desc Register an user
 // @access Public

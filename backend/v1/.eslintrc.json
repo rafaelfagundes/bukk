@@ -2,9 +2,11 @@
   "env": {
     "node": true,
     "es6": true,
-    "amd": true
+    "amd": true,
+    "mocha": true
   },
   "extends": "eslint:recommended",
+  "plugins": ["mocha"],
   "parserOptions": {
     "ecmaVersion": 6,
     "sourceType": "module"
@@ -15,6 +17,7 @@
     "quotes": ["error", "double"],
     "semi": ["error", "always"],
     "no-console": "off",
-    "no-unused-vars": "warn"
+    "no-unused-vars": "warn",
+    "mocha/no-exclusive-tests": "error"
   }
 }

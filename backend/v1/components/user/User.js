@@ -23,8 +23,7 @@ const UserSchema = new Schema({
   },
   company: {
     type: Schema.Types.ObjectId,
-    ref: "company",
-    required: true
+    ref: "company"
   }
 });
 
