@@ -69,7 +69,17 @@ const CompanySchema = new Schema({
       whatsAppEnabled: { type: Boolean }
     }
   ],
-  created: { type: Date, required: true, default: Date.now }
+  created: { type: Date, required: true, default: Date.now },
+  paymentOptions: [
+    {
+      paymentType: {
+        type: String,
+        required: true,
+        enum: ["cash", "credit card", "debit card", "boleto", "transfer"]
+      },
+      paymentDesc: { type: String, required: true }
+    }
+  ]
 });
 
 const Company = mongoose.model("Company", CompanySchema);
