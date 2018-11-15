@@ -6,8 +6,8 @@ const CompanySchema = new Schema({
   companyName: { type: String }, // Razão Social
   tradingName: { type: String, required: true }, // Nome Fantasia
   companyNickname: { type: String }, // Optional name to show on interface
-  cpfCnpj: { type: String, required: true },
-  businessType: { type: String, required: true, enum: ["física", "jurídica"] }, // Pessoa Física, Pessoa Jurídica
+  cpfCnpj: { type: String, required: true, unique: true },
+  businessType: { type: String, required: true, enum: ["f", "j"] }, // Pessoa Física, Pessoa Jurídica
   address: {
     street: {
       type: String,
@@ -63,13 +63,12 @@ const CompanySchema = new Schema({
       number: { type: String },
       phoneType: {
         type: String,
-        enum: ["cellphone", "landline", "fax"],
-        default: "landline"
+        enum: ["cellphone", "landline", "fax"]
       },
       whatsAppEnabled: { type: Boolean }
     }
   ],
-  created: { type: Date, required: true, default: Date.now },
+  created: { type: Date, default: Date.now },
   paymentOptions: [
     {
       paymentType: {

@@ -25,6 +25,7 @@ const app = express();
 app.use(morgan("dev"));
 
 // mongoose setup
+mongoose.Promise = global.Promise;
 mongoose
   .connect(
     keys.mongoURI,

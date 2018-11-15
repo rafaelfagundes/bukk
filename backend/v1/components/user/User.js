@@ -12,6 +12,8 @@ const UserSchema = new Schema({
     type: String,
     required: [true, "O nome de usuário é obrigatório"]
   },
+  gender: { type: String, enum: ["M", "F", "O"] },
+  birthday: { type: Date },
   email: { type: String, required: [true, "O email é obrigatório"] },
   password: { type: String, required: [true, "A senha é obrigatória"] },
   created: { type: Date, default: Date.now, required: true },
@@ -21,9 +23,43 @@ const UserSchema = new Schema({
     default: "company",
     required: true
   },
+  address: {
+    street: {
+      type: String,
+      required: true
+    },
+    number: {
+      type: Number,
+      required: true
+    },
+    neighborhood: {
+      type: String,
+      required: true
+    },
+    city: {
+      type: String,
+      required: true
+    },
+    state: {
+      type: String,
+      required: true
+    },
+    country: {
+      type: String,
+      required: true
+    },
+    postalCode: {
+      type: String,
+      required: true
+    },
+    geolocation: {
+      lat: { type: String },
+      lng: { type: String }
+    }
+  },
   company: {
     type: Schema.Types.ObjectId,
-    ref: "company"
+    ref: "Company"
   }
 });
 

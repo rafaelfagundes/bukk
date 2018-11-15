@@ -1,7 +1,7 @@
 //During the test the env variable is set to test
 process.env.NODE_ENV = "test";
 
-var faker = require("faker/locale/pt_BR");
+const faker = require("faker/locale/pt_BR");
 
 const mongoose = require("mongoose");
 
