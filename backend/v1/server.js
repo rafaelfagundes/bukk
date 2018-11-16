@@ -5,8 +5,8 @@ const bodyParser = require("body-parser");
 const passport = require("passport");
 
 const userRoutes = require("./components/user/userAPI");
-const profileRoutes = require("./components/profile/profileAPI");
 const mailRoutes = require("./components/mail/mailAPI");
+const imageRoutes = require("./components/image/imageAPI");
 
 const keys = require("./config/keys");
 
@@ -52,7 +52,7 @@ app.use(passport.initialize());
 require("./config/passport")(passport);
 
 // routes
-app.use(BASE_URL, [userRoutes, profileRoutes, mailRoutes]);
+app.use(BASE_URL, [userRoutes, mailRoutes, imageRoutes]);
 
 app.listen(process.env.port || PORT, () => {
   console.log(`👂  Listen to requests on port ${process.env.port || PORT}`);
