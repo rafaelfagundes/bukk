@@ -84,7 +84,8 @@ class DateTimePage extends Component {
       appointmentDate: moment(),
       services: [],
       specialists: [],
-      serviceId: ""
+      serviceId: "",
+      specialistId: ""
     };
   }
 
@@ -100,11 +101,27 @@ class DateTimePage extends Component {
     });
   };
 
+  handleSpecialist = (e, value) => {
+    this.setState({ specialistId: value });
+
+    let _specialists = this.state.specialists;
+
+    _specialists.forEach(element => {
+      if (element.id === value) {
+        element.selected = true;
+      } else {
+        element.selected = false;
+      }
+    });
+
+    this.setState({ specialists: _specialists });
+  };
+
   handleService = (e, { value }) => {
     this.props.appointment.services[
       this.props.currentService
     ].serviceId = value;
-
+    this.setState({ serviceId: value });
     this.props.setService(this.props.appointment);
   };
 
@@ -113,7 +130,7 @@ class DateTimePage extends Component {
     return day !== 0 && day !== 6;
   };
 
-  componentWillMount() {
+  componentDidMount() {
     axios
       .get(config.api + "/appointment/")
       .then(response => {
@@ -129,6 +146,11 @@ class DateTimePage extends Component {
           });
         });
         this.setState({ services: _services });
+
+        response.data.specialists.forEach(element => {
+          element.selected = false;
+        });
+
         this.setState({ specialists: response.data.specialists });
       })
       .catch(error => {
@@ -142,7 +164,7 @@ class DateTimePage extends Component {
 
   render() {
     return (
-      <div className="DateTimePage">
+      <div className={"DateTimePage " + this.props.className}>
         <Form>
           <Header as="h3" color="blue" className="booker-title-what">
             O que deseja fazer?
@@ -163,11 +185,14 @@ class DateTimePage extends Component {
           <div id="Specialists">
             {this.state.specialists.map(specialist => (
               <Specialist
+                onClick={this.handleSpecialist}
                 key={specialist.id}
                 firstName={specialist.firstName}
                 lastName={specialist.lastName}
                 image={specialist.image}
                 desc={specialist.desc}
+                value={specialist.id}
+                selected={specialist.selected}
               />
             ))}
           </div>

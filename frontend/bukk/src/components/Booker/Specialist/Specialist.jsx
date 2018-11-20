@@ -5,7 +5,10 @@ import "./Specialist.css";
 class Specialist extends Component {
   render() {
     return (
-      <div className="Specialist">
+      <div
+        className="Specialist"
+        onClick={e => this.props.onClick(e, this.props.value)}
+      >
         <Image
           className={
             "specialist-img " +

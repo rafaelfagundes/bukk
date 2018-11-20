@@ -38,7 +38,7 @@ const services = [
 class ConfirmationPage extends Component {
   render() {
     return (
-      <div className="ConfirmationPage">
+      <div className={"ConfirmationPage " + this.props.className}>
         <Header as="h1" id="confirmation-title">
           Confira os detalhes
           <br />

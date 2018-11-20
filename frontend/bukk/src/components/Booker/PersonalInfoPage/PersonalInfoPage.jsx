@@ -4,7 +4,7 @@ import { Header, Form, Icon } from "semantic-ui-react";
 class PersonalInfoPage extends Component {
   render() {
     return (
-      <div className="PersonalInfoPage">
+      <div className={"PersonalInfoPage " + this.props.className}>
         <Header as="h3" color="blue">
           Preencha seus dados pessoais
         </Header>

@@ -8,6 +8,13 @@
   user-select: none;
 }
 
+.show-page {
+  display: block;
+}
+.dont-show-page {
+  display: none;
+}
+
 .pt30px {
   padding-top: 31px;
 }

@@ -2,10 +2,14 @@ import assign from "lodash/assign";
 import moment from "moment";
 
 const initialState = {
-  companyData: {},
   page: "1",
-  totalValue: 0.0,
   numPages: 3,
+  companyData: {
+    business: {
+      logo: ""
+    }
+  },
+  totalValue: 0.0,
   timeTable: [
     { time: "8:00", selected: false },
     { time: "8:15", selected: false },

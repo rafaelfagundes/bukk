@@ -6,9 +6,13 @@ const keys = require("../../config/keys");
 
 router.get("/appointment/", (req, res) => {
   const appfake = {
-    startTime: 8,
-    endTime: 18,
-    minTimeFrame: 15,
+    business: {
+      logo:
+        "https://res.cloudinary.com/bukkapp/image/upload/v1542735688/Bukk/Assets/logo.png",
+      startTime: 8,
+      endTime: 18,
+      minTimeFrame: 15
+    },
     services: [
       {
         id: faker.random.uuid(),

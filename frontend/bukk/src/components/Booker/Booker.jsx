@@ -39,7 +39,7 @@ class Booker extends Component {
             <div className="Booker">
               <div className="booker-header">
                 <Image
-                  src={require("./img/logo.png")}
+                  src={this.props.companyData.business.logo}
                   className="booker-header-logo"
                 />
                 {this.props.page !== "3" && (
@@ -49,11 +49,21 @@ class Booker extends Component {
                 )}
               </div>
               <div className="booker-main">
-                {this.props.page === "1" && (
-                  <DateTimePage services={this.props.companyData.services} />
-                )}
-                {this.props.page === "2" && <PersonalInfoPage />}
-                {this.props.page === "3" && <ConfirmationPage />}
+                <DateTimePage
+                  className={
+                    this.props.page === "1" ? "show-page" : "dont-show-page"
+                  }
+                />
+                <PersonalInfoPage
+                  className={
+                    this.props.page === "2" ? "show-page" : "dont-show-page"
+                  }
+                />
+                <ConfirmationPage
+                  className={
+                    this.props.page === "3" ? "show-page" : "dont-show-page"
+                  }
+                />
               </div>
               <div className="booker-footer">
                 {this.props.page === "1" && (
