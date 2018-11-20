@@ -1,12 +1,15 @@
+#Specialists {
+  display: flex;
+}
+
 .Specialist {
   position: relative;
   text-align: center;
   width: 20%;
   box-sizing: border-box;
   display: inline-block;
-  margin: 0 0 30px 0;
   cursor: pointer;
-  /* background-color: #eee; */
+  font: "Lato", sans-serif;
 }
 
 .specialist-img {
@@ -14,27 +17,24 @@
   border: 2px solid #eee;
   width: 100px !important;
   margin: 0 auto;
-  /* box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.2); */
 }
 
 .specialist-img__selected {
   border: 5px solid rgb(33, 133, 208);
 }
 
-#specialist-name {
-  font: "Lato", sans-serif;
-  margin: 15px 0px 0px 0px;
-  font-size: 16px;
-  line-height: 19px;
-  font-weight: 400;
-  color: #333;
+.specialist-name {
+  margin: 15px 0px 0px 0px !important;
+  font-size: 16px !important;
+  line-height: 19px !important;
+  font-weight: 400 !important;
+  color: #333 !important;
 }
 
-#specialist-desc {
-  font: "Lato", sans-serif;
-  margin: 8px 0px 0px 0px;
-  font-size: 11px;
-  line-height: 12px;
-  font-weight: 700;
-  color: #aaa;
+.specialist-desc {
+  margin: 8px 0px 0px 0px !important;
+  font-size: 11px !important;
+  line-height: 12px !important;
+  font-weight: 700 !important;
+  color: #aaa !important;
 }

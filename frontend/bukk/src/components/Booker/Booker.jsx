@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Grid, Image, Button } from "semantic-ui-react";
 import "./Booker.css";
 import { connect } from "react-redux";
-import { setPage } from "./bookerActions";
+import { setPage, setCompanyData } from "./bookerActions";
 import Breadcrumbs from "./Breadcrumbs/Breadcrumbs";
 import PersonalInfoPage from "./PersonalInfoPage/PersonalInfoPage";
 import DateTimePage from "./DateTimePage/DateTimePage";
@@ -11,19 +11,18 @@ import ConfirmationPage from "./ConfirmationPage/ConfirmationPage";
 const mapStateToProps = state => {
   return {
     appointment: state.booker.appointment,
-    endTime: state.booker.endTime,
     excludeTimes: state.booker.excludeTimes,
-    minTimeFrame: state.booker.minTimeFrame,
     numPages: state.booker.numPages,
     page: state.booker.page,
-    startTime: state.booker.startTime,
-    totalValue: state.booker.totalValue
+    totalValue: state.booker.totalValue,
+    companyData: state.booker.companyData
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    setPage: page => dispatch(setPage(page))
+    setPage: page => dispatch(setPage(page)),
+    setCompanyData: data => dispatch(setCompanyData(data))
   };
 };
 
@@ -50,7 +49,9 @@ class Booker extends Component {
                 )}
               </div>
               <div className="booker-main">
-                {this.props.page === "1" && <DateTimePage />}
+                {this.props.page === "1" && (
+                  <DateTimePage services={this.props.companyData.services} />
+                )}
                 {this.props.page === "2" && <PersonalInfoPage />}
                 {this.props.page === "3" && <ConfirmationPage />}
               </div>

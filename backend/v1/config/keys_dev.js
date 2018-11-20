@@ -1,5 +1,6 @@
 module.exports = {
-  mongoURI: "mongodb://rfagundes:zO37$cy!ayiM@ds037768.mlab.com:37768/bukk",
+  // mongoURI: "mongodb://rfagundes:zO37$cy!ayiM@ds037768.mlab.com:37768/bukk",
+  mongoURI: "mongodb://localhost:27017/bukk",
   secretOrKey: "secret",
   mailgun: {
     key: "9818a7f9aa1cfe0b625ba71727fc0d25-9525e19d-2f48c152",

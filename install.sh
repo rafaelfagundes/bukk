@@ -1,8 +1,12 @@
-# APT Update & Upgrade
-sudo apt update && sudo apt upgrade
-
 # curl
 sudo apt install -y curl
+
+# Node and npm
+curl -sL https://deb.nodesource.com/setup_11.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+# APT Update & Upgrade
+sudo apt update && sudo apt -y upgrade
 
 # Yarn install
 curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
@@ -19,10 +23,10 @@ sudo mkdir - p /data/db
 sudo npm install -g nodemon
 
 # npm install Backend
-cd ./backend/v1
-yarn install
+cd backend/v1
+npm install
 
 # npm install Frontend
 cd -
-cd ./frontend/bukk
-yarn install
+cd frontend/bukk
+npm install

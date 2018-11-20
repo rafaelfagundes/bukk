@@ -1,6 +1,7 @@
 import assign from "lodash/assign";
 
 const initialState = {
+  companyData: {},
   page: "1",
   totalValue: 0.0,
   numPages: 3,
@@ -34,9 +35,6 @@ const initialState = {
     { time: "17:30", selected: false },
     { time: "17:45", selected: false }
   ],
-  startTime: 8,
-  endTime: 18,
-  minTimeFrame: 15,
   currentService: 0,
   excludeTimes: [
     "12:00",
@@ -68,6 +66,8 @@ const bookerReducer = (state = initialState, action) => {
     case "SET_TIME_TABLE":
       return assign({}, state, action);
     case "SET_TIME":
+      return assign({}, state, action);
+    case "SET_COMPANY_DATA":
       return assign({}, state, action);
     default:
       break;

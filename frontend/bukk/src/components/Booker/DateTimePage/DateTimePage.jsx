@@ -6,6 +6,22 @@ import Spacer from "../Spacer/Spacer";
 import DatePicker from "react-datepicker";
 import moment from "moment";
 import "./DatePicker.css";
+import axios from "axios";
+import config from "../../../config";
+import { connect } from "react-redux";
+import { setCompanyData } from "../bookerActions";
+
+const mapStateToProps = state => {
+  return {
+    companyData: state.booker.companyData
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    setCompanyData: data => dispatch(setCompanyData(data))
+  };
+};
 
 class DateTimePage extends Component {
   constructor(props) {
@@ -61,7 +77,9 @@ class DateTimePage extends Component {
       ordinal: "%dº"
     });
     this.state = {
-      startDate: moment().add(1, "days")
+      startDate: moment().add(1, "days"),
+      services: [],
+      specialists: []
     };
     this.handleChange = this.handleChange.bind(this);
   }
@@ -72,10 +90,42 @@ class DateTimePage extends Component {
     });
   }
 
+  handleService(e) {
+    console.log(e.target);
+  }
+
   isWeekday = date => {
     const day = date.day();
     return day !== 0 && day !== 6;
   };
+
+  componentWillMount() {
+    console.log("mounting booker");
+    axios
+      .get(config.api + "/appointment/")
+      .then(response => {
+        this.props.setCompanyData(response.data);
+        let _services = [];
+        response.data.services.forEach(element => {
+          _services.push({
+            text:
+              element.desc +
+              " - R$" +
+              element.value.toFixed(2).replace(".", ","),
+            value: element.id
+          });
+        });
+        this.setState({ services: _services });
+        this.setState({ specialists: response.data.specialists });
+      })
+      .catch(error => {
+        // handle error
+        console.log(error);
+      })
+      .then(() => {
+        // always executed
+      });
+  }
 
   render() {
     return (
@@ -86,19 +136,27 @@ class DateTimePage extends Component {
           </Header>
 
           <Form.Dropdown
+            onChange={this.handleService}
             placeholder="Serviços"
             search
             selection
             width={8}
-            options={[
-              // TODO: put in reducer file
-              {
-                key: "CCM",
-                value: "CCM01",
-                text: "Corte de Cabelo Masculino"
-              }
-            ]}
+            options={this.state.services}
           />
+          <Header as="h3" color="blue" className="booker-title-who">
+            Com quem deseja fazer?
+          </Header>
+          <div id="Specialists">
+            {this.state.specialists.map(specialist => (
+              <Specialist
+                key={specialist.id}
+                firstName={specialist.firstName}
+                lastName={specialist.lastName}
+                image={specialist.image}
+                desc={specialist.desc}
+              />
+            ))}
+          </div>
 
           <Header as="h3" color="blue" className="booker-title-when">
             Quando deseja fazer?
@@ -129,44 +187,8 @@ class DateTimePage extends Component {
               "13:45"
             ]}
           />
+          <Spacer height="60" />
 
-          <Header as="h3" color="blue" className="booker-title-who">
-            Com quem deseja fazer?
-          </Header>
-          <div>
-            <Specialist
-              firstName="Andrea"
-              lastName="Barbosa"
-              image="http://i.pravatar.cc/150?img=49"
-              desc="Hair Stylist"
-              selected
-            />
-            <Specialist
-              firstName="Carlos"
-              lastName="Deodoro"
-              image="http://i.pravatar.cc/300?img=50"
-              desc="Barbeiro"
-            />
-            <Specialist
-              firstName="Enzo"
-              lastName="Fonseca"
-              image="http://i.pravatar.cc/300?img=11"
-              desc="Barbeiro"
-            />
-            <Specialist
-              firstName="Gabriela"
-              lastName="Honda"
-              image="http://i.pravatar.cc/150?img=35"
-              desc="Nail Stylist"
-            />
-            <Specialist
-              firstName="Helen"
-              lastName="Iolanda"
-              image="http://i.pravatar.cc/150?img=45"
-              desc="Nail Stylist"
-            />
-          </div>
-          <Spacer height="30" />
           <div className="ui one column center aligned grid">
             <Button labelPosition="left" icon color="green">
               Adicionar um serviço
@@ -179,4 +201,7 @@ class DateTimePage extends Component {
   }
 }
 
-export default DateTimePage;
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(DateTimePage);

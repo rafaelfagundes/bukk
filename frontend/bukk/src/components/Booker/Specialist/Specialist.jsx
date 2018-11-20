@@ -15,12 +15,12 @@ class Specialist extends Component {
           circular
           size="small"
         />
-        <Header id="specialist-name" as="h4">
+        <Header className="specialist-name" as="h4">
           {this.props.firstName}
           <br />
           {this.props.lastName}
         </Header>
-        <Header id="specialist-desc" sub>
+        <Header className="specialist-desc" sub>
           {this.props.desc}
         </Header>
       </div>

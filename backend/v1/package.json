@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "watch": "nodemon server.js",
+    "watch": "sudo service mongod start && nodemon server.js",
     "test-actions": "mocha ./test/actions/ --recursive --exit --timeout 10000 || exit 0"
   },
   "author": "",

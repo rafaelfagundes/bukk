@@ -7,6 +7,15 @@ export const setPage = page => {
   };
 };
 
+export const setCompanyData = companyData => {
+  return (dispatch, getState) => {
+    dispatch({
+      type: "SET_COMPANY_DATA",
+      companyData
+    });
+  };
+};
+
 export const setTimeTable = timeTable => {
   return (dispatch, getState) => {
     dispatch({
