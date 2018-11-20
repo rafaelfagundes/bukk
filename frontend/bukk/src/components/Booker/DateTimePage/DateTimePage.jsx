@@ -9,17 +9,21 @@ import "./DatePicker.css";
 import axios from "axios";
 import config from "../../../config";
 import { connect } from "react-redux";
-import { setCompanyData } from "../bookerActions";
+import { setCompanyData, setDate, setService } from "../bookerActions";
 
 const mapStateToProps = state => {
   return {
-    companyData: state.booker.companyData
+    companyData: state.booker.companyData,
+    currentService: state.booker.currentService,
+    appointment: state.booker.appointment
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    setCompanyData: data => dispatch(setCompanyData(data))
+    setCompanyData: data => dispatch(setCompanyData(data)),
+    setDate: appointment => dispatch(setDate(appointment)),
+    setService: appointment => dispatch(setService(appointment))
   };
 };
 
@@ -77,22 +81,32 @@ class DateTimePage extends Component {
       ordinal: "%dº"
     });
     this.state = {
-      startDate: moment().add(1, "days"),
+      appointmentDate: moment(),
       services: [],
-      specialists: []
+      specialists: [],
+      serviceId: ""
     };
-    this.handleChange = this.handleChange.bind(this);
   }
 
-  handleChange(date) {
+  handleDate = date => {
+    this.props.appointment.services[
+      this.props.currentService
+    ].dateAndTime.date = date.format("DD-MM-YYYY");
+
+    this.props.setDate(this.props.appointment);
+
     this.setState({
-      startDate: date
+      appointmentDate: date
     });
-  }
+  };
 
-  handleService(e) {
-    console.log(e.target);
-  }
+  handleService = (e, { value }) => {
+    this.props.appointment.services[
+      this.props.currentService
+    ].serviceId = value;
+
+    this.props.setService(this.props.appointment);
+  };
 
   isWeekday = date => {
     const day = date.day();
@@ -100,7 +114,6 @@ class DateTimePage extends Component {
   };
 
   componentWillMount() {
-    console.log("mounting booker");
     axios
       .get(config.api + "/appointment/")
       .then(response => {
@@ -142,6 +155,7 @@ class DateTimePage extends Component {
             selection
             width={8}
             options={this.state.services}
+            value={this.state.serviceId}
           />
           <Header as="h3" color="blue" className="booker-title-who">
             Com quem deseja fazer?
@@ -164,11 +178,11 @@ class DateTimePage extends Component {
 
           <DatePicker
             inline
-            selected={this.state.startDate}
-            onChange={this.handleChange}
+            selected={this.state.appointmentDate}
+            onChange={this.handleDate}
             allowSameDay={false}
             minDate={moment()}
-            excludeDates={[moment(), moment("03/11/2018", "DD/MM/YYYY")]}
+            excludeDates={[]}
             filterDate={this.isWeekday}
           />
 

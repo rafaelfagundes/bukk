@@ -1,4 +1,5 @@
 import assign from "lodash/assign";
+import moment from "moment";
 
 const initialState = {
   companyData: {},
@@ -49,11 +50,12 @@ const initialState = {
   appointment: {
     services: [
       {
-        serviceId: 1,
+        serviceId: "",
         dateAndTime: {
-          time: "15:00",
-          date: "20180101"
-        }
+          time: "",
+          date: moment().format("DD-MM-YYYY")
+        },
+        specialist: null
       }
     ]
   }
@@ -66,6 +68,10 @@ const bookerReducer = (state = initialState, action) => {
     case "SET_TIME_TABLE":
       return assign({}, state, action);
     case "SET_TIME":
+      return assign({}, state, action);
+    case "SET_DATE":
+      return assign({}, state, action);
+    case "SET_SERVICE":
       return assign({}, state, action);
     case "SET_COMPANY_DATA":
       return assign({}, state, action);

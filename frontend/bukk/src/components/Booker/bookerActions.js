@@ -33,3 +33,21 @@ export const setTime = appointment => {
     });
   };
 };
+
+export const setDate = appointment => {
+  return (dispatch, getState) => {
+    dispatch({
+      type: "SET_DATE",
+      appointment
+    });
+  };
+};
+
+export const setService = appointment => {
+  return (dispatch, getState) => {
+    dispatch({
+      type: "SET_SERVICE",
+      appointment
+    });
+  };
+};
