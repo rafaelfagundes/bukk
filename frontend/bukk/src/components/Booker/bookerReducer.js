@@ -52,6 +52,14 @@ const initialState = {
     "13:45"
   ],
   appointment: {
+    client: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      phone: "",
+      whatsapp: false,
+      obs: ""
+    },
     services: [
       {
         serviceId: "",
@@ -59,7 +67,7 @@ const initialState = {
           time: "",
           date: moment().format("DD-MM-YYYY")
         },
-        specialist: null
+        specialistId: ""
       }
     ]
   }
@@ -76,6 +84,8 @@ const bookerReducer = (state = initialState, action) => {
     case "SET_DATE":
       return assign({}, state, action);
     case "SET_SERVICE":
+      return assign({}, state, action);
+    case "SET_CLIENT":
       return assign({}, state, action);
     case "SET_COMPANY_DATA":
       return assign({}, state, action);

@@ -102,11 +102,9 @@ class DateTimePage extends Component {
   };
 
   handleSpecialist = (e, value) => {
-    this.setState({ specialistId: value });
+    let _specialistsList = this.state.specialists;
 
-    let _specialists = this.state.specialists;
-
-    _specialists.forEach(element => {
+    _specialistsList.forEach(element => {
       if (element.id === value) {
         element.selected = true;
       } else {
@@ -114,21 +112,30 @@ class DateTimePage extends Component {
       }
     });
 
-    this.setState({ specialists: _specialists });
+    this.setState({ specialistId: value });
+    this.setState({ specialists: _specialistsList });
+
+    this.props.appointment.services[
+      this.props.currentService
+    ].specialistId = value;
   };
 
   handleService = (e, { value }) => {
     this.props.appointment.services[
       this.props.currentService
     ].serviceId = value;
+    console.log(e.currentTarget);
     this.setState({ serviceId: value });
-    this.props.setService(this.props.appointment);
   };
 
   isWeekday = date => {
     const day = date.day();
     return day !== 0 && day !== 6;
   };
+
+  componentDidUpdate() {
+    this.props.setService(this.props.appointment);
+  }
 
   componentDidMount() {
     axios

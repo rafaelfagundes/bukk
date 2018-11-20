@@ -51,3 +51,12 @@ export const setService = appointment => {
     });
   };
 };
+
+export const setClient = appointment => {
+  return (dispatch, getState) => {
+    dispatch({
+      type: "SET_CLIENT",
+      appointment
+    });
+  };
+};
