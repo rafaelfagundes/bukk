@@ -3,39 +3,81 @@ import "./ConfirmationPage.css";
 import { Header } from "semantic-ui-react";
 import ServiceListItem from "../ServiceListItem/ServiceListItem";
 import PaymentDetails from "../PaymentDetails/PaymentDetails";
+import { connect } from "react-redux";
+import _ from "lodash";
 
-const services = [
-  {
-    specialistPhoto: "http://i.pravatar.cc/300?img=50",
-    specialistName: "Antônio Brasil",
-    serviceDesc: "Corte de Cabelo Masculino",
-    date: "16 de maio de 2018",
-    time: "11:00 AM até 12:00 PM",
-    currency: "R$",
-    price: "120.99"
-  },
-  {
-    specialistPhoto: "http://i.pravatar.cc/300?img=25",
-    specialistName: "Jennifer Honda",
-    serviceDesc: "Make",
-    date: "19 de novembro de 2018",
-    time: "15:00 AM até 17:00 PM",
-    currency: "R$",
-    price: "319.25"
-  },
-
-  {
-    specialistPhoto: "http://i.pravatar.cc/300?img=12",
-    specialistName: "Carlos Castro Roy",
-    serviceDesc: "Barba",
-    date: "20 de novembro de 2018",
-    time: "9:00 AM até 10:00 PM",
-    currency: "R$",
-    price: "80.00"
-  }
-];
+const mapStateToProps = state => {
+  return {
+    companyData: state.booker.companyData,
+    appointment: state.booker.appointment
+  };
+};
 
 class ConfirmationPage extends Component {
+  state = {
+    servicesList: [],
+    totalPrice: 0.0
+  };
+
+  getSpecialist(id) {
+    const index = _.findIndex(this.props.companyData.specialists, function(o) {
+      return o.id === id;
+    });
+    if (index >= 0) {
+      return this.props.companyData.specialists[index];
+    } else {
+      return null;
+    }
+  }
+  getService(id) {
+    const index = _.findIndex(this.props.companyData.services, function(o) {
+      return o.id === id;
+    });
+    if (index >= 0) {
+      return this.props.companyData.services[index];
+    } else {
+      return null;
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.props.appointment.services[0].serviceId !== "") {
+      let _servicesList = [];
+
+      this.props.appointment.services.forEach(service => {
+        let _specialist = this.getSpecialist(service.specialistId);
+        let _service = this.getService(service.serviceId);
+
+        // console.log(service.dateAndTime.date.format("DD-MM-YYYY"));
+
+        if (_specialist && _service) {
+          _servicesList.push({
+            specialistPhoto: _specialist.image,
+            serviceDesc: _service.desc,
+            specialistName: _specialist.firstName + " " + _specialist.lastName,
+            date: service.dateAndTime.date
+              .locale("pt_BR")
+              .format("DD [de] MMMM [de] YYYY"),
+            time:
+              service.dateAndTime.time.length === 4
+                ? service.dateAndTime.time + " AM"
+                : service.dateAndTime.time,
+            price: "" + _service.value
+          });
+        }
+      });
+
+      if (
+        _servicesList.length > 0 &&
+        !_.isEqual(this.state.servicesList, _servicesList)
+      ) {
+        this.setState({
+          servicesList: _servicesList
+        });
+      }
+    }
+  }
+
   render() {
     return (
       <div className={"ConfirmationPage " + this.props.className}>
@@ -44,11 +86,8 @@ class ConfirmationPage extends Component {
           <br />
           do seu agendamento
         </Header>
-        {services.map(item => (
-          <ServiceListItem
-            service={item}
-            key={Math.floor(Math.random() * 100000 + 1)}
-          />
+        {this.state.servicesList.map(item => (
+          <ServiceListItem service={item} key={"fdsafgasd"} />
         ))}
         <PaymentDetails />
       </div>
@@ -56,4 +95,7 @@ class ConfirmationPage extends Component {
   }
 }
 
-export default ConfirmationPage;
+export default connect(
+  mapStateToProps,
+  null
+)(ConfirmationPage);

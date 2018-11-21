@@ -33,7 +33,10 @@ class ServiceListItem extends Component {
           <p className="service-price-container-price">
             {this.props.service.price.split(".")[0]}
             <span className="service-price-container-price__digits">
-              ,{this.props.service.price.split(".")[1]}
+              ,
+              {this.props.service.price.split(".")[1].length === 1
+                ? this.props.service.price.split(".")[1] + "0"
+                : this.props.service.price.split(".")[1]}
             </span>
           </p>
         </div>

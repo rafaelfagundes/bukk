@@ -65,7 +65,7 @@ const initialState = {
         serviceId: "",
         dateAndTime: {
           time: "",
-          date: moment().format("DD-MM-YYYY")
+          date: moment()
         },
         specialistId: ""
       }

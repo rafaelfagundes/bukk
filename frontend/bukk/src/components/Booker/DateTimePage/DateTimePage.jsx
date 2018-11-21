@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Header, Form, Button, Icon } from "semantic-ui-react";
+import { Header, Form, Button, Icon, Grid } from "semantic-ui-react";
 import Specialist from "../Specialist/Specialist";
 import TimePills from "../TimePills/TimePills";
 import Spacer from "../Spacer/Spacer";
@@ -92,7 +92,7 @@ class DateTimePage extends Component {
   handleDate = date => {
     this.props.appointment.services[
       this.props.currentService
-    ].dateAndTime.date = date.format("DD-MM-YYYY");
+    ].dateAndTime.date = date;
 
     this.props.setDate(this.props.appointment);
 
@@ -124,7 +124,6 @@ class DateTimePage extends Component {
     this.props.appointment.services[
       this.props.currentService
     ].serviceId = value;
-    console.log(e.currentTarget);
     this.setState({ serviceId: value });
   };
 
@@ -176,16 +175,22 @@ class DateTimePage extends Component {
           <Header as="h3" color="blue" className="booker-title-what">
             O que deseja fazer?
           </Header>
+          <Grid columns={2}>
+            <Grid.Row>
+              <Grid.Column>
+                <Form.Dropdown
+                  onChange={this.handleService}
+                  placeholder="Serviços"
+                  search
+                  selection
+                  options={this.state.services}
+                  value={this.state.serviceId}
+                />
+              </Grid.Column>
+              <Grid.Column />
+            </Grid.Row>
+          </Grid>
 
-          <Form.Dropdown
-            onChange={this.handleService}
-            placeholder="Serviços"
-            search
-            selection
-            width={8}
-            options={this.state.services}
-            value={this.state.serviceId}
-          />
           <Header as="h3" color="blue" className="booker-title-who">
             Com quem deseja fazer?
           </Header>
@@ -237,7 +242,7 @@ class DateTimePage extends Component {
 
           <div className="ui one column center aligned grid">
             <Button labelPosition="left" icon color="green">
-              Adicionar um serviço
+              Incluir mais um serviço
               <Icon name="plus" />
             </Button>
           </div>
