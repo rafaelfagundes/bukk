@@ -9,11 +9,13 @@ import {
   Image
 } from "semantic-ui-react";
 import Specialist from "../Specialist/Specialist";
-import TimePills from "../TimePills/TimePills";
+// import TimePills from "../TimePills/TimePills";
+import Pill from "../TimePills/Pill";
 import Spacer from "../Spacer/Spacer";
 import DatePicker from "react-datepicker";
 import moment from "moment";
 import "./DatePicker.css";
+import "../TimePills/TimePills.css";
 import axios from "axios";
 import config from "../../../config";
 import _ from "lodash";
@@ -22,6 +24,7 @@ import {
   setCurrentService,
   setCompanyData,
   setDate,
+  setTime,
   setService
 } from "../bookerActions";
 
@@ -37,10 +40,26 @@ const mapDispatchToProps = dispatch => {
   return {
     setCompanyData: data => dispatch(setCompanyData(data)),
     setDate: appointment => dispatch(setDate(appointment)),
+    setTime: appointment => dispatch(setTime(appointment)),
     setService: appointment => dispatch(setService(appointment)),
     setCurrentService: index => dispatch(setCurrentService(index))
   };
 };
+
+function generateUUID() {
+  var d = new Date().getTime();
+  if (Date.now) {
+    d = Date.now(); //high-precision timer
+  }
+  var uuid = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(
+    c
+  ) {
+    var r = (d + Math.random() * 16) % 16 | 0;
+    d = Math.floor(d / 16);
+    return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
+  });
+  return uuid;
+}
 
 class DateTimePage extends Component {
   constructor(props) {
@@ -97,12 +116,14 @@ class DateTimePage extends Component {
     });
     this.state = {
       appointmentDate: moment(),
+      appointmentTime: "",
       serviceId: "",
       services: [],
       specialistId: "",
       specialists: [],
       servicesTable: [],
-      savedClicked: false
+      timeTable: [],
+      saveClicked: false
       // servicesTable: [
       //   {
       //     serviceId: "service001",
@@ -118,10 +139,12 @@ class DateTimePage extends Component {
   resetPage = () => {
     this.setState({
       appointmentDate: moment(),
+      appointmentTime: "",
       specialists: [],
+      serviceKey: "",
       serviceId: "",
       specialistId: "",
-      savedClicked: false
+      saveClicked: false
     });
   };
 
@@ -152,14 +175,37 @@ class DateTimePage extends Component {
     let _servicesTable = this.state.servicesTable;
 
     _servicesTable.push({
+      serviceKey: this.state.serviceKey,
       serviceId: _service.id,
       serviceDesc: _service.desc,
       specialistName: _specialist.firstName + " " + _specialist.lastName,
       specialistImage: _specialist.image,
-      dateTime: "25-11-2018 às 15:00"
+      dateTime:
+        this.state.appointmentDate.format("DD [de] MMMM [de] YYYY") +
+        " às " +
+        this.state.appointmentTime
     });
     this.resetPage();
-    this.setState({ savedClicked: true });
+    this.setState({ saveClicked: true });
+  };
+
+  handleDeleteService = (e, { value }) => {
+    let _servicesTable = this.state.servicesTable;
+
+    _.remove(_servicesTable, function(o) {
+      return o.serviceKey === value;
+    });
+
+    _.remove(this.props.appointment.services, function(o) {
+      return o.serviceKey === value;
+    });
+
+    // console.log(this.props.appointment.services);
+    this.props.setService(this.props.appointment);
+    this.props.setCurrentService(
+      _servicesTable.length === 0 ? 0 : _servicesTable.length - 1
+    );
+    this.setState({ servicesTable: _servicesTable, saveClicked: true });
   };
 
   handleAddService = () => {
@@ -168,6 +214,24 @@ class DateTimePage extends Component {
   };
 
   handleDate = date => {
+    const _date = date.format("YYYY-MM-DD");
+    const _specialistId = this.state.specialistId;
+
+    axios
+      .get(config.api + "/appointment/dates/" + _specialistId + "/" + _date)
+      .then(response => {
+        if (response.data.times) {
+          let _timeTable = [];
+          response.data.times.forEach(time => {
+            _timeTable.push({ time, selected: false });
+          });
+          this.setState({ timeTable: _timeTable });
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+
     this.props.appointment.services[
       this.props.currentService
     ].dateAndTime.date = date;
@@ -179,7 +243,45 @@ class DateTimePage extends Component {
     });
   };
 
+  handleTime = e => {
+    const _time = e.target.innerText;
+    this.props.appointment.services[
+      this.props.currentService
+    ].dateAndTime.time = _time;
+
+    let _timeTable = this.state.timeTable;
+
+    _timeTable.forEach(item => {
+      if (item.time === _time) {
+        item.selected = true;
+      } else {
+        item.selected = false;
+      }
+    });
+
+    this.props.setTime(this.props.appointment);
+    this.setState({ timeTable: _timeTable, appointmentTime: _time });
+  };
+
   handleSpecialist = (e, value) => {
+    const _date = moment().format("YYYY-MM-DD");
+    const _specialistId = value;
+
+    axios
+      .get(config.api + "/appointment/dates/" + _specialistId + "/" + _date)
+      .then(response => {
+        if (response.data.times) {
+          let _timeTable = [];
+          response.data.times.forEach(time => {
+            _timeTable.push({ time, selected: false });
+          });
+          this.setState({ timeTable: _timeTable });
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+
     let _specialistsList = this.state.specialists;
 
     _specialistsList.forEach(element => {
@@ -190,8 +292,7 @@ class DateTimePage extends Component {
       }
     });
 
-    this.setState({ specialistId: value });
-    this.setState({ specialists: _specialistsList });
+    this.setState({ specialistId: value, specialists: _specialistsList });
 
     this.props.appointment.services[
       this.props.currentService
@@ -199,12 +300,17 @@ class DateTimePage extends Component {
   };
 
   handleService = (e, { value }) => {
+    const _serviceKey = generateUUID();
     if (this.props.appointment.services[this.props.currentService]) {
       this.props.appointment.services[
         this.props.currentService
       ].serviceId = value;
+      this.props.appointment.services[
+        this.props.currentService
+      ].serviceKey = _serviceKey;
     } else {
       this.props.appointment.services.push({
+        serviceKey: _serviceKey,
         serviceId: value,
         dateAndTime: {
           time: "",
@@ -224,7 +330,12 @@ class DateTimePage extends Component {
       _specialistsList.push(_specialist);
     });
 
-    this.setState({ serviceId: value, specialists: _specialistsList });
+    this.setState({
+      serviceId: value,
+      serviceKey: _serviceKey,
+      specialists: _specialistsList,
+      specialistId: ""
+    });
   };
 
   isWeekday = date => {
@@ -271,23 +382,29 @@ class DateTimePage extends Component {
         {this.state.servicesTable.length >= 1 && (
           <React.Fragment>
             <Header as="h3" color="blue">
-              Estes são os seviços já escolhidos
+              Serviços escolhidos
             </Header>
             <Table celled padded>
               <Table.Header>
                 <Table.Row>
-                  <Table.HeaderCell>Serviço</Table.HeaderCell>
-                  <Table.HeaderCell>Data e Hora</Table.HeaderCell>
-                  <Table.HeaderCell>Ações</Table.HeaderCell>
+                  <Table.HeaderCell textAlign="center">
+                    Serviço
+                  </Table.HeaderCell>
+                  <Table.HeaderCell textAlign="center">
+                    Data e Hora
+                  </Table.HeaderCell>
+                  <Table.HeaderCell textAlign="center">
+                    Remover?
+                  </Table.HeaderCell>
                 </Table.Row>
               </Table.Header>
 
               <Table.Body>
                 {this.state.servicesTable.map(row => (
-                  <Table.Row key={row.serviceId}>
+                  <Table.Row key={row.serviceKey}>
                     <Table.Cell>
                       <Header as="h4" image>
-                        <Image src={row.specialistImage} rounded size="mini" />
+                        <Image src={row.specialistImage} avatar />
                         <Header.Content>
                           {row.serviceDesc}
                           <Header.Subheader>
@@ -296,8 +413,18 @@ class DateTimePage extends Component {
                         </Header.Content>
                       </Header>
                     </Table.Cell>
-                    <Table.Cell>{row.dateTime}</Table.Cell>
-                    <Table.Cell>Editar | Excluir</Table.Cell>
+                    <Table.Cell textAlign="center">{row.dateTime}</Table.Cell>
+                    <Table.Cell textAlign="center">
+                      <Button
+                        compact
+                        icon
+                        color="red"
+                        onClick={this.handleDeleteService}
+                        value={row.serviceKey}
+                      >
+                        <Icon name="delete" />
+                      </Button>
+                    </Table.Cell>
                   </Table.Row>
                 ))}
               </Table.Body>
@@ -313,9 +440,12 @@ class DateTimePage extends Component {
             </Button>
           </React.Fragment>
         )}
+
         <Form>
-          {!this.state.savedClicked && (
+          {(this.state.servicesTable.length === 0 ||
+            !this.state.saveClicked) && (
             <React.Fragment>
+              {this.state.servicesTable.length > 0 && <Spacer height={40} />}
               <Header as="h3" color="blue" className="booker-title-what">
                 O que deseja fazer?
               </Header>
@@ -337,7 +467,7 @@ class DateTimePage extends Component {
             </React.Fragment>
           )}
 
-          {this.state.specialists.length > 0 && (
+          {this.state.specialists.length > 0 && this.state.serviceId !== "" && (
             <React.Fragment>
               <Header as="h3" color="blue" className="booker-title-who">
                 Com quem deseja fazer?
@@ -374,22 +504,17 @@ class DateTimePage extends Component {
                 excludeDates={[]}
                 filterDate={this.isWeekday}
               />
-
-              <TimePills
-                startTime="8"
-                endTime="18"
-                minTimeFrame="15"
-                excludeTimes={[
-                  "12:00",
-                  "12:15",
-                  "12:30",
-                  "12:45",
-                  "13:00",
-                  "13:15",
-                  "13:30",
-                  "13:45"
-                ]}
-              />
+              <div className="TimePillsContainer">
+                <div className="TimePills">
+                  {this.state.timeTable.map(item => (
+                    <Pill
+                      key={item.time}
+                      item={item}
+                      onClick={this.handleTime}
+                    />
+                  ))}
+                </div>
+              </div>
             </React.Fragment>
           )}
         </Form>
@@ -401,6 +526,7 @@ class DateTimePage extends Component {
               icon
               color="green"
               onClick={this.handleSave}
+              disabled={this.state.appointmentTime === ""}
             >
               Salvar esta reserva
               <Icon name="save" />

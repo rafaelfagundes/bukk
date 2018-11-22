@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const faker = require("faker/locale/pt_BR");
+const _ = require("lodash");
 
 const keys = require("../../config/keys");
 
@@ -94,10 +95,74 @@ router.get("/appointment/", (req, res) => {
   res.status(200).send(appfake);
 });
 
-router.get("/appointment/dates/:id", (req, res) => {
-  console.log(req.params.id);
+router.get("/appointment/dates/:id/:date", (req, res) => {
+  console.log(req.params.date);
+  const dates = [
+    {
+      date: "2018-11-22",
+      times: [
+        "8:00",
+        "8:30",
+        "9:00",
+        "9:30",
+        "10:00",
+        "10:30",
+        "15:00",
+        "15:30",
+        "17:00",
+        "17:30"
+      ]
+    },
+    {
+      date: "2018-11-23",
+      times: ["8:00", "8:30", "9:00", "9:30"]
+    },
 
-  res.status(200).send("ok");
+    {
+      date: "2018-11-26",
+      times: [
+        "8:00",
+        "8:30",
+        "9:00",
+        "9:30",
+        "10:00",
+        "10:30",
+        "15:00",
+        "15:30",
+        "17:00",
+        "17:30"
+      ]
+    },
+    {
+      date: "2018-11-27",
+      times: ["15:30"]
+    },
+    {
+      date: "2018-11-28",
+      times: ["9:00", "15:00", "16:00", "17:00"]
+    },
+    {
+      date: "2018-11-29",
+      times: ["9:00", "9:30", "16:00", "17:00"]
+    },
+    {
+      date: "2018-11-30",
+      times: ["9:00", "9:30", "15:00", "16:00"]
+    },
+    {
+      date: "2018-12-03",
+      times: ["9:00", "9:30", "15:00", "17:00"]
+    }
+  ];
+
+  const date = _.find(dates, function(o) {
+    return o.date === req.params.date;
+  });
+  if (date) {
+    res.status(200).send(date);
+  } else {
+    res.status(404).send({ error: "Datas indisponível" });
+  }
 });
 
 module.exports = router;

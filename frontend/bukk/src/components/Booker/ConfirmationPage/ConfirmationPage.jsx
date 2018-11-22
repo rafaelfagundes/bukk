@@ -44,41 +44,44 @@ class ConfirmationPage extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.props.appointment.services[0].serviceId !== "") {
-      let _servicesList = [];
-      let _totalPrice = 0;
+    if (this.props.appointment.services.length > 0) {
+      if (this.props.appointment.services[0].serviceId !== "") {
+        let _servicesList = [];
+        let _totalPrice = 0;
 
-      this.props.appointment.services.forEach(service => {
-        let _specialist = this.getSpecialist(service.specialistId);
-        let _service = this.getService(service.serviceId);
+        this.props.appointment.services.forEach(service => {
+          let _specialist = this.getSpecialist(service.specialistId);
+          let _service = this.getService(service.serviceId);
 
-        _totalPrice += _service.value;
+          _totalPrice += _service.value;
 
-        if (_specialist && _service) {
-          _servicesList.push({
-            specialistPhoto: _specialist.image,
-            serviceDesc: _service.desc,
-            specialistName: _specialist.firstName + " " + _specialist.lastName,
-            date: service.dateAndTime.date
-              .locale("pt_BR")
-              .format("DD [de] MMMM [de] YYYY"),
-            time:
-              service.dateAndTime.time.length === 4
-                ? service.dateAndTime.time + " AM"
-                : service.dateAndTime.time,
-            price: "" + _service.value
+          if (_specialist && _service) {
+            _servicesList.push({
+              specialistPhoto: _specialist.image,
+              serviceDesc: _service.desc,
+              specialistName:
+                _specialist.firstName + " " + _specialist.lastName,
+              date: service.dateAndTime.date
+                .locale("pt_BR")
+                .format("DD [de] MMMM [de] YYYY"),
+              time:
+                service.dateAndTime.time.length === 4
+                  ? service.dateAndTime.time + " AM"
+                  : service.dateAndTime.time,
+              price: "" + _service.value
+            });
+          }
+        });
+
+        if (
+          _servicesList.length > 0 &&
+          !_.isEqual(this.state.servicesList, _servicesList)
+        ) {
+          this.setState({
+            servicesList: _servicesList,
+            totalPrice: "" + _totalPrice
           });
         }
-      });
-
-      if (
-        _servicesList.length > 0 &&
-        !_.isEqual(this.state.servicesList, _servicesList)
-      ) {
-        this.setState({
-          servicesList: _servicesList,
-          totalPrice: "" + _totalPrice
-        });
       }
     }
   }

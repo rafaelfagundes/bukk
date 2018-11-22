@@ -10,9 +10,6 @@ import ConfirmationPage from "./ConfirmationPage/ConfirmationPage";
 
 const mapStateToProps = state => {
   return {
-    appointment: state.booker.appointment,
-    excludeTimes: state.booker.excludeTimes,
-    numPages: state.booker.numPages,
     page: state.booker.page,
     totalValue: state.booker.totalValue,
     companyData: state.booker.companyData
@@ -31,6 +28,16 @@ class Booker extends Component {
     this.props.setPage(e.target.value);
   };
 
+  state = {
+    pageOneOk: false,
+    numPages: 3
+  };
+
+  componentDidUpdate(prevProps) {
+    console.log(this.props);
+    console.log(prevProps);
+  }
+
   render() {
     return (
       <React.Fragment>
@@ -42,11 +49,6 @@ class Booker extends Component {
                   src={this.props.companyData.business.logo}
                   className="booker-header-logo"
                 />
-                {this.props.page !== "3" && (
-                  <div className="booker-header-label">
-                    R$ {this.props.totalValue}
-                  </div>
-                )}
               </div>
               <div className="booker-main">
                 <DateTimePage
@@ -73,11 +75,12 @@ class Booker extends Component {
                       onClick={this.handlePagination}
                       floated="right"
                       value="2"
+                      disabled={!this.state.pageOneOk}
                     >
-                      Próximo
+                      Continuar
                     </Button>
                     <Breadcrumbs
-                      pages={this.props.numPages}
+                      pages={this.state.numPages}
                       currentPage={this.props.page}
                     />
                   </React.Fragment>
@@ -97,10 +100,10 @@ class Booker extends Component {
                       onClick={this.handlePagination}
                       value="3"
                     >
-                      Próximo
+                      Continuar
                     </Button>
                     <Breadcrumbs
-                      pages={this.props.numPages}
+                      pages={this.state.numPages}
                       currentPage={this.props.page}
                     />
                   </React.Fragment>
@@ -118,7 +121,7 @@ class Booker extends Component {
                       Confirmar
                     </Button>
                     <Breadcrumbs
-                      pages={this.props.numPages}
+                      pages={this.state.numPages}
                       currentPage={this.props.page}
                     />
                   </React.Fragment>

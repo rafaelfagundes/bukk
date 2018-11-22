@@ -26,7 +26,9 @@ class PaymentDetails extends Component {
                 ,
                 {String(this.props.total).split(".")[1].length === 1
                   ? String(this.props.total).split(".")[1] + "0"
-                  : String(this.props.total).split(".")[1]}
+                  : String(this.props.total)
+                      .split(".")[1]
+                      .substring(0, 2)}
               </span>
             </div>
           </div>
