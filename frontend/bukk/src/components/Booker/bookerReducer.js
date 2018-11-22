@@ -77,6 +77,8 @@ const bookerReducer = (state = initialState, action) => {
   switch (action.type) {
     case "SET_PAGE":
       return assign({}, state, action);
+    case "SET_CURRENT_SERVICE":
+      return assign({}, state, action);
     case "SET_TIME_TABLE":
       return assign({}, state, action);
     case "SET_TIME":

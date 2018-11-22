@@ -1,5 +1,13 @@
 import React, { Component } from "react";
-import { Header, Form, Button, Icon, Grid } from "semantic-ui-react";
+import {
+  Header,
+  Form,
+  Button,
+  Icon,
+  Grid,
+  Table,
+  Image
+} from "semantic-ui-react";
 import Specialist from "../Specialist/Specialist";
 import TimePills from "../TimePills/TimePills";
 import Spacer from "../Spacer/Spacer";
@@ -10,7 +18,12 @@ import axios from "axios";
 import config from "../../../config";
 import _ from "lodash";
 import { connect } from "react-redux";
-import { setCompanyData, setDate, setService } from "../bookerActions";
+import {
+  setCurrentService,
+  setCompanyData,
+  setDate,
+  setService
+} from "../bookerActions";
 
 const mapStateToProps = state => {
   return {
@@ -24,7 +37,8 @@ const mapDispatchToProps = dispatch => {
   return {
     setCompanyData: data => dispatch(setCompanyData(data)),
     setDate: appointment => dispatch(setDate(appointment)),
-    setService: appointment => dispatch(setService(appointment))
+    setService: appointment => dispatch(setService(appointment)),
+    setCurrentService: index => dispatch(setCurrentService(index))
   };
 };
 
@@ -83,12 +97,33 @@ class DateTimePage extends Component {
     });
     this.state = {
       appointmentDate: moment(),
-      services: [],
-      specialists: [],
       serviceId: "",
-      specialistId: ""
+      services: [],
+      specialistId: "",
+      specialists: [],
+      servicesTable: [],
+      savedClicked: false
+      // servicesTable: [
+      //   {
+      //     serviceId: "service001",
+      //     serviceDesc: "Corte de cabelo masculino ultra master hiper",
+      //     specialistName: "MC Zóio de Gato",
+      //     specialistImage: "http://i.pravatar.cc/150?img=22",
+      //     dateTime: "25-11-2018 às 15:00"
+      //   }
+      // ]
     };
   }
+
+  resetPage = () => {
+    this.setState({
+      appointmentDate: moment(),
+      specialists: [],
+      serviceId: "",
+      specialistId: "",
+      savedClicked: false
+    });
+  };
 
   getSpecialist(id) {
     const index = _.findIndex(this.props.companyData.specialists, function(o) {
@@ -111,10 +146,28 @@ class DateTimePage extends Component {
     }
   }
 
-  handleAddService() {}
+  handleSave = () => {
+    let _service = this.getService(this.state.serviceId);
+    let _specialist = this.getSpecialist(this.state.specialistId);
+    let _servicesTable = this.state.servicesTable;
+
+    _servicesTable.push({
+      serviceId: _service.id,
+      serviceDesc: _service.desc,
+      specialistName: _specialist.firstName + " " + _specialist.lastName,
+      specialistImage: _specialist.image,
+      dateTime: "25-11-2018 às 15:00"
+    });
+    this.resetPage();
+    this.setState({ savedClicked: true });
+  };
+
+  handleAddService = () => {
+    this.resetPage();
+    this.props.setCurrentService(this.props.currentService + 1);
+  };
 
   handleDate = date => {
-    console.log("date");
     this.props.appointment.services[
       this.props.currentService
     ].dateAndTime.date = date;
@@ -127,7 +180,6 @@ class DateTimePage extends Component {
   };
 
   handleSpecialist = (e, value) => {
-    console.log("specialist");
     let _specialistsList = this.state.specialists;
 
     _specialistsList.forEach(element => {
@@ -147,16 +199,27 @@ class DateTimePage extends Component {
   };
 
   handleService = (e, { value }) => {
-    console.log("service");
-    this.props.appointment.services[
-      this.props.currentService
-    ].serviceId = value;
+    if (this.props.appointment.services[this.props.currentService]) {
+      this.props.appointment.services[
+        this.props.currentService
+      ].serviceId = value;
+    } else {
+      this.props.appointment.services.push({
+        serviceId: value,
+        dateAndTime: {
+          time: "",
+          date: moment()
+        },
+        specialistId: ""
+      });
+    }
 
     let _service = this.getService(value);
     let _specialistsList = [];
 
     _service.specialists.forEach(specialist => {
       let _specialist = this.getSpecialist(specialist);
+
       _specialist.selected = false;
       _specialistsList.push(_specialist);
     });
@@ -196,7 +259,6 @@ class DateTimePage extends Component {
       })
       .catch(error => {
         // handle error
-        console.log(error);
       })
       .then(() => {
         // always executed
@@ -206,28 +268,77 @@ class DateTimePage extends Component {
   render() {
     return (
       <div className={"DateTimePage " + this.props.className}>
+        {this.state.servicesTable.length >= 1 && (
+          <React.Fragment>
+            <Header as="h3" color="blue">
+              Estes são os seviços já escolhidos
+            </Header>
+            <Table celled padded>
+              <Table.Header>
+                <Table.Row>
+                  <Table.HeaderCell>Serviço</Table.HeaderCell>
+                  <Table.HeaderCell>Data e Hora</Table.HeaderCell>
+                  <Table.HeaderCell>Ações</Table.HeaderCell>
+                </Table.Row>
+              </Table.Header>
+
+              <Table.Body>
+                {this.state.servicesTable.map(row => (
+                  <Table.Row key={row.serviceId}>
+                    <Table.Cell>
+                      <Header as="h4" image>
+                        <Image src={row.specialistImage} rounded size="mini" />
+                        <Header.Content>
+                          {row.serviceDesc}
+                          <Header.Subheader>
+                            {row.specialistName}
+                          </Header.Subheader>
+                        </Header.Content>
+                      </Header>
+                    </Table.Cell>
+                    <Table.Cell>{row.dateTime}</Table.Cell>
+                    <Table.Cell>Editar | Excluir</Table.Cell>
+                  </Table.Row>
+                ))}
+              </Table.Body>
+            </Table>
+            <Button
+              labelPosition="left"
+              icon
+              color="green"
+              onClick={this.handleAddService}
+            >
+              Incluir mais um serviço
+              <Icon name="plus" />
+            </Button>
+          </React.Fragment>
+        )}
         <Form>
-          <Header as="h3" color="blue" className="booker-title-what">
-            O que deseja fazer?
-          </Header>
-          <Grid columns={2}>
-            <Grid.Row>
-              <Grid.Column>
-                <Form.Dropdown
-                  onChange={this.handleService}
-                  placeholder="Serviços"
-                  search
-                  selection
-                  options={this.state.services}
-                  value={this.state.serviceId}
-                />
-              </Grid.Column>
-              <Grid.Column />
-            </Grid.Row>
-          </Grid>
+          {!this.state.savedClicked && (
+            <React.Fragment>
+              <Header as="h3" color="blue" className="booker-title-what">
+                O que deseja fazer?
+              </Header>
+              <Grid columns={2}>
+                <Grid.Row>
+                  <Grid.Column>
+                    <Form.Dropdown
+                      onChange={this.handleService}
+                      placeholder="Serviços"
+                      search
+                      selection
+                      options={this.state.services}
+                      value={this.state.serviceId}
+                    />
+                  </Grid.Column>
+                  <Grid.Column />
+                </Grid.Row>
+              </Grid>
+            </React.Fragment>
+          )}
 
           {this.state.specialists.length > 0 && (
-            <span className="specialists-container">
+            <React.Fragment>
               <Header as="h3" color="blue" className="booker-title-who">
                 Com quem deseja fazer?
               </Header>
@@ -245,11 +356,11 @@ class DateTimePage extends Component {
                   />
                 ))}
               </div>
-            </span>
+            </React.Fragment>
           )}
 
           {this.state.specialistId !== "" && (
-            <span className="date-time-container">
+            <React.Fragment>
               <Header as="h3" color="blue" className="booker-title-when">
                 Quando deseja fazer?
               </Header>
@@ -279,22 +390,23 @@ class DateTimePage extends Component {
                   "13:45"
                 ]}
               />
-              <Spacer height="60" />
-
-              <div className="ui one column center aligned grid">
-                <Button
-                  labelPosition="left"
-                  icon
-                  color="green"
-                  onClick={this.handleAddService}
-                >
-                  Incluir mais um serviço
-                  <Icon name="plus" />
-                </Button>
-              </div>
-            </span>
+            </React.Fragment>
           )}
         </Form>
+        {this.state.specialistId !== "" && (
+          <React.Fragment>
+            <Spacer height={20} />
+            <Button
+              labelPosition="left"
+              icon
+              color="green"
+              onClick={this.handleSave}
+            >
+              Salvar esta reserva
+              <Icon name="save" />
+            </Button>
+          </React.Fragment>
+        )}
       </div>
     );
   }

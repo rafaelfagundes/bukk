@@ -7,6 +7,15 @@ export const setPage = page => {
   };
 };
 
+export const setCurrentService = currentService => {
+  return (dispatch, getState) => {
+    dispatch({
+      type: "SET_CURRENT_SERVICE",
+      currentService
+    });
+  };
+};
+
 export const setCompanyData = companyData => {
   return (dispatch, getState) => {
     dispatch({

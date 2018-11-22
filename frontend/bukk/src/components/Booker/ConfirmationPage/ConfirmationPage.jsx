@@ -54,8 +54,6 @@ class ConfirmationPage extends Component {
 
         _totalPrice += _service.value;
 
-        // console.log(service.dateAndTime.date.format("DD-MM-YYYY"));
-
         if (_specialist && _service) {
           _servicesList.push({
             specialistPhoto: _specialist.image,
@@ -94,7 +92,10 @@ class ConfirmationPage extends Component {
           do seu agendamento
         </Header>
         {this.state.servicesList.map(item => (
-          <ServiceListItem service={item} key={"fdsafgasd"} />
+          <ServiceListItem
+            service={item}
+            key={item.serviceDesc + item.date + item.time + item.price}
+          />
         ))}
         <PaymentDetails total={this.state.totalPrice} />
       </div>
