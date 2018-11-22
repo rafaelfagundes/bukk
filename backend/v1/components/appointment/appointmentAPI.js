@@ -15,38 +15,41 @@ router.get("/appointment/", (req, res) => {
     },
     services: [
       {
-        id: faker.random.uuid(),
+        id: "service001",
         desc: "Corte de cabelo masculino",
         value: 35.9,
         duration: 60,
         products: [],
         display: true,
-        company: "5bf317fba01cdd25993d54f3"
+        company: "5bf317fba01cdd25993d54f3",
+        specialists: ["spec001", "spec002", "spec003", "spec004", "spec005"]
       },
 
       {
-        id: faker.random.uuid(),
+        id: "service002",
         desc: "Corte de cabelo feminino",
         value: 75.9,
         duration: 90,
         products: [],
         display: true,
-        company: "5bf317fba01cdd25993d54f3"
+        company: "5bf317fba01cdd25993d54f3",
+        specialists: ["spec001", "spec004", "spec005"]
       },
 
       {
-        id: faker.random.uuid(),
+        id: "service003",
         desc: "Alisamento feminino",
         value: 45.9,
         duration: 60,
         products: [],
         display: true,
-        company: "5bf317fba01cdd25993d54f3"
+        company: "5bf317fba01cdd25993d54f3",
+        specialists: ["spec002", "spec003", "spec005"]
       }
     ],
     specialists: [
       {
-        id: faker.random.uuid(),
+        id: "spec001",
         firstName: faker.name.firstName(),
         lastName: faker.name.lastName(),
         image:
@@ -54,7 +57,7 @@ router.get("/appointment/", (req, res) => {
         desc: faker.name.jobTitle()
       },
       {
-        id: faker.random.uuid(),
+        id: "spec002",
         firstName: faker.name.firstName(),
         lastName: faker.name.lastName(),
         image:
@@ -62,7 +65,7 @@ router.get("/appointment/", (req, res) => {
         desc: faker.name.jobTitle()
       },
       {
-        id: faker.random.uuid(),
+        id: "spec003",
         firstName: faker.name.firstName(),
         lastName: faker.name.lastName(),
         image:
@@ -70,7 +73,7 @@ router.get("/appointment/", (req, res) => {
         desc: faker.name.jobTitle()
       },
       {
-        id: faker.random.uuid(),
+        id: "spec004",
         firstName: faker.name.firstName(),
         lastName: faker.name.lastName(),
         image:
@@ -78,7 +81,7 @@ router.get("/appointment/", (req, res) => {
         desc: faker.name.jobTitle()
       },
       {
-        id: faker.random.uuid(),
+        id: "spec005",
         firstName: faker.name.firstName(),
         lastName: faker.name.lastName(),
         image:
@@ -89,6 +92,12 @@ router.get("/appointment/", (req, res) => {
   };
 
   res.status(200).send(appfake);
+});
+
+router.get("/appointment/dates/:id", (req, res) => {
+  console.log(req.params.id);
+
+  res.status(200).send("ok");
 });
 
 module.exports = router;

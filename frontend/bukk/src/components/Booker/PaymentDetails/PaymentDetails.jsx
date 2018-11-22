@@ -21,8 +21,13 @@ class PaymentDetails extends Component {
           <div className="payment-details-price-value">
             <div className="payment-details-price-amount">
               <span className="payment-details-price-currency">R$</span>
-              <span>999</span>
-              <span className="payment-details-price-amount__digits">,99</span>
+              <span>{String(this.props.total).split(".")[0]}</span>
+              <span className="payment-details-price-amount__digits">
+                ,
+                {String(this.props.total).split(".")[1].length === 1
+                  ? String(this.props.total).split(".")[1] + "0"
+                  : String(this.props.total).split(".")[1]}
+              </span>
             </div>
           </div>
         </div>

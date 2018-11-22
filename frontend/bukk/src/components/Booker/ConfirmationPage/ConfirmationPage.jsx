@@ -14,10 +14,13 @@ const mapStateToProps = state => {
 };
 
 class ConfirmationPage extends Component {
-  state = {
-    servicesList: [],
-    totalPrice: 0.0
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      servicesList: [],
+      totalPrice: "0.0"
+    };
+  }
 
   getSpecialist(id) {
     const index = _.findIndex(this.props.companyData.specialists, function(o) {
@@ -43,10 +46,13 @@ class ConfirmationPage extends Component {
   componentDidUpdate(prevProps, prevState) {
     if (this.props.appointment.services[0].serviceId !== "") {
       let _servicesList = [];
+      let _totalPrice = 0;
 
       this.props.appointment.services.forEach(service => {
         let _specialist = this.getSpecialist(service.specialistId);
         let _service = this.getService(service.serviceId);
+
+        _totalPrice += _service.value;
 
         // console.log(service.dateAndTime.date.format("DD-MM-YYYY"));
 
@@ -72,7 +78,8 @@ class ConfirmationPage extends Component {
         !_.isEqual(this.state.servicesList, _servicesList)
       ) {
         this.setState({
-          servicesList: _servicesList
+          servicesList: _servicesList,
+          totalPrice: "" + _totalPrice
         });
       }
     }
@@ -89,7 +96,7 @@ class ConfirmationPage extends Component {
         {this.state.servicesList.map(item => (
           <ServiceListItem service={item} key={"fdsafgasd"} />
         ))}
-        <PaymentDetails />
+        <PaymentDetails total={this.state.totalPrice} />
       </div>
     );
   }

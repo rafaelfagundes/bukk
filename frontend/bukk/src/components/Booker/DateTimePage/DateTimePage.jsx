@@ -8,6 +8,7 @@ import moment from "moment";
 import "./DatePicker.css";
 import axios from "axios";
 import config from "../../../config";
+import _ from "lodash";
 import { connect } from "react-redux";
 import { setCompanyData, setDate, setService } from "../bookerActions";
 
@@ -89,7 +90,31 @@ class DateTimePage extends Component {
     };
   }
 
+  getSpecialist(id) {
+    const index = _.findIndex(this.props.companyData.specialists, function(o) {
+      return o.id === id;
+    });
+    if (index >= 0) {
+      return this.props.companyData.specialists[index];
+    } else {
+      return null;
+    }
+  }
+  getService(id) {
+    const index = _.findIndex(this.props.companyData.services, function(o) {
+      return o.id === id;
+    });
+    if (index >= 0) {
+      return this.props.companyData.services[index];
+    } else {
+      return null;
+    }
+  }
+
+  handleAddService() {}
+
   handleDate = date => {
+    console.log("date");
     this.props.appointment.services[
       this.props.currentService
     ].dateAndTime.date = date;
@@ -102,6 +127,7 @@ class DateTimePage extends Component {
   };
 
   handleSpecialist = (e, value) => {
+    console.log("specialist");
     let _specialistsList = this.state.specialists;
 
     _specialistsList.forEach(element => {
@@ -121,10 +147,21 @@ class DateTimePage extends Component {
   };
 
   handleService = (e, { value }) => {
+    console.log("service");
     this.props.appointment.services[
       this.props.currentService
     ].serviceId = value;
-    this.setState({ serviceId: value });
+
+    let _service = this.getService(value);
+    let _specialistsList = [];
+
+    _service.specialists.forEach(specialist => {
+      let _specialist = this.getSpecialist(specialist);
+      _specialist.selected = false;
+      _specialistsList.push(_specialist);
+    });
+
+    this.setState({ serviceId: value, specialists: _specialistsList });
   };
 
   isWeekday = date => {
@@ -156,8 +193,6 @@ class DateTimePage extends Component {
         response.data.specialists.forEach(element => {
           element.selected = false;
         });
-
-        this.setState({ specialists: response.data.specialists });
       })
       .catch(error => {
         // handle error
@@ -191,61 +226,74 @@ class DateTimePage extends Component {
             </Grid.Row>
           </Grid>
 
-          <Header as="h3" color="blue" className="booker-title-who">
-            Com quem deseja fazer?
-          </Header>
-          <div id="Specialists">
-            {this.state.specialists.map(specialist => (
-              <Specialist
-                onClick={this.handleSpecialist}
-                key={specialist.id}
-                firstName={specialist.firstName}
-                lastName={specialist.lastName}
-                image={specialist.image}
-                desc={specialist.desc}
-                value={specialist.id}
-                selected={specialist.selected}
+          {this.state.specialists.length > 0 && (
+            <span className="specialists-container">
+              <Header as="h3" color="blue" className="booker-title-who">
+                Com quem deseja fazer?
+              </Header>
+              <div id="Specialists">
+                {this.state.specialists.map(specialist => (
+                  <Specialist
+                    onClick={this.handleSpecialist}
+                    key={specialist.id}
+                    firstName={specialist.firstName}
+                    lastName={specialist.lastName}
+                    image={specialist.image}
+                    desc={specialist.desc}
+                    value={specialist.id}
+                    selected={specialist.selected}
+                  />
+                ))}
+              </div>
+            </span>
+          )}
+
+          {this.state.specialistId !== "" && (
+            <span className="date-time-container">
+              <Header as="h3" color="blue" className="booker-title-when">
+                Quando deseja fazer?
+              </Header>
+
+              <DatePicker
+                inline
+                selected={this.state.appointmentDate}
+                onChange={this.handleDate}
+                allowSameDay={false}
+                minDate={moment()}
+                excludeDates={[]}
+                filterDate={this.isWeekday}
               />
-            ))}
-          </div>
 
-          <Header as="h3" color="blue" className="booker-title-when">
-            Quando deseja fazer?
-          </Header>
+              <TimePills
+                startTime="8"
+                endTime="18"
+                minTimeFrame="15"
+                excludeTimes={[
+                  "12:00",
+                  "12:15",
+                  "12:30",
+                  "12:45",
+                  "13:00",
+                  "13:15",
+                  "13:30",
+                  "13:45"
+                ]}
+              />
+              <Spacer height="60" />
 
-          <DatePicker
-            inline
-            selected={this.state.appointmentDate}
-            onChange={this.handleDate}
-            allowSameDay={false}
-            minDate={moment()}
-            excludeDates={[]}
-            filterDate={this.isWeekday}
-          />
-
-          <TimePills
-            startTime="8"
-            endTime="18"
-            minTimeFrame="15"
-            excludeTimes={[
-              "12:00",
-              "12:15",
-              "12:30",
-              "12:45",
-              "13:00",
-              "13:15",
-              "13:30",
-              "13:45"
-            ]}
-          />
-          <Spacer height="60" />
-
-          <div className="ui one column center aligned grid">
-            <Button labelPosition="left" icon color="green">
-              Incluir mais um serviço
-              <Icon name="plus" />
-            </Button>
-          </div>
+              <div className="ui one column center aligned grid">
+                <Button
+                  labelPosition="left"
+                  icon
+                  color="green"
+                  onClick={this.handleAddService}
+                >
+                  Incluir mais um serviço
+                  <Icon name="plus" />
+                </Button>
+              </div>
+            </span>
+          )}
         </Form>
       </div>
     );
