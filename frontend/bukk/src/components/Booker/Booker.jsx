@@ -33,11 +33,6 @@ class Booker extends Component {
     numPages: 3
   };
 
-  componentDidUpdate(prevProps) {
-    console.log(this.props);
-    console.log(prevProps);
-  }
-
   render() {
     return (
       <React.Fragment>

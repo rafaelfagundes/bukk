@@ -205,6 +205,7 @@ class DateTimePage extends Component {
     this.props.setCurrentService(
       _servicesTable.length === 0 ? 0 : _servicesTable.length - 1
     );
+    this.resetPage();
     this.setState({ servicesTable: _servicesTable, saveClicked: true });
   };
 
@@ -528,11 +529,39 @@ class DateTimePage extends Component {
               onClick={this.handleSave}
               disabled={this.state.appointmentTime === ""}
             >
-              Salvar esta reserva
+              Salvar este agendamento
               <Icon name="save" />
             </Button>
+            {this.state.servicesTable.length > 0 && (
+              <Button
+                labelPosition="left"
+                icon
+                color="red"
+                onClick={this.handleDeleteService}
+                floated="right"
+              >
+                Cancelar
+                <Icon name="delete" />
+              </Button>
+            )}
           </React.Fragment>
         )}
+        {this.state.servicesTable.length > 0 &&
+          !this.state.saveClicked &&
+          this.state.specialistId === "" && (
+            <React.Fragment>
+              <Spacer height={20} />
+              <Button
+                labelPosition="left"
+                icon
+                color="red"
+                onClick={this.handleDeleteService}
+              >
+                Cancelar
+                <Icon name="delete" />
+              </Button>
+            </React.Fragment>
+          )}
       </div>
     );
   }
