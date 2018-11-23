@@ -25,7 +25,10 @@ import {
   setCompanyData,
   setDate,
   setTime,
-  setService
+  setService,
+  setDateTimeOk,
+  setPersonalInfoOk,
+  setConfirmationOk
 } from "../bookerActions";
 
 const mapStateToProps = state => {
@@ -42,7 +45,12 @@ const mapDispatchToProps = dispatch => {
     setDate: appointment => dispatch(setDate(appointment)),
     setTime: appointment => dispatch(setTime(appointment)),
     setService: appointment => dispatch(setService(appointment)),
-    setCurrentService: index => dispatch(setCurrentService(index))
+    setCurrentService: index => dispatch(setCurrentService(index)),
+    setDateTimeOk: dateAndTimeOk => dispatch(setDateTimeOk(dateAndTimeOk)),
+    setPersonalInfoOk: personalInfoOk =>
+      dispatch(setPersonalInfoOk(personalInfoOk)),
+    setConfirmationOk: confirmationOk =>
+      dispatch(setConfirmationOk(confirmationOk))
   };
 };
 
@@ -124,15 +132,6 @@ class DateTimePage extends Component {
       servicesTable: [],
       timeTable: [],
       saveClicked: false
-      // servicesTable: [
-      //   {
-      //     serviceId: "service001",
-      //     serviceDesc: "Corte de cabelo masculino ultra master hiper",
-      //     specialistName: "MC Zóio de Gato",
-      //     specialistImage: "http://i.pravatar.cc/150?img=22",
-      //     dateTime: "25-11-2018 às 15:00"
-      //   }
-      // ]
     };
   }
 
@@ -187,6 +186,7 @@ class DateTimePage extends Component {
     });
     this.resetPage();
     this.setState({ saveClicked: true });
+    this.props.setDateTimeOk(true);
   };
 
   handleDeleteService = (e, { value }) => {
@@ -207,6 +207,9 @@ class DateTimePage extends Component {
     );
     this.resetPage();
     this.setState({ servicesTable: _servicesTable, saveClicked: true });
+    if (_servicesTable.length === 0) {
+      this.props.setDateTimeOk(false);
+    }
   };
 
   handleAddService = () => {

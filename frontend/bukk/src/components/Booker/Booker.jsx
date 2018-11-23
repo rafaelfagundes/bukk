@@ -12,7 +12,10 @@ const mapStateToProps = state => {
   return {
     page: state.booker.page,
     totalValue: state.booker.totalValue,
-    companyData: state.booker.companyData
+    companyData: state.booker.companyData,
+    dateAndTimeOk: state.booker.dateAndTimeOk,
+    personalInfoOk: state.booker.personalInfoOk,
+    confirmationOk: state.booker.confirmationOk
   };
 };
 
@@ -70,7 +73,7 @@ class Booker extends Component {
                       onClick={this.handlePagination}
                       floated="right"
                       value="2"
-                      disabled={!this.state.pageOneOk}
+                      disabled={!this.props.dateAndTimeOk}
                     >
                       Continuar
                     </Button>
@@ -94,6 +97,7 @@ class Booker extends Component {
                       floated="right"
                       onClick={this.handlePagination}
                       value="3"
+                      disabled={!this.props.personalInfoOk}
                     >
                       Continuar
                     </Button>
@@ -112,7 +116,11 @@ class Booker extends Component {
                     >
                       Voltar
                     </Button>
-                    <Button color="green" floated="right">
+                    <Button
+                      color="green"
+                      floated="right"
+                      disabled={!this.props.confirmationOk}
+                    >
                       Confirmar
                     </Button>
                     <Breadcrumbs

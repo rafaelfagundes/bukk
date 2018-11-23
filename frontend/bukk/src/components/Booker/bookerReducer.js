@@ -3,6 +3,10 @@ import assign from "lodash/assign";
 const initialState = {
   page: "1",
 
+  dateAndTimeOk: false,
+  personalInfoOk: false,
+  confirmationOk: false,
+
   companyData: {
     business: {
       logo: ""
@@ -29,8 +33,6 @@ const bookerReducer = (state = initialState, action) => {
       return assign({}, state, action);
     case "SET_CURRENT_SERVICE":
       return assign({}, state, action);
-    case "SET_TIME_TABLE":
-      return assign({}, state, action);
     case "SET_TIME":
       return assign({}, state, action);
     case "SET_DATE":
@@ -40,6 +42,12 @@ const bookerReducer = (state = initialState, action) => {
     case "SET_CLIENT":
       return assign({}, state, action);
     case "SET_COMPANY_DATA":
+      return assign({}, state, action);
+    case "SET_DATE_TIME_OK":
+      return assign({}, state, action);
+    case "SET_PERSONAL_INFO_OK":
+      return assign({}, state, action);
+    case "SET_CONFIRMATION_OK":
       return assign({}, state, action);
     default:
       break;

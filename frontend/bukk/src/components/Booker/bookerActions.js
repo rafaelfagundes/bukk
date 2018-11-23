@@ -25,15 +25,6 @@ export const setCompanyData = companyData => {
   };
 };
 
-export const setTimeTable = timeTable => {
-  return (dispatch, getState) => {
-    dispatch({
-      type: "SET_TIME_TABLE",
-      timeTable
-    });
-  };
-};
-
 export const setTime = appointment => {
   return (dispatch, getState) => {
     dispatch({
@@ -66,6 +57,33 @@ export const setClient = appointment => {
     dispatch({
       type: "SET_CLIENT",
       appointment
+    });
+  };
+};
+
+export const setDateTimeOk = dateAndTimeOk => {
+  return (dispatch, getState) => {
+    dispatch({
+      type: "SET_DATE_TIME_OK",
+      dateAndTimeOk
+    });
+  };
+};
+
+export const setPersonalInfoOk = personalInfoOk => {
+  return (dispatch, getState) => {
+    dispatch({
+      type: "SET_PERSONAL_INFO_OK",
+      personalInfoOk
+    });
+  };
+};
+
+export const setConfirmationOk = confirmationOk => {
+  return (dispatch, getState) => {
+    dispatch({
+      type: "SET_CONFIRMATION_OK",
+      confirmationOk
     });
   };
 };
