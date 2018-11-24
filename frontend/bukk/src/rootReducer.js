@@ -1,12 +1,10 @@
 import { combineReducers } from "redux";
 
-import authReducer from "./authReducer";
-import clientReducer from "./components/Dashboard/Clients/clientReducer";
+import dashboardReducer from "./components/Dashboard/dashboardReducer";
 import bookerReducer from "./components/Booker/bookerReducer";
 
 const rootReducer = combineReducers({
-  auth: authReducer,
-  client: clientReducer,
+  client: dashboardReducer,
   booker: bookerReducer
 });
 

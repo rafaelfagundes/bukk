@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Input, Button } from "semantic-ui-react";
 import DashboardHeader from "../DashboardHeader/DashboardHeader";
 import { connect } from "react-redux";
-import { addClient, allClients } from "./clientActions";
+import { addClient, allClients } from "../dashboardActions";
 import axios from "axios";
 import config from "../../../config";
 
