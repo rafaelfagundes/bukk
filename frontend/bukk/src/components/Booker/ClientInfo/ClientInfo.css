@@ -3,7 +3,7 @@
   background-color: #f9f9f9;
   width: 100%;
   border-radius: 4px;
-  padding: 20px;
+  padding: 25px 25px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -18,20 +18,22 @@
   line-height: 24px;
 }
 
-.client-email, .client-phone{
+.client-email,
+.client-phone {
   font-size: 16px;
   line-height: 24px;
   margin: 0;
   color: #666;
 }
 
-.client-phone{
+.client-phone {
   margin: 0 0 15px 0;
 }
 
-.client-obs{
+.client-obs {
   font-size: 16px;
   line-height: 24px;
   margin: 0;
-  color: #666;
+  color: #555;
+  padding-right: 100px;
 }

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "./ConfirmationPage.css";
-import { Header, Card } from "semantic-ui-react";
+import { Header } from "semantic-ui-react";
 import ServiceListItem from "../ServiceListItem/ServiceListItem";
 import PaymentDetails from "../PaymentDetails/PaymentDetails";
 import ClientInfo from "../ClientInfo/ClientInfo";
@@ -98,7 +98,17 @@ class ConfirmationPage extends Component {
         <Header as="h3" color="blue">
           Seus dados
         </Header>
-        <ClientInfo name="Rafael Fagundes" email="rafaelcflima@gmail.com" phone="32991267913" obs="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." whatsapp={true} />
+        <ClientInfo
+          name={
+            this.props.appointment.client.firstName +
+            " " +
+            this.props.appointment.client.lastName
+          }
+          email={this.props.appointment.client.email}
+          phone={this.props.appointment.client.phone}
+          obs={this.props.appointment.client.obs}
+          whatsapp={this.props.appointment.client.whatsapp}
+        />
         <Header as="h3" color="blue">
           {this.props.appointment.services > 0 ? "Serviços" : "Serviço"}
         </Header>
