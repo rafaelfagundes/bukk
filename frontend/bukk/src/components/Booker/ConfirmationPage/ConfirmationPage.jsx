@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 import "./ConfirmationPage.css";
-import { Header } from "semantic-ui-react";
+import { Header, Card } from "semantic-ui-react";
 import ServiceListItem from "../ServiceListItem/ServiceListItem";
 import PaymentDetails from "../PaymentDetails/PaymentDetails";
+import ClientInfo from "../ClientInfo/ClientInfo";
 import { connect } from "react-redux";
 import _ from "lodash";
 
@@ -93,6 +94,13 @@ class ConfirmationPage extends Component {
           Confira os detalhes
           <br />
           do seu agendamento
+        </Header>
+        <Header as="h3" color="blue">
+          Seus dados
+        </Header>
+        <ClientInfo name="Rafael Fagundes" email="rafaelcflima@gmail.com" phone="32991267913" obs="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." whatsapp={true} />
+        <Header as="h3" color="blue">
+          {this.props.appointment.services > 0 ? "Serviços" : "Serviço"}
         </Header>
         {this.state.servicesList.map(item => (
           <ServiceListItem

@@ -1,0 +1,37 @@
+.ClientInfo {
+  position: relative;
+  background-color: #f9f9f9;
+  width: 100%;
+  border-radius: 4px;
+  padding: 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 25px;
+}
+
+.client-name {
+  color: #555;
+  font-weight: 400;
+  font-size: 24px;
+  margin: 0 0 15px 0;
+  line-height: 24px;
+}
+
+.client-email, .client-phone{
+  font-size: 16px;
+  line-height: 24px;
+  margin: 0;
+  color: #666;
+}
+
+.client-phone{
+  margin: 0 0 15px 0;
+}
+
+.client-obs{
+  font-size: 16px;
+  line-height: 24px;
+  margin: 0;
+  color: #666;
+}
