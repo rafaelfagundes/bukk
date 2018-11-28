@@ -110,7 +110,7 @@ class ConfirmationPage extends Component {
           whatsapp={this.props.appointment.client.whatsapp}
         />
         <Header as="h3" color="blue">
-          {this.props.appointment.services > 0 ? "Serviços" : "Serviço"}
+          {this.props.appointment.services.length > 1 ? "Serviços" : "Serviço"}
         </Header>
         {this.state.servicesList.map(item => (
           <ServiceListItem

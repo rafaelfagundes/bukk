@@ -6,7 +6,7 @@ const initialState = {
 
   dateAndTimeOk: false,
   personalInfoOk: false,
-  confirmationOk: false,
+  confirmationOk: true,
 
   companyData: {
     business: {

@@ -7,6 +7,8 @@ import Breadcrumbs from "./Breadcrumbs/Breadcrumbs";
 import PersonalInfoPage from "./PersonalInfoPage/PersonalInfoPage";
 import DateTimePage from "./DateTimePage/DateTimePage";
 import ConfirmationPage from "./ConfirmationPage/ConfirmationPage";
+import axios from "axios";
+import config from "../../config";
 
 const mapStateToProps = state => {
   return {
@@ -15,7 +17,8 @@ const mapStateToProps = state => {
     companyData: state.booker.companyData,
     dateAndTimeOk: state.booker.dateAndTimeOk,
     personalInfoOk: state.booker.personalInfoOk,
-    confirmationOk: state.booker.confirmationOk
+    confirmationOk: state.booker.confirmationOk,
+    appointment: state.booker.appointment
   };
 };
 
@@ -27,6 +30,17 @@ const mapDispatchToProps = dispatch => {
 };
 
 class Booker extends Component {
+  handleSubmit = () => {
+    axios
+      .post(config.api + "/appointment", this.props.appointment)
+      .then(function(response) {
+        console.log(response);
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
+  };
+
   handlePagination = e => {
     this.props.setPage(e.target.value);
   };
@@ -123,6 +137,7 @@ class Booker extends Component {
                       color="green"
                       floated="right"
                       disabled={!this.props.confirmationOk}
+                      onClick={this.handleSubmit}
                     >
                       Confirmar
                     </Button>
