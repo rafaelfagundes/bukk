@@ -1,7 +1,7 @@
 import assign from "lodash/assign";
 
 const initialState = {
-  page: "2",
+  page: "1",
   currentService: 0,
 
   dateAndTimeOk: false,

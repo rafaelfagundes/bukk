@@ -59,13 +59,7 @@ class PersonalInfoPage extends Component {
     ) {
       _errors.email = "Insira um email válido.";
     }
-    if (
-      !validator.isEmpty(String(this.state.phone)) &&
-      !validator.isNumeric(String(this.state.phone))
-    ) {
-      _errors.phone =
-        "Por favor insira somente números. Sendo DDD + Número. Exemplo: 32912349876";
-    }
+
     if (
       !validator.isEmpty(String(this.state.phone)) &&
       (this.state.phone.length < 10 || this.state.phone.length > 11)
@@ -74,16 +68,25 @@ class PersonalInfoPage extends Component {
         "O número deve conter 10 ou 11 algarismos. Sendo DDD + Número. Exemplo: 32912349876";
     }
     if (
-      !validator.isEmpty(String(this.state.phone)) &&
       this.state.whatsapp &&
-      this.state.phone.length !== 11
+      (validator.isEmpty(String(this.state.phone)) ||
+        this.state.phone.length !== 11)
     ) {
-      _errors.phone =
-        "Um número vinculado ao WhatsApp deve conter 11 algarismos. Exemplo: 32912349876";
+      _errors.phone = "O número de WhatsApp deve ser de um telefone móvel.";
     }
-    if (this.state.phone.length === 10) {
+    if (
+      this.state.phone.length === 10 &&
+      validator.isNumeric(String(this.state.phone))
+    ) {
       _warnings.phone =
         "Dica: com um número de celular, você recebe lembretes por mensagem SMS.\nConfira seu número ou insira um número de celular.";
+    }
+    if (
+      !validator.isEmpty(String(this.state.phone)) &&
+      !validator.isNumeric(String(this.state.phone))
+    ) {
+      _errors.phone =
+        "Por favor insira somente números. Sendo DDD + Número. Exemplo: 32912349876";
     }
 
     if (
@@ -220,7 +223,7 @@ class PersonalInfoPage extends Component {
               size="large"
               label="Observações"
               placeholder="Observações"
-              width={10}
+              width={12}
               rows="8"
               value={this.state.obs}
               onChange={this.handleChange}
@@ -228,21 +231,6 @@ class PersonalInfoPage extends Component {
             />
           </Form.Group>
         </Form>
-        <div>
-          {/* <p>{this.props.appointment.client.firstName}</p>
-          <p>{this.props.appointment.client.lastName}</p>
-          <p>{this.props.appointment.client.email}</p>
-          <p>{this.props.appointment.client.phone}</p>
-          <p>{this.props.appointment.client.whatsapp}</p>
-          <p>{this.props.appointment.client.obs}</p> */}
-
-          <p>Nome: {this.state.firstName}</p>
-          <p>Sobrenome: {this.state.lastName}</p>
-          <p>Email: {this.state.email}</p>
-          <p>Phone: {this.state.phone}</p>
-          <p>Whatsapp: {this.state.whatsapp ? "Sim" : "Não"}</p>
-          <p>Obs: {this.state.obs}</p>
-        </div>
       </div>
     );
   }
