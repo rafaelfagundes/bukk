@@ -1,17 +1,21 @@
 import React, { Component } from "react";
-import { Header, Form, Icon } from "semantic-ui-react";
+import { Header, Form, Label } from "semantic-ui-react";
 import { connect } from "react-redux";
-import { setClient } from "../bookerActions";
+import { setClient, setPersonalInfoOk } from "../bookerActions";
+import validator from "validator";
 
 const mapStateToProps = state => {
   return {
-    appointment: state.booker.appointment
+    appointment: state.booker.appointment,
+    personalInfoOk: state.booker.personalInfoOk
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    setClient: appointment => dispatch(setClient(appointment))
+    setClient: appointment => dispatch(setClient(appointment)),
+    setPersonalInfoOk: personalInfoOk =>
+      dispatch(setPersonalInfoOk(personalInfoOk))
   };
 };
 
@@ -22,14 +26,95 @@ class PersonalInfoPage extends Component {
     email: "",
     phone: "",
     whatsapp: false,
-    obs: ""
+    obs: "",
+    errors: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      phone: ""
+    },
+    warnings: {
+      phone: ""
+    }
+  };
+
+  validate = () => {
+    let _errors = { firstName: "", lastName: "", email: "", phone: "" };
+    let _warnings = { phone: "" };
+    if (
+      !validator.isEmpty(String(this.state.firstName)) &&
+      !validator.isAlpha(String(this.state.firstName), "pt-BR")
+    ) {
+      _errors.firstName = "O nome deve conter somente letras.";
+    }
+    if (
+      !validator.isEmpty(String(this.state.lastName)) &&
+      !validator.isAlpha(String(this.state.lastName), "pt-BR")
+    ) {
+      _errors.lastName = "O sobrenome deve conter somente letras.";
+    }
+    if (
+      !validator.isEmpty(String(this.state.email)) &&
+      !validator.isEmail(String(this.state.email))
+    ) {
+      _errors.email = "Insira um email válido.";
+    }
+    if (
+      !validator.isEmpty(String(this.state.phone)) &&
+      !validator.isNumeric(String(this.state.phone))
+    ) {
+      _errors.phone =
+        "Por favor insira somente números. Sendo DDD + Número. Exemplo: 32912349876";
+    }
+    if (
+      !validator.isEmpty(String(this.state.phone)) &&
+      (this.state.phone.length < 10 || this.state.phone.length > 11)
+    ) {
+      _errors.phone =
+        "O número deve conter 10 ou 11 algarismos. Sendo DDD + Número. Exemplo: 32912349876";
+    }
+    if (
+      !validator.isEmpty(String(this.state.phone)) &&
+      this.state.whatsapp &&
+      this.state.phone.length !== 11
+    ) {
+      _errors.phone =
+        "Um número vinculado ao WhatsApp deve conter 11 algarismos. Exemplo: 32912349876";
+    }
+    if (this.state.phone.length === 10) {
+      _warnings.phone =
+        "Dica: com um número de celular, você recebe lembretes por mensagem SMS.\nConfira seu número ou insira um número de celular.";
+    }
+
+    if (
+      _errors.firstName === "" &&
+      _errors.lastName === "" &&
+      _errors.email === "" &&
+      _errors.phone === "" &&
+      this.state.firstName !== "" &&
+      this.state.lastName !== "" &&
+      this.state.email !== "" &&
+      this.state.phone !== ""
+    ) {
+      this.props.setPersonalInfoOk(true);
+    } else {
+      this.props.setPersonalInfoOk(false);
+    }
+    this.setState({
+      errors: _errors,
+      warnings: _warnings
+    });
   };
 
   handleChange = e => {
     if (e.currentTarget.id === "whatsapp") {
-      this.setState({ [e.currentTarget.id]: e.currentTarget.checked });
+      this.setState({ [e.currentTarget.id]: e.currentTarget.checked }, () => {
+        this.validate();
+      });
     } else {
-      this.setState({ [e.currentTarget.id]: e.currentTarget.value });
+      this.setState({ [e.currentTarget.id]: e.currentTarget.value }, () => {
+        this.validate();
+      });
     }
   };
 
@@ -46,63 +131,96 @@ class PersonalInfoPage extends Component {
         </Header>
         <Form>
           <Form.Group>
-            <Form.Input
-              label="Nome"
-              placeholder="Nome"
-              width={6}
-              value={this.state.firstName}
-              onChange={this.handleChange}
-              id="firstName"
-            />
-            <Form.Input
-              label="Sobrenome"
-              placeholder="Sobrenome"
-              width={6}
-              value={this.state.lastName}
-              onChange={this.handleChange}
-              id="lastName"
-            />
+            <Form.Field width={6}>
+              <Form.Input
+                size="large"
+                label="Nome *"
+                placeholder="Nome"
+                value={this.state.firstName}
+                onChange={this.handleChange}
+                id="firstName"
+              />
+              {this.state.errors.firstName !== "" && (
+                <Label size="large" color="red" pointing>
+                  {this.state.errors.firstName}
+                </Label>
+              )}
+            </Form.Field>
+            <Form.Field width={6}>
+              <Form.Input
+                size="large"
+                label="Sobrenome *"
+                placeholder="Sobrenome"
+                value={this.state.lastName}
+                onChange={this.handleChange}
+                id="lastName"
+              />
+              {this.state.errors.lastName !== "" && (
+                <Label size="large" color="red" pointing>
+                  {this.state.errors.lastName}
+                </Label>
+              )}
+            </Form.Field>
           </Form.Group>
           <Form.Group>
-            <Form.Input
-              label="Email"
-              placeholder="Email"
-              width={6}
-              value={this.state.email}
-              onChange={this.handleChange}
-              id="email"
-            />
+            <Form.Field width={8}>
+              <Form.Input
+                size="large"
+                label="Email *"
+                placeholder="Email"
+                value={this.state.email}
+                onChange={this.handleChange}
+                id="email"
+              />
+              {this.state.errors.email !== "" && (
+                <Label size="large" color="red" pointing>
+                  {this.state.errors.email}
+                </Label>
+              )}
+            </Form.Field>
           </Form.Group>
+
           <Form.Group>
-            <Form.Input
-              label="Telefone"
-              placeholder="Telefone"
-              width={6}
-              value={this.state.phone}
-              onChange={this.handleChange}
-              id="phone"
-            />
-            <Form.Checkbox
-              toggle
-              inline
-              label="É um número WhatsApp?"
-              className="pt30px"
-              onChange={this.handleChange}
-              id="whatsapp"
-              checked={this.state.whatsapp}
-            />
-            <Icon
-              name="whatsapp"
-              color="green"
-              className="pt30px"
-              size="large"
-            />
+            <Form.Field width={8}>
+              <Form.Input
+                size="large"
+                label="Telefone *"
+                placeholder="Telefone"
+                value={this.state.phone}
+                onChange={this.handleChange}
+                id="phone"
+              />
+              {this.state.errors.phone !== "" && (
+                <Label size="large" color="red" pointing>
+                  {this.state.errors.phone}
+                </Label>
+              )}
+              {this.state.warnings.phone !== "" && (
+                <Label size="large" color="green" pointing>
+                  {this.state.warnings.phone}{" "}
+                </Label>
+              )}
+            </Form.Field>
+            <Form.Field width={6}>
+              <Form.Checkbox
+                toggle
+                inline
+                size="large"
+                label="Possui WhatsApp?"
+                className="pt30px"
+                onChange={this.handleChange}
+                id="whatsapp"
+                checked={this.state.whatsapp}
+              />
+            </Form.Field>
           </Form.Group>
+
           <Form.Group>
             <Form.TextArea
-              label="Observações / Notas"
-              placeholder="Observações / Notas"
-              width={12}
+              size="large"
+              label="Observações"
+              placeholder="Observações"
+              width={10}
               rows="8"
               value={this.state.obs}
               onChange={this.handleChange}
@@ -110,6 +228,21 @@ class PersonalInfoPage extends Component {
             />
           </Form.Group>
         </Form>
+        <div>
+          {/* <p>{this.props.appointment.client.firstName}</p>
+          <p>{this.props.appointment.client.lastName}</p>
+          <p>{this.props.appointment.client.email}</p>
+          <p>{this.props.appointment.client.phone}</p>
+          <p>{this.props.appointment.client.whatsapp}</p>
+          <p>{this.props.appointment.client.obs}</p> */}
+
+          <p>Nome: {this.state.firstName}</p>
+          <p>Sobrenome: {this.state.lastName}</p>
+          <p>Email: {this.state.email}</p>
+          <p>Phone: {this.state.phone}</p>
+          <p>Whatsapp: {this.state.whatsapp ? "Sim" : "Não"}</p>
+          <p>Obs: {this.state.obs}</p>
+        </div>
       </div>
     );
   }

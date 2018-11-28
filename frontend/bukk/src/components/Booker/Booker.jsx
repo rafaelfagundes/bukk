@@ -31,8 +31,11 @@ class Booker extends Component {
     this.props.setPage(e.target.value);
   };
 
+  handlePersonalPage = e => {
+    this.props.setPage(e.target.value);
+  };
+
   state = {
-    pageOneOk: false,
     numPages: 3
   };
 
@@ -95,7 +98,7 @@ class Booker extends Component {
                     <Button
                       primary
                       floated="right"
-                      onClick={this.handlePagination}
+                      onClick={this.handlePersonalPage}
                       value="3"
                       disabled={!this.props.personalInfoOk}
                     >

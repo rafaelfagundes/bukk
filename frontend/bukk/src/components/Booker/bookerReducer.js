@@ -1,7 +1,7 @@
 import assign from "lodash/assign";
 
 const initialState = {
-  page: "1",
+  page: "2",
   currentService: 0,
 
   dateAndTimeOk: false,
@@ -13,6 +13,8 @@ const initialState = {
       logo: ""
     }
   },
+
+  errors: false,
 
   appointment: {
     client: {

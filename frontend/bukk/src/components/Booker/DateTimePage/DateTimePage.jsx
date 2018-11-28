@@ -27,7 +27,6 @@ import {
   setTime,
   setService,
   setDateTimeOk,
-  setPersonalInfoOk,
   setConfirmationOk
 } from "../bookerActions";
 
@@ -47,8 +46,7 @@ const mapDispatchToProps = dispatch => {
     setService: appointment => dispatch(setService(appointment)),
     setCurrentService: index => dispatch(setCurrentService(index)),
     setDateTimeOk: dateAndTimeOk => dispatch(setDateTimeOk(dateAndTimeOk)),
-    setPersonalInfoOk: personalInfoOk =>
-      dispatch(setPersonalInfoOk(personalInfoOk)),
+
     setConfirmationOk: confirmationOk =>
       dispatch(setConfirmationOk(confirmationOk))
   };
@@ -458,7 +456,7 @@ class DateTimePage extends Component {
                   <Grid.Column>
                     <Form.Dropdown
                       onChange={this.handleService}
-                      placeholder="Serviços"
+                      placeholder="Selecione um serviço..."
                       search
                       selection
                       options={this.state.services}
