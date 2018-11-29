@@ -5,6 +5,7 @@
   margin-bottom: 40px;
 }
 
-.conclusion-header {
+.conclusion-header,
+.conclusion-content {
   text-align: center;
 }

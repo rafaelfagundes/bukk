@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Header, Icon } from "semantic-ui-react";
+import { Header, Icon, Button } from "semantic-ui-react";
 import Ticket from "./Ticket";
 
 import "./ConclusionPage.css";
@@ -43,45 +43,56 @@ class ConclusionPage extends Component {
     ]
   };
 
-  componentDidMount() {}
+  handlePrint = () => {
+    window.print();
+  };
 
   render() {
     return (
       <div className={"ConclusionPage " + this.props.className}>
         {this.state.status === "confirmed" && (
-          <div className="conclusion-header">
-            <Icon
-              className="conclusion-icon"
-              name="check circle outline"
-              size="huge"
-              color="green"
-            />
-            <Header as="h1" className="conclusion-title">
-              Agendamento concluído
-              <br />
-              com sucesso
-            </Header>
+          <React.Fragment>
+            <div className="conclusion-header">
+              <Icon
+                className="conclusion-icon"
+                name="check circle outline"
+                size="huge"
+                color="green"
+              />
+              <Header as="h1" className="conclusion-title">
+                Agendamento concluído
+                <br />
+                com sucesso
+              </Header>
+            </div>
+            <div className="conclusion-content">
+              <Ticket
+                confirmationId={this.state.confirmationId}
+                name={
+                  this.state.client.firstName + " " + this.state.client.lastName
+                }
+                email={this.state.client.email}
+                phone={this.state.client.phone}
+                whatsapp={this.state.client.whatsapp}
+                qrcode={this.props.confirmation.qrcode}
+                services={this.state.services}
+              />
+              <div className="conclusion-footer">
+                <p>
+                  Todos estes detalhes também
+                  <br />
+                  serão enviados por email.
+                </p>
 
-            <Ticket
-              confirmationId={this.state.confirmationId}
-              name={
-                this.state.client.firstName + " " + this.state.client.lastName
-              }
-              email={this.state.client.email}
-              phone={this.state.client.phone}
-              whatsapp={this.state.client.whatsapp}
-              qrcode={this.props.confirmation.qrcode}
-              services={this.state.services}
-            />
-
-            {/* <img
-              src={this.props.confirmation.qrcode}
-              alt="Escaneie o QR Code com seu smartphone para salvar na agenda."
-              title="Escaneie o QR Code com seu smartphone para salvar na agenda."
-              width={this.state.qrcode.width}
-              height={this.state.qrcode.height}
-            /> */}
-          </div>
+                <Button
+                  labelPosition="left"
+                  icon="print"
+                  content="Imprimir"
+                  onClick={this.handlePrint}
+                />
+              </div>
+            </div>
+          </React.Fragment>
         )}
       </div>
     );

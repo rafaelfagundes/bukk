@@ -129,3 +129,27 @@
   color: #ffffff;
   font-weight: 700;
 }
+
+/* PRINT */
+@media print {
+  * {
+    box-shadow: 0px 0px 0px #fff !important;
+  }
+
+  .Booker {
+    width: 100%;
+    border: none;
+  }
+  .booker-header,
+  .conclusion-header,
+  .ticket-qrcode,
+  .conclusion-footer,
+  .ticket-appointment-details-service-avatar {
+    display: none !important;
+  }
+
+  .Ticket {
+    margin: 0 !important;
+    width: 100% !important;
+  }
+}
