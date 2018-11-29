@@ -35,7 +35,7 @@ class ConclusionPage extends Component {
         specialistId: "spec001"
       },
       {
-        serviceKey: "18a6673e-4cf5-4b27-878b-da02cfcf9aea",
+        serviceKey: "18a6673e-4cf5-4b27-878b-da02cgcf9aea",
         serviceId: "service002",
         dateAndTime: { time: "18:00", date: "2018-12-01T18:09:46.000Z" },
         specialistId: "spec002"

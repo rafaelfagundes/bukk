@@ -1,26 +1,15 @@
 import React, { Component } from "react";
-import { Icon } from "semantic-ui-react";
+import { Icon, Segment, Portal } from "semantic-ui-react";
 import "./Ticket.css";
 
 class Ticket extends Component {
   state = {
-    qrcode: {
-      width: 80,
-      height: 80,
-      amplified: false
-    }
+    open: false
   };
 
-  handleQrCodeSize = e => {
-    console.log("ok");
-    if (this.state.qrcode.amplified) {
-      this.setState({
-        qrcode: { height: 80, width: 80, amplified: false }
-      });
-    } else {
-      this.setState({ qrcode: { height: 388, width: 388, amplified: true } });
-    }
-  };
+  handleOpen = () => this.setState({ open: true });
+
+  handleClose = () => this.setState({ open: false });
 
   render() {
     return (
@@ -32,7 +21,7 @@ class Ticket extends Component {
             </div>
             <div className="ticket-client-details-name">{this.props.name}</div>
             <div className="ticket-client-details-email">
-              <Icon name="mail outline" />
+              <Icon name="envelope outline" />
               {this.props.email}
             </div>
             <div className="ticket-client-details-phone">
@@ -52,17 +41,64 @@ class Ticket extends Component {
               src={this.props.qrcode}
               alt="QR CODE"
             />
-            <button onClick={this.handleQrCodeSize}>+ Ampliar</button>
+            {/* <button onClick={this.handleQrCodeSize}>+ Ampliar</button> */}
+            <Portal
+              closeOnTriggerClick
+              onOpen={this.handleOpen}
+              onClose={this.handleClose}
+              openOnTriggerClick
+              trigger={
+                <button
+                  negative={this.state.open + ""}
+                  positive={!this.state.open + ""}
+                >
+                  {this.state.open ? "- Fechar" : "+ Ampliar"}
+                </button>
+              }
+            >
+              <Segment
+                style={{
+                  transform: "translate(-209px,-209px)",
+                  left: "50%",
+                  position: "fixed",
+                  top: "50%",
+                  zIndex: "1000",
+                  boxShadow: "0px 0px 100px rgba(0,0,0,.3)"
+                }}
+              >
+                <img src={this.props.qrcode} alt="QR CODE" />
+              </Segment>
+            </Portal>
           </div>
         </div>
         <div className="ticket-appointment-details">
           {this.props.services.map(item => (
-            <div className="ticket-appointment-details-service">
-              <div className="ticket-appointment-details-service-avatar" />
-              <div className="ticket-appointment-details-service-desc" />
-              <div className="ticket-appointment-details-service-specialist" />
-              <div className="ticket-appointment-details-service-date" />
-              <div className="ticket-appointment-details-service-time" />
+            <div
+              className="ticket-appointment-details-service"
+              key={item.serviceKey}
+            >
+              <div className="ticket-appointment-details-service-avatar">
+                <img
+                  src={"http://i.pravatar.cc/150?u=" + item.serviceKey}
+                  alt="Alguem"
+                />
+              </div>
+              <div>
+                <div className="ticket-appointment-details-service-desc">
+                  Corte de Cabelo Irado
+                </div>
+                <div className="ticket-appointment-details-service-specialist">
+                  com Tony Tornado
+                </div>
+                <div className="ticket-appointment-details-service-date">
+                  <Icon name="calendar outline" />
+                  18 de dezembro de 2018
+                </div>
+                <div className="ticket-appointment-details-service-time">
+                  <Icon name="clock outline" />
+                  9:00 AM
+                </div>
+              </div>
             </div>
           ))}
         </div>
@@ -80,7 +116,7 @@ class Ticket extends Component {
             (32) 3371-1234
           </div>
           <div className="ticket-company-details-email">
-            <Icon name="mail outline" />
+            <Icon name="envelope outline" />
             contato@rafaelf.com.br
           </div>
           <div className="ticket-company-details-web">

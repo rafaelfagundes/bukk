@@ -7,7 +7,7 @@
   position: relative;
   box-sizing: border-box;
   border: 4px solid white;
-  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.05);
+  box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.05);
 }
 
 .ticket-client-details-info {
@@ -69,7 +69,51 @@
   border-bottom: 2px dotted #ddd;
   padding: 20px;
   display: flex;
+  flex-direction: column;
+}
+
+.ticket-appointment-details-service {
+  width: 100%;
+  padding: 15px 15px 15px 0;
+  display: flex;
   flex-direction: row;
+  border-radius: 10px;
+  background-color: #fafafa;
+}
+
+.ticket-appointment-details-service-desc {
+  color: #555;
+  font-weight: 400;
+  font-size: 1.2rem;
+  margin: 0;
+  line-height: 1.3rem;
+}
+
+.ticket-appointment-details-service-specialist {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #444;
+  margin: 0;
+  font-style: italic;
+  margin-bottom: 9px;
+  line-height: 1.1rem;
+}
+
+.ticket-appointment-details-service-date,
+.ticket-appointment-details-service-time {
+  font-size: 1rem;
+  line-height: 1.4rem;
+  margin: 0;
+  color: #666;
+}
+
+.ticket-appointment-details-service-avatar {
+  margin-right: 15px;
+}
+
+.ticket-appointment-details-service-avatar img {
+  width: 65px;
+  border-radius: 50%;
 }
 
 .ticket-company-details {
