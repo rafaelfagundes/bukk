@@ -1,9 +1,10 @@
 import React, { Component } from "react";
 import "./ConfirmationPage.css";
-import { Header } from "semantic-ui-react";
+import { Header, Icon } from "semantic-ui-react";
 import ServiceListItem from "../ServiceListItem/ServiceListItem";
 import PaymentDetails from "../PaymentDetails/PaymentDetails";
 import ClientInfo from "../ClientInfo/ClientInfo";
+import { setPage } from "../bookerActions";
 import { connect } from "react-redux";
 import _ from "lodash";
 
@@ -14,6 +15,10 @@ const mapStateToProps = state => {
   };
 };
 
+const mapDispatchToProps = dispatch => {
+  return { setPage: page => dispatch(setPage(page)) };
+};
+
 class ConfirmationPage extends Component {
   constructor(props) {
     super(props);
@@ -22,6 +27,10 @@ class ConfirmationPage extends Component {
       totalPrice: "0.0"
     };
   }
+
+  handleRemoveService = () => {
+    this.props.setPage("1");
+  };
 
   getSpecialist(id) {
     const index = _.findIndex(this.props.companyData.specialists, function(o) {
@@ -58,6 +67,7 @@ class ConfirmationPage extends Component {
 
           if (_specialist && _service) {
             _servicesList.push({
+              serviceKey: service.serviceKey,
               specialistPhoto: _specialist.image,
               serviceDesc: _service.desc,
               specialistName:
@@ -115,10 +125,23 @@ class ConfirmationPage extends Component {
         {this.state.servicesList.map(item => (
           <ServiceListItem
             service={item}
-            key={item.serviceDesc + item.date + item.time + item.price}
+            key={item.serviceKey}
+            serviceKey={item.serviceKey}
           />
         ))}
-        <PaymentDetails total={this.state.totalPrice} />
+        <div className="service-remove">
+          <Icon name="edit" />
+          <button
+            onClick={this.handleRemoveService}
+            className="service-remove-btn"
+          >
+            Adicionar ou remover serviços
+          </button>
+        </div>
+        <PaymentDetails
+          types={this.props.companyData.paymentTypes}
+          total={this.state.totalPrice}
+        />
       </div>
     );
   }
@@ -126,5 +149,5 @@ class ConfirmationPage extends Component {
 
 export default connect(
   mapStateToProps,
-  null
+  mapDispatchToProps
 )(ConfirmationPage);

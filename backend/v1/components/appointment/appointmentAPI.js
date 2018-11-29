@@ -17,6 +17,32 @@ router.get("/appointment/", (req, res) => {
       endTime: 18,
       minTimeFrame: 15
     },
+    paymentTypes: [
+      {
+        id: "visa",
+        name: "Visa",
+        icon:
+          "https://res.cloudinary.com/bukkapp/image/upload/v1543528600/Bukk/Assets/Payment%20Types/visa.png"
+      },
+      {
+        id: "mastercard",
+        name: "MasterCard",
+        icon:
+          "https://res.cloudinary.com/bukkapp/image/upload/v1543528600/Bukk/Assets/Payment%20Types/mastercard.png"
+      },
+      {
+        id: "amex",
+        name: "American Express",
+        icon:
+          "https://res.cloudinary.com/bukkapp/image/upload/v1543528599/Bukk/Assets/Payment%20Types/amex.png"
+      },
+      {
+        id: "money",
+        name: "Dinheiro em espécie",
+        icon:
+          "https://res.cloudinary.com/bukkapp/image/upload/v1543529964/Bukk/Assets/Payment%20Types/cash.png"
+      }
+    ],
     services: [
       {
         id: "service001",

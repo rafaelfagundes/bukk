@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Header, Form, Label } from "semantic-ui-react";
 import { connect } from "react-redux";
-import { setClient, setPersonalInfoOk } from "../bookerActions";
+import { setAppointment, setPersonalInfoOk } from "../bookerActions";
 import validator from "validator";
 
 const mapStateToProps = state => {
@@ -13,7 +13,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    setClient: appointment => dispatch(setClient(appointment)),
+    setAppointment: appointment => dispatch(setAppointment(appointment)),
     setPersonalInfoOk: personalInfoOk =>
       dispatch(setPersonalInfoOk(personalInfoOk))
   };
@@ -40,18 +40,23 @@ class PersonalInfoPage extends Component {
     }
   };
 
+  isName = (value, locale) => {
+    let _value = value.replace(/ /g, "");
+    return validator.isAlpha(_value, locale);
+  };
+
   validate = () => {
     let _errors = { firstName: "", lastName: "", email: "", phone: "" };
     let _warnings = { phone: "" };
     if (
       !validator.isEmpty(String(this.state.client.firstName)) &&
-      !validator.isAlpha(String(this.state.client.firstName), "pt-BR")
+      !this.isName(String(this.state.client.firstName), "pt-BR")
     ) {
       _errors.firstName = "O nome deve conter somente letras.";
     }
     if (
       !validator.isEmpty(String(this.state.client.lastName)) &&
-      !validator.isAlpha(String(this.state.client.lastName), "pt-BR")
+      !this.isName(String(this.state.client.lastName), "pt-BR")
     ) {
       _errors.lastName = "O sobrenome deve conter somente letras.";
     }
@@ -144,7 +149,7 @@ class PersonalInfoPage extends Component {
 
   componentDidUpdate() {
     this.props.appointment.client = this.state.client;
-    this.props.setClient(this.props.appointment);
+    this.props.setAppointment(this.props.appointment);
   }
 
   render() {

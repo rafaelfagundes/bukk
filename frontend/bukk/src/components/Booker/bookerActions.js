@@ -25,37 +25,10 @@ export const setCompanyData = companyData => {
   };
 };
 
-export const setTime = appointment => {
+export const setAppointment = appointment => {
   return (dispatch, getState) => {
     dispatch({
-      type: "SET_TIME",
-      appointment
-    });
-  };
-};
-
-export const setDate = appointment => {
-  return (dispatch, getState) => {
-    dispatch({
-      type: "SET_DATE",
-      appointment
-    });
-  };
-};
-
-export const setService = appointment => {
-  return (dispatch, getState) => {
-    dispatch({
-      type: "SET_SERVICE",
-      appointment
-    });
-  };
-};
-
-export const setClient = appointment => {
-  return (dispatch, getState) => {
-    dispatch({
-      type: "SET_CLIENT",
+      type: "SET_APPOINTMENT",
       appointment
     });
   };

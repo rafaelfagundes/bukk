@@ -53,24 +53,27 @@
   color: #666;
 }
 
+.service-price {
+  text-align: center;
+}
+
 .service-price-container {
   background-color: #2693e7;
-  width: 100px;
-  height: 100px;
   border-radius: 4px;
   text-align: center;
   vertical-align: middle;
   color: white;
+  padding: 17px 34px;
 }
 
 .service-price-container-currency {
-  font-size: 18px;
+  font-size: 1.1rem;
   font-weight: 400;
   line-height: 22px;
-  margin: 20px 0 0 0 !important;
+  margin: 3px 0 -5px 0 !important;
 }
 .service-price-container-price {
-  font-size: 32px;
+  font-size: 2rem;
   font-weight: 400;
   line-height: 43px;
   position: relative;
@@ -78,7 +81,7 @@
 }
 
 .service-price-container-price__digits {
-  font-size: 14px;
+  font-size: 1rem;
   font-weight: 400;
   line-height: 43px;
   position: absolute;

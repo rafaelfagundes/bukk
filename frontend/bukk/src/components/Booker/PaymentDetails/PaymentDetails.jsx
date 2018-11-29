@@ -1,17 +1,19 @@
 import React from "react";
 import "./PaymentDetails.css";
-import { Icon } from "semantic-ui-react";
 
 const PaymentDetails = props => (
   <div className="PaymentDetails">
     <div className="payment-details-type">
       <p>Pagamento no local</p>
-      <div className="payment-details-forms">
-        <Icon name="cc visa" />
-        <Icon name="cc mastercard" />
-        <Icon name="cc amex" />
-        <Icon name="cc diners club" />
-        <Icon name="money bill alternate outline" />
+      <div className="payment-details-types">
+        {props.types.map(item => (
+          <img
+            src={item.icon}
+            key={item.id}
+            alt={item.name}
+            title={item.name}
+          />
+        ))}
       </div>
     </div>
     <div className="payment-details-price">

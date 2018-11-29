@@ -1,7 +1,7 @@
 import assign from "lodash/assign";
 
 const initialState = {
-  page: "4",
+  page: "1",
   currentService: 0,
 
   dateAndTimeOk: false,
@@ -11,7 +11,8 @@ const initialState = {
   companyData: {
     business: {
       logo: ""
-    }
+    },
+    paymentTypes: []
   },
 
   errors: false,
@@ -37,13 +38,7 @@ const bookerReducer = (state = initialState, action) => {
       return assign({}, state, action);
     case "SET_CURRENT_SERVICE":
       return assign({}, state, action);
-    case "SET_TIME":
-      return assign({}, state, action);
-    case "SET_DATE":
-      return assign({}, state, action);
-    case "SET_SERVICE":
-      return assign({}, state, action);
-    case "SET_CLIENT":
+    case "SET_APPOINTMENT":
       return assign({}, state, action);
     case "SET_COMPANY_DATA":
       return assign({}, state, action);

@@ -22,10 +22,13 @@
   font-weight: 400;
   color: #444444;
 }
-.payment-details-forms {
-  margin-left: 15px;
-  font-size: 32px;
+.payment-details-types {
   color: #444;
+  margin: 11px 0px 0px 12px;
+}
+
+.payment-details-types img {
+  width: 32px;
 }
 
 .payment-details-price {

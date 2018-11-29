@@ -23,11 +23,9 @@ import { connect } from "react-redux";
 import {
   setCurrentService,
   setCompanyData,
-  setDate,
-  setTime,
-  setService,
   setDateTimeOk,
-  setConfirmationOk
+  setConfirmationOk,
+  setAppointment
 } from "../bookerActions";
 
 const mapStateToProps = state => {
@@ -41,12 +39,9 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     setCompanyData: data => dispatch(setCompanyData(data)),
-    setDate: appointment => dispatch(setDate(appointment)),
-    setTime: appointment => dispatch(setTime(appointment)),
-    setService: appointment => dispatch(setService(appointment)),
+    setAppointment: appointment => dispatch(setAppointment(appointment)),
     setCurrentService: index => dispatch(setCurrentService(index)),
     setDateTimeOk: dateAndTimeOk => dispatch(setDateTimeOk(dateAndTimeOk)),
-
     setConfirmationOk: confirmationOk =>
       dispatch(setConfirmationOk(confirmationOk))
   };
@@ -199,7 +194,7 @@ class DateTimePage extends Component {
     });
 
     // console.log(this.props.appointment.services);
-    this.props.setService(this.props.appointment);
+    this.props.setAppointment(this.props.appointment);
     this.props.setCurrentService(
       _servicesTable.length === 0 ? 0 : _servicesTable.length - 1
     );
@@ -238,7 +233,7 @@ class DateTimePage extends Component {
       this.props.currentService
     ].dateAndTime.date = date;
 
-    this.props.setDate(this.props.appointment);
+    this.props.setAppointment(this.props.appointment);
 
     this.setState({
       appointmentDate: date
@@ -261,7 +256,7 @@ class DateTimePage extends Component {
       }
     });
 
-    this.props.setTime(this.props.appointment);
+    this.props.setAppointment(this.props.appointment);
     this.setState({ timeTable: _timeTable, appointmentTime: _time });
   };
 
@@ -346,7 +341,7 @@ class DateTimePage extends Component {
   };
 
   componentDidUpdate() {
-    this.props.setService(this.props.appointment);
+    this.props.setAppointment(this.props.appointment);
   }
 
   componentDidMount() {
