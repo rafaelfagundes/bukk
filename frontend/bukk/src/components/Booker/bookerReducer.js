@@ -1,7 +1,7 @@
 import assign from "lodash/assign";
 
 const initialState = {
-  page: "1",
+  page: "4",
   currentService: 0,
 
   dateAndTimeOk: false,
@@ -26,7 +26,9 @@ const initialState = {
       obs: ""
     },
     services: []
-  }
+  },
+
+  confirmation: {}
 };
 
 const bookerReducer = (state = initialState, action) => {
@@ -50,6 +52,8 @@ const bookerReducer = (state = initialState, action) => {
     case "SET_PERSONAL_INFO_OK":
       return assign({}, state, action);
     case "SET_CONFIRMATION_OK":
+      return assign({}, state, action);
+    case "SET_CONFIRMATION":
       return assign({}, state, action);
     default:
       break;

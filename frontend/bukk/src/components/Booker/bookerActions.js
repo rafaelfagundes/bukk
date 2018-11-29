@@ -87,3 +87,12 @@ export const setConfirmationOk = confirmationOk => {
     });
   };
 };
+
+export const setConfirmation = confirmation => {
+  return (dispatch, getState) => {
+    dispatch({
+      type: "SET_CONFIRMATION",
+      confirmation
+    });
+  };
+};

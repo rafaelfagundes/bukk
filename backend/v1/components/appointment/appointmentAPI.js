@@ -2,7 +2,10 @@ const express = require("express");
 const router = express.Router();
 const faker = require("faker/locale/pt_BR");
 const _ = require("lodash");
-
+const QRCode = require("qrcode");
+const ical = require("ical-generator");
+const cal = ical();
+const moment = require("moment");
 const keys = require("../../config/keys");
 
 router.get("/appointment/", (req, res) => {
@@ -96,7 +99,6 @@ router.get("/appointment/", (req, res) => {
 });
 
 router.get("/appointment/dates/:id/:date", (req, res) => {
-  console.log(req.params.date);
   const dates = [
     {
       date: "2018-11-22",
@@ -166,8 +168,45 @@ router.get("/appointment/dates/:id/:date", (req, res) => {
 });
 
 router.post("/appointment/", (req, res) => {
-  console.log(req.body);
-  res.status(200).json(req.body);
+  let _event = ical({
+    domain: "bukk.com.br",
+    prodId: "//bukk.com.br//bukk//PT",
+    events: [
+      {
+        start: moment(),
+        end: moment().add(1, "hour"),
+
+        summary: "Corte de cabelo Masculino",
+        alarms: [
+          { type: "audio", trigger: 24 * 60 * 60 },
+          { type: "audio", trigger: 48 * 60 * 60 }
+        ],
+        organizer: {
+          name: "Johnny Cash",
+          email: "jcash@gmail.com"
+        },
+        location:
+          "Rua Frederico Ozanan, 150, Guarda-Mor, São João del Rei, MG, Brasil"
+      }
+    ]
+  }).toString();
+
+  QRCode.toDataURL(_event)
+    .then(_qrcode => {
+      let response = {
+        status: "confirmed",
+        msg: "Agendamento concluído com sucesso",
+        confirmationId: "conf00001",
+        client: req.body.client,
+        services: req.body.services,
+        qrcode: _qrcode
+      };
+      console.log(response);
+      res.status(200).json(response);
+    })
+    .catch(err => {
+      console.error(err);
+    });
 });
 
 module.exports = router;
