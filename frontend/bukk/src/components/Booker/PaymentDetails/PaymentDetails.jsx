@@ -9,7 +9,7 @@ const PaymentDetails = props => (
         {props.types.map(item => (
           <img
             src={item.icon}
-            key={item.id}
+            key={item.paymentId}
             alt={item.name}
             title={item.name}
           />

@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const Service = require("../service/Service");
 
 // Employee Schema & Model
 const EmployeeSchema = new Schema({
@@ -18,7 +17,7 @@ const EmployeeSchema = new Schema({
   salesCommission: { type: Number, default: 100 },
   worksSince: { type: Date },
   salary: { type: Number },
-  services: [Service],
+  services: [{ type: mongoose.Schema.Types.ObjectId, ref: "Service" }],
   avatar: { type: String }
 });
 

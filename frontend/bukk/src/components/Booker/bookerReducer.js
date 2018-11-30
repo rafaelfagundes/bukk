@@ -12,7 +12,7 @@ const initialState = {
     business: {
       logo: ""
     },
-    paymentTypes: []
+    paymentOptions: []
   },
 
   errors: false,

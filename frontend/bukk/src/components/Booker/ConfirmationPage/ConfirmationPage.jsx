@@ -139,7 +139,7 @@ class ConfirmationPage extends Component {
           </button>
         </div>
         <PaymentDetails
-          types={this.props.companyData.paymentTypes}
+          types={this.props.companyData.paymentOptions}
           total={this.state.totalPrice}
         />
       </div>

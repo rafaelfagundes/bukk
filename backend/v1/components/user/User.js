@@ -19,8 +19,8 @@ const UserSchema = new Schema({
   created: { type: Date, default: Date.now, required: true },
   role: {
     type: String,
-    enum: ["company", "owner", "manager", "supervisor", "employee"],
-    default: "company",
+    enum: ["owner", "manager", "supervisor", "employee"],
+    default: "owner",
     required: true
   },
   address: {
@@ -49,7 +49,7 @@ const UserSchema = new Schema({
       required: true
     },
     postalCode: {
-      type: String,
+      type: Number,
       required: true
     },
     geolocation: {

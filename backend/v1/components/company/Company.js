@@ -7,7 +7,7 @@ const CompanySchema = new Schema({
   tradingName: { type: String, required: true }, // Nome Fantasia
   companyNickname: { type: String }, // Optional name to show on interface
   cpfCnpj: { type: String, required: true, unique: true },
-  businessType: { type: String, required: true, enum: ["f", "j"] }, // Pessoa Física, Pessoa Jurídica
+  businessType: { type: String, required: true, enum: ["F", "J"] }, // Pessoa Física, Pessoa Jurídica
   address: {
     street: {
       type: String,
@@ -34,7 +34,7 @@ const CompanySchema = new Schema({
       required: true
     },
     postalCode: {
-      type: String,
+      type: Number,
       required: true
     },
     geolocation: {
@@ -71,12 +71,13 @@ const CompanySchema = new Schema({
   created: { type: Date, default: Date.now },
   paymentOptions: [
     {
+      paymentId: { type: String },
       paymentType: {
         type: String,
-        required: true,
-        enum: ["cash", "credit card", "debit card", "boleto", "transfer"]
+        enum: ["credit card", "cash", "money transfer", "boleto"]
       },
-      paymentDesc: { type: String, required: true }
+      name: { type: String },
+      icon: { type: String }
     }
   ]
 });
