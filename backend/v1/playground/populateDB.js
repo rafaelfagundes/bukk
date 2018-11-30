@@ -165,7 +165,7 @@ const createServices = company => {
     },
     {
       desc: "Corte de cabelo feminino",
-      value: 35.89,
+      value: 60.0,
       duration: 90,
       products: [],
       display: true,
@@ -173,7 +173,7 @@ const createServices = company => {
     },
     {
       desc: "Alisamento feminino",
-      value: 35.89,
+      value: 65.0,
       duration: 90,
       products: [],
       display: true,
@@ -181,7 +181,7 @@ const createServices = company => {
     },
     {
       desc: "Luzes",
-      value: 35.89,
+      value: 40.0,
       duration: 60,
       products: [],
       display: true,

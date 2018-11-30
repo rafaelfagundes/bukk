@@ -152,7 +152,7 @@ class DateTimePage extends Component {
   }
   getService(id) {
     const index = _.findIndex(this.props.companyData.services, function(o) {
-      return o.id === id;
+      return o._id === id;
     });
     if (index >= 0) {
       return this.props.companyData.services[index];
@@ -317,14 +317,16 @@ class DateTimePage extends Component {
       });
     }
 
-    let _service = this.getService(value);
+    // let _service = this.getService(value);
     let _specialistsList = [];
 
-    _service.specialists.forEach(specialist => {
-      let _specialist = this.getSpecialist(specialist);
-
-      _specialist.selected = false;
-      _specialistsList.push(_specialist);
+    this.props.companyData.specialists.forEach(specialist => {
+      const result = _.find(specialist.services, o => {
+        return o._id === value;
+      });
+      if (result) {
+        _specialistsList.push(specialist);
+      }
     });
 
     this.setState({
@@ -346,7 +348,7 @@ class DateTimePage extends Component {
 
   componentDidMount() {
     axios
-      .get(config.api + "/appointment/5c01b05630fbd13de63bf942")
+      .get(config.api + "/appointment/5c01c3644db5f96941ec0796")
       .then(response => {
         this.props.setCompanyData(response.data);
         let _services = [];
@@ -356,14 +358,10 @@ class DateTimePage extends Component {
               element.desc +
               " - R$" +
               element.value.toFixed(2).replace(".", ","),
-            value: element.id
+            value: element._id
           });
         });
         this.setState({ services: _services });
-
-        response.data.specialists.forEach(element => {
-          element.selected = false;
-        });
       })
       .catch(error => {
         // handle error

@@ -163,8 +163,10 @@ router.get("/appointment/:companyId", (req, res) => {
             _specialist.lastName = user.lastName;
 
             Employee.findOne({ user: user._id }, (err, employee) => {
+              employee.services = services;
               _specialist.image = employee.avatar;
               _specialist.desc = employee.title;
+              _specialist.services = employee.services;
 
               _appData.specialists.push(_specialist);
               res.status(200).send(_appData);
