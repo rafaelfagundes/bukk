@@ -34,6 +34,20 @@ const mapDispatchToProps = dispatch => {
 };
 
 class Booker extends Component {
+  componentDidMount() {
+    window.addEventListener("beforeunload", this.handleLeavePage);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("beforeunload", this.handleLeavePage);
+  }
+
+  handleLeavePage(e) {
+    const confirmationMessage = "Teste";
+    e.returnValue = confirmationMessage; // Gecko, Trident, Chrome 34+
+    return confirmationMessage; // Gecko, WebKit, Chrome <34
+  }
+
   handlePagination = e => {
     this.props.setPage(e.target.value);
   };
