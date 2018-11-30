@@ -32,6 +32,8 @@ const createCompany = () => {
     companyNickname: "Bukk",
     cpfCnpj: "45441339000161",
     businessType: "J",
+    logo:
+      "https://res.cloudinary.com/bukkapp/image/upload/v1542735688/Bukk/Assets/logo.png",
     address: {
       street: "Rua Frederico Ozanan",
       number: 150,

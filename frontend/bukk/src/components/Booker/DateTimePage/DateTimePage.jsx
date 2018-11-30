@@ -346,7 +346,7 @@ class DateTimePage extends Component {
 
   componentDidMount() {
     axios
-      .get(config.api + "/appointment/")
+      .get(config.api + "/appointment/5c01b05630fbd13de63bf942")
       .then(response => {
         this.props.setCompanyData(response.data);
         let _services = [];

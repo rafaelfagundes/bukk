@@ -8,7 +8,12 @@ const cal = ical();
 const moment = require("moment");
 const keys = require("../../config/keys");
 
-router.get("/appointment/", (req, res) => {
+const User = require("../user/User");
+const Company = require("../company/Company");
+const Service = require("../service/Service");
+const Employee = require("../employee/Employee");
+
+router.get("/appointment/:companyId", (req, res) => {
   const appfake = {
     business: {
       logo:
@@ -125,7 +130,50 @@ router.get("/appointment/", (req, res) => {
     ]
   };
 
-  res.status(200).send(appfake);
+  Company.findById({ _id: req.params.companyId }, (err, company) => {
+    if (err) res.status(404).send({ msg: "Empresa não encontrada" });
+    else {
+      let _appData = {
+        business: {
+          logo: company.logo,
+          address: company.address,
+          tradingName: company.tradingName,
+          companyNickname: company.companyNickname,
+          website: company.website,
+          social: company.social,
+          workingDays: company.workingDays,
+          phone: company.phone,
+          paymentOptions: company.paymentOptions
+        },
+        paymentOptions: company.paymentOptions,
+        services: [],
+        specialists: []
+      };
+
+      Service.find({ company: company._id }, (err, services) => {
+        services.forEach(service => {
+          _appData.services.push(service);
+        });
+
+        User.find({ company: company.id, role: "employee" }, (err, users) => {
+          users.forEach(user => {
+            let _specialist = {};
+            _specialist.id = user._id;
+            _specialist.firstName = user.firstName;
+            _specialist.lastName = user.lastName;
+
+            Employee.findOne({ user: user._id }, (err, employee) => {
+              _specialist.image = employee.avatar;
+              _specialist.desc = employee.title;
+
+              _appData.specialists.push(_specialist);
+              res.status(200).send(_appData);
+            });
+          });
+        });
+      });
+    }
+  });
 });
 
 router.get("/appointment/dates/:id/:date", (req, res) => {

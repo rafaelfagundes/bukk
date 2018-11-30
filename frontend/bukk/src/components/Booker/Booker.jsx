@@ -55,7 +55,7 @@ class Booker extends Component {
   handleConfirmation = e => {
     var _page = e.target.value;
     axios
-      .post(config.api + "/appointment", this.props.appointment)
+      .post(config.api + "/appointment/", this.props.appointment)
       .then(response => {
         this.props.setConfirmation(response.data);
         this.props.setPage(_page);
