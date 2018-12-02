@@ -325,14 +325,14 @@ const createEmployee = user => {
 
 const createEmployeeUser = company => {
   const user = {
-    firstName: "Heliete",
-    lastName: "Castro",
-    username: "helietecastro",
+    firstName: "Maria",
+    lastName: "José",
+    username: "mariajose",
     gender: "F",
     birthday: moment()
       .set({ year: 1960, month: 11, date: 22 })
       .toDate(),
-    email: "helietedecastro@gmail.com",
+    email: "mariajose@gmail.com",
     password: "123456",
     role: "employee",
     address: {
