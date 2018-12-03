@@ -19,8 +19,10 @@ import "./DatePicker.css";
 import "../TimePills/TimePills.css";
 import axios from "axios";
 import config from "../../config";
+import calendarLocale from "./CalendarLocale";
 import _ from "lodash";
 import { connect } from "react-redux";
+
 import {
   setCurrentService,
   setCompanyData,
@@ -66,56 +68,8 @@ function generateUUID() {
 class DateTimePage extends Component {
   constructor(props) {
     super(props);
-    moment.locale("pt-br", {
-      months: "janeiro_fevereiro_março_abril_maio_junho_julho_agosto_setembro_outubro_novembro_dezembro".split(
-        "_"
-      ),
-      monthsShort: "jan_fev_mar_abr_mai_jun_jul_ago_set_out_nov_dez".split("_"),
-      weekdays: "Domingo_Segunda-feira_Terça-feira_Quarta-feira_Quinta-feira_Sexta-feira_Sábado".split(
-        "_"
-      ),
-      weekdaysShort: "Dom_Seg_Ter_Qua_Qui_Sex_Sáb".split("_"),
-      weekdaysMin: "Dom_Seg_Ter_Qua_Qui_Sex_Sáb".split("_"),
-      weekdaysParseExact: true,
-      longDateFormat: {
-        LT: "HH:mm",
-        LTS: "HH:mm:ss",
-        L: "DD/MM/YYYY",
-        LL: "D [de] MMMM [de] YYYY",
-        LLL: "D [de] MMMM [de] YYYY [às] HH:mm",
-        LLLL: "dddd, D [de] MMMM [de] YYYY [às] HH:mm"
-      },
-      calendar: {
-        sameDay: "[Hoje às] LT",
-        nextDay: "[Amanhã às] LT",
-        nextWeek: "dddd [às] LT",
-        lastDay: "[Ontem às] LT",
-        lastWeek: function() {
-          return this.day() === 0 || this.day() === 6
-            ? "[Último] dddd [às] LT" // Saturday + Sunday
-            : "[Última] dddd [às] LT"; // Monday - Friday
-        },
-        sameElse: "L"
-      },
-      relativeTime: {
-        future: "em %s",
-        past: "há %s",
-        s: "poucos segundos",
-        ss: "%d segundos",
-        m: "um minuto",
-        mm: "%d minutos",
-        h: "uma hora",
-        hh: "%d horas",
-        d: "um dia",
-        dd: "%d dias",
-        M: "um mês",
-        MM: "%d meses",
-        y: "um ano",
-        yy: "%d anos"
-      },
-      dayOfMonthOrdinalParse: /\d{1,2}º/,
-      ordinal: "%dº"
-    });
+    moment.locale("pt-br", calendarLocale);
+
     this.state = {
       appointmentDate: moment(),
       appointmentTime: "",
@@ -125,6 +79,7 @@ class DateTimePage extends Component {
       specialists: [],
       servicesTable: [],
       timeTable: [],
+      excludeDates: [],
       saveClicked: false,
       errors: {
         companyNotFound: false
@@ -213,12 +168,26 @@ class DateTimePage extends Component {
     this.props.setCurrentService(this.props.currentService + 1);
   };
 
+  handleMonthChange = e => {
+    const _month = e.format("YYYY-MM");
+    const _specialistId = this.state.specialistId;
+
+    axios
+      .get(config.api + "/appointment/dates/" + _specialistId + "/" + _month)
+      .then(response => {
+        this.setState({ excludeDates: response.data });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
   handleDate = date => {
     const _date = date.format("YYYY-MM-DD");
     const _specialistId = this.state.specialistId;
 
     axios
-      .get(config.api + "/appointment/dates/" + _specialistId + "/" + _date)
+      .get(config.api + "/appointment/date/" + _specialistId + "/" + _date)
       .then(response => {
         if (response.data.times) {
           let _timeTable = [];
@@ -229,7 +198,7 @@ class DateTimePage extends Component {
         }
       })
       .catch(err => {
-        console.log(err);
+        this.setState({ timeTable: [] });
       });
 
     this.props.appointment.services[
@@ -265,10 +234,11 @@ class DateTimePage extends Component {
 
   handleSpecialist = (e, value) => {
     const _date = moment().format("YYYY-MM-DD");
+    const _month = moment().format("YYYY-MM");
     const _specialistId = value;
 
     axios
-      .get(config.api + "/appointment/dates/" + _specialistId + "/" + _date)
+      .get(config.api + "/appointment/date/" + _specialistId + "/" + _date)
       .then(response => {
         if (response.data.times) {
           let _timeTable = [];
@@ -277,6 +247,15 @@ class DateTimePage extends Component {
           });
           this.setState({ timeTable: _timeTable });
         }
+      })
+      .catch(err => {
+        this.setState({ timeTable: [] });
+      });
+
+    axios
+      .get(config.api + "/appointment/dates/" + _specialistId + "/" + _month)
+      .then(response => {
+        this.setState({ excludeDates: response.data });
       })
       .catch(err => {
         console.log(err);
@@ -327,6 +306,7 @@ class DateTimePage extends Component {
         return o === value;
       });
       if (result) {
+        specialist.selected = false;
         _specialistsList.push(specialist);
       }
     });
@@ -505,10 +485,10 @@ class DateTimePage extends Component {
                 inline
                 selected={this.state.appointmentDate}
                 onChange={this.handleDate}
+                onMonthChange={this.handleMonthChange}
                 allowSameDay={false}
                 minDate={moment()}
-                excludeDates={[]}
-                filterDate={this.isWeekday}
+                excludeDates={this.state.excludeDates}
               />
               <div className="TimePillsContainer">
                 <div className="TimePills">
@@ -519,6 +499,9 @@ class DateTimePage extends Component {
                       onClick={this.handleTime}
                     />
                   ))}
+                  {this.state.timeTable.length === 0 && (
+                    <Message color="orange">Nenhum horário disponível</Message>
+                  )}
                 </div>
               </div>
             </React.Fragment>

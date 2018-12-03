@@ -1,12 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const faker = require("faker/locale/pt_BR");
+// const faker = require("faker/locale/pt_BR");
 const _ = require("lodash");
 const QRCode = require("qrcode");
 const ical = require("ical-generator");
-const cal = ical();
+// const cal = ical();
 const moment = require("moment");
-const keys = require("../../config/keys");
+// const keys = require("../../config/keys");
 
 const User = require("../user/User");
 const Company = require("../company/Company");
@@ -93,12 +93,38 @@ router.get("/appointment/:companyId", (req, res) => {
 });
 
 router.get("/appointment/dates/:id/:date", (req, res) => {
-  console.log(
-    moment()
-      .add(1, "days")
-      .format("YYYY-MM-DD")
-  );
+  // TODO: passar para chamada no banco
 
+  const settings = {
+    workingDays: [1, 2, 3, 4, 5] // 0 = domingo
+  };
+
+  function getDaysArrayByMonth() {
+    var daysInMonth = moment(req.params.date, "YYYY-MM").daysInMonth();
+
+    var arrDays = [];
+
+    while (daysInMonth) {
+      var current = moment(req.params.date, "YYYY-MM").date(daysInMonth);
+      arrDays.push(current);
+      daysInMonth--;
+    }
+
+    return arrDays;
+  }
+
+  var schedule = getDaysArrayByMonth();
+  var _unavailableDays = [];
+  schedule.forEach(function(item) {
+    if (_.indexOf(settings.workingDays, item.weekday()) < 0) {
+      _unavailableDays.push(item.toDate());
+    }
+  });
+
+  res.status(200).json(_unavailableDays);
+});
+
+router.get("/appointment/date/:id/:date", (req, res) => {
   const dates = [
     {
       date: moment().format("YYYY-MM-DD"),
