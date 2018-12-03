@@ -8,6 +8,7 @@ const userRoutes = require("./components/user/userAPI");
 const mailRoutes = require("./components/mail/mailAPI");
 const imageRoutes = require("./components/image/imageAPI");
 const appointmentRoutes = require("./components/appointment/appointmentAPI");
+const qrcodeRoutes = require("./components/qrcode/qrcodeAPI");
 
 const keys = require("./config/keys");
 
@@ -53,7 +54,13 @@ app.use(passport.initialize());
 require("./config/passport")(passport);
 
 // routes
-app.use(BASE_URL, [userRoutes, mailRoutes, imageRoutes, appointmentRoutes]);
+app.use(BASE_URL, [
+  userRoutes,
+  mailRoutes,
+  imageRoutes,
+  appointmentRoutes,
+  qrcodeRoutes
+]);
 
 app.listen(process.env.port || PORT, () => {
   console.log(`👂  Listen to requests on port ${process.env.port || PORT}`);

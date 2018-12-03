@@ -145,7 +145,6 @@ router.get("/appointment/:companyId", (req, res) => {
           phone: company.phone,
           paymentOptions: company.paymentOptions
         },
-        paymentOptions: company.paymentOptions,
         services: [],
         specialists: []
       };
@@ -301,7 +300,6 @@ router.post("/appointment/", (req, res) => {
         services: req.body.services,
         qrcode: _qrcode
       };
-      console.log(response);
       res.status(200).json(response);
     })
     .catch(err => {

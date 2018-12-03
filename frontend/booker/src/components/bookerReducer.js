@@ -10,9 +10,9 @@ const initialState = {
 
   companyData: {
     business: {
-      logo: ""
-    },
-    paymentOptions: []
+      logo: "",
+      paymentOptions: []
+    }
   },
 
   errors: false,
