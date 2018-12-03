@@ -9,7 +9,7 @@ class App extends Component {
       <div className="App">
         <BrowserRouter>
           <Switch>
-            <Route path="/agendar/" component={Booker} />
+            <Route path="/agendar/:companyId" component={Booker} />
           </Switch>
         </BrowserRouter>
       </div>

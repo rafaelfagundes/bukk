@@ -44,7 +44,7 @@ class ConfirmationPage extends Component {
   }
   getService(id) {
     const index = _.findIndex(this.props.companyData.services, function(o) {
-      return o._id === id;
+      return o.id === id;
     });
     if (index >= 0) {
       return this.props.companyData.services[index];

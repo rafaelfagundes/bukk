@@ -6,7 +6,8 @@ import {
   Icon,
   Grid,
   Table,
-  Image
+  Image,
+  Message
 } from "semantic-ui-react";
 import Specialist from "../Specialist/Specialist";
 // import TimePills from "../TimePills/TimePills";
@@ -124,7 +125,10 @@ class DateTimePage extends Component {
       specialists: [],
       servicesTable: [],
       timeTable: [],
-      saveClicked: false
+      saveClicked: false,
+      errors: {
+        companyNotFound: false
+      }
     };
   }
 
@@ -152,7 +156,7 @@ class DateTimePage extends Component {
   }
   getService(id) {
     const index = _.findIndex(this.props.companyData.services, function(o) {
-      return o._id === id;
+      return o.id === id;
     });
     if (index >= 0) {
       return this.props.companyData.services[index];
@@ -193,7 +197,6 @@ class DateTimePage extends Component {
       return o.serviceKey === value;
     });
 
-    // console.log(this.props.appointment.services);
     this.props.setAppointment(this.props.appointment);
     this.props.setCurrentService(
       _servicesTable.length === 0 ? 0 : _servicesTable.length - 1
@@ -317,12 +320,11 @@ class DateTimePage extends Component {
       });
     }
 
-    // let _service = this.getService(value);
     let _specialistsList = [];
 
     this.props.companyData.specialists.forEach(specialist => {
       const result = _.find(specialist.services, o => {
-        return o._id === value;
+        return o === value;
       });
       if (result) {
         _specialistsList.push(specialist);
@@ -348,7 +350,7 @@ class DateTimePage extends Component {
 
   componentDidMount() {
     axios
-      .get(config.api + "/appointment/5c03201077b0b437ad71dba9")
+      .get(config.api + "/appointment/" + this.props.companyId)
       .then(response => {
         this.props.setCompanyData(response.data);
         let _services = [];
@@ -358,22 +360,30 @@ class DateTimePage extends Component {
               element.desc +
               " - R$" +
               element.value.toFixed(2).replace(".", ","),
-            value: element._id
+            value: element.id
           });
         });
         this.setState({ services: _services });
       })
       .catch(error => {
         // handle error
-      })
-      .then(() => {
-        // always executed
+        this.setState({ errors: { companyNotFound: true } });
       });
   }
 
   render() {
     return (
       <div className={"DateTimePage " + this.props.className}>
+        {this.state.errors.companyNotFound && (
+          <Message
+            error
+            header="Identificador da empresa inválido"
+            list={[
+              "Entre em contato com o suporte;",
+              "Ou contate o responsável pela tecnologia em sua empresa."
+            ]}
+          />
+        )}
         {this.state.servicesTable.length >= 1 && (
           <React.Fragment>
             <Header as="h3" color="blue">
@@ -437,30 +447,31 @@ class DateTimePage extends Component {
         )}
 
         <Form>
-          {(this.state.servicesTable.length === 0 ||
-            !this.state.saveClicked) && (
-            <React.Fragment>
-              {this.state.servicesTable.length > 0 && <Spacer height={40} />}
-              <Header as="h3" color="blue" className="booker-title-what">
-                O que deseja fazer?
-              </Header>
-              <Grid columns={2}>
-                <Grid.Row>
-                  <Grid.Column>
-                    <Form.Dropdown
-                      onChange={this.handleService}
-                      placeholder="Selecione um serviço..."
-                      search
-                      selection
-                      options={this.state.services}
-                      value={this.state.serviceId}
-                    />
-                  </Grid.Column>
-                  <Grid.Column />
-                </Grid.Row>
-              </Grid>
-            </React.Fragment>
-          )}
+          {!this.state.errors.companyNotFound &&
+            (this.state.servicesTable.length === 0 ||
+              !this.state.saveClicked) && (
+              <React.Fragment>
+                {this.state.servicesTable.length > 0 && <Spacer height={40} />}
+                <Header as="h3" color="blue" className="booker-title-what">
+                  O que deseja fazer?
+                </Header>
+                <Grid columns={2}>
+                  <Grid.Row>
+                    <Grid.Column>
+                      <Form.Dropdown
+                        onChange={this.handleService}
+                        placeholder="Selecione um serviço..."
+                        search
+                        selection
+                        options={this.state.services}
+                        value={this.state.serviceId}
+                      />
+                    </Grid.Column>
+                    <Grid.Column />
+                  </Grid.Row>
+                </Grid>
+              </React.Fragment>
+            )}
 
           {this.state.specialists.length > 0 && this.state.serviceId !== "" && (
             <React.Fragment>

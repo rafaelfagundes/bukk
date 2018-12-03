@@ -6,17 +6,8 @@ const AppointmentSchema = new Schema({
   costumer: { type: Schema.Types.ObjectId, ref: "Costumer" },
   employee: { type: Schema.Types.ObjectId, ref: "Employee" },
   company: { type: Schema.Types.ObjectId, ref: "Company" },
-  date: { type: Date, required: true },
-  time: {
-    start: {
-      type: Date,
-      required: true
-    },
-    end: {
-      type: Date,
-      required: true
-    }
-  },
+  start: { type: Date, required: true },
+  end: { type: Date, required: true },
   status: {
     type: String,
     required: true,

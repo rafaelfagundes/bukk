@@ -14,124 +14,11 @@ const Service = require("../service/Service");
 const Employee = require("../employee/Employee");
 
 router.get("/appointment/:companyId", (req, res) => {
-  const appfake = {
-    business: {
-      logo:
-        "https://res.cloudinary.com/bukkapp/image/upload/v1542735688/Bukk/Assets/logo.png",
-      startTime: 8,
-      endTime: 18,
-      minTimeFrame: 15
-    },
-    paymentOptions: [
-      {
-        paymentId: "visa",
-        paymentType: "credit card",
-        name: "Visa",
-        icon:
-          "https://res.cloudinary.com/bukkapp/image/upload/v1543528600/Bukk/Assets/Payment%20Types/visa.png"
-      },
-      {
-        paymentId: "mastercard",
-        paymentType: "credit card",
-        name: "MasterCard",
-        icon:
-          "https://res.cloudinary.com/bukkapp/image/upload/v1543528600/Bukk/Assets/Payment%20Types/mastercard.png"
-      },
-      {
-        paymentId: "amex",
-        paymentType: "credit card",
-        name: "American Express",
-        icon:
-          "https://res.cloudinary.com/bukkapp/image/upload/v1543528599/Bukk/Assets/Payment%20Types/amex.png"
-      },
-      {
-        paymentId: "money",
-        paymentType: "cash",
-        name: "Dinheiro em espécie",
-        icon:
-          "https://res.cloudinary.com/bukkapp/image/upload/v1543529964/Bukk/Assets/Payment%20Types/cash.png"
-      }
-    ],
-    services: [
-      {
-        id: "service001",
-        desc: "Corte de cabelo masculino",
-        value: 35.9,
-        duration: 60,
-        products: [],
-        display: true,
-        company: "5bf317fba01cdd25993d54f3",
-        specialists: ["spec001", "spec002", "spec003", "spec004", "spec005"]
-      },
-
-      {
-        id: "service002",
-        desc: "Corte de cabelo feminino",
-        value: 75.9,
-        duration: 90,
-        products: [],
-        display: true,
-        company: "5bf317fba01cdd25993d54f3",
-        specialists: ["spec001", "spec004", "spec005"]
-      },
-
-      {
-        id: "service003",
-        desc: "Alisamento feminino",
-        value: 45.9,
-        duration: 60,
-        products: [],
-        display: true,
-        company: "5bf317fba01cdd25993d54f3",
-        specialists: ["spec002", "spec003", "spec005"]
-      }
-    ],
-    specialists: [
-      {
-        id: "spec001",
-        firstName: faker.name.firstName(),
-        lastName: faker.name.lastName(),
-        image:
-          "http://i.pravatar.cc/150?img=" + Math.floor(Math.random() * 70 + 1),
-        desc: faker.name.jobTitle()
-      },
-      {
-        id: "spec002",
-        firstName: faker.name.firstName(),
-        lastName: faker.name.lastName(),
-        image:
-          "http://i.pravatar.cc/150?img=" + Math.floor(Math.random() * 70 + 1),
-        desc: faker.name.jobTitle()
-      },
-      {
-        id: "spec003",
-        firstName: faker.name.firstName(),
-        lastName: faker.name.lastName(),
-        image:
-          "http://i.pravatar.cc/150?img=" + Math.floor(Math.random() * 70 + 1),
-        desc: faker.name.jobTitle()
-      },
-      {
-        id: "spec004",
-        firstName: faker.name.firstName(),
-        lastName: faker.name.lastName(),
-        image:
-          "http://i.pravatar.cc/150?img=" + Math.floor(Math.random() * 70 + 1),
-        desc: faker.name.jobTitle()
-      },
-      {
-        id: "spec005",
-        firstName: faker.name.firstName(),
-        lastName: faker.name.lastName(),
-        image:
-          "http://i.pravatar.cc/150?img=" + Math.floor(Math.random() * 70 + 1),
-        desc: faker.name.jobTitle()
-      }
-    ]
-  };
-
   Company.findById({ _id: req.params.companyId }, (err, company) => {
-    if (err) res.status(404).send({ msg: "Empresa não encontrada" });
+    if (err) {
+      res.status(500).send({ error: err });
+    }
+    if (!company) res.status(404).send({ msg: "Empresa não encontrada" });
     else {
       let _appData = {
         business: {
@@ -150,11 +37,25 @@ router.get("/appointment/:companyId", (req, res) => {
       };
 
       Service.find({ company: company._id }, (err, services) => {
+        if (err) {
+          res.status(500).send({ error: err });
+        }
         services.forEach(service => {
-          _appData.services.push(service);
+          if (service.display) {
+            let _service = {
+              id: service._id,
+              desc: service.desc,
+              value: service.value,
+              duration: service.duration
+            };
+            _appData.services.push(_service);
+          }
         });
 
         User.find({ company: company.id, role: "employee" }, (err, users) => {
+          if (err) {
+            res.status(500).send({ error: err });
+          }
           users.forEach(user => {
             let _specialist = {};
             _specialist.id = user._id;
@@ -162,7 +63,21 @@ router.get("/appointment/:companyId", (req, res) => {
             _specialist.lastName = user.lastName;
 
             Employee.findOne({ user: user._id }, (err, employee) => {
-              employee.services = services;
+              if (err) {
+                res.status(500).send({ error: err });
+              }
+              let _simplifiedServices = [];
+              services.forEach(service => {
+                if (service.display) {
+                  _simplifiedServices.push({
+                    id: service._id,
+                    value: service.value,
+                    duration: service.duration
+                  });
+                }
+              });
+
+              employee.services = _simplifiedServices;
               _specialist.image = employee.avatar;
               _specialist.desc = employee.title;
               _specialist.services = employee.services;
