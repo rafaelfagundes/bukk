@@ -17,7 +17,7 @@ import moment from "moment";
 import "./DatePicker.css";
 import "../TimePills/TimePills.css";
 import axios from "axios";
-import config from "../../../config";
+import config from "../../config";
 import _ from "lodash";
 import { connect } from "react-redux";
 import {

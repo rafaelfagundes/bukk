@@ -179,9 +179,15 @@ router.get("/appointment/:companyId", (req, res) => {
 });
 
 router.get("/appointment/dates/:id/:date", (req, res) => {
+  console.log(
+    moment()
+      .add(1, "days")
+      .format("YYYY-MM-DD")
+  );
+
   const dates = [
     {
-      date: "2018-11-22",
+      date: moment().format("YYYY-MM-DD"),
       times: [
         "8:00",
         "8:30",
@@ -196,12 +202,16 @@ router.get("/appointment/dates/:id/:date", (req, res) => {
       ]
     },
     {
-      date: "2018-11-23",
+      date: moment()
+        .add(1, "days")
+        .format("YYYY-MM-DD"),
       times: ["8:00", "8:30", "9:00", "9:30"]
     },
 
     {
-      date: "2018-11-26",
+      date: moment()
+        .add(2, "days")
+        .format("YYYY-MM-DD"),
       times: [
         "8:00",
         "8:30",
@@ -216,23 +226,33 @@ router.get("/appointment/dates/:id/:date", (req, res) => {
       ]
     },
     {
-      date: "2018-11-27",
+      date: moment()
+        .add(3, "days")
+        .format("YYYY-MM-DD"),
       times: ["15:30"]
     },
     {
-      date: "2018-11-28",
+      date: moment()
+        .add(4, "days")
+        .format("YYYY-MM-DD"),
       times: ["9:00", "15:00", "16:00", "17:00"]
     },
     {
-      date: "2018-11-29",
+      date: moment()
+        .add(5, "days")
+        .format("YYYY-MM-DD"),
       times: ["9:00", "9:30", "16:00", "17:00"]
     },
     {
-      date: "2018-11-30",
+      date: moment()
+        .add(6, "days")
+        .format("YYYY-MM-DD"),
       times: ["9:00", "9:30", "15:00", "16:00"]
     },
     {
-      date: "2018-12-03",
+      date: moment()
+        .add(7, "days")
+        .format("YYYY-MM-DD"),
       times: ["9:00", "9:30", "15:00", "17:00"]
     }
   ];

@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import { setPage, setCompanyData, setConfirmation } from "./bookerActions";
 
 import axios from "axios";
-import config from "../../config";
+import config from "../config";
 
 import Breadcrumbs from "./Breadcrumbs/Breadcrumbs";
 import PersonalInfoPage from "./PersonalInfoPage/PersonalInfoPage";
