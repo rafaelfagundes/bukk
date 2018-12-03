@@ -4,7 +4,7 @@ import DashboardHeader from "../DashboardHeader/DashboardHeader";
 import { connect } from "react-redux";
 import { addClient, allClients } from "../dashboardActions";
 import axios from "axios";
-import config from "../../../config";
+import config from "../../config";
 
 const mapStateToProps = state => {
   return {
