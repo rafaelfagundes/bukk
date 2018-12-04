@@ -5,6 +5,9 @@ import { connect } from "react-redux";
 import { setPage, setCompanyData, setConfirmation } from "./bookerActions";
 
 import axios from "axios";
+import moment from "moment";
+import _ from "lodash";
+
 import config from "../config";
 
 import Breadcrumbs from "./Breadcrumbs/Breadcrumbs";
@@ -54,16 +57,57 @@ class Booker extends Component {
 
   handleConfirmation = e => {
     var _page = e.target.value;
+
     axios
       .post(config.api + "/appointment/", this.props.appointment)
       .then(response => {
-        this.props.setConfirmation(response.data);
+        const _response = response.data;
+
+        _response.services.forEach(service => {
+          const _service = this.getService(service.serviceId);
+          const _specialist = this.getSpecialist(service.specialistId);
+          service.specialistName =
+            _specialist.firstName + " " + _specialist.lastName;
+          service.specialistImage = _specialist.image;
+          service.specialistTitle = _specialist.desc;
+          service.serviceDesc = _service.desc;
+          service.time =
+            moment(service.start).format("H:mm A") +
+            " até " +
+            moment(service.end).format("H:mm A");
+          service.date = moment(service.start)
+            .locale("pt_BR")
+            .format("DD [de] MMMM [de] YYYY");
+        });
+
+        this.props.setConfirmation(_response);
         this.props.setPage(_page);
       })
       .catch(error => {
         console.log(error);
       });
   };
+
+  getSpecialist(id) {
+    const index = _.findIndex(this.props.companyData.specialists, function(o) {
+      return o.id === id;
+    });
+    if (index >= 0) {
+      return this.props.companyData.specialists[index];
+    } else {
+      return null;
+    }
+  }
+  getService(id) {
+    const index = _.findIndex(this.props.companyData.services, function(o) {
+      return o.id === id;
+    });
+    if (index >= 0) {
+      return this.props.companyData.services[index];
+    } else {
+      return null;
+    }
+  }
 
   state = {
     numPages: 3

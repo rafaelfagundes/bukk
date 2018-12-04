@@ -7,10 +7,12 @@ const CostumerSchema = new Schema({
   lastName: { type: String, required: true },
   email: { type: String },
   gender: { type: String, required: true, enum: ["M", "F", "O"] },
-  phone: {
-    number: { type: String, required: true },
-    whatsApp: { type: Boolean, required: true, default: false }
-  }, // Minutes
+  phone: [
+    {
+      number: { type: String, required: true },
+      whatsApp: { type: Boolean, required: true, default: false }
+    }
+  ], // Minutes
   company: { type: Schema.Types.ObjectId, ref: "Company" }
 });
 

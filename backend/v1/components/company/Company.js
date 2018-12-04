@@ -44,6 +44,7 @@ const CompanySchema = new Schema({
     }
   },
   website: { type: String },
+  email: { type: String },
   social: [
     {
       socialNetwork: { type: String },

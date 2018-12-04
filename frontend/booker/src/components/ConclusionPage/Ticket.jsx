@@ -19,20 +19,22 @@ class Ticket extends Component {
             <div className="ticket-client-details-confirmationId">
               #{this.props.confirmationId}
             </div>
-            <div className="ticket-client-details-name">{this.props.name}</div>
+            <div className="ticket-client-details-name">
+              {this.props.client.firstName + " " + this.props.client.lastName}
+            </div>
             <div className="ticket-client-details-email">
               <Icon name="envelope outline" />
-              {this.props.email}
+              {this.props.client.email}
             </div>
             <div className="ticket-client-details-phone">
-              {this.props.whatsapp ? (
+              {this.props.client.whatsapp ? (
                 <Icon name="whatsapp" />
-              ) : this.props.phone.length === 10 ? (
+              ) : this.props.client.phone.length === 10 ? (
                 <Icon name="phone" />
               ) : (
                 <Icon name="mobile alternate" />
               )}
-              {this.props.phone}
+              {this.props.client.phone}
             </div>
           </div>
           <div className="ticket-qrcode">
@@ -78,50 +80,60 @@ class Ticket extends Component {
               key={item.serviceKey}
             >
               <div className="ticket-appointment-details-service-avatar">
-                <img
-                  src={"http://i.pravatar.cc/150?u=" + item.serviceKey}
-                  alt="Alguem"
-                />
+                <img src={item.specialistImage} alt={item.specialistName} />
               </div>
               <div>
                 <div className="ticket-appointment-details-service-desc">
-                  Corte de Cabelo Irado
+                  {item.serviceDesc}
                 </div>
                 <div className="ticket-appointment-details-service-specialist">
-                  com Tony Tornado
+                  com {item.specialistName}
                 </div>
                 <div className="ticket-appointment-details-service-date">
                   <Icon name="calendar outline" />
-                  18 de dezembro de 2018
+                  {item.date}
                 </div>
                 <div className="ticket-appointment-details-service-time">
                   <Icon name="clock outline" />
-                  9:00 AM
+                  {item.time}
                 </div>
               </div>
             </div>
           ))}
         </div>
         <div className="ticket-company-details">
-          <div className="ticket-company-details-name">Acme Co.</div>
+          <div className="ticket-company-details-name">
+            {this.props.companyData.business.tradingName}
+          </div>
           <div className="ticket-company-details-street">
             <Icon name="map marker alternate" />
-            Rua Frederico Ozanan, 150 - Guarda-Mor
+            {this.props.companyData.business.address.street},{" "}
+            {this.props.companyData.business.address.number} -{" "}
+            {this.props.companyData.business.address.neighborhood}
           </div>
           <div className="ticket-company-details-city">
-            São João del Rei - MG
+            {this.props.companyData.business.address.city} -{" "}
+            {this.props.companyData.business.address.state}
           </div>
-          <div className="ticket-company-details-phone">
-            <Icon name="phone" />
-            (32) 3371-1234
-          </div>
+          {this.props.companyData.business.phone.map(phone => (
+            <div className="ticket-company-details-phone" key={phone.number}>
+              {phone.phoneType === "landline" ? (
+                <Icon name="phone" />
+              ) : (
+                <Icon name="mobile alternate" />
+              )}
+              {phone.number}
+            </div>
+          ))}
           <div className="ticket-company-details-email">
             <Icon name="envelope outline" />
-            contato@rafaelf.com.br
+            {this.props.companyData.business.email}
           </div>
           <div className="ticket-company-details-web">
             <Icon name="world" />
-            <a href="www.rafaelf.com.br">www.rafaelf.com.br</a>
+            <a href={this.props.companyData.business.website}>
+              {this.props.companyData.business.website}
+            </a>
           </div>
         </div>
       </div>

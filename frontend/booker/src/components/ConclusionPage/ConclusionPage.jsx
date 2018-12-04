@@ -50,7 +50,7 @@ class ConclusionPage extends Component {
   render() {
     return (
       <div className={"ConclusionPage " + this.props.className}>
-        {this.state.status === "confirmed" && (
+        {this.props.confirmation.status === "confirmed" && (
           <React.Fragment>
             <div className="conclusion-header">
               <Icon
@@ -67,15 +67,10 @@ class ConclusionPage extends Component {
             </div>
             <div className="conclusion-content">
               <Ticket
-                confirmationId={this.state.confirmationId}
-                name={
-                  this.state.client.firstName + " " + this.state.client.lastName
-                }
-                email={this.state.client.email}
-                phone={this.state.client.phone}
-                whatsapp={this.state.client.whatsapp}
-                qrcode={this.props.confirmation.qrcode}
-                services={this.state.services}
+                confirmationId={this.props.confirmation.confirmationId}
+                client={this.props.confirmation.client}
+                services={this.props.confirmation.services}
+                companyData={this.props.companyData}
               />
               <div className="conclusion-footer">
                 <p>

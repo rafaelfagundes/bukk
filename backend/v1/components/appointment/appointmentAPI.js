@@ -1,8 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const _ = require("lodash");
-const QRCode = require("qrcode");
-const ical = require("ical-generator");
+
 const moment = require("moment");
 
 const User = require("../user/User");
@@ -11,6 +10,7 @@ const Service = require("../service/Service");
 const Employee = require("../employee/Employee");
 
 const Appointment = require("../appointment/Appointment");
+const Costumer = require("../costumer/Costumer");
 
 router.get("/appointment/:companyId", (req, res) => {
   Company.findById({ _id: req.params.companyId }, (err, company) => {
@@ -26,6 +26,7 @@ router.get("/appointment/:companyId", (req, res) => {
           tradingName: company.tradingName,
           companyNickname: company.companyNickname,
           website: company.website,
+          email: company.email,
           social: company.social,
           workingDays: company.workingDays,
           phone: company.phone,
@@ -211,19 +212,52 @@ router.post("/appointment/", (req, res) => {
   const _client = req.body.client; // Costumer
   const _services = req.body.services;
 
-  _services.forEach(_service => {
-    let _appointment = {
-      costumer: "", // criado antes
-      employee: _service.specialistId,
-      company: req.body.companyId,
-      service: _service.serviceId,
-      start: _service.start,
-      end: _service.end,
-      status: "created",
-      notes: _client.obs
-    };
+  let _costumer = {
+    firstName: _client.firstName,
+    lastName: _client.lastName,
+    email: _client.email,
+    gender: _client.gender,
+    phone: [{ number: _client.phone, whatsapp: _client.whatsapp }],
+    company: req.body.companyId
+  };
 
-    console.log(_appointment);
+  console.log(_costumer);
+
+  Costumer.create(_costumer, (err, costumer) => {
+    if (err) res.status(500).json({ msg: "Erro ao criar novo agendamento." });
+    else {
+      let _appointments = [];
+      _services.forEach(_service => {
+        let _appointment = {
+          costumer: costumer._id, // criado antes
+          employee: _service.specialistId,
+          company: req.body.companyId,
+          service: _service.serviceId,
+          start: _service.start,
+          end: _service.end,
+          status: "created",
+          notes: _client.obs
+        };
+
+        _appointments.push(_appointment);
+      });
+
+      Appointment.create(_appointments, (err, appointments) => {
+        if (err)
+          res.status(500).json({ msg: "Erro ao criar novo agendamento." });
+        else {
+          console.log(appointments);
+          const _return = {
+            status: "confirmed",
+            msg: "Agendamento concluído com sucesso",
+            confirmationId: appointments[0].id,
+            client: _client,
+            services: _services
+          };
+          res.status(200).json(_return);
+        }
+      });
+    }
   });
 });
 

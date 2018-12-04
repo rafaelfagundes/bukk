@@ -7,6 +7,8 @@ const User = require("../components/user/User");
 const Company = require("../components/company/Company");
 const Employee = require("../components/employee/Employee");
 const Service = require("../components/service/Service");
+const Costumer = require("../components/costumer/Costumer");
+const Appointment = require("../components/appointment/Appointment");
 
 // mongoose setup
 mongoose.Promise = global.Promise;
@@ -23,6 +25,8 @@ const clearCollections = () => {
   User.collection.deleteMany({});
   Employee.collection.deleteMany({});
   Service.collection.deleteMany({});
+  Costumer.collection.deleteMany({});
+  Appointment.collection.deleteMany({});
 };
 
 const createCompany = () => {
@@ -47,7 +51,8 @@ const createCompany = () => {
         lng: "-44.2649491"
       }
     },
-    website: "http://www.rafaelf.com.br",
+    website: "http://www.bukk.com.br",
+    email: "contato@bukk.com.br",
     social: [
       {
         socialNetwork: "Instagram",
