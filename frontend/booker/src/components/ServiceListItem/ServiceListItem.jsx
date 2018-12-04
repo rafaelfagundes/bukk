@@ -3,6 +3,25 @@ import "./ServiceListItem.css";
 import { Header, Icon, Image } from "semantic-ui-react";
 
 class ServiceListItem extends Component {
+  state = {
+    price: "",
+    digits: ""
+  };
+
+  componentDidMount() {
+    if (this.props.service.price.indexOf(".") >= 0) {
+      const _price = this.props.service.price.split(".")[0];
+      const _digits =
+        this.props.service.price.split(".")[1].length === 1
+          ? this.props.service.price.split(".")[1] + "0"
+          : this.props.service.price.split(".")[1];
+
+      this.setState({ price: _price + "", digits: _digits });
+    } else {
+      this.setState({ price: this.props.service.price + "", digits: "00" });
+    }
+  }
+
   render() {
     return (
       <div className="ServiceListItem">
@@ -32,12 +51,9 @@ class ServiceListItem extends Component {
           <div className="service-price-container">
             <p className="service-price-container-currency">R$</p>
             <p className="service-price-container-price">
-              {this.props.service.price.split(".")[0]}
+              {this.state.price}
               <span className="service-price-container-price__digits">
-                ,
-                {this.props.service.price.split(".")[1].length === 1
-                  ? this.props.service.price.split(".")[1] + "0"
-                  : this.props.service.price.split(".")[1]}
+                ,{this.state.digits}
               </span>
             </p>
           </div>

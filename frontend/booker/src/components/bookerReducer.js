@@ -26,7 +26,8 @@ const initialState = {
       whatsapp: false,
       obs: ""
     },
-    services: []
+    services: [],
+    companyId: ""
   },
 
   confirmation: {}

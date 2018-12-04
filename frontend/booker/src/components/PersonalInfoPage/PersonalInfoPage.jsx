@@ -1,8 +1,9 @@
 import React, { Component } from "react";
-import { Header, Form, Label } from "semantic-ui-react";
+import { Header, Form, Label, Radio } from "semantic-ui-react";
 import { connect } from "react-redux";
 import { setAppointment, setPersonalInfoOk } from "../bookerActions";
 import validator from "validator";
+import "./PersonalInfoPage.css";
 
 const mapStateToProps = state => {
   return {
@@ -24,6 +25,7 @@ class PersonalInfoPage extends Component {
     client: {
       firstName: "",
       lastName: "",
+      gender: "",
       email: "",
       phone: "",
       whatsapp: false,
@@ -32,6 +34,7 @@ class PersonalInfoPage extends Component {
     errors: {
       firstName: "",
       lastName: "",
+      gender: "",
       email: "",
       phone: ""
     },
@@ -46,7 +49,13 @@ class PersonalInfoPage extends Component {
   };
 
   validate = () => {
-    let _errors = { firstName: "", lastName: "", email: "", phone: "" };
+    let _errors = {
+      firstName: "",
+      lastName: "",
+      email: "",
+      phone: "",
+      gender: ""
+    };
     let _warnings = { phone: "" };
     if (
       !validator.isEmpty(String(this.state.client.firstName)) &&
@@ -96,16 +105,21 @@ class PersonalInfoPage extends Component {
       _errors.phone =
         "Por favor insira somente números. Sendo DDD + Número. Exemplo: 32912349876";
     }
+    if (validator.isEmpty(String(this.state.client.gender))) {
+      _errors.gender = "Por favor selecione o sexo";
+    }
 
     if (
       _errors.firstName === "" &&
       _errors.lastName === "" &&
       _errors.email === "" &&
       _errors.phone === "" &&
+      _errors.gender === "" &&
       this.state.client.firstName !== "" &&
       this.state.client.lastName !== "" &&
       this.state.client.email !== "" &&
-      this.state.client.phone !== ""
+      this.state.client.phone !== "" &&
+      this.state.client.gender !== ""
     ) {
       this.props.setPersonalInfoOk(true);
     } else {
@@ -117,11 +131,24 @@ class PersonalInfoPage extends Component {
     });
   };
 
-  handleChange = e => {
+  handleChange = (e, { value }) => {
     if (e.currentTarget.id === "whatsapp") {
       let item = {
         ...this.state.client,
         [e.currentTarget.id]: e.currentTarget.checked
+      };
+      this.setState(
+        {
+          client: item
+        },
+        () => {
+          this.validate();
+        }
+      );
+    } else if (!e.currentTarget.id) {
+      let item = {
+        ...this.state.client,
+        gender: value
       };
       this.setState(
         {
@@ -170,7 +197,7 @@ class PersonalInfoPage extends Component {
                 id="firstName"
               />
               {this.state.errors.firstName !== "" && (
-                <Label size="large" color="red" pointing>
+                <Label size="large" color="orange" pointing>
                   {this.state.errors.firstName}
                 </Label>
               )}
@@ -185,12 +212,52 @@ class PersonalInfoPage extends Component {
                 id="lastName"
               />
               {this.state.errors.lastName !== "" && (
-                <Label size="large" color="red" pointing>
+                <Label size="large" color="orange" pointing>
                   {this.state.errors.lastName}
                 </Label>
               )}
             </Form.Field>
           </Form.Group>
+          <Form.Field label="Sexo *" className="label-gender" />
+          <Form.Group>
+            <Form.Field>
+              <Radio
+                label="Feminino"
+                name="radioGroup"
+                value="F"
+                checked={this.state.client.gender === "F"}
+                onChange={this.handleChange}
+              />
+            </Form.Field>
+            <Form.Field>
+              <Radio
+                label="Masculino"
+                name="radioGroup"
+                value="M"
+                checked={this.state.client.gender === "M"}
+                onChange={this.handleChange}
+              />
+            </Form.Field>
+            <Form.Field>
+              <Radio
+                label="Outro"
+                name="radioGroup"
+                value="O"
+                checked={this.state.client.gender === "O"}
+                onChange={this.handleChange}
+              />
+            </Form.Field>
+          </Form.Group>
+          {this.state.errors.gender !== "" && (
+            <Label
+              className="error-gender"
+              size="large"
+              color="orange"
+              pointing
+            >
+              {this.state.errors.gender}
+            </Label>
+          )}
           <Form.Group>
             <Form.Field width={8}>
               <Form.Input
@@ -202,7 +269,7 @@ class PersonalInfoPage extends Component {
                 id="email"
               />
               {this.state.errors.email !== "" && (
-                <Label size="large" color="red" pointing>
+                <Label size="large" color="orange" pointing>
                   {this.state.errors.email}
                 </Label>
               )}
@@ -220,7 +287,7 @@ class PersonalInfoPage extends Component {
                 id="phone"
               />
               {this.state.errors.phone !== "" && (
-                <Label size="large" color="red" pointing>
+                <Label size="large" color="orange" pointing>
                   {this.state.errors.phone}
                 </Label>
               )}

@@ -201,9 +201,12 @@ class DateTimePage extends Component {
         this.setState({ timeTable: [] });
       });
 
+    //TODO: remove
     this.props.appointment.services[
       this.props.currentService
     ].dateAndTime.date = date;
+
+    this.props.appointment.services[this.props.currentService].start = date;
 
     this.props.setAppointment(this.props.appointment);
 
@@ -217,6 +220,43 @@ class DateTimePage extends Component {
     this.props.appointment.services[
       this.props.currentService
     ].dateAndTime.time = _time;
+
+    // console.log(
+    //   this.props.appointment.services[this.props.currentService].start
+    // );
+
+    const _newTime = { hour: _time.split(":")[0], minute: _time.split(":")[1] };
+
+    this.props.appointment.services[this.props.currentService].start.set(
+      _newTime
+    );
+
+    this.props.appointment.services[this.props.currentService].end = moment(
+      this.props.appointment.services[this.props.currentService].start
+    );
+
+    this.props.appointment.services[this.props.currentService].end.add(
+      this.props.appointment.services[this.props.currentService].duration,
+      "minutes"
+    );
+
+    console.log(
+      "start ->> ",
+      this.props.appointment.services[this.props.currentService].start
+    );
+    console.log(
+      "duration ->>",
+      this.props.appointment.services[this.props.currentService].duration
+    );
+    console.log(
+      "end ->> ",
+      this.props.appointment.services[this.props.currentService].end
+    );
+
+    // console.log(
+    //   this.props.appointment.services[this.props.currentService].dateAndTime
+    //     .date
+    // );
 
     let _timeTable = this.state.timeTable;
 
@@ -280,23 +320,26 @@ class DateTimePage extends Component {
 
   handleService = (e, { value }) => {
     const _serviceKey = generateUUID();
+    const { duration } = this.getService(value);
+
+    const _service = {
+      serviceKey: _serviceKey,
+      serviceId: value,
+      dateAndTime: {
+        time: "",
+        date: moment()
+      },
+      start: moment(),
+      end: "",
+      specialistId: "",
+      duration: duration
+    };
+
+    // If already exists a entry, set to this entry
     if (this.props.appointment.services[this.props.currentService]) {
-      this.props.appointment.services[
-        this.props.currentService
-      ].serviceId = value;
-      this.props.appointment.services[
-        this.props.currentService
-      ].serviceKey = _serviceKey;
+      this.props.appointment.services[this.props.currentService] = _service;
     } else {
-      this.props.appointment.services.push({
-        serviceKey: _serviceKey,
-        serviceId: value,
-        dateAndTime: {
-          time: "",
-          date: moment()
-        },
-        specialistId: ""
-      });
+      this.props.appointment.services.push(_service);
     }
 
     let _specialistsList = [];
@@ -325,6 +368,7 @@ class DateTimePage extends Component {
   };
 
   componentDidUpdate() {
+    this.props.appointment.companyId = this.props.companyId;
     this.props.setAppointment(this.props.appointment);
   }
 

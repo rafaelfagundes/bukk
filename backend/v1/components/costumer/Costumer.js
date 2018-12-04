@@ -6,7 +6,7 @@ const CostumerSchema = new Schema({
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
   email: { type: String },
-  gender: { type: String, required: true, enum: ["M", "F"] },
+  gender: { type: String, required: true, enum: ["M", "F", "O"] },
   phone: {
     number: { type: String, required: true },
     whatsApp: { type: Boolean, required: true, default: false }

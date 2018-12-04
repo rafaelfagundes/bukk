@@ -1,17 +1,16 @@
 const express = require("express");
 const router = express.Router();
-// const faker = require("faker/locale/pt_BR");
 const _ = require("lodash");
 const QRCode = require("qrcode");
 const ical = require("ical-generator");
-// const cal = ical();
 const moment = require("moment");
-// const keys = require("../../config/keys");
 
 const User = require("../user/User");
 const Company = require("../company/Company");
 const Service = require("../service/Service");
 const Employee = require("../employee/Employee");
+
+const Appointment = require("../appointment/Appointment");
 
 router.get("/appointment/:companyId", (req, res) => {
   Company.findById({ _id: req.params.companyId }, (err, company) => {
@@ -208,44 +207,38 @@ router.get("/appointment/date/:id/:date", (req, res) => {
 });
 
 router.post("/appointment/", (req, res) => {
-  let _event = ical({
-    domain: "bukk.com.br",
-    prodId: "//bukk.com.br//bukk//PT",
-    events: [
-      {
-        start: moment(),
-        end: moment().add(1, "hour"),
+  console.log(req.body);
+  const _client = req.body.client; // Costumer
+  const _services = req.body.services;
 
-        summary: "Corte de cabelo Masculino",
-        alarms: [
-          { type: "audio", trigger: 24 * 60 * 60 },
-          { type: "audio", trigger: 48 * 60 * 60 }
-        ],
-        organizer: {
-          name: "Johnny Cash",
-          email: "jcash@gmail.com"
-        },
-        location:
-          "Rua Frederico Ozanan, 150, Guarda-Mor, São João del Rei, MG, Brasil"
-      }
-    ]
-  }).toString();
+  // console.log(_client);
+  // console.log(_services);
 
-  QRCode.toDataURL(_event)
-    .then(_qrcode => {
-      let response = {
-        status: "confirmed",
-        msg: "Agendamento concluído com sucesso",
-        confirmationId: "conf00001",
-        client: req.body.client,
-        services: req.body.services,
-        qrcode: _qrcode
-      };
-      res.status(200).json(response);
-    })
-    .catch(err => {
-      console.error(err);
-    });
+  _services.forEach(_service => {
+    const _hour = _service.dateAndTime.time.split(":")[0];
+    const _minute = _service.dateAndTime.time.split(":")[1];
+
+    let _start = moment(_service.date);
+    _start.set({ hour: _hour, minute: _minute });
+
+    const _end = moment(_start)
+      .add(_service.duration, "minutes")
+      .toDate();
+    _start = _start.toDate();
+
+    let _appointment = {
+      costumer: "", // criado antes
+      employee: _service.specialistId,
+      company: req.body.companyId,
+      service: _service.serviceId,
+      start: _start,
+      end: _end,
+      status: "created",
+      notes: _client.obs
+    };
+
+    console.log(_appointment);
+  });
 });
 
 module.exports = router;

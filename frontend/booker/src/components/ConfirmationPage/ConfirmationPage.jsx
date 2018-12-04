@@ -63,7 +63,7 @@ class ConfirmationPage extends Component {
           let _specialist = this.getSpecialist(service.specialistId);
           let _service = this.getService(service.serviceId);
 
-          _totalPrice += _service.value;
+          _totalPrice += Number(_service.value);
 
           if (_specialist && _service) {
             _servicesList.push({
@@ -83,6 +83,8 @@ class ConfirmationPage extends Component {
             });
           }
         });
+
+        console.log(_totalPrice);
 
         if (
           _servicesList.length > 0 &&

@@ -1,0 +1,11 @@
+.label-gender {
+  margin: 0 !important;
+}
+
+.ui.orange.pointing.large.label.error-gender {
+  margin: 0 0 15px 0;
+}
+
+.ui.orange.pointing.large.label.error-gender::before {
+  left: 18%;
+}
