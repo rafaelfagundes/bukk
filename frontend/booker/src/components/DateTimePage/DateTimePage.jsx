@@ -201,11 +201,6 @@ class DateTimePage extends Component {
         this.setState({ timeTable: [] });
       });
 
-    //TODO: remove
-    this.props.appointment.services[
-      this.props.currentService
-    ].dateAndTime.date = date;
-
     this.props.appointment.services[this.props.currentService].start = date;
 
     this.props.setAppointment(this.props.appointment);
@@ -217,14 +212,6 @@ class DateTimePage extends Component {
 
   handleTime = e => {
     const _time = e.target.innerText;
-    this.props.appointment.services[
-      this.props.currentService
-    ].dateAndTime.time = _time;
-
-    // console.log(
-    //   this.props.appointment.services[this.props.currentService].start
-    // );
-
     const _newTime = { hour: _time.split(":")[0], minute: _time.split(":")[1] };
 
     this.props.appointment.services[this.props.currentService].start.set(
@@ -239,24 +226,6 @@ class DateTimePage extends Component {
       this.props.appointment.services[this.props.currentService].duration,
       "minutes"
     );
-
-    console.log(
-      "start ->> ",
-      this.props.appointment.services[this.props.currentService].start
-    );
-    console.log(
-      "duration ->>",
-      this.props.appointment.services[this.props.currentService].duration
-    );
-    console.log(
-      "end ->> ",
-      this.props.appointment.services[this.props.currentService].end
-    );
-
-    // console.log(
-    //   this.props.appointment.services[this.props.currentService].dateAndTime
-    //     .date
-    // );
 
     let _timeTable = this.state.timeTable;
 
@@ -325,10 +294,6 @@ class DateTimePage extends Component {
     const _service = {
       serviceKey: _serviceKey,
       serviceId: value,
-      dateAndTime: {
-        time: "",
-        date: moment()
-      },
       start: moment(),
       end: "",
       specialistId: "",

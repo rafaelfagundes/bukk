@@ -211,28 +211,14 @@ router.post("/appointment/", (req, res) => {
   const _client = req.body.client; // Costumer
   const _services = req.body.services;
 
-  // console.log(_client);
-  // console.log(_services);
-
   _services.forEach(_service => {
-    const _hour = _service.dateAndTime.time.split(":")[0];
-    const _minute = _service.dateAndTime.time.split(":")[1];
-
-    let _start = moment(_service.date);
-    _start.set({ hour: _hour, minute: _minute });
-
-    const _end = moment(_start)
-      .add(_service.duration, "minutes")
-      .toDate();
-    _start = _start.toDate();
-
     let _appointment = {
       costumer: "", // criado antes
       employee: _service.specialistId,
       company: req.body.companyId,
       service: _service.serviceId,
-      start: _start,
-      end: _end,
+      start: _service.start,
+      end: _service.end,
       status: "created",
       notes: _client.obs
     };

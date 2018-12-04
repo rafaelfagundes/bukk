@@ -72,19 +72,17 @@ class ConfirmationPage extends Component {
               serviceDesc: _service.desc,
               specialistName:
                 _specialist.firstName + " " + _specialist.lastName,
-              date: service.dateAndTime.date
+              date: service.start
                 .locale("pt_BR")
                 .format("DD [de] MMMM [de] YYYY"),
               time:
-                service.dateAndTime.time.length === 4
-                  ? service.dateAndTime.time + " AM"
-                  : service.dateAndTime.time,
+                service.start.format("H:mm A") +
+                " até " +
+                service.end.format("H:mm A"),
               price: "" + _service.value
             });
           }
         });
-
-        console.log(_totalPrice);
 
         if (
           _servicesList.length > 0 &&
