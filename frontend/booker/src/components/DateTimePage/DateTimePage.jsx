@@ -186,20 +186,7 @@ class DateTimePage extends Component {
     const _date = date.format("YYYY-MM-DD");
     const _specialistId = this.state.specialistId;
 
-    axios
-      .get(config.api + "/appointment/date/" + _specialistId + "/" + _date)
-      .then(response => {
-        if (response.data.times) {
-          let _timeTable = [];
-          response.data.times.forEach(time => {
-            _timeTable.push({ time, selected: false });
-          });
-          this.setState({ timeTable: _timeTable });
-        }
-      })
-      .catch(err => {
-        this.setState({ timeTable: [] });
-      });
+    this.handleTimeTable(_specialistId, _date);
 
     this.props.appointment.services[this.props.currentService].start = date;
 
@@ -247,21 +234,6 @@ class DateTimePage extends Component {
     const _specialistId = value;
 
     axios
-      .get(config.api + "/appointment/date/" + _specialistId + "/" + _date)
-      .then(response => {
-        if (response.data.times) {
-          let _timeTable = [];
-          response.data.times.forEach(time => {
-            _timeTable.push({ time, selected: false });
-          });
-          this.setState({ timeTable: _timeTable });
-        }
-      })
-      .catch(err => {
-        this.setState({ timeTable: [] });
-      });
-
-    axios
       .get(config.api + "/appointment/dates/" + _specialistId + "/" + _month)
       .then(response => {
         this.setState({ excludeDates: response.data });
@@ -269,6 +241,8 @@ class DateTimePage extends Component {
       .catch(err => {
         console.log(err);
       });
+
+    this.handleTimeTable(_specialistId, _date);
 
     let _specialistsList = this.state.specialists;
 
@@ -330,6 +304,113 @@ class DateTimePage extends Component {
   isWeekday = date => {
     const day = date.day();
     return day !== 0 && day !== 6;
+  };
+
+  handleTimeTable = (specialistId, date) => {
+    axios
+      .get(config.api + "/appointment/date/" + specialistId + "/" + date)
+      .then(response => {
+        if (response.data.times) {
+          let _timeTable = [];
+          if (this.props.currentService > 0) {
+            // Already Reserved Times
+            let _alreadyReserved = [];
+            this.props.appointment.services.forEach(service => {
+              if (service.end && service.end !== "") {
+                response.data.times.forEach(item => {
+                  const _momentItem = moment(date).set({
+                    hour: item.split(":")[0],
+                    minute: item.split(":")[1],
+                    second: "00"
+                  });
+
+                  if (_momentItem.isSame(service.start, "day")) {
+                    if (
+                      _momentItem.isSameOrAfter(
+                        service.start.set({ second: "00" }),
+                        "hour"
+                      ) &&
+                      _momentItem.isBefore(
+                        service.end.set({ second: "00" }),
+                        "hour"
+                      )
+                    ) {
+                      _alreadyReserved.push({ time: item, selected: false });
+                    }
+                  }
+                });
+              }
+            });
+
+            // All times
+            response.data.times.forEach(item => {
+              // If not reserved, add to timetable to show in the UI
+              if (!_.find(_alreadyReserved, { time: item, selected: false })) {
+                _timeTable.push({ time: item, selected: false });
+              }
+            });
+            this.setState({ timeTable: _timeTable });
+          } else {
+            response.data.times.forEach(time => {
+              _timeTable.push({ time, selected: false });
+            });
+            this.setState({ timeTable: _timeTable });
+          }
+        }
+      })
+      .catch(err => {
+        this.setState({ timeTable: [] });
+      });
+  };
+
+  handleTimeTable2 = (specialistId, date) => {
+    axios
+      .get(config.api + "/appointment/date/" + specialistId + "/" + date)
+      .then(response => {
+        if (response.data.times) {
+          this.setState({ timeTable: this.setTimeTable(response) });
+        }
+      })
+      .catch(err => {
+        this.setState({ timeTable: [] });
+      });
+  };
+
+  setTimeTable = response => {
+    let _timeTable = [];
+    if (this.props.currentService > 0) {
+      // Already Reserved Times
+      let _alreadyReserved = [];
+      this.props.appointment.services.forEach(service => {
+        if (service.end && service.end !== "") {
+          response.data.times.forEach(item => {
+            const _momentItem = moment(service.start).set({
+              hour: item.split(":")[0],
+              minute: item.split(":")[1]
+            });
+            if (
+              _momentItem.isSameOrAfter(service.start) &&
+              _momentItem.isBefore(service.end)
+            ) {
+              _alreadyReserved.push({ time: item, selected: false });
+            }
+          });
+        }
+      });
+
+      // All times
+      response.data.times.forEach(item => {
+        // If not reserved, add to timetable to show in the UI
+        if (!_.find(_alreadyReserved, { time: item, selected: false })) {
+          _timeTable.push({ time: item, selected: false });
+        }
+      });
+    } else {
+      response.data.times.forEach(time => {
+        _timeTable.push({ time, selected: false });
+      });
+    }
+    return _timeTable;
   };
 
   componentDidUpdate() {
@@ -537,7 +618,7 @@ class DateTimePage extends Component {
                 onClick={this.handleDeleteService}
                 floated="right"
               >
-                Cancelar
+                Cancelar adição
                 <Icon name="delete" />
               </Button>
             )}
@@ -554,7 +635,7 @@ class DateTimePage extends Component {
                 color="red"
                 onClick={this.handleDeleteService}
               >
-                Cancelar
+                Cancelar adição
                 <Icon name="delete" />
               </Button>
             </React.Fragment>
