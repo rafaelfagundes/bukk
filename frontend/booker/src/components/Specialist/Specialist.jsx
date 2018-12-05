@@ -3,7 +3,10 @@ import { Image, Header } from "semantic-ui-react";
 import "./Specialist.css";
 
 const Specialist = props => (
-  <div className="Specialist" onClick={e => props.onClick(e, props.value)}>
+  <div
+    className={props.random ? "Specialist random" : "Specialist"}
+    onClick={e => props.onClick(e, props.value)}
+  >
     <Image
       className={
         "specialist-img " + (props.selected ? "specialist-img__selected" : "")

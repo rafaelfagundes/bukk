@@ -7,7 +7,8 @@ const moment = require("moment");
 const User = require("../user/User");
 const Company = require("../company/Company");
 const Service = require("../service/Service");
-const Employee = require("../employee/Employee");
+
+const mongoose = require("mongoose");
 
 const Appointment = require("../appointment/Appointment");
 const Costumer = require("../costumer/Costumer");
@@ -52,41 +53,45 @@ router.get("/appointment/:companyId", (req, res) => {
           }
         });
 
-        User.find({ company: company.id, role: "employee" }, (err, users) => {
-          if (err) {
-            res.status(500).send({ error: err });
-          }
-          users.forEach(user => {
-            let _specialist = {};
-            _specialist.id = user._id;
-            _specialist.firstName = user.firstName;
-            _specialist.lastName = user.lastName;
-
-            Employee.findOne({ user: user._id }, (err, employee) => {
-              if (err) {
-                res.status(500).send({ error: err });
+        User.aggregate(
+          [
+            { $match: { role: "employee" } },
+            {
+              $match: {
+                company: new mongoose.Types.ObjectId(req.params.companyId)
               }
-              let _simplifiedServices = [];
-              services.forEach(service => {
-                if (service.display) {
-                  _simplifiedServices.push({
-                    id: service._id,
-                    value: service.value,
-                    duration: service.duration
-                  });
-                }
-              });
+            },
+            {
+              $lookup: {
+                from: "employees",
+                localField: "_id",
+                foreignField: "user",
+                as: "employee"
+              }
+            }
+          ],
+          (err, users) => {
+            if (err) {
+              res.status(500).send({ error: err });
+            }
+            users.forEach(user => {
+              console.log(user);
 
-              employee.services = _simplifiedServices;
-              _specialist.image = employee.avatar;
-              _specialist.desc = employee.title;
-              _specialist.services = employee.services;
+              let _specialist = {};
+              _specialist.id = user._id;
+              _specialist.firstName = user.firstName;
+              _specialist.lastName = user.lastName;
+
+              const _employee = user.employee[0];
+              _specialist.image = _employee.avatar;
+              _specialist.desc = _employee.title;
+              _specialist.services = _employee.services;
 
               _appData.specialists.push(_specialist);
-              res.status(200).send(_appData);
             });
-          });
-        });
+            res.status(200).send(_appData);
+          }
+        );
       });
     }
   });

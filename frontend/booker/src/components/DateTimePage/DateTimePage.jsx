@@ -228,6 +228,11 @@ class DateTimePage extends Component {
     this.setState({ timeTable: _timeTable, appointmentTime: _time });
   };
 
+  handleRandom = () => {
+    const _index = _.random(0, this.state.specialists.length - 1);
+    this.handleSpecialist(null, this.state.specialists[_index].id);
+  };
+
   handleSpecialist = (e, value) => {
     const _date = moment().format("YYYY-MM-DD");
     const _month = moment().format("YYYY-MM");
@@ -561,6 +566,16 @@ class DateTimePage extends Component {
                     selected={specialist.selected}
                   />
                 ))}
+                {this.state.specialists.length > 1 && (
+                  <Specialist
+                    onClick={this.handleRandom}
+                    firstName="Escolha"
+                    lastName="Por Mim"
+                    desc="Escolher aleatoriamente"
+                    image="https://res.cloudinary.com/bukkapp/image/upload/v1543975354/Bukk/Assets/user.png"
+                    random={true}
+                  />
+                )}
               </div>
             </React.Fragment>
           )}

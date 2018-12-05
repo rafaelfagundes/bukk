@@ -12,11 +12,25 @@
   font: "Lato", sans-serif;
 }
 
+.Specialist.random {
+  border-radius: 4px;
+  background-color: #2185d00d;
+}
+
+.Specialist.random h4 {
+  color: #2185d0 !important;
+}
+
+.Specialist.random div {
+  color: #2185d0ab !important;
+}
+
 .specialist-img {
   box-sizing: border-box;
   border: 2px solid #eee;
   width: 100px !important;
   margin: 0 auto;
+  margin-top: 10px;
 }
 
 .specialist-img__selected {

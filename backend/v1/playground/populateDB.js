@@ -2,6 +2,8 @@ const _ = require("lodash");
 const moment = require("moment");
 const keys = require("../config/keys");
 const mongoose = require("mongoose");
+const faker = require("faker");
+faker.locale = "pt_BR";
 
 const User = require("../components/user/User");
 const Company = require("../components/company/Company");
@@ -154,6 +156,8 @@ const createCompany = () => {
       createUser(company);
       createServices(company);
       createEmployeeUser(company);
+      createEmployeeUser(company);
+      createEmployeeUser(company);
     }
   });
 };
@@ -286,12 +290,12 @@ const createEmployee = user => {
         ]
       }
     ],
-    title: "Hair Stylist",
+    title: faker.name.jobTitle(),
     salesCommission: 30,
-    worksSince: moment().set({ year: 2016, month: 5, date: 15 }),
+    worksSince: faker.date.past(),
     salary: 3600,
     services: [],
-    avatar: "http://i.pravatar.cc/150?img=1"
+    avatar: faker.image.avatar()
   };
 
   Employee.create(employee, (err, employee) => {
@@ -330,27 +334,25 @@ const createEmployee = user => {
 
 const createEmployeeUser = company => {
   const user = {
-    firstName: "Maria",
-    lastName: "José",
-    username: "mariajose",
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
+    username: faker.internet.userName(),
     gender: "F",
-    birthday: moment()
-      .set({ year: 1960, month: 11, date: 22 })
-      .toDate(),
-    email: "mariajose@gmail.com",
-    password: "123456",
+    birthday: faker.date.past(),
+    email: faker.internet.email(),
+    password: faker.internet.password(),
     role: "employee",
     address: {
-      street: "Rua Frederico Ozanan",
-      number: 150,
+      street: faker.address.streetName(),
+      number: faker.random.number({ min: 80, max: 3000 }),
       neighborhood: "Guarda-Mor",
-      city: "São João del Rei",
-      state: "Minas Gerais",
-      country: "Brasil",
+      city: faker.address.city(),
+      state: faker.address.state(),
+      country: faker.address.country(),
       postalCode: 36309012,
       geolocation: {
-        lat: "-21.1394739",
-        lng: "-44.2649491"
+        lat: faker.address.latitude(),
+        lng: faker.address.longitude()
       }
     },
     company: company.id
