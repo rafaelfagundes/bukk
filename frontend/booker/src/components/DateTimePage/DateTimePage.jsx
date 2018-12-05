@@ -234,6 +234,9 @@ class DateTimePage extends Component {
   };
 
   handleSpecialist = (e, value) => {
+    if (this.state.specialists.length === 1) {
+      return false;
+    }
     const _date = moment().format("YYYY-MM-DD");
     const _month = moment().format("YYYY-MM");
     const _specialistId = String(value);
@@ -552,7 +555,9 @@ class DateTimePage extends Component {
           {this.state.specialists.length > 0 && this.state.serviceId !== "" && (
             <React.Fragment>
               <Header as="h3" color="blue" className="booker-title-who">
-                Com quem deseja fazer?
+                {this.state.specialists.length > 1
+                  ? "Com quem deseja fazer?"
+                  : "Especialista que irá lhe atender"}
               </Header>
               <div id="Specialists">
                 {this.state.specialists.length > 1 && (
