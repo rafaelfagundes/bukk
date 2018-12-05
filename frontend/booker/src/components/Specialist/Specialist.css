@@ -5,24 +5,37 @@
 .Specialist {
   position: relative;
   text-align: center;
-  width: 20%;
+  width: 25%;
   box-sizing: border-box;
   display: inline-block;
   cursor: pointer;
   font: "Lato", sans-serif;
+  margin-right: 15px;
+  border-radius: 4px;
+}
+
+.Specialist:last-child {
+  margin-right: 0px;
+}
+
+.Specialist:hover {
+  background-color: #f1f1f1;
 }
 
 .Specialist.random {
-  border-radius: 4px;
-  background-color: #2185d00d;
+  background-color: #3592da;
+}
+
+.Specialist.random:hover {
+  background-color: #2185d0;
 }
 
 .Specialist.random h4 {
-  color: #2185d0 !important;
+  color: #fff !important;
 }
 
 .Specialist.random div {
-  color: #2185d0ab !important;
+  color: rgba(255, 255, 255, 0.8) !important;
 }
 
 .specialist-img {
@@ -46,9 +59,10 @@
 }
 
 .specialist-desc {
-  margin: 8px 0px 0px 0px !important;
+  margin: 8px 0px 10px 0px !important;
   font-size: 11px !important;
   line-height: 12px !important;
   font-weight: 700 !important;
   color: #aaa !important;
+  padding: 0px 10px !important;
 }

@@ -236,7 +236,7 @@ class DateTimePage extends Component {
   handleSpecialist = (e, value) => {
     const _date = moment().format("YYYY-MM-DD");
     const _month = moment().format("YYYY-MM");
-    const _specialistId = value;
+    const _specialistId = String(value);
 
     axios
       .get(config.api + "/appointment/dates/" + _specialistId + "/" + _month)
@@ -252,14 +252,17 @@ class DateTimePage extends Component {
     let _specialistsList = this.state.specialists;
 
     _specialistsList.forEach(element => {
-      if (element.id === value) {
+      if (element.id === _specialistId) {
         element.selected = true;
       } else {
         element.selected = false;
       }
     });
 
-    this.setState({ specialistId: value, specialists: _specialistsList });
+    this.setState({
+      specialistId: _specialistId,
+      specialists: _specialistsList
+    });
 
     this.props.appointment.services[
       this.props.currentService
@@ -298,12 +301,23 @@ class DateTimePage extends Component {
       }
     });
 
-    this.setState({
-      serviceId: value,
-      serviceKey: _serviceKey,
-      specialists: _specialistsList,
-      specialistId: ""
-    });
+    if (_specialistsList.length === 1) {
+      _specialistsList[0].selected = true;
+      this.handleSpecialist(null, _specialistsList[0].id);
+      this.setState({
+        serviceId: value,
+        serviceKey: _serviceKey,
+        specialists: _specialistsList
+      });
+    } else {
+      _specialistsList = _.shuffle(_specialistsList);
+      this.setState({
+        serviceId: value,
+        serviceKey: _serviceKey,
+        specialists: _specialistsList,
+        specialistId: ""
+      });
+    }
   };
 
   isWeekday = date => {
@@ -361,19 +375,6 @@ class DateTimePage extends Component {
             });
             this.setState({ timeTable: _timeTable });
           }
-        }
-      })
-      .catch(err => {
-        this.setState({ timeTable: [] });
-      });
-  };
-
-  handleTimeTable2 = (specialistId, date) => {
-    axios
-      .get(config.api + "/appointment/date/" + specialistId + "/" + date)
-      .then(response => {
-        if (response.data.times) {
-          this.setState({ timeTable: this.setTimeTable(response) });
         }
       })
       .catch(err => {
@@ -554,6 +555,16 @@ class DateTimePage extends Component {
                 Com quem deseja fazer?
               </Header>
               <div id="Specialists">
+                {this.state.specialists.length > 1 && (
+                  <Specialist
+                    onClick={this.handleRandom}
+                    firstName="Escolher"
+                    lastName="Aleatoriamente"
+                    desc="Deixe o sistema decidir por você"
+                    image="https://res.cloudinary.com/bukkapp/image/upload/v1543975354/Bukk/Assets/user.png"
+                    random={true}
+                  />
+                )}
                 {this.state.specialists.map(specialist => (
                   <Specialist
                     onClick={this.handleSpecialist}
@@ -566,16 +577,6 @@ class DateTimePage extends Component {
                     selected={specialist.selected}
                   />
                 ))}
-                {this.state.specialists.length > 1 && (
-                  <Specialist
-                    onClick={this.handleRandom}
-                    firstName="Escolha"
-                    lastName="Por Mim"
-                    desc="Escolher aleatoriamente"
-                    image="https://res.cloudinary.com/bukkapp/image/upload/v1543975354/Bukk/Assets/user.png"
-                    random={true}
-                  />
-                )}
               </div>
             </React.Fragment>
           )}
