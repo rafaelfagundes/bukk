@@ -7,7 +7,8 @@ import {
   Grid,
   Table,
   Image,
-  Message
+  Message,
+  Popup
 } from "semantic-ui-react";
 import Specialist from "../Specialist/Specialist";
 // import TimePills from "../TimePills/TimePills";
@@ -76,6 +77,7 @@ class DateTimePage extends Component {
       serviceId: "",
       services: [],
       specialistId: "",
+      specialistIndex: -1,
       specialists: [],
       servicesTable: [],
       timeTable: [],
@@ -229,8 +231,14 @@ class DateTimePage extends Component {
   };
 
   handleRandom = () => {
-    const _index = _.random(0, this.state.specialists.length - 1);
+    let _index = -2;
+
+    do {
+      _index = _.random(0, this.state.specialists.length - 1);
+    } while (_index === this.state.specialistIndex);
+
     this.handleSpecialist(null, this.state.specialists[_index].id);
+    this.setState({ specialistIndex: _index });
   };
 
   handleSpecialist = (e, value) => {
@@ -523,6 +531,20 @@ class DateTimePage extends Component {
               Incluir mais um serviço
               <Icon name="plus" />
             </Button>
+            <Popup
+              trigger={
+                <Icon
+                  className="help-tooltip"
+                  size="mini"
+                  name="help"
+                  circular
+                  color="blue"
+                />
+              }
+              header="Incluir mais um serviço"
+              content="Caso queira agendar mais um serviço clique neste botão. Ele será agendado com quaisquer outro serviço já salvo."
+              basic
+            />
           </React.Fragment>
         )}
 
@@ -533,8 +555,23 @@ class DateTimePage extends Component {
               <React.Fragment>
                 {this.state.servicesTable.length > 0 && <Spacer height={40} />}
                 <Header as="h3" color="blue" className="booker-title-what">
-                  O que deseja fazer?
+                  Serviço que deseja fazer
+                  <Popup
+                    trigger={
+                      <Icon
+                        className="help-tooltip"
+                        size="mini"
+                        name="help"
+                        circular
+                        color="blue"
+                      />
+                    }
+                    header="Serviço que deseja fazer"
+                    content="Escolha um dos serviços na lista. Por enquanto escolha somente um. Após informar todos os dados deste serviço, um novo poderá ser adicionado, caso queira."
+                    basic
+                  />
                 </Header>
+
                 <Grid columns={2}>
                   <Grid.Row>
                     <Grid.Column>
@@ -557,8 +594,22 @@ class DateTimePage extends Component {
             <React.Fragment>
               <Header as="h3" color="blue" className="booker-title-who">
                 {this.state.specialists.length > 1
-                  ? "Com quem deseja fazer?"
+                  ? "Escolha um especialista"
                   : "Especialista que irá lhe atender"}
+                <Popup
+                  trigger={
+                    <Icon
+                      className="help-tooltip"
+                      size="mini"
+                      name="help"
+                      circular
+                      color="blue"
+                    />
+                  }
+                  header="Escolha um especialista"
+                  content="Escolha um dos especialistas para executar o serviço. Caso tenha somente um, já está selecionado automaticamente."
+                  basic
+                />
               </Header>
               <div id="Specialists">
                 {this.state.specialists.length > 1 && (
@@ -567,7 +618,7 @@ class DateTimePage extends Component {
                     firstName="Escolher"
                     lastName="Aleatoriamente"
                     desc="Deixe o sistema decidir por você"
-                    image="https://res.cloudinary.com/bukkapp/image/upload/v1543975354/Bukk/Assets/user.png"
+                    image="https://res.cloudinary.com/bukkapp/image/upload/v1544067728/Bukk/Assets/shuffle.png"
                     random={true}
                   />
                 )}
@@ -590,7 +641,21 @@ class DateTimePage extends Component {
           {this.state.specialistId !== "" && (
             <React.Fragment>
               <Header as="h3" color="blue" className="booker-title-when">
-                Quando deseja fazer?
+                Dia e horário
+                <Popup
+                  trigger={
+                    <Icon
+                      className="help-tooltip"
+                      size="mini"
+                      name="help"
+                      circular
+                      color="blue"
+                    />
+                  }
+                  header="Dia e horário"
+                  content="Escolha um dia e um horário. As datas em cinza claro estão indisponíveis."
+                  basic
+                />
               </Header>
 
               <DatePicker
@@ -632,17 +697,33 @@ class DateTimePage extends Component {
               Salvar este agendamento
               <Icon name="save" />
             </Button>
+            <Popup
+              trigger={
+                <Icon
+                  className="help-tooltip"
+                  size="mini"
+                  name="help"
+                  circular
+                  color="blue"
+                />
+              }
+              header="Salvar agendamento"
+              content="Salve os dados deste serviço. Após salvar, você pode prosseguir ou adicionar mais um serviço."
+              basic
+            />
             {this.state.servicesTable.length > 0 && (
-              <Button
-                labelPosition="left"
-                icon
-                color="red"
-                onClick={this.handleDeleteService}
-                floated="right"
-              >
-                Cancelar adição
-                <Icon name="delete" />
-              </Button>
+              <React.Fragment>
+                <Button
+                  labelPosition="left"
+                  icon
+                  color="red"
+                  onClick={this.handleDeleteService}
+                  floated="right"
+                >
+                  Cancelar adição
+                  <Icon name="delete" />
+                </Button>
+              </React.Fragment>
             )}
           </React.Fragment>
         )}
@@ -660,6 +741,20 @@ class DateTimePage extends Component {
                 Cancelar adição
                 <Icon name="delete" />
               </Button>
+              <Popup
+                trigger={
+                  <Icon
+                    className="help-tooltip"
+                    size="mini"
+                    name="help"
+                    circular
+                    color="blue"
+                  />
+                }
+                header="Cancelar adição"
+                content="Caso tenha desistido de adicionar mais um serviço, clique neste botão."
+                basic
+              />
             </React.Fragment>
           )}
       </div>

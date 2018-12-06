@@ -10,7 +10,6 @@
   display: inline-block;
   cursor: pointer;
   font: "Lato", sans-serif;
-  margin-right: 15px;
   border-radius: 4px;
 }
 
@@ -22,28 +21,12 @@
   background-color: #f1f1f1;
 }
 
-.Specialist.random {
-  background-color: #3592da;
-}
-
-.Specialist.random:hover {
-  background-color: #2185d0;
-}
-
-.Specialist.random h4 {
-  color: #fff !important;
-}
-
-.Specialist.random div {
-  color: rgba(255, 255, 255, 0.8) !important;
-}
-
 .specialist-img {
   box-sizing: border-box;
-  border: 2px solid #eee;
-  width: 100px !important;
+  width: 105px !important;
   margin: 0 auto;
   margin-top: 10px;
+  border: 5px solid transparent;
 }
 
 .specialist-img__selected {
