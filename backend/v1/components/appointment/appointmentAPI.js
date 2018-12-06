@@ -75,10 +75,8 @@ router.get("/appointment/:companyId", (req, res) => {
               res.status(500).send({ error: err });
             }
             users.forEach(user => {
-              console.log(user);
-
               let _specialist = {};
-              _specialist.id = user._id;
+
               _specialist.firstName = user.firstName;
               _specialist.lastName = user.lastName;
 
@@ -86,6 +84,7 @@ router.get("/appointment/:companyId", (req, res) => {
               _specialist.image = _employee.avatar;
               _specialist.desc = _employee.title;
               _specialist.services = _employee.services;
+              _specialist.id = _employee._id;
 
               _appData.specialists.push(_specialist);
             });
@@ -98,21 +97,39 @@ router.get("/appointment/:companyId", (req, res) => {
 });
 
 router.get("/appointment/dates/:id/:date", (req, res) => {
-  // TODO: passar para chamada no banco
+  console.log("========= DATES =========");
+  try {
+    if (!moment(req.params.date).isValid("YYYY-MM")) {
+      res.status(500).json([]);
+      return false;
+    }
+  } catch (error) {
+    res.status(500).json([]);
+    return false;
+  }
+
+  const _dateFromParam = moment(req.params.date + "-01", "YYYY-MM");
+
+  // Month is in the past
+  if (moment().isAfter(_dateFromParam, "month")) {
+    res.status(500).json([]);
+    return false;
+  }
 
   const settings = {
     workingDays: [1, 2, 3, 4, 5] // 0 = domingo
   };
 
   function getDaysArrayByMonth() {
-    var daysInMonth = moment(req.params.date, "YYYY-MM").daysInMonth();
+    const _date = moment(req.params.date, "YYYY-MM");
+    var _daysInMonth = _date.daysInMonth();
 
     var arrDays = [];
 
-    while (daysInMonth) {
-      var current = moment(req.params.date, "YYYY-MM").date(daysInMonth);
+    while (_daysInMonth) {
+      var current = moment(req.params.date, "YYYY-MM").date(_daysInMonth);
       arrDays.push(current);
-      daysInMonth--;
+      _daysInMonth--;
     }
 
     return arrDays;
@@ -130,86 +147,49 @@ router.get("/appointment/dates/:id/:date", (req, res) => {
 });
 
 router.get("/appointment/date/:id/:date", (req, res) => {
-  const dates = [
-    {
-      date: moment().format("YYYY-MM-DD"),
-      times: [
-        "8:00",
-        "8:30",
-        "9:00",
-        "9:30",
-        "10:00",
-        "10:30",
-        "15:00",
-        "15:30",
-        "17:00",
-        "17:30"
-      ]
-    },
-    {
-      date: moment()
-        .add(1, "days")
-        .format("YYYY-MM-DD"),
-      times: ["8:00", "8:30", "9:00", "9:30"]
-    },
+  let _dateReq = moment(req.params.date);
+  const _employeeId = req.params.id;
 
-    {
-      date: moment()
-        .add(2, "days")
-        .format("YYYY-MM-DD"),
-      times: [
-        "8:00",
-        "8:30",
-        "9:00",
-        "9:30",
-        "10:00",
-        "10:30",
-        "15:00",
-        "15:30",
-        "17:00",
-        "17:30"
-      ]
-    },
-    {
-      date: moment()
-        .add(3, "days")
-        .format("YYYY-MM-DD"),
-      times: ["15:30"]
-    },
-    {
-      date: moment()
-        .add(4, "days")
-        .format("YYYY-MM-DD"),
-      times: ["9:00", "15:00", "16:00", "17:00"]
-    },
-    {
-      date: moment()
-        .add(5, "days")
-        .format("YYYY-MM-DD"),
-      times: ["9:00", "9:30", "16:00", "17:00"]
-    },
-    {
-      date: moment()
-        .add(6, "days")
-        .format("YYYY-MM-DD"),
-      times: ["9:00", "9:30", "15:00", "16:00"]
-    },
-    {
-      date: moment()
-        .add(7, "days")
-        .format("YYYY-MM-DD"),
-      times: ["9:00", "9:30", "15:00", "17:00"]
-    }
+  let _times = [
+    "08:00",
+    "08:30",
+    "09:00",
+    "09:30",
+    "10:00",
+    "10:30",
+    "11:00",
+    "11:30",
+    "14:00",
+    "14:30",
+    "15:00",
+    "15:30",
+    "16:00",
+    "16:30",
+    "17:00",
+    "17:30"
   ];
 
-  const date = _.find(dates, function(o) {
-    return o.date === req.params.date;
-  });
-  if (date) {
-    res.status(200).send(date);
-  } else {
-    res.status(404).send({ error: "Datas indisponível" });
-  }
+  Appointment.find(
+    { employee: mongoose.Types.ObjectId(_employeeId) },
+    (err, appointments) => {
+      appointments.forEach(item => {
+        let _start = moment(item.start);
+        let _end = moment(item.end);
+        if (_dateReq.format("YYYY-MM-DD") === _start.format("YYYY-MM-DD")) {
+          _.remove(_times, t => {
+            let _time = moment(_dateReq.format("YYYY-MM-DD") + " " + t);
+            const _t = moment(_time.format("YYYY-MM-DD HH:mm"));
+            const _s = moment(_start.format("YYYY-MM-DD HH:mm"));
+            const _e = moment(_end.format("YYYY-MM-DD HH:mm"));
+
+            return _t.isSameOrAfter(_s) && _t.isBefore(_e);
+          });
+        }
+      });
+
+      res.status(200).send(_times);
+    }
+  );
 });
 
 router.post("/appointment/", (req, res) => {
@@ -225,8 +205,6 @@ router.post("/appointment/", (req, res) => {
     phone: [{ number: _client.phone, whatsapp: _client.whatsapp }],
     company: req.body.companyId
   };
-
-  console.log(_costumer);
 
   Costumer.create(_costumer, (err, costumer) => {
     if (err) res.status(500).json({ msg: "Erro ao criar novo agendamento." });

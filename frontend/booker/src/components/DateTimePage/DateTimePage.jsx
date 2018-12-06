@@ -264,7 +264,8 @@ class DateTimePage extends Component {
 
     this.setState({
       specialistId: _specialistId,
-      specialists: _specialistsList
+      specialists: _specialistsList,
+      appointmentDate: moment()
     });
 
     this.props.appointment.services[
@@ -332,14 +333,14 @@ class DateTimePage extends Component {
     axios
       .get(config.api + "/appointment/date/" + specialistId + "/" + date)
       .then(response => {
-        if (response.data.times) {
+        if (response.data) {
           let _timeTable = [];
           if (this.props.currentService > 0) {
             // Already Reserved Times
             let _alreadyReserved = [];
             this.props.appointment.services.forEach(service => {
               if (service.end && service.end !== "") {
-                response.data.times.forEach(item => {
+                response.data.forEach(item => {
                   const _momentItem = moment(date).set({
                     hour: item.split(":")[0],
                     minute: item.split(":")[1],
@@ -365,7 +366,7 @@ class DateTimePage extends Component {
             });
 
             // All times
-            response.data.times.forEach(item => {
+            response.data.forEach(item => {
               // If not reserved, add to timetable to show in the UI
               if (!_.find(_alreadyReserved, { time: item, selected: false })) {
                 _timeTable.push({ time: item, selected: false });
@@ -373,7 +374,7 @@ class DateTimePage extends Component {
             });
             this.setState({ timeTable: _timeTable });
           } else {
-            response.data.times.forEach(time => {
+            response.data.forEach(time => {
               _timeTable.push({ time, selected: false });
             });
             this.setState({ timeTable: _timeTable });
