@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Header, Form, Label, Radio } from "semantic-ui-react";
+import { Header, Form, Label, Radio, Popup, Icon } from "semantic-ui-react";
 import { connect } from "react-redux";
 import { setAppointment, setPersonalInfoOk } from "../bookerActions";
 import validator from "validator";
@@ -183,7 +183,21 @@ class PersonalInfoPage extends Component {
     return (
       <div className={"PersonalInfoPage " + this.props.className}>
         <Header as="h3" color="blue">
-          Preencha seus dados pessoais
+          Seus dados pessoais
+          <Popup
+            trigger={
+              <Icon
+                className="help-tooltip"
+                size="mini"
+                name="help"
+                circular
+                color="blue"
+              />
+            }
+            header="Seus dados pessoais"
+            content="Os dados com (*) são obrigatórios. Confira os dados digitados em caso de erro. Caso estejam certos, os erros desaparecem."
+            basic
+          />
         </Header>
         <Form>
           <Form.Group>
@@ -302,7 +316,7 @@ class PersonalInfoPage extends Component {
                 toggle
                 inline
                 size="large"
-                label="Possui WhatsApp?"
+                label="Número WhatsApp?"
                 className="pt30px"
                 onChange={this.handleChange}
                 id="whatsapp"

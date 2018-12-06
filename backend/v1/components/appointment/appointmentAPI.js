@@ -97,7 +97,6 @@ router.get("/appointment/:companyId", (req, res) => {
 });
 
 router.get("/appointment/dates/:id/:date", (req, res) => {
-  console.log("========= DATES =========");
   try {
     if (!moment(req.params.date).isValid("YYYY-MM")) {
       res.status(500).json([]);
@@ -233,7 +232,6 @@ router.post("/appointment/", (req, res) => {
           const _return = {
             status: "confirmed",
             msg: "Agendamento concluído com sucesso",
-            confirmationId: appointments[0].id,
             client: _client,
             services: _services
           };

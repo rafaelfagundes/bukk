@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "./ConfirmationPage.css";
-import { Header, Icon } from "semantic-ui-react";
+import { Header, Icon, Popup } from "semantic-ui-react";
 import ServiceListItem from "../ServiceListItem/ServiceListItem";
 import PaymentDetails from "../PaymentDetails/PaymentDetails";
 import ClientInfo from "../ClientInfo/ClientInfo";
@@ -137,6 +137,20 @@ class ConfirmationPage extends Component {
           >
             Adicionar ou remover serviços
           </button>
+          <Popup
+            trigger={
+              <Icon
+                className="help-tooltip"
+                size="mini"
+                name="help"
+                circular
+                color="blue"
+              />
+            }
+            header="Adicionar ou remover serviços"
+            content="Ainda dá tempo de adicionar ou remover serviços. Assim que tiver adicionado, volte a essa tela. Nenhum dado será perdido."
+            basic
+          />
         </div>
         <PaymentDetails
           types={this.props.companyData.business.paymentOptions}

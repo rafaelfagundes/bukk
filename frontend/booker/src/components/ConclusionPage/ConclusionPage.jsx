@@ -14,35 +14,6 @@ const mapStateToProps = state => {
 };
 
 class ConclusionPage extends Component {
-  state = {
-    status: "confirmed",
-    msg: "Agendamento concluído com sucesso",
-    confirmationId: "6c22b5fdc8c24913ac4d9b63",
-    client: {
-      firstName: "Richard",
-      lastName: "Mula",
-      email: "mula@gmail.com",
-      phone: "32991267913",
-      whatsapp: true,
-      obs:
-        "Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?"
-    },
-    services: [
-      {
-        serviceKey: "18a6673e-4cf5-4b27-878b-da02cfcf9aea",
-        serviceId: "service001",
-        dateAndTime: { time: "16:00", date: "2018-11-30T18:09:46.000Z" },
-        specialistId: "spec001"
-      },
-      {
-        serviceKey: "18a6673e-4cf5-4b27-878b-da02cgcf9aea",
-        serviceId: "service002",
-        dateAndTime: { time: "18:00", date: "2018-12-01T18:09:46.000Z" },
-        specialistId: "spec002"
-      }
-    ]
-  };
-
   handlePrint = () => {
     window.print();
   };
@@ -67,7 +38,6 @@ class ConclusionPage extends Component {
             </div>
             <div className="conclusion-content">
               <Ticket
-                confirmationId={this.props.confirmation.confirmationId}
                 client={this.props.confirmation.client}
                 services={this.props.confirmation.services}
                 companyData={this.props.companyData}

@@ -223,6 +223,9 @@ class Booker extends Component {
             )}
           </Grid.Column>
         </Grid.Row>
+        <Button floated="left" onClick={this.handlePagination} value="3">
+          voltar
+        </Button>
       </React.Fragment>
     );
   }
