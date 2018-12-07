@@ -62,6 +62,20 @@ app.use(BASE_URL, [
   qrcodeRoutes
 ]);
 
+app.use((req, res, next) => {
+  const err = new Error("Not Found");
+  err.status = 404;
+  next(err);
+});
+app.use((err, req, res, next) => {
+  res.status(err.status || 500);
+  res.json({
+    error: {
+      message: err.message
+    }
+  });
+});
+
 app.listen(process.env.port || PORT, () => {
   console.log(`👂  Listen to requests on port ${process.env.port || PORT}`);
   console.log(

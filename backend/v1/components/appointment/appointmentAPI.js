@@ -13,6 +13,36 @@ const mongoose = require("mongoose");
 const Appointment = require("../appointment/Appointment");
 const Costumer = require("../costumer/Costumer");
 
+function getWeekday(number) {
+  const _weekdays = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+  return _weekdays[number];
+}
+
+function generateTimeTable(times, minTimeFrame = 30) {
+  let _timeTable = [];
+
+  times.forEach(time => {
+    let _s = moment().set({
+      hour: time.start.split(":")[0],
+      minute: time.start.split(":")[1],
+      second: "00"
+    });
+    let _e = moment().set({
+      hour: time.end.split(":")[0],
+      minute: time.end.split(":")[1],
+      second: "00"
+    });
+    while (_s.isBefore(_e)) {
+      if (_s.format("HH:mm") !== _e.format("HH:mm")) {
+        _timeTable.push(moment(_s).format("HH:mm"));
+      }
+      _s.add(minTimeFrame, "minutes");
+    }
+  });
+
+  return _timeTable;
+}
+
 router.get("/appointment/:companyId", (req, res) => {
   Company.findById({ _id: req.params.companyId }, (err, company) => {
     if (err) {
@@ -149,33 +179,37 @@ router.get("/appointment/date/:id/:date", (req, res) => {
   let _dateReq = moment(req.params.date);
   const _employeeId = req.params.id;
 
-  let _times = [
-    "08:00",
-    "08:30",
-    "09:00",
-    "09:30",
-    "10:00",
-    "10:30",
-    "11:00",
-    "11:30",
-    "14:00",
-    "14:30",
-    "15:00",
-    "15:30",
-    "16:00",
-    "16:30",
-    "17:00",
-    "17:30"
-  ];
-
-  Appointment.find(
-    { employee: mongoose.Types.ObjectId(_employeeId) },
+  Appointment.aggregate(
+    [
+      {
+        $match: {
+          employee: mongoose.Types.ObjectId(_employeeId)
+        }
+      },
+      {
+        $lookup: {
+          from: "employees",
+          localField: "employee",
+          foreignField: "_id",
+          as: "employee"
+        }
+      }
+    ],
     (err, appointments) => {
+      let _timeTable;
       appointments.forEach(item => {
+        const _employee = item.employee[0];
         let _start = moment(item.start);
         let _end = moment(item.end);
+
+        let _workingHours = _.find(_employee.workingDays, function(e) {
+          return e.weekDay === getWeekday(_dateReq.weekday());
+        });
+
+        _timeTable = generateTimeTable(_workingHours.workingHours, 15);
+
         if (_dateReq.format("YYYY-MM-DD") === _start.format("YYYY-MM-DD")) {
-          _.remove(_times, t => {
+          _.remove(_timeTable, t => {
             let _time = moment(_dateReq.format("YYYY-MM-DD") + " " + t);
             const _t = moment(_time.format("YYYY-MM-DD HH:mm"));
             const _s = moment(_start.format("YYYY-MM-DD HH:mm"));
@@ -186,7 +220,7 @@ router.get("/appointment/date/:id/:date", (req, res) => {
         }
       });
 
-      res.status(200).send(_times);
+      res.status(200).send(_timeTable);
     }
   );
 });

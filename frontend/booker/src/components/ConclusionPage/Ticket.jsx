@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Icon } from "semantic-ui-react";
+import { Icon, Popup } from "semantic-ui-react";
 import "./Ticket.css";
 
 class Ticket extends Component {
@@ -107,6 +107,20 @@ class Ticket extends Component {
                 <div className="ticket-client-details-confirmationId">
                   <Icon name="hashtag" />
                   {item.serviceId}
+                  <Popup
+                    trigger={
+                      <Icon
+                        className="help-tooltip"
+                        size="mini"
+                        name="help"
+                        circular
+                        color="blue"
+                      />
+                    }
+                    header="Número de agendamento"
+                    content="Informe este número de agendamento para a empresa prestadora de serviços, caso eles peçam. Não se preocupe, não é obrigatório e você receberá também por email."
+                    basic
+                  />
                 </div>
                 <div className="ticket-appointment-details-service-date">
                   <Icon name="calendar outline" />
