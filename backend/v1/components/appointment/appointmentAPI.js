@@ -178,6 +178,7 @@ router.get("/appointment/dates/:id/:date", (req, res) => {
 router.get("/appointment/date/:id/:date", (req, res) => {
   let _dateReq = moment(req.params.date);
   const _employeeId = req.params.id;
+  let _excludeDates = [];
 
   Appointment.aggregate(
     [
@@ -206,18 +207,26 @@ router.get("/appointment/date/:id/:date", (req, res) => {
           return e.weekDay === getWeekday(_dateReq.weekday());
         });
 
-        _timeTable = generateTimeTable(_workingHours.workingHours, 15);
+        // console.log(_start.format("YYYY-MM-DD"));
 
-        if (_dateReq.format("YYYY-MM-DD") === _start.format("YYYY-MM-DD")) {
-          _.remove(_timeTable, t => {
-            let _time = moment(_dateReq.format("YYYY-MM-DD") + " " + t);
-            const _t = moment(_time.format("YYYY-MM-DD HH:mm"));
-            const _s = moment(_start.format("YYYY-MM-DD HH:mm"));
-            const _e = moment(_end.format("YYYY-MM-DD HH:mm"));
+        if (_workingHours) {
+          if (_dateReq.format("YYYY-MM-DD") === _start.format("YYYY-MM-DD")) {
+            _timeTable = generateTimeTable(_workingHours.workingHours, 30);
 
-            return _t.isSameOrAfter(_s) && _t.isBefore(_e);
-          });
+            _.remove(_timeTable, t => {
+              let _time = moment(_dateReq.format("YYYY-MM-DD") + " " + t);
+              const _t = moment(_time.format("YYYY-MM-DD HH:mm"));
+              const _s = moment(_start.format("YYYY-MM-DD HH:mm"));
+              const _e = moment(_end.format("YYYY-MM-DD HH:mm"));
 
+              return _t.isSameOrAfter(_s) && _t.isBefore(_e);
+            });
+          } else {
+            _timeTable = generateTimeTable(_workingHours.workingHours, 30);
+            console.log("outro dia");
+          }
+
+          // Remove times in today past
           _.remove(_timeTable, t => {
             let _time = moment(_dateReq.format("YYYY-MM-DD") + " " + t);
             const _t = moment(_time.format("YYYY-MM-DD HH:mm"));
