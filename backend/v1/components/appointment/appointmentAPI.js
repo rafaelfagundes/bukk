@@ -217,6 +217,12 @@ router.get("/appointment/date/:id/:date", (req, res) => {
 
             return _t.isSameOrAfter(_s) && _t.isBefore(_e);
           });
+
+          _.remove(_timeTable, t => {
+            let _time = moment(_dateReq.format("YYYY-MM-DD") + " " + t);
+            const _t = moment(_time.format("YYYY-MM-DD HH:mm"));
+            return _t.isBefore(moment());
+          });
         }
       });
 

@@ -677,7 +677,9 @@ class DateTimePage extends Component {
                     />
                   ))}
                   {this.state.timeTable.length === 0 && (
-                    <Message color="orange">Nenhum horário disponível</Message>
+                    <Message color="orange">
+                      Nenhum horário disponível. Tente o próximo dia.
+                    </Message>
                   )}
                 </div>
               </div>
