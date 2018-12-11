@@ -23,7 +23,7 @@ import config from "../../config";
 import calendarLocale from "./CalendarLocale";
 import _ from "lodash";
 import { connect } from "react-redux";
-import { getService, getSpecialist, generateUUID } from "../Utils/utils";
+import { getService, generateUUID } from "../Utils/utils";
 
 import {
   setCurrentService,
@@ -208,7 +208,7 @@ class DateTimePage extends Component {
       _index = _.random(0, this.state.specialists.length - 1);
     } while (_index === this.state.specialistIndex);
 
-    this.handleSpecialist(null, this.state.specialists[_index].id);
+    this.handleSpecialist(null, this.state.specialists[_index].employee._id);
     this.setState({ specialistIndex: _index });
   };
 
@@ -234,7 +234,8 @@ class DateTimePage extends Component {
     let _specialistsList = this.state.specialists;
 
     _specialistsList.forEach(element => {
-      if (element.id === _specialistId) {
+      console.log(element);
+      if (element.employee._id === _specialistId) {
         element.selected = true;
       } else {
         element.selected = false;

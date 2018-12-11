@@ -1,10 +1,12 @@
 // External Dependancies
 const boom = require("boom");
 const mongoose = require("mongoose");
+const moment = require("moment");
 
 // Get Data Models
 const Employee = require("./Employee");
 const User = require("../user/User");
+const Appointment = require("../appointment/Appointment");
 
 // Get all employees
 exports.getEmployees = async (req, reply) => {
@@ -62,6 +64,28 @@ exports.getEmployeesByCompany = async (req, reply) => {
 exports.getSingleEmployee = async (req, reply) => {
   try {
     const id = req.params.id;
+    const employee = await Employee.findById(id);
+    return employee;
+  } catch (err) {
+    throw boom.boomify(err);
+  }
+};
+
+// Get an employee's schedule
+exports.getSchedule = async (req, reply) => {
+  console.clear();
+  const id = req.params.id;
+  const monthStart = moment(req.params.date + "-01");
+  const monthEnd = moment(req.params.date + "-01").add(1, "month");
+  const duration = req.params.duration;
+
+  return [{ id, monthStart, monthEnd, duration }];
+};
+
+exports.getAvaialbleDates2 = async (req, reply) => {
+  try {
+    const id = req.params.id;
+    const date = req.params.date;
     const employee = await Employee.findById(id);
     return employee;
   } catch (err) {

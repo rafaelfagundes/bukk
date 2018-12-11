@@ -120,6 +120,11 @@ const routes = [
   },
   {
     method: "GET",
+    url: "/api/specialists/schedule/:id/date/:date/duration/:duration",
+    handler: employeeController.getSchedule
+  },
+  {
+    method: "GET",
     url: "/api/specialists/company/:companyId",
     handler: employeeController.getEmployeesByCompany
   },

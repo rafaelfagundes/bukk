@@ -1,3 +1,4 @@
+console.clear();
 const mongoose = require("mongoose");
 const cors = require("cors");
 const fastify = require("fastify")({
