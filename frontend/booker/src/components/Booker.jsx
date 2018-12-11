@@ -122,7 +122,7 @@ class Booker extends Component {
               <div className="Booker">
                 <div className="booker-header">
                   <Image
-                    src={this.props.companyData.business.logo}
+                    src={this.props.companyData.logo}
                     className="booker-header-logo"
                   />
                 </div>

@@ -9,11 +9,12 @@ const initialState = {
   confirmationOk: true,
 
   companyData: {
-    business: {
-      logo: "",
-      paymentOptions: []
-    }
+    logo: "",
+    paymentOptions: []
   },
+
+  services: [],
+  specialists: [],
 
   errors: false,
 
@@ -42,6 +43,10 @@ const bookerReducer = (state = initialState, action) => {
     case "SET_APPOINTMENT":
       return assign({}, state, action);
     case "SET_COMPANY_DATA":
+      return assign({}, state, action);
+    case "SET_SERVICES":
+      return assign({}, state, action);
+    case "SET_SPECIALISTS":
       return assign({}, state, action);
     case "SET_DATE_TIME_OK":
       return assign({}, state, action);

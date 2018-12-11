@@ -25,6 +25,18 @@ export const setCompanyData = companyData => {
   };
 };
 
+export const setServices = services => {
+  return (dispatch, getState) => {
+    dispatch({ type: "SET_SERVICES", services });
+  };
+};
+
+export const setSpecialists = specialists => {
+  return (dispatch, getState) => {
+    dispatch({ type: "SET_SPECIALISTS", specialists });
+  };
+};
+
 export const setAppointment = appointment => {
   return (dispatch, getState) => {
     dispatch({

@@ -23,18 +23,23 @@ import config from "../../config";
 import calendarLocale from "./CalendarLocale";
 import _ from "lodash";
 import { connect } from "react-redux";
+import { getService, getSpecialist, generateUUID } from "../Utils/utils";
 
 import {
   setCurrentService,
   setCompanyData,
   setDateTimeOk,
   setConfirmationOk,
-  setAppointment
+  setAppointment,
+  setServices,
+  setSpecialists
 } from "../bookerActions";
 
 const mapStateToProps = state => {
   return {
     companyData: state.booker.companyData,
+    services: state.booker.services,
+    specialists: state.booker.specialists,
     currentService: state.booker.currentService,
     appointment: state.booker.appointment
   };
@@ -43,6 +48,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     setCompanyData: data => dispatch(setCompanyData(data)),
+    setServices: data => dispatch(setServices(data)),
+    setSpecialists: data => dispatch(setSpecialists(data)),
     setAppointment: appointment => dispatch(setAppointment(appointment)),
     setCurrentService: index => dispatch(setCurrentService(index)),
     setDateTimeOk: dateAndTimeOk => dispatch(setDateTimeOk(dateAndTimeOk)),
@@ -50,21 +57,6 @@ const mapDispatchToProps = dispatch => {
       dispatch(setConfirmationOk(confirmationOk))
   };
 };
-
-function generateUUID() {
-  var d = new Date().getTime();
-  if (Date.now) {
-    d = Date.now(); //high-precision timer
-  }
-  var uuid = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(
-    c
-  ) {
-    var r = (d + Math.random() * 16) % 16 | 0;
-    d = Math.floor(d / 16);
-    return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
-  });
-  return uuid;
-}
 
 class DateTimePage extends Component {
   constructor(props) {
@@ -101,29 +93,8 @@ class DateTimePage extends Component {
     });
   };
 
-  getSpecialist(id) {
-    const index = _.findIndex(this.props.companyData.specialists, function(o) {
-      return o.id === id;
-    });
-    if (index >= 0) {
-      return this.props.companyData.specialists[index];
-    } else {
-      return null;
-    }
-  }
-  getService(id) {
-    const index = _.findIndex(this.props.companyData.services, function(o) {
-      return o.id === id;
-    });
-    if (index >= 0) {
-      return this.props.companyData.services[index];
-    } else {
-      return null;
-    }
-  }
-
   handleSave = () => {
-    let _service = this.getService(this.state.serviceId);
+    let _service = getService(this.state.serviceId, this.props.services);
     let _specialist = this.getSpecialist(this.state.specialistId);
     let _servicesTable = this.state.servicesTable;
 
@@ -283,7 +254,7 @@ class DateTimePage extends Component {
 
   handleService = (e, { value }) => {
     const _serviceKey = generateUUID();
-    const { duration } = this.getService(value);
+    const { duration } = getService(value, this.props.services);
 
     const _service = {
       serviceKey: _serviceKey,
@@ -303,8 +274,8 @@ class DateTimePage extends Component {
 
     let _specialistsList = [];
 
-    this.props.companyData.specialists.forEach(specialist => {
-      const result = _.find(specialist.services, o => {
+    this.props.specialists.forEach(specialist => {
+      const result = _.find(specialist.employee.services, o => {
         return o === value;
       });
       if (result) {
@@ -438,24 +409,35 @@ class DateTimePage extends Component {
 
   componentDidMount() {
     axios
-      .get(config.api + "/appointment/" + this.props.companyId)
+      .get(config.api + "/companies/" + this.props.companyId)
       .then(response => {
         this.props.setCompanyData(response.data);
+      })
+      .catch(error => {
+        // handle error
+        this.setState({ errors: { companyNotFound: true } });
+      });
+
+    axios
+      .get(config.api + "/services/company/" + this.props.companyId)
+      .then(response => {
+        this.props.setServices(response.data);
         let _services = [];
-        response.data.services.forEach(element => {
+        response.data.forEach(element => {
           _services.push({
             text:
               element.desc +
               " - R$" +
               element.value.toFixed(2).replace(".", ","),
-            value: element.id
+            value: element._id
           });
         });
         this.setState({ services: _services });
-      })
-      .catch(error => {
-        // handle error
-        this.setState({ errors: { companyNotFound: true } });
+      });
+    axios
+      .get(config.api + "/specialists/company/" + this.props.companyId)
+      .then(response => {
+        this.props.setSpecialists(response.data);
       });
   }
 
@@ -625,12 +607,12 @@ class DateTimePage extends Component {
                 {this.state.specialists.map(specialist => (
                   <Specialist
                     onClick={this.handleSpecialist}
-                    key={specialist.id}
+                    key={specialist.employee._id}
                     firstName={specialist.firstName}
                     lastName={specialist.lastName}
-                    image={specialist.image}
-                    desc={specialist.desc}
-                    value={specialist.id}
+                    image={specialist.employee.avatar}
+                    desc={specialist.employee.title}
+                    value={specialist.employee._id}
                     selected={specialist.selected}
                   />
                 ))}
