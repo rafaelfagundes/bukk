@@ -149,7 +149,8 @@
   .conclusion-header,
   .ticket-qrcode,
   .conclusion-footer,
-  .ticket-appointment-details-service-avatar {
+  .ticket-appointment-details-service-avatar,
+  .help-tooltip {
     display: none !important;
   }
 

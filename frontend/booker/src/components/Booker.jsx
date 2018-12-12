@@ -10,6 +10,8 @@ import _ from "lodash";
 
 import config from "../config";
 
+import { getService, getSpecialist } from "./Utils/utils";
+
 import Breadcrumbs from "./Breadcrumbs/Breadcrumbs";
 import PersonalInfoPage from "./PersonalInfoPage/PersonalInfoPage";
 import DateTimePage from "./DateTimePage/DateTimePage";
@@ -24,7 +26,9 @@ const mapStateToProps = state => {
     dateAndTimeOk: state.booker.dateAndTimeOk,
     personalInfoOk: state.booker.personalInfoOk,
     confirmationOk: state.booker.confirmationOk,
-    appointment: state.booker.appointment
+    appointment: state.booker.appointment,
+    services: state.booker.services,
+    specialists: state.booker.specialists
   };
 };
 
@@ -59,16 +63,19 @@ class Booker extends Component {
     var _page = e.target.value;
 
     axios
-      .post(config.api + "/appointment/", this.props.appointment)
+      .post(config.api + "/appointments", this.props.appointment)
       .then(response => {
         const _response = response.data;
 
         _response.services.forEach(service => {
-          const _service = this.getService(service.serviceId);
-          const _specialist = this.getSpecialist(service.specialistId);
+          const _service = getService(service.serviceId, this.props.services);
+          const _specialist = getSpecialist(
+            service.specialistId,
+            this.props.specialists
+          );
           service.specialistName =
             _specialist.firstName + " " + _specialist.lastName;
-          service.specialistImage = _specialist.image;
+          service.specialistImage = _specialist.employee.avatar;
           service.specialistTitle = _specialist.desc;
           service.serviceDesc = _service.desc;
           service.time =
@@ -223,9 +230,6 @@ class Booker extends Component {
             )}
           </Grid.Column>
         </Grid.Row>
-        <Button floated="left" onClick={this.handlePagination} value="3">
-          voltar
-        </Button>
       </React.Fragment>
     );
   }

@@ -6,12 +6,15 @@ import PaymentDetails from "../PaymentDetails/PaymentDetails";
 import ClientInfo from "../ClientInfo/ClientInfo";
 import { setPage } from "../bookerActions";
 import { connect } from "react-redux";
+import { getService, getSpecialist } from "../Utils/utils";
 import _ from "lodash";
 
 const mapStateToProps = state => {
   return {
     companyData: state.booker.companyData,
-    appointment: state.booker.appointment
+    appointment: state.booker.appointment,
+    services: state.booker.services,
+    specialists: state.booker.specialists
   };
 };
 
@@ -60,15 +63,18 @@ class ConfirmationPage extends Component {
         let _totalPrice = 0;
 
         this.props.appointment.services.forEach(service => {
-          let _specialist = this.getSpecialist(service.specialistId);
-          let _service = this.getService(service.serviceId);
+          let _specialist = getSpecialist(
+            service.specialistId,
+            this.props.specialists
+          );
+          let _service = getService(service.serviceId, this.props.services);
 
           _totalPrice += Number(_service.value);
 
           if (_specialist && _service) {
             _servicesList.push({
               serviceKey: service.serviceKey,
-              specialistPhoto: _specialist.image,
+              specialistPhoto: _specialist.employee.avatar,
               serviceDesc: _service.desc,
               specialistName:
                 _specialist.firstName + " " + _specialist.lastName,

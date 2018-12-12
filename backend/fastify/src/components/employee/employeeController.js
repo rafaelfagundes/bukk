@@ -8,6 +8,59 @@ const Employee = require("./Employee");
 const User = require("../user/User");
 const Appointment = require("../appointment/Appointment");
 
+function generateMonthSchedule(date, workingDays, workingTime, timeFrame = 30) {
+  let monthStart = moment(date);
+  if (monthStart.isBefore(moment())) {
+    monthStart = moment({ minute: "00", second: "00" });
+  }
+  const monthEnd = moment(date).add(1, "month");
+
+  let dateSet = new Set();
+
+  let times = [];
+
+  while (monthStart.isBefore(monthEnd)) {
+    // For each working time period
+    workingTime.forEach(wTime => {
+      // Start period
+      let _s = moment(monthStart).set({
+        hour: wTime.start.split(":")[0],
+        minute: wTime.start.split(":")[1],
+        second: "00"
+      });
+
+      //End period
+      let _e = moment(monthStart).set({
+        hour: wTime.end.split(":")[0],
+        minute: wTime.end.split(":")[1],
+        second: "00"
+      });
+
+      // Non working day filter
+      if (workingDays.indexOf(moment(monthStart).weekday()) >= 0) {
+        // Non working hour filter
+        if (
+          moment(monthStart).isSameOrAfter(_s) &&
+          moment(monthStart).isBefore(_e) &&
+          moment(monthStart).isSameOrAfter(moment())
+        ) {
+          times.push(moment(monthStart).format("YYYY-MM-DD HH:mm"));
+        }
+      } else {
+        dateSet.add(moment(monthStart).format("YYYY-MM-DD"));
+      }
+    });
+    monthStart.add(timeFrame, "minute");
+  }
+
+  const dates = Array.from(dateSet);
+
+  return {
+    dates,
+    times
+  };
+}
+
 // Get all employees
 exports.getEmployees = async (req, reply) => {
   try {
@@ -75,11 +128,20 @@ exports.getSingleEmployee = async (req, reply) => {
 exports.getSchedule = async (req, reply) => {
   console.clear();
   const id = req.params.id;
-  const monthStart = moment(req.params.date + "-01");
-  const monthEnd = moment(req.params.date + "-01").add(1, "month");
+  const date = req.params.date;
   const duration = req.params.duration;
 
-  return [{ id, monthStart, monthEnd, duration }];
+  // return [{ id, monthStart, monthEnd, duration }];
+  return generateMonthSchedule(
+    date,
+    [1, 2, 3, 4, 5],
+    [
+      { start: "8:00", end: "12:00" },
+      { start: "14:00", end: "18:00" },
+      { start: "19:00", end: "23:59" }
+    ],
+    duration
+  );
 };
 
 exports.getAvaialbleDates2 = async (req, reply) => {

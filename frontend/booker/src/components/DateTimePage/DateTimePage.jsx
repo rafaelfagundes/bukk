@@ -23,7 +23,7 @@ import config from "../../config";
 import calendarLocale from "./CalendarLocale";
 import _ from "lodash";
 import { connect } from "react-redux";
-import { getService, generateUUID } from "../Utils/utils";
+import { getService, generateUUID, getSpecialist } from "../Utils/utils";
 
 import {
   setCurrentService,
@@ -70,14 +70,13 @@ class DateTimePage extends Component {
       services: [],
       specialistId: "",
       specialistIndex: -1,
+      specialistSchedule: [],
       specialists: [],
       servicesTable: [],
       timeTable: [],
       excludeDates: [],
       saveClicked: false,
-      errors: {
-        companyNotFound: false
-      }
+      errors: { companyNotFound: false }
     };
   }
 
@@ -95,7 +94,10 @@ class DateTimePage extends Component {
 
   handleSave = () => {
     let _service = getService(this.state.serviceId, this.props.services);
-    let _specialist = this.getSpecialist(this.state.specialistId);
+    let _specialist = getSpecialist(
+      this.state.specialistId,
+      this.props.specialists
+    );
     let _servicesTable = this.state.servicesTable;
 
     _servicesTable.push({
@@ -103,7 +105,7 @@ class DateTimePage extends Component {
       serviceId: _service.id,
       serviceDesc: _service.desc,
       specialistName: _specialist.firstName + " " + _specialist.lastName,
-      specialistImage: _specialist.image,
+      specialistImage: _specialist.employee.avatar,
       dateTime:
         this.state.appointmentDate.format("DD [de] MMMM [de] YYYY") +
         " às " +
@@ -146,9 +148,20 @@ class DateTimePage extends Component {
     const _specialistId = this.state.specialistId;
 
     axios
-      .get(config.api + "/appointment/dates/" + _specialistId + "/" + _month)
+      .get(
+        `${
+          config.api
+        }/specialists/schedule/${_specialistId}/date/${_month}/duration/30`
+      )
       .then(response => {
-        this.setState({ excludeDates: response.data });
+        let _dates = [];
+        response.data.dates.forEach(date => {
+          _dates.push(moment(date));
+        });
+        this.setState({
+          excludeDates: _dates,
+          specialistSchedule: response.data.times
+        });
       })
       .catch(err => {
         console.log(err);
@@ -156,10 +169,7 @@ class DateTimePage extends Component {
   };
 
   handleDate = date => {
-    const _date = date.format("YYYY-MM-DD");
-    const _specialistId = this.state.specialistId;
-
-    this.handleTimeTable(_specialistId, _date);
+    this.handleTimeTable(date.format("YYYY-MM-DD"));
 
     this.props.appointment.services[this.props.currentService].start = date;
 
@@ -221,20 +231,33 @@ class DateTimePage extends Component {
     const _specialistId = String(value);
 
     axios
-      .get(config.api + "/appointment/dates/" + _specialistId + "/" + _month)
+      .get(
+        `${
+          config.api
+        }/specialists/schedule/${_specialistId}/date/${_month}/duration/30`
+      )
       .then(response => {
-        this.setState({ excludeDates: response.data });
+        let _dates = [];
+        response.data.dates.forEach(date => {
+          _dates.push(moment(date));
+        });
+        this.setState(
+          {
+            excludeDates: _dates,
+            specialistSchedule: response.data.times
+          },
+          () => {
+            this.handleTimeTable(_date);
+          }
+        );
       })
       .catch(err => {
         console.log(err);
       });
 
-    this.handleTimeTable(_specialistId, _date);
-
     let _specialistsList = this.state.specialists;
 
     _specialistsList.forEach(element => {
-      console.log(element);
       if (element.employee._id === _specialistId) {
         element.selected = true;
       } else {
@@ -309,7 +332,21 @@ class DateTimePage extends Component {
     return day !== 0 && day !== 6;
   };
 
-  handleTimeTable = (specialistId, date) => {
+  handleTimeTable = date => {
+    let _timeTable = [];
+
+    this.state.specialistSchedule.forEach(time => {
+      if (time.indexOf(date) >= 0) {
+        _timeTable.push({
+          time: moment(time).format("HH:mm"),
+          selected: false
+        });
+      }
+    });
+    this.setState({ timeTable: _timeTable });
+  };
+
+  handleTimeTable2 = (specialistId, date) => {
     axios
       .get(config.api + "/appointment/date/" + specialistId + "/" + date)
       .then(response => {

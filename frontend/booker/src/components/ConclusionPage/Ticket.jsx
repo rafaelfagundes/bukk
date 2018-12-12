@@ -136,19 +136,19 @@ class Ticket extends Component {
         </div>
         <div className="ticket-company-details">
           <div className="ticket-company-details-name">
-            {this.props.companyData.business.tradingName}
+            {this.props.companyData.tradingName}
           </div>
           <div className="ticket-company-details-street">
             <Icon name="map marker alternate" />
-            {this.props.companyData.business.address.street},{" "}
-            {this.props.companyData.business.address.number} -{" "}
-            {this.props.companyData.business.address.neighborhood}
+            {this.props.companyData.address.street},{" "}
+            {this.props.companyData.address.number} -{" "}
+            {this.props.companyData.address.neighborhood}
           </div>
           <div className="ticket-company-details-city">
-            {this.props.companyData.business.address.city} -{" "}
-            {this.props.companyData.business.address.state}
+            {this.props.companyData.address.city} -{" "}
+            {this.props.companyData.address.state}
           </div>
-          {this.props.companyData.business.phone.map(phone => (
+          {this.props.companyData.phone.map(phone => (
             <div className="ticket-company-details-phone" key={phone.number}>
               {phone.phoneType === "landline" ? (
                 <Icon name="phone" />
@@ -160,12 +160,12 @@ class Ticket extends Component {
           ))}
           <div className="ticket-company-details-email">
             <Icon name="envelope outline" />
-            {this.props.companyData.business.email}
+            {this.props.companyData.email}
           </div>
           <div className="ticket-company-details-web">
             <Icon name="world" />
-            <a href={this.props.companyData.business.website}>
-              {this.props.companyData.business.website}
+            <a href={this.props.companyData.website}>
+              {this.props.companyData.website}
             </a>
           </div>
         </div>
