@@ -16,6 +16,7 @@ import PersonalInfoPage from "./PersonalInfoPage/PersonalInfoPage";
 import DateTimePage from "./DateTimePage/DateTimePage";
 import ConfirmationPage from "./ConfirmationPage/ConfirmationPage";
 import ConclusionPage from "./ConclusionPage/ConclusionPage";
+import ErrorPage from "./ErrorPage/ErrorPage";
 
 const mapStateToProps = state => {
   return {
@@ -41,7 +42,9 @@ const mapDispatchToProps = dispatch => {
 
 class Booker extends Component {
   state = {
-    numPages: 3
+    numPages: 3,
+    error:
+      "Erro ao tentar agendar: A data e horários escolhidos já foram agendados. Tente novamente em outro horário."
   };
 
   componentDidMount() {
@@ -95,7 +98,8 @@ class Booker extends Component {
         this.props.setPage(_page);
       })
       .catch(error => {
-        console.log(error);
+        this.props.setPage("5");
+        this.setState({ error: error.response.data.message });
       });
   };
 
@@ -133,6 +137,12 @@ class Booker extends Component {
                     className={
                       this.props.page === "4" ? "show-page" : "dont-show-page"
                     }
+                  />
+                  <ErrorPage
+                    className={
+                      this.props.page === "5" ? "show-page" : "dont-show-page"
+                    }
+                    message={this.state.error}
                   />
                 </div>
 
@@ -201,6 +211,17 @@ class Booker extends Component {
                           pages={this.state.numPages}
                           currentPage={this.props.page}
                         />
+                      </React.Fragment>
+                    )}
+                    {this.props.page === "5" && (
+                      <React.Fragment>
+                        <Button
+                          floated="left"
+                          onClick={this.handlePagination}
+                          value="1"
+                        >
+                          Voltar
+                        </Button>
                       </React.Fragment>
                     )}
                   </div>

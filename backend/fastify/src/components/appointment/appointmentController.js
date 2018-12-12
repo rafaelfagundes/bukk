@@ -1,9 +1,53 @@
 // External Dependancies
 const boom = require("boom");
+const mongoose = require("mongoose");
+const moment = require("moment");
 
 // Get Data Models
 const Appointment = require("./Appointment");
 const Costumer = require("../costumer/Costumer");
+
+// Aux functions
+
+const checkEmptyTimeInSchedule = async services => {
+  const jobs = [];
+
+  services.forEach(service => {
+    jobs.push(
+      Appointment.find({
+        employee: mongoose.Types.ObjectId(service.specialistId),
+        $or: [
+          {
+            $and: [
+              { start: { $gte: moment(service.start).toDate() } },
+              { start: { $lt: moment(service.end).toDate() } }
+            ]
+          },
+          {
+            $and: [
+              { end: { $gt: moment(service.start).toDate() } },
+              { end: { $lt: moment(service.end).toDate() } }
+            ]
+          }
+        ]
+      })
+    );
+  });
+
+  // Promise.all(jobs).then(result => {
+  //   console.log(result[0].length);
+  //   return result[0].length;
+  // });
+
+  const result = await Promise.all(jobs);
+
+  let _resultsCounter = 0;
+  result.forEach((r, index) => {
+    _resultsCounter += result[index].length;
+  });
+
+  return _resultsCounter === 0 ? true : false;
+};
 
 // Get all appointments
 exports.getAppointments = async (req, reply) => {
@@ -29,46 +73,69 @@ exports.getSingleAppointment = async (req, reply) => {
 // Add a new appointment
 exports.addAppointment = async (req, reply) => {
   console.log("\n-------------------------------\n");
-  try {
-    const _client = req.body.client; // Costumer
-    const _services = req.body.services;
+  const okToContinue = await checkEmptyTimeInSchedule(req.body.services);
+  if (okToContinue) {
+    try {
+      const _client = req.body.client; // Costumer
+      const _services = req.body.services;
 
-    const costumer = new Costumer({
-      firstName: _client.firstName,
-      lastName: _client.lastName,
-      email: _client.email,
-      gender: _client.gender,
-      phone: [{ number: _client.phone, whatsapp: _client.whatsapp }],
-      company: req.body.companyId
-    });
-    const resultCostumer = await costumer.save();
+      const costumer = new Costumer({
+        firstName: _client.firstName,
+        lastName: _client.lastName,
+        email: _client.email,
+        gender: _client.gender,
+        phone: [{ number: _client.phone, whatsapp: _client.whatsapp }],
+        company: req.body.companyId
+      });
 
-    let _appointments = [];
-    _services.forEach(_service => {
-      let _appointment = {
-        costumer: resultCostumer._id,
-        employee: _service.specialistId,
-        company: req.body.companyId,
-        service: _service.serviceId,
-        start: _service.start,
-        end: _service.end,
-        status: "created",
-        notes: _client.obs
-      };
+      const resultCostumer = await costumer.save();
 
-      _appointments.push(_appointment);
-    });
+      let _appointments = [];
+      _services.forEach(_service => {
+        let _appointment = {
+          costumer: resultCostumer._id,
+          employee: _service.specialistId,
+          company: req.body.companyId,
+          service: _service.serviceId,
+          start: _service.start,
+          end: _service.end,
+          status: "created",
+          notes: _client.obs
+        };
 
-    const resultAppointment = await Appointment.create(_appointments);
+        _appointments.push(_appointment);
+      });
 
-    return {
-      status: "confirmed",
-      msg: "Agendamento concluído com sucesso",
-      client: _client,
-      services: _services
-    };
-  } catch (err) {
-    throw boom.boomify(err);
+      const resultAppointment = await Appointment.create(_appointments);
+
+      if (resultAppointment) {
+        return {
+          status: "confirmed",
+          msg: "Agendamento concluído com sucesso",
+          client: _client,
+          services: _services
+        };
+      } else {
+        return {
+          status: "error",
+          msg: "Houve um erro ao agendar. Tente novamente.",
+          client: _client,
+          services: _services
+        };
+      }
+    } catch (err) {
+      throw boom.boomify(err);
+    }
+  } else {
+    throw boom.boomify(
+      new Error(
+        "A data e horários escolhidos já foram agendados. Tente novamente em outro horário"
+      ),
+      {
+        statusCode: 500,
+        message: "Erro ao tentar agendar"
+      }
+    );
   }
 };
 

@@ -136,7 +136,11 @@ exports.getSchedule = async (req, reply) => {
     return generateMonthSchedule(
       date,
       [1, 2, 3, 4, 5],
-      [{ start: "8:00", end: "12:00" }, { start: "14:00", end: "18:00" }],
+      [
+        { start: "8:00", end: "12:00" },
+        { start: "14:00", end: "18:00" },
+        { start: "18:30", end: "23:59" }
+      ],
       duration
     );
   } catch (err) {
