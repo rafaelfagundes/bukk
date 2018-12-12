@@ -1,26 +1,9 @@
 import React, { Component } from "react";
 import "./ClientInfo.css";
 import { Icon } from "semantic-ui-react";
+import { formatBrazilianPhoneNumber } from "../Utils/utils";
 
 class ClientInfo extends Component {
-  formatBrazilianPhoneNumber(phone) {
-    if (phone.length === 11) {
-      let _number = `(${phone[0]}${phone[1]}) ${phone[2]}${phone[3]}${
-        phone[4]
-      }${phone[5]}${phone[6]}-${phone[7]}${phone[8]}${phone[9]}${phone[10]}`;
-
-      return _number;
-    } else if (phone.length === 10) {
-      let _number = `(${phone[0]}${phone[1]}) ${phone[2]}${phone[3]}${
-        phone[4]
-      }${phone[5]}-${phone[6]}${phone[7]}${phone[8]}${phone[9]}`;
-
-      return _number;
-    } else {
-      return phone;
-    }
-  }
-
   render() {
     return (
       <React.Fragment>
@@ -38,7 +21,7 @@ class ClientInfo extends Component {
             ) : (
               <Icon name="mobile alternate" />
             )}
-            {this.formatBrazilianPhoneNumber(this.props.phone)}
+            {formatBrazilianPhoneNumber(this.props.phone)}
           </div>
           {this.props.obs !== "" && (
             <div className="client-obs">

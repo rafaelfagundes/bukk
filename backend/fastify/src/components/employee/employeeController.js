@@ -126,30 +126,19 @@ exports.getSingleEmployee = async (req, reply) => {
 
 // Get an employee's schedule
 exports.getSchedule = async (req, reply) => {
-  console.clear();
-  const id = req.params.id;
-  const date = req.params.date;
-  const duration = req.params.duration;
-
-  // return [{ id, monthStart, monthEnd, duration }];
-  return generateMonthSchedule(
-    date,
-    [1, 2, 3, 4, 5],
-    [
-      { start: "8:00", end: "12:00" },
-      { start: "14:00", end: "18:00" },
-      { start: "19:00", end: "23:59" }
-    ],
-    duration
-  );
-};
-
-exports.getAvaialbleDates2 = async (req, reply) => {
   try {
+    console.clear();
     const id = req.params.id;
     const date = req.params.date;
-    const employee = await Employee.findById(id);
-    return employee;
+    const duration = req.params.duration;
+
+    // return [{ id, monthStart, monthEnd, duration }];
+    return generateMonthSchedule(
+      date,
+      [1, 2, 3, 4, 5],
+      [{ start: "8:00", end: "12:00" }, { start: "14:00", end: "18:00" }],
+      duration
+    );
   } catch (err) {
     throw boom.boomify(err);
   }

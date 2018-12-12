@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Icon, Popup } from "semantic-ui-react";
 import "./Ticket.css";
+import { formatBrazilianPhoneNumber } from "../Utils/utils";
 
 class Ticket extends Component {
   state = {
@@ -10,24 +11,6 @@ class Ticket extends Component {
   handleOpen = () => this.setState({ open: true });
 
   handleClose = () => this.setState({ open: false });
-
-  formatBrazilianPhoneNumber(phone) {
-    if (phone.length === 11) {
-      let _number = `(${phone[0]}${phone[1]}) ${phone[2]}${phone[3]}${
-        phone[4]
-      }${phone[5]}${phone[6]}-${phone[7]}${phone[8]}${phone[9]}${phone[10]}`;
-
-      return _number;
-    } else if (phone.length === 10) {
-      let _number = `(${phone[0]}${phone[1]}) ${phone[2]}${phone[3]}${
-        phone[4]
-      }${phone[5]}-${phone[6]}${phone[7]}${phone[8]}${phone[9]}`;
-
-      return _number;
-    } else {
-      return phone;
-    }
-  }
 
   render() {
     return (
@@ -49,7 +32,7 @@ class Ticket extends Component {
               ) : (
                 <Icon name="mobile alternate" />
               )}
-              {this.formatBrazilianPhoneNumber(this.props.client.phone)}
+              {formatBrazilianPhoneNumber(this.props.client.phone)}
             </div>
           </div>
           {/* <div className="ticket-qrcode">
@@ -155,7 +138,7 @@ class Ticket extends Component {
               ) : (
                 <Icon name="mobile alternate" />
               )}
-              {this.formatBrazilianPhoneNumber(phone.number)}
+              {formatBrazilianPhoneNumber(phone.number)}
             </div>
           ))}
           <div className="ticket-company-details-email">
