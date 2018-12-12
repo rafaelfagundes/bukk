@@ -1,9 +1,6 @@
 const _ = require("lodash");
 
 exports.getSpecialist = (id, specialists) => {
-  console.log(id);
-  console.log(specialists);
-
   const index = _.findIndex(specialists, function(o) {
     return o.employee._id === id;
   });

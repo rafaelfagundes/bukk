@@ -184,7 +184,8 @@ class DateTimePage extends Component {
     const _newTime = {
       hour: _time.split(":")[0],
       minute: _time.split(":")[1],
-      second: "00"
+      second: "00",
+      millisecond: "000"
     };
 
     // Already a moment object
