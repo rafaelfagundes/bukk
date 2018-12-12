@@ -6,7 +6,6 @@ import { setPage, setCompanyData, setConfirmation } from "./bookerActions";
 
 import axios from "axios";
 import moment from "moment";
-import _ from "lodash";
 
 import config from "../config";
 
@@ -41,6 +40,10 @@ const mapDispatchToProps = dispatch => {
 };
 
 class Booker extends Component {
+  state = {
+    numPages: 3
+  };
+
   componentDidMount() {
     window.addEventListener("beforeunload", this.handleLeavePage);
   }
@@ -50,7 +53,8 @@ class Booker extends Component {
   }
 
   handleLeavePage(e) {
-    const confirmationMessage = "Teste";
+    const confirmationMessage =
+      "Tem certeza que deseja sair da página? Há informações não salvas.";
     e.returnValue = confirmationMessage; // Gecko, Trident, Chrome 34+
     return confirmationMessage; // Gecko, WebKit, Chrome <34
   }
@@ -93,31 +97,6 @@ class Booker extends Component {
       .catch(error => {
         console.log(error);
       });
-  };
-
-  getSpecialist(id) {
-    const index = _.findIndex(this.props.companyData.specialists, function(o) {
-      return o.id === id;
-    });
-    if (index >= 0) {
-      return this.props.companyData.specialists[index];
-    } else {
-      return null;
-    }
-  }
-  getService(id) {
-    const index = _.findIndex(this.props.companyData.services, function(o) {
-      return o.id === id;
-    });
-    if (index >= 0) {
-      return this.props.companyData.services[index];
-    } else {
-      return null;
-    }
-  }
-
-  state = {
-    numPages: 3
   };
 
   render() {

@@ -11,7 +11,6 @@ import {
   Popup
 } from "semantic-ui-react";
 import Specialist from "../Specialist/Specialist";
-// import TimePills from "../TimePills/TimePills";
 import Pill from "../TimePills/Pill";
 import Spacer from "../Spacer/Spacer";
 import DatePicker from "react-datepicker";
@@ -182,8 +181,13 @@ class DateTimePage extends Component {
 
   handleTime = e => {
     const _time = e.target.innerText;
-    const _newTime = { hour: _time.split(":")[0], minute: _time.split(":")[1] };
+    const _newTime = {
+      hour: _time.split(":")[0],
+      minute: _time.split(":")[1],
+      second: "00"
+    };
 
+    // Already a moment object
     this.props.appointment.services[this.props.currentService].start.set(
       _newTime
     );
@@ -317,7 +321,8 @@ class DateTimePage extends Component {
         specialists: _specialistsList
       });
     } else {
-      _specialistsList = _.shuffle(_specialistsList);
+      // TODO: remover comentário
+      // _specialistsList = _.shuffle(_specialistsList);
       this.setState({
         serviceId: value,
         serviceKey: _serviceKey,
@@ -327,15 +332,11 @@ class DateTimePage extends Component {
     }
   };
 
-  isWeekday = date => {
-    const day = date.day();
-    return day !== 0 && day !== 6;
-  };
-
   handleTimeTable = date => {
     let _timeTable = [];
 
     this.state.specialistSchedule.forEach(time => {
+      // Only times from date in param
       if (time.indexOf(date) >= 0) {
         _timeTable.push({
           time: moment(time).format("HH:mm"),
@@ -343,64 +344,27 @@ class DateTimePage extends Component {
         });
       }
     });
-    this.setState({ timeTable: _timeTable });
-  };
 
-  handleTimeTable2 = (specialistId, date) => {
-    axios
-      .get(config.api + "/appointment/date/" + specialistId + "/" + date)
-      .then(response => {
-        if (response.data) {
-          let _timeTable = [];
-          if (this.props.currentService > 0) {
-            // Already Reserved Times
-            let _alreadyReserved = [];
-            this.props.appointment.services.forEach(service => {
-              if (service.end && service.end !== "") {
-                response.data.forEach(item => {
-                  const _momentItem = moment(date).set({
-                    hour: item.split(":")[0],
-                    minute: item.split(":")[1],
-                    second: "00"
-                  });
-
-                  if (_momentItem.isSame(service.start, "day")) {
-                    if (
-                      _momentItem.isSameOrAfter(
-                        service.start.set({ second: "00" }),
-                        "hour"
-                      ) &&
-                      _momentItem.isBefore(
-                        service.end.set({ second: "00" }),
-                        "hour"
-                      )
-                    ) {
-                      _alreadyReserved.push({ time: item, selected: false });
-                    }
-                  }
-                });
+    if (this.props.currentService > 0) {
+      let _indexes = [];
+      this.props.appointment.services.forEach(service => {
+        if (service.end && service.end !== "") {
+          if (service.specialistId === this.state.specialistId) {
+            _timeTable.forEach((item, index) => {
+              let _s = moment(service.start.format("YYYY-MM-DD HH:mm:ss"));
+              let _e = moment(service.end.format("YYYY-MM-DD HH:mm:ss"));
+              let _i = moment(date + " " + item.time + ":00");
+              if (_i.isSameOrAfter(_s) && _i.isBefore(_e)) {
+                _indexes.push(index);
               }
             });
-
-            // All times
-            response.data.forEach(item => {
-              // If not reserved, add to timetable to show in the UI
-              if (!_.find(_alreadyReserved, { time: item, selected: false })) {
-                _timeTable.push({ time: item, selected: false });
-              }
-            });
-            this.setState({ timeTable: _timeTable });
-          } else {
-            response.data.forEach(time => {
-              _timeTable.push({ time, selected: false });
-            });
-            this.setState({ timeTable: _timeTable });
           }
         }
-      })
-      .catch(err => {
-        this.setState({ timeTable: [] });
       });
+      _.pullAt(_timeTable, _indexes);
+    }
+
+    this.setState({ timeTable: _timeTable });
   };
 
   setTimeTable = response => {
