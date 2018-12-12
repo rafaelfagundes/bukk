@@ -70,7 +70,7 @@ const CompanySchema = new Schema({
       whatsAppEnabled: { type: Boolean }
     }
   ],
-  created: { type: Date, default: Date.now },
+  createdAt: { type: Date, default: Date.now },
   paymentOptions: [
     {
       paymentId: { type: String },

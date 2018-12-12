@@ -18,7 +18,8 @@ const EmployeeSchema = new Schema({
   worksSince: { type: Date },
   salary: { type: Number },
   services: [{ type: mongoose.Schema.Types.ObjectId, ref: "Service" }],
-  avatar: { type: String }
+  avatar: { type: String },
+  createdAt: { type: Date, default: Date.now }
 });
 
 const Employee = mongoose.model("Employee", EmployeeSchema);

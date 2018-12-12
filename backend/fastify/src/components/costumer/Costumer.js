@@ -13,7 +13,8 @@ const CostumerSchema = new Schema({
       whatsApp: { type: Boolean, required: true, default: false }
     }
   ], // Minutes
-  company: { type: Schema.Types.ObjectId, ref: "Company" }
+  company: { type: Schema.Types.ObjectId, ref: "Company" },
+  createdAt: { type: Date, default: Date.now }
 });
 
 const Costumer = mongoose.model("Costumer", CostumerSchema);

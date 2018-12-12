@@ -8,7 +8,8 @@ const ServiceSchema = new Schema({
   duration: { type: Number, required: true }, // Minutes
   products: [{ desc: String, value: Number, units: Number }],
   display: { type: Boolean, required: true },
-  company: { type: Schema.Types.ObjectId, ref: "Company" }
+  company: { type: Schema.Types.ObjectId, ref: "Company" },
+  createdAt: { type: Date, default: Date.now }
 });
 
 const Service = mongoose.model("Service", ServiceSchema);

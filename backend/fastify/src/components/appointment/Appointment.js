@@ -14,7 +14,8 @@ const AppointmentSchema = new Schema({
     required: true,
     enum: ["canceled", "confirmed", "created", "done", "missed", "payed"]
   },
-  notes: { type: String }
+  notes: { type: String },
+  createdAt: { type: Date, default: Date.now }
 });
 
 const Appointment = mongoose.model("Appointment", AppointmentSchema);

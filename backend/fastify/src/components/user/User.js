@@ -16,7 +16,7 @@ const UserSchema = new Schema({
   birthday: { type: Date },
   email: { type: String, required: [true, "O email é obrigatório"] },
   password: { type: String, required: [true, "A senha é obrigatória"] },
-  created: { type: Date, default: Date.now, required: true },
+  createdAt: { type: Date, default: Date.now },
   role: {
     type: String,
     enum: ["owner", "manager", "supervisor", "employee"],
