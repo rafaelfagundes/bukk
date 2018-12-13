@@ -84,12 +84,16 @@ const CompanySchema = new Schema({
   ],
   settings: {
     colors: {
-      primary: { type: String },
-      secondary: { type: String },
-      header: { type: String },
-      confirmation: { type: String },
-      contrastColor: { type: String },
-      confirmationContrastColor: { type: String }
+      primary: { type: String, required: true, default: "#800080" },
+      secondary: { type: String, required: true, default: "#999" },
+      header: { type: String, required: true, default: "#800080" },
+      confirmation: { type: String, required: true, default: "#21ba45" },
+      contrastColor: { type: String, required: true, default: "#FFFFFF" },
+      confirmationContrastColor: {
+        type: String,
+        required: true,
+        default: "#FFFFFF"
+      }
     }
   }
 });
