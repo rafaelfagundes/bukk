@@ -85,7 +85,7 @@ const CompanySchema = new Schema({
   settings: {
     colors: {
       primary: { type: String, required: true, default: "#800080" },
-      secondary: { type: String, required: true, default: "#999" },
+      secondary: { type: String, required: true, default: "46, 86%" },
       header: { type: String, required: true, default: "#800080" },
       confirmation: { type: String, required: true, default: "#21ba45" },
       contrastColor: { type: String, required: true, default: "#FFFFFF" },

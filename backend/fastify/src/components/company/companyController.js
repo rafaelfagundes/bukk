@@ -82,6 +82,19 @@ exports.getCompanyCss = async (req, reply) => {
       background-color: ${company.settings.colors.confirmation} !important;
       color: ${company.settings.colors.confirmationContrastColor} !important
     }
+    .PaymentDetails {
+      background: hsl(${company.settings.colors.secondary}, 82%) !important;
+      color: ${company.settings.colors.contrastColor} !important;
+    }
+    
+    .payment-details-price {
+      background: hsl(${company.settings.colors.secondary}, 52%) !important;
+      color: ${company.settings.colors.contrastColor} !important;
+    }
+    .payment-details-price-total {
+      background: hsl(${company.settings.colors.secondary}, 65%) !important;
+      color: ${company.settings.colors.contrastColor} !important;
+    }
     `;
   } catch (err) {
     throw boom.boomify(err);

@@ -1,7 +1,6 @@
 .PaymentDetails {
   width: 100%;
   height: 60px;
-  background: rgba(255, 236, 169, 0.97);
   border-radius: 4px;
   display: flex;
   flex-direction: row;
@@ -35,7 +34,6 @@
   display: flex;
   flex-direction: row;
   line-height: 60px;
-  background: #f0c121;
   justify-content: flex-end;
   border-radius: 4px;
   width: 216px;
@@ -49,11 +47,9 @@
 }
 
 .payment-details-price-total {
-  color: #000000;
   font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
-  background: #ffd030;
   text-align: center;
   width: 67px;
 }
