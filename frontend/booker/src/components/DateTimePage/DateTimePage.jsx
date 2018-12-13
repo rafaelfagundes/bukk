@@ -17,6 +17,7 @@ import DatePicker from "react-datepicker";
 import moment from "moment";
 import "./DatePicker.css";
 import "../TimePills/TimePills.css";
+import "./DateTimePage.css";
 import axios from "axios";
 import config from "../../config";
 import calendarLocale from "./CalendarLocale";
@@ -67,6 +68,7 @@ class DateTimePage extends Component {
       appointmentTime: "",
       serviceId: "",
       services: [],
+      showHugeDropdown: true,
       specialistId: "",
       specialistIndex: -1,
       specialistSchedule: [],
@@ -319,7 +321,8 @@ class DateTimePage extends Component {
       this.setState({
         serviceId: value,
         serviceKey: _serviceKey,
-        specialists: _specialistsList
+        specialists: _specialistsList,
+        showHugeDropdown: false
       });
     } else {
       // TODO: remover comentário
@@ -328,7 +331,8 @@ class DateTimePage extends Component {
         serviceId: value,
         serviceKey: _serviceKey,
         specialists: _specialistsList,
-        specialistId: ""
+        specialistId: "",
+        showHugeDropdown: false
       });
     }
   };
@@ -534,7 +538,49 @@ class DateTimePage extends Component {
         )}
 
         <Form>
-          {!this.state.errors.companyNotFound &&
+          {this.state.showHugeDropdown && this.state.serviceId === "" && (
+            <div className="huge-service">
+              {this.state.servicesTable.length > 0 && <Spacer height={40} />}
+              <Header as="h2" color="blue" className="booker-title-what">
+                Qual serviço deseja fazer?
+                <Popup
+                  trigger={
+                    <Icon
+                      className="help-tooltip"
+                      size="mini"
+                      name="help"
+                      circular
+                      color="blue"
+                    />
+                  }
+                  header="Qual serviço deseja fazer"
+                  content="Escolha um dos serviços na lista. Por enquanto 
+escolha somente um. Após informar todos os dados deste serviço, um novo poderá 
+ser adicionado, caso queira."
+                  basic
+                />
+              </Header>
+
+              <Grid columns={1}>
+                <Grid.Row>
+                  <Grid.Column>
+                    <Form.Dropdown
+                      className="huge-service-dropdown"
+                      onChange={this.handleService}
+                      placeholder="Escolha um serviço na lista..."
+                      search
+                      selection
+                      options={this.state.services}
+                      value={this.state.serviceId}
+                    />
+                  </Grid.Column>
+                </Grid.Row>
+              </Grid>
+            </div>
+          )}
+
+          {!this.state.showHugeDropdown &&
+            !this.state.errors.companyNotFound &&
             (this.state.servicesTable.length === 0 ||
               !this.state.saveClicked) && (
               <React.Fragment>

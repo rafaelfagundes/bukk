@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "./node_modules/nodemon/bin/nodemon.js ./src/index.js"
+    "start": "sudo service mongod start && ./node_modules/nodemon/bin/nodemon.js ./src/index.js"
   },
   "author": "Rafael Fagundes <rafaelcflima@gmail.com>",
   "license": "ISC",
