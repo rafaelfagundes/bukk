@@ -52,6 +52,11 @@ const routes = [
     handler: companyController.getSingleCompany
   },
   {
+    method: "GET",
+    url: "/api/companies/css/:id",
+    handler: companyController.getCompanyCss
+  },
+  {
     method: "POST",
     url: "/api/companies",
     handler: companyController.addCompany

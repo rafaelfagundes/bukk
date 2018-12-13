@@ -1,11 +1,15 @@
 .conclusion-title {
   text-align: center;
   font-weight: 400 !important;
-  color: #2185d0 !important;
+  color: #21ba45 !important;
   margin-bottom: 40px;
 }
 
 .conclusion-header,
 .conclusion-content {
   text-align: center;
+}
+
+.ticket-company-details-web a {
+  color: red;
 }

@@ -29,7 +29,7 @@
 }
 
 #service-details-container-desc {
-  color: #555;
+  color: #555 !important;
   font-weight: 400;
   font-size: 24px;
   margin: 0;

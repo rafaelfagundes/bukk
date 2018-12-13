@@ -81,7 +81,17 @@ const CompanySchema = new Schema({
       name: { type: String },
       icon: { type: String }
     }
-  ]
+  ],
+  settings: {
+    colors: {
+      primary: { type: String },
+      secondary: { type: String },
+      header: { type: String },
+      confirmation: { type: String },
+      contrastColor: { type: String },
+      confirmationContrastColor: { type: String }
+    }
+  }
 });
 
 const Company = mongoose.model("Company", CompanySchema);

@@ -97,7 +97,6 @@ class Ticket extends Component {
                         size="mini"
                         name="help"
                         circular
-                        color="blue"
                       />
                     }
                     header="Número de agendamento"

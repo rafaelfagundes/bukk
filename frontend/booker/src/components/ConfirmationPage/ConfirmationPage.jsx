@@ -111,9 +111,7 @@ class ConfirmationPage extends Component {
           <br />
           do seu agendamento
         </Header>
-        <Header as="h3" color="blue">
-          Seus dados
-        </Header>
+        <Header as="h3">Seus dados</Header>
         <ClientInfo
           name={
             this.props.appointment.client.firstName +
@@ -125,7 +123,7 @@ class ConfirmationPage extends Component {
           obs={this.props.appointment.client.obs}
           whatsapp={this.props.appointment.client.whatsapp}
         />
-        <Header as="h3" color="blue">
+        <Header as="h3">
           {this.props.appointment.services.length > 1 ? "Serviços" : "Serviço"}
         </Header>
         {this.state.servicesList.map(item => (
@@ -145,13 +143,7 @@ class ConfirmationPage extends Component {
           </button>
           <Popup
             trigger={
-              <Icon
-                className="help-tooltip"
-                size="mini"
-                name="help"
-                circular
-                color="blue"
-              />
+              <Icon className="help-tooltip" size="mini" name="help" circular />
             }
             header="Adicionar ou remover serviços"
             content="Ainda dá tempo de adicionar ou remover serviços. Assim que tiver adicionado, volte a essa tela. Nenhum dado será perdido."

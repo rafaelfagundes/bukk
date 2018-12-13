@@ -1,3 +1,8 @@
+/* Until company CSS load, don't show anything */
+body {
+  display: none;
+}
+
 .Booker {
   width: 700px;
   margin: 0 auto;

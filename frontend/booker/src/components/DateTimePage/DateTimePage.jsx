@@ -463,9 +463,7 @@ class DateTimePage extends Component {
         )}
         {this.state.servicesTable.length >= 1 && (
           <React.Fragment>
-            <Header as="h3" color="blue">
-              Serviços escolhidos
-            </Header>
+            <Header as="h3">Serviços escolhidos</Header>
             <Table celled padded>
               <Table.Header>
                 <Table.Row>
@@ -512,9 +510,9 @@ class DateTimePage extends Component {
               </Table.Body>
             </Table>
             <Button
+              className="confirmation"
               labelPosition="left"
               icon
-              color="green"
               onClick={this.handleAddService}
             >
               Incluir mais um serviço
@@ -527,7 +525,6 @@ class DateTimePage extends Component {
                   size="mini"
                   name="help"
                   circular
-                  color="blue"
                 />
               }
               header="Incluir mais um serviço"
@@ -541,24 +538,8 @@ class DateTimePage extends Component {
           {this.state.showHugeDropdown && this.state.serviceId === "" && (
             <div className="huge-service">
               {this.state.servicesTable.length > 0 && <Spacer height={40} />}
-              <Header as="h2" color="blue" className="booker-title-what">
+              <Header as="h2" className="booker-title-what">
                 Qual serviço deseja fazer?
-                <Popup
-                  trigger={
-                    <Icon
-                      className="help-tooltip"
-                      size="mini"
-                      name="help"
-                      circular
-                      color="blue"
-                    />
-                  }
-                  header="Qual serviço deseja fazer"
-                  content="Escolha um dos serviços na lista. Por enquanto 
-escolha somente um. Após informar todos os dados deste serviço, um novo poderá 
-ser adicionado, caso queira."
-                  basic
-                />
               </Header>
 
               <Grid columns={1}>
@@ -585,7 +566,7 @@ ser adicionado, caso queira."
               !this.state.saveClicked) && (
               <React.Fragment>
                 {this.state.servicesTable.length > 0 && <Spacer height={40} />}
-                <Header as="h3" color="blue" className="booker-title-what">
+                <Header as="h3" className="booker-title-what">
                   Serviço que deseja fazer
                   <Popup
                     trigger={
@@ -594,7 +575,6 @@ ser adicionado, caso queira."
                         size="mini"
                         name="help"
                         circular
-                        color="blue"
                       />
                     }
                     header="Serviço que deseja fazer"
@@ -623,7 +603,7 @@ ser adicionado, caso queira."
 
           {this.state.specialists.length > 0 && this.state.serviceId !== "" && (
             <React.Fragment>
-              <Header as="h3" color="blue" className="booker-title-who">
+              <Header as="h3" className="booker-title-who">
                 {this.state.specialists.length > 1
                   ? "Escolha um especialista"
                   : "Especialista que irá lhe atender"}
@@ -634,7 +614,6 @@ ser adicionado, caso queira."
                       size="mini"
                       name="help"
                       circular
-                      color="blue"
                     />
                   }
                   header="Escolha um especialista"
@@ -671,7 +650,7 @@ ser adicionado, caso queira."
 
           {this.state.specialistId !== "" && (
             <React.Fragment>
-              <Header as="h3" color="blue" className="booker-title-when">
+              <Header as="h3" className="booker-title-when">
                 Dia e horário
                 <Popup
                   trigger={
@@ -680,7 +659,6 @@ ser adicionado, caso queira."
                       size="mini"
                       name="help"
                       circular
-                      color="blue"
                     />
                   }
                   header="Dia e horário"
@@ -721,9 +699,9 @@ ser adicionado, caso queira."
           <React.Fragment>
             <Spacer height={20} />
             <Button
+              className="confirmation"
               labelPosition="left"
               icon
-              color="green"
               onClick={this.handleSave}
               disabled={this.state.appointmentTime === ""}
             >
@@ -737,7 +715,6 @@ ser adicionado, caso queira."
                   size="mini"
                   name="help"
                   circular
-                  color="blue"
                 />
               }
               header="Salvar agendamento"
@@ -781,7 +758,6 @@ ser adicionado, caso queira."
                     size="mini"
                     name="help"
                     circular
-                    color="blue"
                   />
                 }
                 header="Cancelar adição"

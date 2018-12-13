@@ -14,6 +14,80 @@ exports.getCompanies = async (req, reply) => {
   }
 };
 
+// Get company CSS
+exports.getCompanyCss = async (req, reply) => {
+  try {
+    const id = req.params.id;
+    const company = await Company.findById(id);
+
+    reply.code(200);
+    reply.header("Content-Type", "text/css");
+    reply.type("text/css");
+    return `
+    body{
+      display: block
+    }
+    h1,h2,h3 {
+      color: ${company.settings.colors.primary} !important
+    }
+    .booker-header{ background-color: ${
+      company.settings.colors.header
+    } !important}
+    .breadcrumbs-page-number{
+      border-color: ${company.settings.colors.primary} !important;
+      color: ${company.settings.colors.primary} !important
+    }
+    .breadcrumbs-page-number__active{
+      background-color: ${company.settings.colors.primary} !important;
+      color: ${company.settings.colors.contrastColor} !important
+    }
+    .breadcrumbs-page-numbers::before{
+      background-color: ${company.settings.colors.primary} !important;
+    }
+    .specialist-img__selected {
+      border: 5px solid ${company.settings.colors.primary} !important;
+    }
+    .selected-pill{
+      background-color: ${company.settings.colors.primary} !important;
+      color: ${company.settings.colors.contrastColor} !important
+    }
+    .react-datepicker__day--selected{
+      background-color: ${company.settings.colors.primary} !important;
+      color: ${company.settings.colors.contrastColor} !important
+    }
+    .ui.primary.button{
+      background-color: ${company.settings.colors.primary} !important;
+      color: ${company.settings.colors.contrastColor} !important
+    }
+    .service-price-container {
+      background-color: ${company.settings.colors.primary} !important;
+      color: ${company.settings.colors.contrastColor} !important
+    }
+    .service-remove-btn{
+      color: ${company.settings.colors.primary} !important;
+    }
+    .ticket-company-details-web a {
+      color: ${company.settings.colors.primary} !important;
+    }
+    .help-tooltip {
+      color: ${company.settings.colors.primary} !important;
+    }
+    .service-remove{
+      color: ${company.settings.colors.primary} !important;
+    }
+    .service-remove-btn{
+      color: ${company.settings.colors.primary} !important;
+    }
+    .confirmation{
+      background-color: ${company.settings.colors.confirmation} !important;
+      color: ${company.settings.colors.confirmationContrastColor} !important
+    }
+    `;
+  } catch (err) {
+    throw boom.boomify(err);
+  }
+};
+
 // Get single company by ID
 exports.getSingleCompany = async (req, reply) => {
   try {

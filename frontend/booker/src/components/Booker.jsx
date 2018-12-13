@@ -44,7 +44,9 @@ class Booker extends Component {
   state = {
     numPages: 3,
     error:
-      "Erro ao tentar agendar: A data e horários escolhidos já foram agendados. Tente novamente em outro horário."
+      "Erro ao tentar agendar: A data e horários escolhidos já foram agendados. Tente novamente em outro horário.",
+    companyCss:
+      "http://localhost:4000/api/companies/css/5c0edd683743257844de6e69"
   };
 
   componentDidMount() {
@@ -106,6 +108,13 @@ class Booker extends Component {
   render() {
     return (
       <React.Fragment>
+        <link
+          rel="stylesheet"
+          type="text/css"
+          href={
+            config.api + "/companies/css/" + this.props.match.params.companyId
+          }
+        />
         <Grid.Row>
           <Grid.Column>
             {this.props.match.params.companyId && (
@@ -199,7 +208,7 @@ class Booker extends Component {
                           Voltar
                         </Button>
                         <Button
-                          color="green"
+                          className="confirmation"
                           floated="right"
                           disabled={!this.props.confirmationOk}
                           onClick={this.handleConfirmation}

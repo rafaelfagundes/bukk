@@ -182,17 +182,11 @@ class PersonalInfoPage extends Component {
   render() {
     return (
       <div className={"PersonalInfoPage " + this.props.className}>
-        <Header as="h3" color="blue">
+        <Header as="h3">
           Seus dados pessoais
           <Popup
             trigger={
-              <Icon
-                className="help-tooltip"
-                size="mini"
-                name="help"
-                circular
-                color="blue"
-              />
+              <Icon className="help-tooltip" size="mini" name="help" circular />
             }
             header="Seus dados pessoais"
             content="Os dados com (*) são obrigatórios. Confira os dados digitados em caso de erro. Caso estejam certos, os erros desaparecem."
@@ -211,7 +205,7 @@ class PersonalInfoPage extends Component {
                 id="firstName"
               />
               {this.state.errors.firstName !== "" && (
-                <Label size="large" color="orange" pointing>
+                <Label size="large" pointing>
                   {this.state.errors.firstName}
                 </Label>
               )}
@@ -226,7 +220,7 @@ class PersonalInfoPage extends Component {
                 id="lastName"
               />
               {this.state.errors.lastName !== "" && (
-                <Label size="large" color="orange" pointing>
+                <Label size="large" pointing>
                   {this.state.errors.lastName}
                 </Label>
               )}
@@ -263,12 +257,7 @@ class PersonalInfoPage extends Component {
             </Form.Field>
           </Form.Group>
           {this.state.errors.gender !== "" && (
-            <Label
-              className="error-gender"
-              size="large"
-              color="orange"
-              pointing
-            >
+            <Label className="error-gender" size="large" pointing>
               {this.state.errors.gender}
             </Label>
           )}
@@ -283,7 +272,7 @@ class PersonalInfoPage extends Component {
                 id="email"
               />
               {this.state.errors.email !== "" && (
-                <Label size="large" color="orange" pointing>
+                <Label size="large" pointing>
                   {this.state.errors.email}
                 </Label>
               )}
@@ -301,7 +290,7 @@ class PersonalInfoPage extends Component {
                 id="phone"
               />
               {this.state.errors.phone !== "" && (
-                <Label size="large" color="orange" pointing>
+                <Label size="large" pointing>
                   {this.state.errors.phone}
                 </Label>
               )}
@@ -311,9 +300,8 @@ class PersonalInfoPage extends Component {
                 </Label>
               )}
             </Form.Field>
-            <Form.Field width={6}>
+            <Form.Field width={6} id="whatsapp-toogle">
               <Form.Checkbox
-                toggle
                 inline
                 size="large"
                 label="Número WhatsApp?"

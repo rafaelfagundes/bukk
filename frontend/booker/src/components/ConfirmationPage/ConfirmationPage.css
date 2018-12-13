@@ -1,13 +1,12 @@
 #confirmation-title {
   text-align: center;
   font-weight: 400 !important;
-  color: #2185d0 !important;
   margin-bottom: 40px;
 }
 
 .service-remove {
   text-align: center;
-  color: #2185d0;
+
   margin-top: -15px;
 }
 
@@ -16,7 +15,6 @@
   border: none;
   background-color: transparent;
   cursor: pointer;
-  color: #2185d0;
   font-weight: 600;
   font-size: 0.9rem;
 }
