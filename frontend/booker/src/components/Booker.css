@@ -62,6 +62,13 @@ body {
   left: 25px;
 }
 
+.booker-header-name {
+  position: absolute;
+  top: 0;
+  left: 90px;
+  font-weight: 300 !important;
+}
+
 .booker-header-label {
   position: absolute;
   width: 75px;

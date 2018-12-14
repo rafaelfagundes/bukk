@@ -23,7 +23,8 @@ exports.getCompanyCss = async (req, reply) => {
     reply.code(200);
     reply.header("Content-Type", "text/css");
     reply.type("text/css");
-    return `
+
+    let customCss = `
     body{
       display: block
     }
@@ -96,6 +97,108 @@ exports.getCompanyCss = async (req, reply) => {
       color: ${company.settings.colors.contrastColor} !important;
     }
     `;
+
+    if (company.settings.options.disableMarginTopBooker) {
+      customCss += `.Booker{margin: 0px auto 55px auto !important;}`;
+    }
+    if (company.settings.options.disableHeader) {
+      customCss += `
+      .Booker{border-top: 1px solid #eeeeee !important;}
+      `;
+    }
+    if (company.settings.options.disableBorder) {
+      customCss += `
+      .Booker{border: none !important;}
+      .booker-header {
+        border-radius: 6px !important;
+      }
+      `;
+    }
+    if (company.settings.options.disableBorderRadius) {
+      customCss += `
+      .Booker *{border-radius: 0px !important}
+      `;
+    }
+    if (company.settings.options.centerLogo) {
+      customCss += `
+      .booker-header-logo {
+        margin: 0 auto !important;
+        left: 0 !important;
+      }
+      `;
+    }
+    if (company.settings.options.roundedLogo) {
+      customCss += `
+      .booker-header-logo {
+        border-radius: 50%;
+        max-height: 56px;
+        top: 50%;
+        -webkit-transform: translateY(-28px);
+        transform: translateY(-28px);
+        left: 20px;
+      }
+      `;
+    }
+
+    if (company.settings.options.squareLogo) {
+      customCss += `
+      .booker-header-logo {
+
+        max-height: 56px;
+        top: 50%;
+        -webkit-transform: translateY(-28px);
+        transform: translateY(-28px);
+        left: 20px;
+      }
+      `;
+    }
+
+    if (company.settings.options.softSquareLogo) {
+      customCss += `
+      .booker-header-logo {
+        border-radius: 4px;
+        max-height: 56px;
+        top: 50%;
+        -webkit-transform: translateY(-28px);
+        transform: translateY(-28px);
+        left: 20px;
+      }
+      `;
+    }
+
+    if (company.settings.options.showCompanyNickname) {
+      customCss += `
+      .booker-header-name {
+        color: ${company.settings.colors.contrastColor} !important
+      }`;
+    }
+
+    if (company.settings.options.disableLogo) {
+      customCss += `
+      .booker-header-name {
+        top: 50% !important;
+        left: 20px !important;
+        transform: translateY(-14px) !important;
+      }`;
+    }
+
+    if (company.settings.options.dropShadowBooker) {
+      customCss += `
+      .Booker {
+        box-shadow: 0px 5px 20px rgba(0,0,0,.06) !important;
+        border: none !important;
+      }`;
+    }
+    if (company.settings.options.dropShadowComponents) {
+      customCss += `
+      input, textarea, .button, .button:disabled, .search, .specialist-img, .react-datepicker, .TimePills > .label,
+      .DateTimePage table, .checkbox > label:before, .pointing.label, .breadcrumbs-page-number,
+      .ClientInfo, .ServiceListItem, .PaymentDetails, .Ticket {
+        box-shadow: 0px 2px 15px rgba(0,0,0,.06) !important;
+      }`;
+    }
+
+    return customCss;
   } catch (err) {
     throw boom.boomify(err);
   }

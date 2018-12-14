@@ -10,7 +10,12 @@ const initialState = {
 
   companyData: {
     logo: "",
-    paymentOptions: []
+    paymentOptions: [],
+    settings: {
+      options: {
+        disableHeader: false
+      }
+    }
   },
 
   services: [],

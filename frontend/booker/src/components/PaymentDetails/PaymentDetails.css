@@ -36,7 +36,7 @@
   line-height: 60px;
   justify-content: flex-end;
   border-radius: 4px;
-  width: 216px;
+  width: 218px;
 }
 
 .payment-details-price-value {
@@ -51,7 +51,7 @@
   font-weight: 700;
   text-transform: uppercase;
   text-align: center;
-  width: 67px;
+  width: 68px;
 }
 
 .payment-details-price-currency {

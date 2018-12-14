@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Grid, Image, Button } from "semantic-ui-react";
+import { Grid, Image, Button, Header } from "semantic-ui-react";
 import "./Booker.css";
 import { connect } from "react-redux";
 import { setPage, setCompanyData, setConfirmation } from "./bookerActions";
@@ -44,9 +44,7 @@ class Booker extends Component {
   state = {
     numPages: 3,
     error:
-      "Erro ao tentar agendar: A data e horários escolhidos já foram agendados. Tente novamente em outro horário.",
-    companyCss:
-      "http://localhost:4000/api/companies/css/5c0edd683743257844de6e69"
+      "Erro ao tentar agendar: A data e horários escolhidos já foram agendados. Tente novamente em outro horário."
   };
 
   componentDidMount() {
@@ -119,12 +117,22 @@ class Booker extends Component {
           <Grid.Column>
             {this.props.match.params.companyId && (
               <div className="Booker">
-                <div className="booker-header">
-                  <Image
-                    src={this.props.companyData.logo}
-                    className="booker-header-logo"
-                  />
-                </div>
+                {!this.props.companyData.settings.options.disableHeader && (
+                  <div className="booker-header">
+                    {!this.props.companyData.settings.options.disableLogo && (
+                      <Image
+                        src={this.props.companyData.logo}
+                        className="booker-header-logo"
+                      />
+                    )}
+                    {this.props.companyData.settings.options
+                      .showCompanyNickname && (
+                      <Header as="h1" className="booker-header-name">
+                        {this.props.companyData.companyNickname}
+                      </Header>
+                    )}
+                  </div>
+                )}
                 <div className="booker-main">
                   <DateTimePage
                     companyId={this.props.match.params.companyId}

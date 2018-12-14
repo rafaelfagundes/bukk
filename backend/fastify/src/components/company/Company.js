@@ -94,6 +94,20 @@ const CompanySchema = new Schema({
         required: true,
         default: "#FFFFFF"
       }
+    },
+    options: {
+      disableMarginTopBooker: { type: Boolean, required: true, default: false },
+      disableHeader: { type: Boolean, required: true, default: false },
+      disableBorder: { type: Boolean, required: true, default: false },
+      disableBorderRadius: { type: Boolean, required: true, default: false },
+      centerLogo: { type: Boolean, required: true, default: false },
+      roundedLogo: { type: Boolean, required: true, default: false },
+      squareLogo: { type: Boolean, required: true, default: false },
+      softSquareLogo: { type: Boolean, required: true, default: false },
+      disableLogo: { type: Boolean, required: true, default: false },
+      showCompanyNickname: { type: Boolean, required: true, default: false },
+      dropShadowBooker: { type: Boolean, required: true, default: false },
+      dropShadowComponents: { type: Boolean, required: true, default: false }
     }
   }
 });

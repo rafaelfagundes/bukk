@@ -77,7 +77,8 @@ class DateTimePage extends Component {
       timeTable: [],
       excludeDates: [],
       saveClicked: false,
-      errors: { companyNotFound: false }
+      errors: { companyNotFound: false },
+      greetings: ""
     };
   }
 
@@ -415,6 +416,17 @@ class DateTimePage extends Component {
   }
 
   componentDidMount() {
+    const hour = moment().hour();
+    if (hour >= 6 && hour < 12) {
+      this.setState({ greetings: "Bom dia" });
+    } else if (hour >= 12 && hour < 18) {
+      this.setState({ greetings: "Boa tarde" });
+    } else if (hour >= 18 && hour < 24) {
+      this.setState({ greetings: "Boa noite" });
+    } else {
+      this.setState({ greetings: "Boa madrugada" });
+    }
+
     axios
       .get(config.api + "/companies/" + this.props.companyId)
       .then(response => {
@@ -539,6 +551,7 @@ class DateTimePage extends Component {
             <div className="huge-service">
               {this.state.servicesTable.length > 0 && <Spacer height={40} />}
               <Header as="h2" className="booker-title-what">
+                {this.state.greetings}!<br />
                 Qual serviço deseja fazer?
               </Header>
 
