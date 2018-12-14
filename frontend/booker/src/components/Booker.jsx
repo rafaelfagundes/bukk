@@ -1,8 +1,14 @@
 import React, { Component } from "react";
 import { Grid, Image, Button, Header } from "semantic-ui-react";
 import "./Booker.css";
+import "./BookerMobile.css";
 import { connect } from "react-redux";
-import { setPage, setCompanyData, setConfirmation } from "./bookerActions";
+import {
+  setPage,
+  setCompanyData,
+  setConfirmation,
+  setIsMobile
+} from "./bookerActions";
 
 import axios from "axios";
 import moment from "moment";
@@ -28,7 +34,8 @@ const mapStateToProps = state => {
     confirmationOk: state.booker.confirmationOk,
     appointment: state.booker.appointment,
     services: state.booker.services,
-    specialists: state.booker.specialists
+    specialists: state.booker.specialists,
+    isMobile: state.booker.isMobile
   };
 };
 
@@ -36,7 +43,8 @@ const mapDispatchToProps = dispatch => {
   return {
     setPage: page => dispatch(setPage(page)),
     setCompanyData: data => dispatch(setCompanyData(data)),
-    setConfirmation: confirmation => dispatch(setConfirmation(confirmation))
+    setConfirmation: confirmation => dispatch(setConfirmation(confirmation)),
+    setIsMobile: isMobile => dispatch(setIsMobile(isMobile))
   };
 };
 
@@ -44,11 +52,15 @@ class Booker extends Component {
   state = {
     numPages: 3,
     error:
-      "Erro ao tentar agendar: A data e horários escolhidos já foram agendados. Tente novamente em outro horário."
+      "Erro ao tentar agendar: A data e horários escolhidos já foram agendados. Tente novamente em outro horário.",
+    isMobile: false
   };
 
   componentDidMount() {
     window.addEventListener("beforeunload", this.handleLeavePage);
+    if (window.outerWidth < 830) {
+      this.props.setIsMobile(true);
+    }
   }
 
   componentDidUpdate() {
@@ -110,13 +122,19 @@ class Booker extends Component {
   render() {
     return (
       <React.Fragment>
-        <link
-          rel="stylesheet"
-          type="text/css"
-          href={
-            config.api + "/companies/css/" + this.props.match.params.companyId
-          }
+        <meta
+          name="theme-color"
+          content={this.props.companyData.settings.colors.primary}
         />
+        {!this.props.setIsMobile && (
+          <link
+            rel="stylesheet"
+            type="text/css"
+            href={
+              config.api + "/companies/css/" + this.props.match.params.companyId
+            }
+          />
+        )}
         <Grid.Row>
           <Grid.Column>
             {this.props.match.params.companyId && (

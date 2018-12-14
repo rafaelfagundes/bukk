@@ -7,6 +7,15 @@ export const setPage = page => {
   };
 };
 
+export const setIsMobile = isMobile => {
+  return (dispatch, getState) => {
+    dispatch({
+      type: "SET_IS_MOBILE",
+      isMobile
+    });
+  };
+};
+
 export const setCurrentService = currentService => {
   return (dispatch, getState) => {
     dispatch({

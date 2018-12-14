@@ -1,0 +1,31 @@
+@media only screen and (max-width: 600px) {
+  :root {
+    font-size: 14pt;
+  }
+  body {
+    display: block; /* TODO: mover pra quando chamar o CSS */
+  }
+  .Booker {
+    width: 100%;
+    margin: 0px auto 55px auto;
+    border: none;
+  }
+  .booker-header {
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+  }
+  .booker-main {
+    height: calc(100vh - 220px);
+  }
+  .breadcrumbs-page-numbers {
+    display: none;
+  }
+
+  .huge-service {
+    margin: 0 !important;
+  }
+
+  .huge-service .booker-title-what {
+    font-size: 1.2rem !important;
+  }
+}

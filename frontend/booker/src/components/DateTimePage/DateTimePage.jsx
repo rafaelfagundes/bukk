@@ -41,7 +41,8 @@ const mapStateToProps = state => {
     services: state.booker.services,
     specialists: state.booker.specialists,
     currentService: state.booker.currentService,
-    appointment: state.booker.appointment
+    appointment: state.booker.appointment,
+    isMobile: state.booker.isMobile
   };
 };
 
@@ -562,7 +563,7 @@ class DateTimePage extends Component {
                       className="huge-service-dropdown"
                       onChange={this.handleService}
                       placeholder="Escolha um serviço na lista..."
-                      search
+                      search={!this.props.isMobile}
                       selection
                       options={this.state.services}
                       value={this.state.serviceId}
@@ -596,13 +597,13 @@ class DateTimePage extends Component {
                   />
                 </Header>
 
-                <Grid columns={2}>
+                <Grid columns={1}>
                   <Grid.Row>
                     <Grid.Column>
                       <Form.Dropdown
                         onChange={this.handleService}
                         placeholder="Selecione um serviço..."
-                        search
+                        search={!this.props.isMobile}
                         selection
                         options={this.state.services}
                         value={this.state.serviceId}
