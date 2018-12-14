@@ -13,7 +13,9 @@ const initialState = {
     paymentOptions: [],
     settings: {
       options: {
-        disableHeader: false
+        disableHeader: false,
+        disableLogo: false,
+        showCompanyNickname: false
       }
     }
   },

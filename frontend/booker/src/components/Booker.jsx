@@ -51,6 +51,10 @@ class Booker extends Component {
     window.addEventListener("beforeunload", this.handleLeavePage);
   }
 
+  componentDidUpdate() {
+    document.title = this.props.companyData.companyNickname;
+  }
+
   componentWillUnmount() {
     window.removeEventListener("beforeunload", this.handleLeavePage);
   }
