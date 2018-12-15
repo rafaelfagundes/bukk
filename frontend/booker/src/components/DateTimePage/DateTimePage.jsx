@@ -328,7 +328,7 @@ class DateTimePage extends Component {
       });
     } else {
       // TODO: remover comentário
-      // _specialistsList = _.shuffle(_specialistsList);
+      _specialistsList = _.shuffle(_specialistsList);
       this.setState({
         serviceId: value,
         serviceKey: _serviceKey,
@@ -476,8 +476,10 @@ class DateTimePage extends Component {
         )}
         {this.state.servicesTable.length >= 1 && (
           <React.Fragment>
-            <Header as="h3">Serviços escolhidos</Header>
-            <Table celled padded>
+            <Header as="h2" className="booker-title-what">
+              Serviços escolhidos
+            </Header>
+            <Table celled padded className="chosen-services-table">
               <Table.Header>
                 <Table.Row>
                   <Table.HeaderCell textAlign="center">
@@ -506,7 +508,12 @@ class DateTimePage extends Component {
                         </Header.Content>
                       </Header>
                     </Table.Cell>
-                    <Table.Cell textAlign="center">{row.dateTime}</Table.Cell>
+                    <Table.Cell
+                      textAlign="center"
+                      className="date-services-table"
+                    >
+                      {row.dateTime}
+                    </Table.Cell>
                     <Table.Cell textAlign="center">
                       <Button
                         compact
@@ -514,6 +521,7 @@ class DateTimePage extends Component {
                         color="red"
                         onClick={this.handleDeleteService}
                         value={row.serviceKey}
+                        className="remove-service-btn"
                       >
                         <Icon name="delete" />
                       </Button>
@@ -528,7 +536,9 @@ class DateTimePage extends Component {
               icon
               onClick={this.handleAddService}
             >
-              Incluir mais um serviço
+              {this.props.isMobile
+                ? "Incluir serviço"
+                : "Incluir mais um serviço"}
               <Icon name="plus" />
             </Button>
             <Popup
@@ -552,7 +562,11 @@ class DateTimePage extends Component {
             <div className="huge-service">
               {this.state.servicesTable.length > 0 && <Spacer height={40} />}
               <Header as="h2" className="booker-title-what">
-                {this.state.greetings}!<br />
+                {!this.props.isMobile && (
+                  <>
+                    {this.state.greetings}!<br />
+                  </>
+                )}
                 Qual serviço deseja fazer?
               </Header>
 
@@ -609,7 +623,6 @@ class DateTimePage extends Component {
                         value={this.state.serviceId}
                       />
                     </Grid.Column>
-                    <Grid.Column />
                   </Grid.Row>
                 </Grid>
               </React.Fragment>
@@ -637,14 +650,18 @@ class DateTimePage extends Component {
               </Header>
               <div id="Specialists">
                 {this.state.specialists.length > 1 && (
-                  <Specialist
-                    onClick={this.handleRandom}
-                    firstName="Escolher"
-                    lastName="Aleatoriamente"
-                    desc="Deixe o sistema decidir por você"
-                    image="https://res.cloudinary.com/bukkapp/image/upload/v1544067728/Bukk/Assets/shuffle.png"
-                    random={true}
-                  />
+                  <>
+                    {true && (
+                      <Specialist
+                        onClick={this.handleRandom}
+                        firstName="Escolher"
+                        lastName="Aleatoriamente"
+                        desc="Deixe o sistema decidir por você"
+                        image="https://res.cloudinary.com/bukkapp/image/upload/v1544067728/Bukk/Assets/shuffle.png"
+                        random={true}
+                      />
+                    )}
+                  </>
                 )}
                 {this.state.specialists.map(specialist => (
                   <Specialist
@@ -719,7 +736,7 @@ class DateTimePage extends Component {
               onClick={this.handleSave}
               disabled={this.state.appointmentTime === ""}
             >
-              Salvar este agendamento
+              {this.props.isMobile ? "Salvar" : "Salvar este agendamento"}
               <Icon name="save" />
             </Button>
             <Popup
@@ -744,7 +761,7 @@ class DateTimePage extends Component {
                   onClick={this.handleDeleteService}
                   floated="right"
                 >
-                  Cancelar adição
+                  {this.props.isMobile ? "Cancelar" : "Cancelar adição"}
                   <Icon name="delete" />
                 </Button>
               </React.Fragment>
@@ -762,7 +779,7 @@ class DateTimePage extends Component {
                 color="red"
                 onClick={this.handleDeleteService}
               >
-                Cancelar adição
+                {this.props.isMobile ? "Cancelar" : "Cancelar adição"}
                 <Icon name="delete" />
               </Button>
               <Popup

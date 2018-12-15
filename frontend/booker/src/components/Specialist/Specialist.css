@@ -1,5 +1,5 @@
 #Specialists {
-  display: flex;
+  width: 100%;
 }
 
 .Specialist {
@@ -34,18 +34,19 @@
 }
 
 .specialist-name {
-  margin: 15px 0px 0px 0px !important;
-  font-size: 16px !important;
-  line-height: 19px !important;
-  font-weight: 400 !important;
-  color: #333 !important;
+  margin: 15px 0px 0px 0px;
+  font-size: 16px;
+  line-height: 19px;
+  font-weight: 400;
+  color: #333;
 }
 
 .specialist-desc {
-  margin: 8px 0px 10px 0px !important;
-  font-size: 11px !important;
-  line-height: 12px !important;
-  font-weight: 700 !important;
-  color: #aaa !important;
-  padding: 0px 10px !important;
+  margin: 8px 0px 10px 0px;
+  text-transform: uppercase;
+  font-size: 11px;
+  line-height: 12px;
+  font-weight: 700;
+  color: #aaa;
+  padding: 0px 10px;
 }

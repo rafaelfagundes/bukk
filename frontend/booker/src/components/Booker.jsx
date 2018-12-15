@@ -58,7 +58,7 @@ class Booker extends Component {
 
   componentDidMount() {
     window.addEventListener("beforeunload", this.handleLeavePage);
-    if (window.outerWidth < 830) {
+    if (window.outerWidth <= 720) {
       this.props.setIsMobile(true);
     }
   }
@@ -126,7 +126,7 @@ class Booker extends Component {
           name="theme-color"
           content={this.props.companyData.settings.colors.primary}
         />
-        {!this.props.setIsMobile && (
+        {!this.props.isMobile && (
           <link
             rel="stylesheet"
             type="text/css"

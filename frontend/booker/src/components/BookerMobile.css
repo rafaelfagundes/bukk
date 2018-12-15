@@ -1,22 +1,105 @@
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 720px) {
   :root {
     font-size: 14pt;
   }
+
+  ::-webkit-scrollbar {
+    height: 0px !important; /* remove scrollbar space */
+    width: 0px !important; /* remove scrollbar space */
+    background: transparent !important; /* optional: just make scrollbar invisible */
+  }
+
   body {
     display: block; /* TODO: mover pra quando chamar o CSS */
   }
+
+  .button {
+    font-size: 0.9rem !important;
+  }
+
+  .ui.labeled.icon.button,
+  .ui.labeled.icon.buttons .button {
+    padding-left: 3rem !important;
+    padding-right: 0.7rem !important;
+  }
+
+  h1 {
+    font-size: 1.1rem !important;
+  }
+
+  h2 {
+    font-size: 1rem !important;
+  }
+
+  h3 {
+    font-size: 0.9rem !important;
+  }
+
+  h4 {
+    font-size: 0.8rem !important;
+  }
+
+  h5 {
+    font-size: 0.7rem !important;
+  }
+
+  h6 {
+    font-size: 0.6rem !important;
+  }
+  .dropdown {
+    font-size: 0.9rem !important;
+  }
+
   .Booker {
     width: 100%;
     margin: 0px auto 55px auto;
     border: none;
   }
+
   .booker-header {
     border-top-left-radius: 0px;
     border-top-right-radius: 0px;
+    height: 70px;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.15);
+    position: fixed;
+    width: 100%;
+    z-index: 999;
   }
+
+  .booker-header-logo {
+    left: 20px;
+  }
+
   .booker-main {
-    height: calc(100vh - 220px);
+    min-height: calc(100vh - 245px);
+    padding: 90px 20px 0 20px;
+    box-sizing: border-box;
   }
+
+  .booker-title-what {
+    margin-top: 30px !important;
+    margin-bottom: 15px !important;
+    font-size: 1.1rem !important;
+    opacity: 0.8;
+    font-weight: 400 !important;
+  }
+
+  .booker-title-who {
+    margin-top: 50px !important;
+    margin-bottom: 5px !important;
+    font-size: 1.1rem !important;
+    opacity: 0.8;
+    font-weight: 400 !important;
+  }
+
+  .booker-title-when {
+    margin-top: 45px !important;
+    margin-bottom: 15px !important;
+    font-size: 1.1rem !important;
+    opacity: 0.8;
+    font-weight: 400 !important;
+  }
+
   .breadcrumbs-page-numbers {
     display: none;
   }
@@ -25,7 +108,107 @@
     margin: 0 !important;
   }
 
-  .huge-service .booker-title-what {
-    font-size: 1.2rem !important;
+  .huge-service-dropdown {
+    font-size: 0.95rem !important;
+    padding: 0px 10px !important;
+  }
+
+  .visible.menu.transition {
+    min-height: 250px;
+    font-size: 0.9rem !important;
+  }
+
+  .help-tooltip {
+    border: 1px solid lightskyblue;
+    font-size: 0.6rem !important;
+    margin: -4px 5px 0 5px !important;
+    color: lightskyblue;
+  }
+
+  #Specialists {
+    overflow-x: auto !important;
+    display: flex;
+  }
+  .Specialist {
+    text-align: center;
+    box-sizing: border-box;
+    display: inline-block;
+    cursor: pointer;
+    font: "Lato", sans-serif;
+    border-radius: 4px;
+    margin-right: 10px;
+    min-width: 25vw;
+    /* background-color: yellow; */
+  }
+
+  .Specialist:hover {
+    background-color: transparent !important;
+  }
+
+  .specialist-img {
+    margin-bottom: -10px !important;
+    /* min-width: 25vw; */
+  }
+
+  .specialist-name {
+    font-size: 0.7rem !important;
+    line-height: 0.9rem !important;
+    font-weight: 600 !important;
+    color: #444 !important;
+    min-width: 25vw;
+  }
+  .specialist-desc {
+    display: none;
+  }
+
+  /* .react-datepicker {
+    width: 355px;
+  }
+  .react-datepicker__month-container {
+    width: 355px;
+  } */
+
+  .TimePills {
+    width: 100% !important;
+    max-height: 180px !important;
+    margin-left: -10px !important;
+    margin-top: 20px !important;
+    position: initial !important;
+    top: 0px !important;
+    left: 0px !important;
+    padding-right: 0px;
+    height: max-content !important;
+  }
+
+  .TimePills > .label {
+    width: 63px !important;
+    margin: 0px 10px 10px 0px !important;
+    text-align: center;
+    cursor: pointer;
+    font-size: 0.8rem;
+  }
+
+  .chosen-services-table thead {
+    display: none !important;
+  }
+
+  .date-services-table {
+    text-align: left !important;
+    margin-left: 55px;
+  }
+
+  .remove-service-btn {
+    float: right;
+    margin-top: -80px !important;
+    left: 5px;
+    position: relative;
+    border-radius: 50% !important;
+    width: 28px;
+    height: 28px;
+    font-size: 0.6rem !important;
+  }
+
+  .booker-footer {
+    margin-top: 50px;
   }
 }

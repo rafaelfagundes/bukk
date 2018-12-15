@@ -1,5 +1,5 @@
 import React from "react";
-import { Image, Header } from "semantic-ui-react";
+import { Image } from "semantic-ui-react";
 import "./Specialist.css";
 
 const Specialist = props => (
@@ -15,14 +15,25 @@ const Specialist = props => (
       circular
       size="small"
     />
-    <Header className="specialist-name" as="h4">
-      {props.firstName}
-      <br />
-      {props.lastName}
-    </Header>
-    <Header className="specialist-desc" sub>
-      {props.desc}
-    </Header>
+    <div className="specialist-name">
+      {props.selected && (
+        <>
+          <strong>
+            {props.firstName}
+            <br />
+            {props.lastName}
+          </strong>
+        </>
+      )}
+      {!props.selected && (
+        <>
+          {props.firstName}
+          <br />
+          {props.lastName}
+        </>
+      )}
+    </div>
+    <div className="specialist-desc">{props.desc}</div>
   </div>
 );
 
