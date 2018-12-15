@@ -54,6 +54,7 @@
     width: 100%;
     margin: 0px auto 55px auto;
     border: none;
+    height: 150vh;
   }
 
   .booker-header {
@@ -71,8 +72,7 @@
   }
 
   .booker-main {
-    min-height: calc(100vh - 245px);
-    padding: 90px 20px 0 20px;
+    padding: 90px 20px 90px 20px;
     box-sizing: border-box;
   }
 
@@ -209,6 +209,13 @@
   }
 
   .booker-footer {
-    margin-top: 50px;
+    margin: 0px 0px 0px 0px;
+    padding: 10px 10px;
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    border: 2px solid #eee !important;
+    background-color: #fcfcfc;
   }
 }

@@ -115,7 +115,9 @@ class DateTimePage extends Component {
         this.state.appointmentTime
     });
     this.resetPage();
-    this.setState({ saveClicked: true });
+    this.setState({ saveClicked: true }, () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
     this.props.setDateTimeOk(true);
   };
 
@@ -144,6 +146,8 @@ class DateTimePage extends Component {
   handleAddService = () => {
     this.resetPage();
     this.props.setCurrentService(this.props.currentService + 1);
+
+    window.scrollTo({ top: window.pageYOffset + 295, behavior: "smooth" });
   };
 
   handleMonthChange = e => {
@@ -178,9 +182,14 @@ class DateTimePage extends Component {
 
     this.props.setAppointment(this.props.appointment);
 
-    this.setState({
-      appointmentDate: date
-    });
+    this.setState(
+      {
+        appointmentDate: date
+      },
+      () => {
+        window.scrollTo({ top: window.pageYOffset + 650, behavior: "smooth" });
+      }
+    );
   };
 
   handleTime = e => {
@@ -274,11 +283,16 @@ class DateTimePage extends Component {
       }
     });
 
-    this.setState({
-      specialistId: _specialistId,
-      specialists: _specialistsList,
-      appointmentDate: moment()
-    });
+    this.setState(
+      {
+        specialistId: _specialistId,
+        specialists: _specialistsList,
+        appointmentDate: moment()
+      },
+      () => {
+        window.scrollTo({ top: window.pageYOffset + 225, behavior: "smooth" });
+      }
+    );
 
     this.props.appointment.services[
       this.props.currentService
@@ -320,22 +334,38 @@ class DateTimePage extends Component {
     if (_specialistsList.length === 1) {
       _specialistsList[0].selected = true;
       this.handleSpecialist(null, _specialistsList[0].id);
-      this.setState({
-        serviceId: value,
-        serviceKey: _serviceKey,
-        specialists: _specialistsList,
-        showHugeDropdown: false
-      });
+      this.setState(
+        {
+          serviceId: value,
+          serviceKey: _serviceKey,
+          specialists: _specialistsList,
+          showHugeDropdown: false
+        },
+        () => {
+          window.scrollTo({
+            top: window.pageYOffset + 155,
+            behavior: "smooth"
+          });
+        }
+      );
     } else {
       // TODO: remover comentário
       _specialistsList = _.shuffle(_specialistsList);
-      this.setState({
-        serviceId: value,
-        serviceKey: _serviceKey,
-        specialists: _specialistsList,
-        specialistId: "",
-        showHugeDropdown: false
-      });
+      this.setState(
+        {
+          serviceId: value,
+          serviceKey: _serviceKey,
+          specialists: _specialistsList,
+          specialistId: "",
+          showHugeDropdown: false
+        },
+        () => {
+          window.scrollTo({
+            top: window.pageYOffset + 155,
+            behavior: "smooth"
+          });
+        }
+      );
     }
   };
 
@@ -417,6 +447,7 @@ class DateTimePage extends Component {
   }
 
   componentDidMount() {
+    window.scrollTo({ top: 0, behavior: "smooth" });
     const hour = moment().hour();
     if (hour >= 6 && hour < 12) {
       this.setState({ greetings: "Bom dia" });
