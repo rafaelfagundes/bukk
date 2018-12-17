@@ -23,7 +23,12 @@ import config from "../../config";
 import calendarLocale from "./CalendarLocale";
 import _ from "lodash";
 import { connect } from "react-redux";
-import { getService, generateUUID, getSpecialist } from "../Utils/utils";
+import {
+  getService,
+  generateUUID,
+  getSpecialist,
+  getElementYPosition
+} from "../Utils/utils";
 
 import {
   setCurrentService,
@@ -137,7 +142,9 @@ class DateTimePage extends Component {
       _servicesTable.length === 0 ? 0 : _servicesTable.length - 1
     );
     this.resetPage();
-    this.setState({ servicesTable: _servicesTable, saveClicked: true });
+    this.setState({ servicesTable: _servicesTable, saveClicked: true }, () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
     if (_servicesTable.length === 0) {
       this.props.setDateTimeOk(false);
     }
@@ -147,7 +154,10 @@ class DateTimePage extends Component {
     this.resetPage();
     this.props.setCurrentService(this.props.currentService + 1);
 
-    window.scrollTo({ top: window.pageYOffset + 295, behavior: "smooth" });
+    window.scrollTo({
+      top: getElementYPosition("services-title") - 70,
+      behavior: "smooth"
+    });
   };
 
   handleMonthChange = e => {
@@ -187,7 +197,10 @@ class DateTimePage extends Component {
         appointmentDate: date
       },
       () => {
-        window.scrollTo({ top: window.pageYOffset + 650, behavior: "smooth" });
+        window.scrollTo({
+          top: getElementYPosition("time-pool") - 100,
+          behavior: "smooth"
+        });
       }
     );
   };
@@ -226,7 +239,12 @@ class DateTimePage extends Component {
     });
 
     this.props.setAppointment(this.props.appointment);
-    this.setState({ timeTable: _timeTable, appointmentTime: _time });
+    this.setState({ timeTable: _timeTable, appointmentTime: _time }, () => {
+      window.scrollTo({
+        top: getElementYPosition("save-button") - 100,
+        behavior: "smooth"
+      });
+    });
   };
 
   handleRandom = () => {
@@ -290,7 +308,10 @@ class DateTimePage extends Component {
         appointmentDate: moment()
       },
       () => {
-        window.scrollTo({ top: window.pageYOffset + 225, behavior: "smooth" });
+        window.scrollTo({
+          top: getElementYPosition("date-title") - 100,
+          behavior: "smooth"
+        });
       }
     );
 
@@ -343,9 +364,10 @@ class DateTimePage extends Component {
         },
         () => {
           window.scrollTo({
-            top: window.pageYOffset + 155,
+            top: getElementYPosition("specialist-title") - 100,
             behavior: "smooth"
           });
+          document.getElementsByClassName("Booker")[0].style.height = "150vh";
         }
       );
     } else {
@@ -361,9 +383,10 @@ class DateTimePage extends Component {
         },
         () => {
           window.scrollTo({
-            top: window.pageYOffset + 155,
+            top: getElementYPosition("specialist-title") - 100,
             behavior: "smooth"
           });
+          document.getElementsByClassName("Booker")[0].style.height = "150vh";
         }
       );
     }
@@ -447,7 +470,7 @@ class DateTimePage extends Component {
   }
 
   componentDidMount() {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo(0, 0);
     const hour = moment().hour();
     if (hour >= 6 && hour < 12) {
       this.setState({ greetings: "Bom dia" });
@@ -507,7 +530,11 @@ class DateTimePage extends Component {
         )}
         {this.state.servicesTable.length >= 1 && (
           <React.Fragment>
-            <Header as="h2" className="booker-title-what">
+            <Header
+              as="h2"
+              className="booker-title-what"
+              id="services-table-title"
+            >
               Serviços escolhidos
             </Header>
             <Table celled padded className="chosen-services-table">
@@ -618,13 +645,13 @@ class DateTimePage extends Component {
               </Grid>
             </div>
           )}
-
+          <div id="services-title" />
           {!this.state.showHugeDropdown &&
             !this.state.errors.companyNotFound &&
             (this.state.servicesTable.length === 0 ||
               !this.state.saveClicked) && (
               <React.Fragment>
-                {this.state.servicesTable.length > 0 && <Spacer height={40} />}
+                {/* {this.state.servicesTable.length > 0 && <Spacer height={40} />} */}
                 <Header as="h3" className="booker-title-what">
                   Serviço que deseja fazer
                   <Popup
@@ -661,7 +688,11 @@ class DateTimePage extends Component {
 
           {this.state.specialists.length > 0 && this.state.serviceId !== "" && (
             <React.Fragment>
-              <Header as="h3" className="booker-title-who">
+              <Header
+                as="h3"
+                className="booker-title-who"
+                id="specialist-title"
+              >
                 {this.state.specialists.length > 1
                   ? "Escolha um especialista"
                   : "Especialista que irá lhe atender"}
@@ -712,7 +743,7 @@ class DateTimePage extends Component {
 
           {this.state.specialistId !== "" && (
             <React.Fragment>
-              <Header as="h3" className="booker-title-when">
+              <Header as="h3" className="booker-title-when" id="date-title">
                 Dia e horário
                 <Popup
                   trigger={
@@ -738,7 +769,7 @@ class DateTimePage extends Component {
                 minDate={moment()}
                 excludeDates={this.state.excludeDates}
               />
-              <div className="TimePillsContainer">
+              <div className="TimePillsContainer" id="time-pool">
                 <div className="TimePills">
                   {this.state.timeTable.map(item => (
                     <Pill
@@ -766,6 +797,7 @@ class DateTimePage extends Component {
               icon
               onClick={this.handleSave}
               disabled={this.state.appointmentTime === ""}
+              id="save-button"
             >
               {this.props.isMobile ? "Salvar" : "Salvar este agendamento"}
               <Icon name="save" />

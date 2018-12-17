@@ -54,7 +54,7 @@
     width: 100%;
     margin: 0px auto 55px auto;
     border: none;
-    height: 150vh;
+    -webkit-tap-highlight-color: transparent;
   }
 
   .booker-header {
@@ -215,7 +215,7 @@
     position: fixed;
     bottom: 0;
     left: 0;
-    border: 2px solid #eee !important;
+    border-top: 2px solid #eee !important;
     background-color: #fcfcfc;
   }
 }

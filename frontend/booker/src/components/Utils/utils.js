@@ -1,5 +1,21 @@
 const _ = require("lodash");
 
+exports.getElementYPosition = elementId => {
+  console.log(
+    "top",
+    document.getElementById(elementId).getBoundingClientRect().top
+  );
+  console.log(
+    "final",
+    document.getElementById(elementId).getBoundingClientRect().top +
+      window.scrollY
+  );
+  return (
+    document.getElementById(elementId).getBoundingClientRect().top +
+    window.scrollY
+  );
+};
+
 exports.getSpecialist = (id, specialists) => {
   const index = _.findIndex(specialists, function(o) {
     return o.employee._id === id;
