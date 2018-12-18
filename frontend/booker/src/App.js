@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import "./App.css";
 import Booker from "./components/Booker";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 

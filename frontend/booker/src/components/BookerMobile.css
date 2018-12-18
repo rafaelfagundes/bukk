@@ -253,6 +253,7 @@
   #whatsapp-toogle label {
     padding-top: 4px !important;
     padding-left: 76px !important;
+    z-index: 1 !important;
   }
 
   .ui.pointing.large.label.error-gender {
