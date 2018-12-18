@@ -730,7 +730,7 @@ class DateTimePage extends Component {
                         firstName="Escolher"
                         lastName="Aleatoriamente"
                         desc="Deixe o sistema decidir por você"
-                        image="https://res.cloudinary.com/bukkapp/image/upload/v1544067728/Bukk/Assets/shuffle.png"
+                        image="https://res.cloudinary.com/bukkapp/image/upload/v1545096912/Bukk/Assets/shuffle-square.png"
                         random={true}
                       />
                     )}
