@@ -35,41 +35,6 @@ class Ticket extends Component {
               {formatBrazilianPhoneNumber(this.props.client.phone)}
             </div>
           </div>
-          {/* <div className="ticket-qrcode">
-            <img
-              className="ticket-qrcode-img"
-              src={this.props.qrcode}
-              alt="QR CODE"
-            />
-            <button onClick={this.handleQrCodeSize}>+ Ampliar</button>
-            <Portal
-              closeOnTriggerClick
-              onOpen={this.handleOpen}
-              onClose={this.handleClose}
-              openOnTriggerClick
-              trigger={
-                <button
-                  negative={this.state.open + ""}
-                  positive={!this.state.open + ""}
-                >
-                  {this.state.open ? "- Fechar" : "+ Ampliar"}
-                </button>
-              }
-            >
-              <Segment
-                style={{
-                  transform: "translate(-209px,-209px)",
-                  left: "50%",
-                  position: "fixed",
-                  top: "50%",
-                  zIndex: "1000",
-                  boxShadow: "0px 0px 100px rgba(0,0,0,.3)"
-                }}
-              >
-                <img src={this.props.qrcode} alt="QR CODE" />
-              </Segment>
-            </Portal>
-          </div> */}
         </div>
         <div className="ticket-appointment-details">
           {this.props.services.map(item => (
@@ -127,6 +92,7 @@ class Ticket extends Component {
             {this.props.companyData.address.neighborhood}
           </div>
           <div className="ticket-company-details-city">
+            <Icon name="map outline" />
             {this.props.companyData.address.city} -{" "}
             {this.props.companyData.address.state}
           </div>

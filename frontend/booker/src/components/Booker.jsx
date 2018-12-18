@@ -71,6 +71,15 @@ class Booker extends Component {
     window.removeEventListener("beforeunload", this.handleLeavePage);
   }
 
+  scrollToTop() {
+    setTimeout(function() {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    }, 100);
+  }
+
   handleLeavePage(e) {
     const confirmationMessage =
       "Tem certeza que deseja sair da página? Há informações não salvas.";
@@ -79,11 +88,18 @@ class Booker extends Component {
   }
 
   handlePagination = e => {
+    if (e.target.value.toString() === "3") {
+      console.log("confirmation page");
+      if (this.props.isMobile) {
+        document.getElementsByClassName("Booker")[0].style.height = "100vh";
+      }
+    }
     this.props.setPage(e.target.value);
+    this.scrollToTop();
   };
 
   handleConfirmation = e => {
-    var _page = e.target.value;
+    const _page = e.target.value;
 
     axios
       .post(config.api + "/appointments", this.props.appointment)
@@ -102,9 +118,9 @@ class Booker extends Component {
           service.specialistTitle = _specialist.desc;
           service.serviceDesc = _service.desc;
           service.time =
-            moment(service.start).format("H:mm A") +
+            moment(service.start).format("H:mm") +
             " até " +
-            moment(service.end).format("H:mm A");
+            moment(service.end).format("H:mm");
           service.date = moment(service.start)
             .locale("pt_BR")
             .format("DD [de] MMMM [de] YYYY");
@@ -117,6 +133,7 @@ class Booker extends Component {
         this.props.setPage("5");
         this.setState({ error: error.response.data.message });
       });
+    this.scrollToTop();
   };
 
   render() {
@@ -132,6 +149,17 @@ class Booker extends Component {
             type="text/css"
             href={
               config.api + "/companies/css/" + this.props.match.params.companyId
+            }
+          />
+        )}
+        {this.props.isMobile && (
+          <link
+            rel="stylesheet"
+            type="text/css"
+            href={
+              config.api +
+              "/companies/mobilecss/" +
+              this.props.match.params.companyId
             }
           />
         )}

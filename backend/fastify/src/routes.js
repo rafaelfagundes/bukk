@@ -57,6 +57,11 @@ const routes = [
     handler: companyController.getCompanyCss
   },
   {
+    method: "GET",
+    url: "/api/companies/mobilecss/:id",
+    handler: companyController.getCompanyMobileCss
+  },
+  {
     method: "POST",
     url: "/api/companies",
     handler: companyController.addCompany

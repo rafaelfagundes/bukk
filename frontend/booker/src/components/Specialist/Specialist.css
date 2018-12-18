@@ -29,10 +29,6 @@
   border: 5px solid transparent;
 }
 
-.specialist-img__selected {
-  border: 5px solid rgb(33, 133, 208);
-}
-
 .specialist-name {
   margin: 15px 0px 0px 0px;
   font-size: 16px;

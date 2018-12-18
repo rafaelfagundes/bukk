@@ -1,15 +1,6 @@
 const _ = require("lodash");
 
 exports.getElementYPosition = elementId => {
-  console.log(
-    "top",
-    document.getElementById(elementId).getBoundingClientRect().top
-  );
-  console.log(
-    "final",
-    document.getElementById(elementId).getBoundingClientRect().top +
-      window.scrollY
-  );
   return (
     document.getElementById(elementId).getBoundingClientRect().top +
     window.scrollY

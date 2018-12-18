@@ -82,9 +82,9 @@ class ConfirmationPage extends Component {
                 .locale("pt_BR")
                 .format("DD [de] MMMM [de] YYYY"),
               time:
-                service.start.format("H:mm A") +
+                service.start.format("H:mm") +
                 " até " +
-                service.end.format("H:mm A"),
+                service.end.format("H:mm"),
               price: "" + _service.value
             });
           }
@@ -111,7 +111,9 @@ class ConfirmationPage extends Component {
           <br />
           do seu agendamento
         </Header>
-        <Header as="h3">Seus dados</Header>
+        <Header as="h3" className="confimation-page-title">
+          Seus dados
+        </Header>
         <ClientInfo
           name={
             this.props.appointment.client.firstName +
@@ -123,7 +125,7 @@ class ConfirmationPage extends Component {
           obs={this.props.appointment.client.obs}
           whatsapp={this.props.appointment.client.whatsapp}
         />
-        <Header as="h3">
+        <Header as="h3" className="confimation-page-title">
           {this.props.appointment.services.length > 1 ? "Serviços" : "Serviço"}
         </Header>
         {this.state.servicesList.map(item => (

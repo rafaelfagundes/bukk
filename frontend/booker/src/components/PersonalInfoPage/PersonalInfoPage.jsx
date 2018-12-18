@@ -182,7 +182,7 @@ class PersonalInfoPage extends Component {
   render() {
     return (
       <div className={"PersonalInfoPage " + this.props.className}>
-        <Header as="h3">
+        <Header as="h3" className="personal-info">
           Seus dados pessoais
           <Popup
             trigger={
@@ -193,7 +193,7 @@ class PersonalInfoPage extends Component {
             basic
           />
         </Header>
-        <Form>
+        <Form className="personal-info-form">
           <Form.Group>
             <Form.Field width={6}>
               <Form.Input
@@ -270,6 +270,7 @@ class PersonalInfoPage extends Component {
                 value={this.state.client.email}
                 onChange={this.handleChange}
                 id="email"
+                type="email"
               />
               {this.state.errors.email !== "" && (
                 <Label size="large" pointing>
@@ -288,6 +289,7 @@ class PersonalInfoPage extends Component {
                 value={this.state.client.phone}
                 onChange={this.handleChange}
                 id="phone"
+                type="tel"
               />
               {this.state.errors.phone !== "" && (
                 <Label size="large" pointing>
@@ -309,6 +311,7 @@ class PersonalInfoPage extends Component {
                 onChange={this.handleChange}
                 id="whatsapp"
                 checked={this.state.client.whatsapp}
+                toggle
               />
             </Form.Field>
           </Form.Group>
@@ -319,7 +322,7 @@ class PersonalInfoPage extends Component {
               label="Observações"
               placeholder="Observações"
               width={12}
-              rows="8"
+              rows="3"
               value={this.state.client.obs}
               onChange={this.handleChange}
               id="obs"

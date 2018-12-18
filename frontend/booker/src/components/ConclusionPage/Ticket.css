@@ -41,7 +41,9 @@
 
 .ticket-client-details-email,
 .ticket-company-details-email,
-.ticket-company-details-phone {
+.ticket-company-details-phone,
+.ticket-company-details-street,
+.ticket-company-details-city {
   color: #333;
   font-size: 1rem;
   margin-bottom: 5px;
@@ -130,10 +132,4 @@
   padding: 30px;
   display: flex;
   flex-direction: column;
-}
-
-.ticket-company-details-street {
-}
-.ticket-company-details-city {
-  margin: 0 0 5px 21px;
 }

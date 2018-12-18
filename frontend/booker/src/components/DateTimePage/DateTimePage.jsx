@@ -367,7 +367,9 @@ class DateTimePage extends Component {
             top: getElementYPosition("specialist-title") - 100,
             behavior: "smooth"
           });
-          document.getElementsByClassName("Booker")[0].style.height = "150vh";
+          if (this.props.isMobile) {
+            document.getElementsByClassName("Booker")[0].style.height = "150vh";
+          }
         }
       );
     } else {
@@ -386,7 +388,9 @@ class DateTimePage extends Component {
             top: getElementYPosition("specialist-title") - 100,
             behavior: "smooth"
           });
-          document.getElementsByClassName("Booker")[0].style.height = "150vh";
+          if (this.props.isMobile) {
+            document.getElementsByClassName("Booker")[0].style.height = "150vh";
+          }
         }
       );
     }

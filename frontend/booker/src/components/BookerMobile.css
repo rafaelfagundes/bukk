@@ -76,7 +76,8 @@
     box-sizing: border-box;
   }
 
-  .booker-title-what {
+  .booker-title-what,
+  .personal-info {
     margin-top: 30px !important;
     margin-bottom: 15px !important;
     font-size: 1.1rem !important;
@@ -92,7 +93,8 @@
     font-weight: 400 !important;
   }
 
-  .booker-title-when {
+  .booker-title-when,
+  .confimation-page-title {
     margin-top: 45px !important;
     margin-bottom: 15px !important;
     font-size: 1.1rem !important;
@@ -217,5 +219,176 @@
     left: 0;
     border-top: 2px solid #eee !important;
     background-color: #fcfcfc;
+  }
+
+  .ui.pointing.large.label {
+    font-size: 0.8rem !important;
+  }
+  .personal-info {
+    margin-bottom: 0px !important;
+  }
+
+  .personal-info-form label {
+    margin-top: 25px !important;
+    font-weight: 400 !important;
+    font-size: 0.9rem !important;
+    padding: 0 !important;
+  }
+
+  .personal-info-form .label-gender {
+    margin-bottom: -20px !important;
+  }
+
+  .personal-info-form .checkbox label {
+    padding-left: 22px !important;
+  }
+
+  .personal-info-form .radio label {
+    padding-left: 20px !important;
+  }
+
+  #whatsapp-toogle {
+    margin-top: -45px;
+  }
+  #whatsapp-toogle label {
+    padding-top: 4px !important;
+    padding-left: 76px !important;
+  }
+
+  .ui.pointing.large.label.error-gender {
+    margin-top: 15px !important;
+    margin-bottom: 0px !important;
+  }
+
+  #confirmation-title {
+    padding-top: 30px !important;
+  }
+
+  .ServiceListItem {
+    padding: 10px 0px !important;
+  }
+
+  .service-details-container {
+    max-width: calc(100% - 75px) !important;
+    min-width: 0 !important;
+    padding-left: 0px !important;
+  }
+
+  .service-photo-container {
+    border-right: none !important;
+    padding: 0px 10px 0 10px !important;
+  }
+  .service-photo-container img {
+    width: 50px !important;
+    height: 50px !important;
+  }
+  .service-price {
+    position: absolute !important;
+    top: 60px !important;
+    left: 10px !important;
+  }
+  .service-price-container {
+    padding: 0px 20px 0px 25px !important;
+    background-color: transparent !important;
+  }
+
+  .service-price-container-currency {
+    font-size: 0.6rem !important;
+    font-weight: 700 !important;
+    width: 50px !important;
+  }
+
+  .service-price-container {
+    padding: 0px !important;
+    text-align: center !important;
+  }
+  .service-price-container-price {
+    font-size: 0.8rem !important;
+    font-weight: 700 !important;
+    margin-top: -18px !important;
+    width: 70px !important;
+  }
+
+  .service-price-container-price__digits {
+    font-size: 0.4rem !important;
+    font-weight: 700 !important;
+    position: relative !important;
+  }
+
+  .payment-details-price-amount {
+    font-size: 1.3rem !important;
+  }
+
+  .payment-details-types,
+  .payment-details-price-total {
+    display: none !important;
+  }
+
+  .conclusion-header {
+    padding-top: 30px !important;
+  }
+
+  .conclusion-title {
+    margin-top: 15px !important;
+  }
+
+  .Ticket {
+    width: 100% !important;
+    margin: 35px auto !important;
+  }
+  .ticket-client-details {
+    padding: 20px !important;
+  }
+
+  .ticket-client-details-name {
+    font-size: 0.9rem !important;
+    line-height: 1rem !important;
+  }
+  .ticket-client-details-email,
+  .ticket-client-details-phone {
+    font-size: 0.8rem !important;
+    line-height: 1rem !important;
+  }
+  .ticket-appointment-details {
+    padding: 20px 20px !important;
+  }
+  .ticket-appointment-details-service-avatar {
+    margin-right: 0px;
+  }
+  .ticket-appointment-details-service-avatar img {
+    width: 50px !important;
+    height: 50px !important;
+    margin-right: 10px !important;
+  }
+  .ticket-appointment-details-service-desc {
+    font-size: 0.9rem !important;
+    line-height: 1rem !important;
+    padding-right: 20px !important;
+  }
+  .ticket-appointment-details-service-specialist {
+    font-size: 0.8rem !important;
+    line-height: 1rem !important;
+  }
+  .ticket-client-details-confirmationId {
+    display: none !important;
+  }
+  .ticket-appointment-details-service-date,
+  .ticket-appointment-details-service-time {
+    font-size: 0.8rem !important;
+    line-height: 1.1rem !important;
+  }
+  .ticket-company-details {
+    padding: 20px !important;
+  }
+  .ticket-company-details-name {
+    font-size: 0.9rem !important;
+  }
+  .ticket-company-details-street,
+  .ticket-company-details-city,
+  .ticket-company-details-phone,
+  .ticket-company-details-email,
+  .ticket-company-details-web {
+    font-size: 0.8rem !important;
+    line-height: 1rem !important;
   }
 }
