@@ -325,6 +325,15 @@
     display: none !important;
   }
 
+  .service-remove {
+    margin-top: 0 !important;
+  }
+
+  .service-remove-btn {
+    font-size: 0.7rem !important;
+    padding: 0 !important;
+  }
+
   .conclusion-header {
     padding-top: 30px !important;
   }

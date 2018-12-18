@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Grid, Image, Button, Header } from "semantic-ui-react";
 import "./Booker.css";
 import "./BookerMobile.css";
+import "./Print.css";
 import { connect } from "react-redux";
 import {
   setPage,

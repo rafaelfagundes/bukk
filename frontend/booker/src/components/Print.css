@@ -1,0 +1,39 @@
+/* PRINT */
+@media print {
+  * {
+    box-shadow: 0px 0px 0px #fff !important;
+  }
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    height: calc(100vh - 40px) !important;
+    background-color: #fff !important;
+  }
+
+  .Booker {
+    width: 100%;
+    border: none;
+    background-color: #fff !important;
+  }
+  .booker-header,
+  .conclusion-header,
+  .ticket-qrcode,
+  .conclusion-footer,
+  .ticket-appointment-details-service-avatar,
+  .help-tooltip {
+    display: none !important;
+    background-color: #fff !important;
+  }
+
+  .booker-main {
+    padding: 0 !important;
+    background-color: #fff !important;
+  }
+
+  .Ticket {
+    margin: 0 !important;
+    width: 100% !important;
+    background-image: none !important;
+    background-color: #fff !important;
+  }
+}
