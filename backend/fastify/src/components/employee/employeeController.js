@@ -2,43 +2,66 @@
 const boom = require("boom");
 const mongoose = require("mongoose");
 const moment = require("moment");
+const _ = require("lodash");
 
 // Get Data Models
 const Employee = require("./Employee");
 const User = require("../user/User");
 const Appointment = require("../appointment/Appointment");
 
-function generateMonthSchedule(date, workingDays, workingTime, timeFrame = 30) {
+function generateMonthSchedule(date, workingDays, timeFrame = 30) {
+  function getWorkingHours(workingDay) {
+    return _.find(workingDays, function(o) {
+      return o.weekDay === workingDay;
+    }).workingHours;
+  }
+
+  // If the first day
   let monthStart = moment(date);
+
+  // If not the first day
   if (monthStart.isBefore(moment())) {
     monthStart = moment({ minute: "00", second: "00" });
   }
+
+  // First moment of the next month
   const monthEnd = moment(date).add(1, "month");
 
+  // Maps days to indexes
+  const allWeekDays = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+
+  // Actually working days
+  const _workingDays = [];
+  workingDays.forEach(day => {
+    _workingDays.push(day.weekDay);
+  });
+
+  // Excluded dates
   let dateSet = new Set();
 
+  // Times
   let times = [];
 
   while (monthStart.isBefore(monthEnd)) {
-    // For each working time period
-    workingTime.forEach(wTime => {
-      // Start period
-      let _s = moment(monthStart).set({
-        hour: wTime.start.split(":")[0],
-        minute: wTime.start.split(":")[1],
-        second: "00"
-      });
+    // If in working days
+    if (_workingDays.indexOf(allWeekDays[monthStart.weekday()]) >= 0) {
+      let _workingHours = getWorkingHours(allWeekDays[monthStart.weekday()]);
+      _workingHours.forEach(hour => {
+        // Start period
+        let _s = moment(monthStart).set({
+          hour: hour.start.split(":")[0],
+          minute: hour.start.split(":")[1],
+          second: "00"
+        });
 
-      //End period
-      let _e = moment(monthStart).set({
-        hour: wTime.end.split(":")[0],
-        minute: wTime.end.split(":")[1],
-        second: "00"
-      });
+        //End period
+        let _e = moment(monthStart).set({
+          hour: hour.end.split(":")[0],
+          minute: hour.end.split(":")[1],
+          second: "00"
+        });
 
-      // Non working day filter
-      if (workingDays.indexOf(moment(monthStart).weekday()) >= 0) {
-        // Non working hour filter
+        // Check if it is in time range
         if (
           moment(monthStart).isSameOrAfter(_s) &&
           moment(monthStart).isBefore(_e) &&
@@ -46,19 +69,66 @@ function generateMonthSchedule(date, workingDays, workingTime, timeFrame = 30) {
         ) {
           times.push(moment(monthStart).format("YYYY-MM-DD HH:mm"));
         }
-      } else {
-        dateSet.add(moment(monthStart).format("YYYY-MM-DD"));
-      }
-    });
+      });
+    } else {
+      dateSet.add(moment(monthStart).format("YYYY-MM-DD"));
+    }
+
+    // Add X minutes
     monthStart.add(timeFrame, "minute");
   }
 
+  // Cast to array
   const dates = Array.from(dateSet);
 
   return {
     dates,
     times
   };
+}
+
+function filterAlreadyUsedTimes(appointments, times) {
+  appointments.forEach(app => {
+    _.remove(times, function(time) {
+      const s = moment(app.start);
+      const e = moment(app.end);
+      const t = moment(time);
+      return t.isSameOrAfter(s) && t.isBefore(e);
+    });
+  });
+}
+
+function filterIncompatibleRange(times, duration, timeFrame = 30) {
+  function isAllFound(items, array) {
+    let _counter = 0;
+    items.forEach(i => {
+      let result = _.find(array, function(o) {
+        return i === o;
+      });
+      if (result) _counter++;
+    });
+    return _counter === items.length;
+  }
+  const _timeSlots = duration / timeFrame;
+
+  // console.log(isAllFound([1, 2, 3], [1, 3, 4, 5]));
+
+  const _filteredTimes = [];
+
+  times.forEach(t => {
+    let _times = [];
+    let _time = moment(t);
+    for (let index = 0; index < _timeSlots; index++) {
+      _times.push(moment(_time).format("YYYY-MM-DD HH:mm"));
+      _time.add(timeFrame, "minute");
+    }
+
+    if (isAllFound(_times, times)) {
+      _filteredTimes.push(t);
+    }
+  });
+
+  return _filteredTimes;
 }
 
 // Get all employees
@@ -130,19 +200,23 @@ exports.getSchedule = async (req, reply) => {
     console.clear();
     const id = req.params.id;
     const date = req.params.date;
-    const duration = req.params.duration;
+    const serviceDuration = req.params.duration;
 
-    // return [{ id, monthStart, monthEnd, duration }];
-    return generateMonthSchedule(
-      date,
-      [1, 2, 3, 4, 5],
-      [
-        { start: "8:00", end: "12:00" },
-        { start: "14:00", end: "18:00" },
-        { start: "18:30", end: "23:59" }
-      ],
-      duration
+    const employee = await Employee.findOne({ _id: id });
+    const appointments = await Appointment.find({ employee: id });
+    let _monthSchedule = generateMonthSchedule(date, employee.workingDays);
+
+    // Scheduled times
+    filterAlreadyUsedTimes(appointments, _monthSchedule.times);
+
+    // Impossible to book due previous booking
+    _monthSchedule.times = filterIncompatibleRange(
+      _monthSchedule.times,
+      serviceDuration,
+      30
     );
+
+    return _monthSchedule;
   } catch (err) {
     throw boom.boomify(err);
   }

@@ -169,12 +169,14 @@ class DateTimePage extends Component {
   handleMonthChange = e => {
     const _month = e.format("YYYY-MM");
     const _specialistId = this.state.specialistId;
+    const _duration = getService(this.state.serviceId, this.props.services)
+      .duration;
 
     axios
       .get(
         `${
           config.api
-        }/specialists/schedule/${_specialistId}/date/${_month}/duration/30`
+        }/specialists/schedule/${_specialistId}/date/${_month}/duration/${_duration}`
       )
       .then(response => {
         let _dates = [];
@@ -271,12 +273,14 @@ class DateTimePage extends Component {
     const _date = moment().format("YYYY-MM-DD");
     const _month = moment().format("YYYY-MM");
     const _specialistId = String(value);
+    const _duration = getService(this.state.serviceId, this.props.services)
+      .duration;
 
     axios
       .get(
         `${
           config.api
-        }/specialists/schedule/${_specialistId}/date/${_month}/duration/30`
+        }/specialists/schedule/${_specialistId}/date/${_month}/duration/${_duration}`
       )
       .then(response => {
         let _dates = [];
