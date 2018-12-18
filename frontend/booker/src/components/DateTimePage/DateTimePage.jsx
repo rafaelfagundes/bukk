@@ -151,6 +151,12 @@ class DateTimePage extends Component {
   };
 
   handleAddService = () => {
+    // Avoid counter iteration
+    if (
+      this.props.appointment.services[this.props.currentService] === undefined
+    ) {
+      return false;
+    }
     this.resetPage();
     this.props.setCurrentService(this.props.currentService + 1);
 
@@ -655,7 +661,8 @@ class DateTimePage extends Component {
             (this.state.servicesTable.length === 0 ||
               !this.state.saveClicked) && (
               <React.Fragment>
-                {/* {this.state.servicesTable.length > 0 && <Spacer height={40} />} */}
+                {this.state.servicesTable.length > 0 &&
+                  !this.props.isMobile && <Spacer height={40} />}
                 <Header as="h3" className="booker-title-what">
                   Serviço que deseja fazer
                   <Popup
