@@ -353,7 +353,10 @@ exports.getCompanyMobileCss = async (req, reply) => {
 exports.getSingleCompany = async (req, reply) => {
   try {
     const id = req.params.id;
-    const company = await Company.findById(id);
+    const company = await Company.findById(
+      id,
+      "id address settings companyNickname tradingName logo website email phone paymentOptions"
+    );
     return company;
   } catch (err) {
     throw boom.boomify(err);

@@ -18,7 +18,10 @@ exports.getServices = async (req, reply) => {
 exports.getServicesByCompany = async (req, reply) => {
   try {
     const companyId = req.params.companyId;
-    const services = await Service.find({ company: companyId });
+    const services = await Service.find(
+      { company: companyId },
+      "id desc value duration company"
+    );
     return services;
   } catch (err) {
     throw boom.boomify(err);
