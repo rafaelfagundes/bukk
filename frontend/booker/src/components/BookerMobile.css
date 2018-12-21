@@ -4,13 +4,9 @@
   }
 
   ::-webkit-scrollbar {
-    height: 0px !important; /* remove scrollbar space */
-    width: 0px !important; /* remove scrollbar space */
+    height: 0px !important; /* remove scrollbar height */
+    width: 0px !important; /* remove scrollbar width */
     background: transparent !important; /* optional: just make scrollbar invisible */
-  }
-
-  body {
-    display: block; /* TODO: mover pra quando chamar o CSS */
   }
 
   .button {

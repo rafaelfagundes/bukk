@@ -7,6 +7,9 @@ const moment = require("moment");
 const Appointment = require("./Appointment");
 const Costumer = require("../costumer/Costumer");
 
+const Mail = require("../mail/Mail");
+const templates = require("../mail/templates/emailTemplates");
+
 // Aux functions
 
 const checkEmptyTimeInSchedule = async services => {
@@ -33,11 +36,6 @@ const checkEmptyTimeInSchedule = async services => {
       })
     );
   });
-
-  // Promise.all(jobs).then(result => {
-  //   console.log(result[0].length);
-  //   return result[0].length;
-  // });
 
   const result = await Promise.all(jobs);
 
@@ -72,7 +70,6 @@ exports.getSingleAppointment = async (req, reply) => {
 
 // Add a new appointment
 exports.addAppointment = async (req, reply) => {
-  console.log("\n-------------------------------\n");
   const okToContinue = await checkEmptyTimeInSchedule(req.body.services);
   if (okToContinue) {
     try {
@@ -109,6 +106,18 @@ exports.addAppointment = async (req, reply) => {
       const resultAppointment = await Appointment.create(_appointments);
 
       if (resultAppointment) {
+        // TODO: Send email
+
+        const html = templates.newAppointment();
+        const mail = new Mail(
+          "Agendamento concluído com sucesso",
+          "Agendamento concluído com sucesso",
+          html,
+          "rafaelcflima@gmail.com",
+          "no-reply@bukk.com.br"
+        );
+        mail.send();
+
         return {
           status: "confirmed",
           msg: "Agendamento concluído com sucesso",
@@ -118,24 +127,18 @@ exports.addAppointment = async (req, reply) => {
       } else {
         return {
           status: "error",
-          msg: "Houve um erro ao agendar. Tente novamente.",
-          client: _client,
-          services: _services
+          msg: "Houve um erro ao agendar. Tente novamente."
         };
       }
     } catch (err) {
       throw boom.boomify(err);
     }
   } else {
-    throw boom.boomify(
-      new Error(
-        "A data e horários escolhidos já foram agendados. Tente novamente em outro horário"
-      ),
-      {
-        statusCode: 500,
-        message: "Erro ao tentar agendar"
-      }
-    );
+    return {
+      status: "error",
+      msg:
+        "A data e horário escolhidos não estão mais disponíveis. Tente novamente em outro horário."
+    };
   }
 };
 
