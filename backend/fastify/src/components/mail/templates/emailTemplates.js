@@ -1,5 +1,101 @@
-exports.newAppointment = () => {
-  return `<!DOCTYPE html>
+const Appointment = require("../../appointment/Appointment");
+const moment = require("moment");
+
+exports.newAppointment = async confirmationId => {
+  let appointment = await Appointment.aggregate([
+    {
+      $match: {
+        confirmationId: confirmationId
+      }
+    },
+    {
+      $lookup: {
+        from: "costumers",
+        localField: "costumer",
+        foreignField: "_id",
+        as: "costumer"
+      }
+    },
+    {
+      $lookup: {
+        from: "companies",
+        localField: "company",
+        foreignField: "_id",
+        as: "company"
+      }
+    },
+    {
+      $lookup: {
+        from: "employees",
+        localField: "employee",
+        foreignField: "_id",
+        as: "employee"
+      }
+    },
+    {
+      $lookup: {
+        from: "services",
+        localField: "service",
+        foreignField: "_id",
+        as: "service"
+      }
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "employee.user",
+        foreignField: "_id",
+        as: "employee.user"
+      }
+    },
+    {
+      $unwind: {
+        path: "$employee"
+      }
+    },
+    {
+      $unwind: {
+        path: "$costumer"
+      }
+    },
+    {
+      $unwind: {
+        path: "$company"
+      }
+    },
+    {
+      $unwind: {
+        path: "$employee.user"
+      }
+    },
+    {
+      $unwind: {
+        path: "$service"
+      }
+    },
+    {
+      $project: {
+        confirmationId: 1,
+        start: 1,
+        end: 1,
+        "costumer.firstName": 1,
+        "costumer.lastName": 1,
+        "employee.user.firstName": 1,
+        "employee.user.lastName": 1,
+        "service.desc": 1,
+        "company.companyNickname": 1,
+        "company.email": 1,
+        "company.website": 1,
+        "company.phone": 1,
+        "company.address": 1
+      }
+    }
+  ]).exec();
+
+  console.log(appointment);
+
+  text = ``;
+  html = `<!DOCTYPE html>
   <html
     lang="en"
     xmlns="http://www.w3.org/1999/xhtml"
@@ -215,7 +311,9 @@ exports.newAppointment = () => {
         <div
           style="display: none; font-size: 1px; line-height: 1px; max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden; mso-hide: all; font-family: sans-serif;"
         >
-          Olá, XXXXXXX. Seu agendamento foi concluído com sucesso.
+          Olá, ${
+            appointment[0].costumer.firstName
+          }. Seu agendamento foi concluído com sucesso.
         </div>
         <!-- Visually Hidden Preheader Text : END -->
   
@@ -297,45 +395,56 @@ exports.newAppointment = () => {
                       <h1
                         style="margin: 0 0 10px 0; font-family: sans-serif; font-size: 25px; line-height: 30px; color: #333333; font-weight: normal;"
                       >
-                        Olá, XXXXXXX<br />Seu agendamento foi concluído
+                        Olá, ${
+                          appointment[0].costumer.firstName
+                        }.<br />Seu agendamento foi concluído
                         com&nbsp;sucesso
                       </h1>
                       <p style="margin: 0; color: #555;">
                         Confira os dados do seu
-                        agendamento.<br />Qualquer dúvida entre em contato com
-                        XXXXXXXX através de um dos meios&nbsp;informados.
+                        agendamento.<br />Qualquer dúvida entre em contato com <strong>
+                        ${
+                          appointment[0].company.companyNickname
+                        }</strong> através de um dos meios&nbsp;informados.
                       </p>
                     </td>
                   </tr>
                   <tr>
                     <td
-                      style="padding: 20px 0 0 20px; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;"
+                      style="padding: 10px 0 0 20px; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;"
                     >
                       <h2
-                        style="margin: 0 0 10px 0; font-family: sans-serif; font-size: 18px; line-height: 22px; color: #666; font-weight: 400;"
+                        style="margin: 0 0 0px 0; font-family: sans-serif; font-size: 18px; line-height: 22px; color: #666; font-weight: 400;"
                       >
                         Serviços&nbsp;agendados
                       </h2>
                     </td>
-                  </tr>
+                  </tr>`;
+
+  appointment.forEach(appointment => {
+    html += `<tr>
+    <td
+      style="padding: 10px 20px; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;"
+    >
+        <p style="margin: 0; color: #555">${appointment.service.desc}</p>
+        <p style="margin: 0; color: #555">${appointment.employee.user
+          .firstName +
+          " " +
+          appointment.employee.user.lastName}</p>
+        <p style="margin: 0; color: #555">${moment(appointment.start).format(
+          "DD [de] MMMM [de] YYYY"
+        )}</p>
+        <p style="margin: 0; color: #555">De ${moment(appointment.start).format(
+          "HH:mm"
+        )} às ${moment(appointment.end).format("HH:mm")}</p>
+      </td>
+    </tr>`;
+  });
+
+  html += `
                   <tr>
                     <td
-                      style="padding: 0 20px; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;"
-                    >
-                      <p style="margin: 0; color: #555">Descrição do serviço 1</p>
-                      <p style="margin: 0; color: #555">Especialista</p>
-                      <p style="margin: 0; color: #555">XX de xxxxxx de XXXX</p>
-                      <p style="margin: 0; color: #555">De XX:XX às XX:XX</p>
-                      <br />
-                      <p style="margin: 0; color: #555">Descrição do serviço 2</p>
-                      <p style="margin: 0; color: #555">Especialista</p>
-                      <p style="margin: 0; color: #555">XX de xxxxxx de XXXX</p>
-                      <p style="margin: 0; color: #555">De XX:XX às XX:XX</p>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td
-                      style="padding: 40px 0 0 20px; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;"
+                      style="padding: 20px 0 0 20px; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;"
                     >
                       <h2
                         style="margin: 0 0 10px 0; font-family: sans-serif; font-size: 18px; line-height: 22px; color: #666; font-weight: 400;"
@@ -348,11 +457,26 @@ exports.newAppointment = () => {
                     <td
                       style="padding: 0 20px; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;"
                     >
-                      <p style="margin: 0; color: #555">Endereço</p>
-                      <p style="margin: 0; color: #555">Telefone 1</p>
-                      <p style="margin: 0; color: #555">Telefone 2</p>
-                      <p style="margin: 0; color: #555">Email</p>
-                      <p style="margin: 0; color: #555">Site</p>
+                      <p style="margin: 0; color: #555">${
+                        appointment[0].company.address.street
+                      } - ${appointment[0].company.address.number}<br />
+                      ${appointment[0].company.address.neighborhood}<br />${
+    appointment[0].company.address.city
+  } - ${appointment[0].company.address.state}<br /><br /></p>
+  `;
+
+  appointment[0].company.phone.forEach(phone => {
+    html += `<p style="margin: 0; color: #555">${phone.number}</p>`;
+  });
+
+  html += `
+
+                      <p style="margin: 0; color: #555">${
+                        appointment[0].company.email
+                      }</p>
+                      <p style="margin: 0; color: #555">${
+                        appointment[0].company.website
+                      }</p>
                     </td>
                   </tr>
                   <tr>
@@ -557,4 +681,6 @@ exports.newAppointment = () => {
     </body>
   </html>
   `;
+
+  return { text, html };
 };

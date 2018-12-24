@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 
 // Appointment Schema & Model
 const AppointmentSchema = new Schema({
+  confirmationId: { type: String, required: true },
   costumer: { type: Schema.Types.ObjectId, ref: "Costumer" },
   employee: { type: Schema.Types.ObjectId, ref: "Employee" },
   company: { type: Schema.Types.ObjectId, ref: "Company" },

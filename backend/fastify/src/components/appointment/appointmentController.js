@@ -2,6 +2,10 @@
 const boom = require("boom");
 const mongoose = require("mongoose");
 const moment = require("moment");
+const shortid = require("shortid");
+shortid.characters(
+  "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$@"
+);
 
 // Get Data Models
 const Appointment = require("./Appointment");
@@ -73,6 +77,7 @@ exports.addAppointment = async (req, reply) => {
   const okToContinue = await checkEmptyTimeInSchedule(req.body.services);
   if (okToContinue) {
     try {
+      const _confirmationId = shortid.generate();
       const _client = req.body.client; // Costumer
       const _services = req.body.services;
 
@@ -90,6 +95,7 @@ exports.addAppointment = async (req, reply) => {
       let _appointments = [];
       _services.forEach(_service => {
         let _appointment = {
+          confirmationId: _confirmationId,
           costumer: resultCostumer._id,
           employee: _service.specialistId,
           company: req.body.companyId,
@@ -108,17 +114,18 @@ exports.addAppointment = async (req, reply) => {
       if (resultAppointment) {
         // TODO: Send email
 
-        const html = templates.newAppointment();
+        const template = templates.newAppointment();
         const mail = new Mail(
           "Agendamento concluído com sucesso",
-          "Agendamento concluído com sucesso",
-          html,
+          template.text,
+          template.html,
           "rafaelcflima@gmail.com",
           "no-reply@bukk.com.br"
         );
         mail.send();
 
         return {
+          confirmationId: _confirmationId,
           status: "confirmed",
           msg: "Agendamento concluído com sucesso",
           client: _client,
