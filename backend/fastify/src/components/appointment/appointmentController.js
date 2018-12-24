@@ -114,12 +114,12 @@ exports.addAppointment = async (req, reply) => {
       if (resultAppointment) {
         // TODO: Send email
 
-        const template = templates.newAppointment();
+        const template = await templates.newAppointment(_confirmationId);
         const mail = new Mail(
           "Agendamento concluído com sucesso",
           template.text,
           template.html,
-          "rafaelcflima@gmail.com",
+          _client.email,
           "no-reply@bukk.com.br"
         );
         mail.send();
