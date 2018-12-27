@@ -2,7 +2,7 @@
 process.env.NODE_ENV = "test";
 
 const mongoose = require("mongoose");
-const keys = require("../../config/keys");
+const keys = require("../../config/config");
 mongoose.Promise = global.Promise;
 
 const faker = require("faker/locale/pt_BR");

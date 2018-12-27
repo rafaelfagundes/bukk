@@ -108,6 +108,13 @@ const CompanySchema = new Schema({
       showCompanyNickname: { type: Boolean, required: true, default: false },
       dropShadowBooker: { type: Boolean, required: true, default: false },
       dropShadowComponents: { type: Boolean, required: true, default: false }
+    },
+    appointment: {
+      rules: [
+        {
+          type: String
+        }
+      ]
     }
   }
 });

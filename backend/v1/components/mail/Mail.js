@@ -1,4 +1,4 @@
-const keys = require("../../config/keys.js");
+const keys = require("../../config/config.js");
 const api_key = keys.mailgun.key;
 const domain = keys.mailgun.domain;
 const mailgun = require("mailgun-js")({ apiKey: api_key, domain: domain });

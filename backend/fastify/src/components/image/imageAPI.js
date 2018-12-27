@@ -3,7 +3,7 @@ const router = express.Router();
 const multer = require("multer");
 const cloudinary = require("cloudinary");
 const cloudinaryStorage = require("multer-storage-cloudinary");
-const keys = require("../../config/keys");
+const keys = require("../../config/config");
 const Image = require("../image/Image");
 
 cloudinary.config({

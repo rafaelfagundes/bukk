@@ -1,5 +1,24 @@
 const Appointment = require("../../appointment/Appointment");
 const moment = require("moment");
+const config = require("../../../config/config");
+
+const formatBrazilianPhoneNumber = phone => {
+  if (phone.length === 11) {
+    let _number = `(${phone[0]}${phone[1]}) ${phone[2]}${phone[3]}${phone[4]}${
+      phone[5]
+    }${phone[6]}-${phone[7]}${phone[8]}${phone[9]}${phone[10]}`;
+
+    return _number;
+  } else if (phone.length === 10) {
+    let _number = `(${phone[0]}${phone[1]}) ${phone[2]}${phone[3]}${phone[4]}${
+      phone[5]
+    }-${phone[6]}${phone[7]}${phone[8]}${phone[9]}`;
+
+    return _number;
+  } else {
+    return phone;
+  }
+};
 
 exports.newAppointment = async confirmationId => {
   let appointment = await Appointment.aggregate([
@@ -80,6 +99,7 @@ exports.newAppointment = async confirmationId => {
         end: 1,
         "costumer.firstName": 1,
         "costumer.lastName": 1,
+        "costumer.email": 1,
         "employee.user.firstName": 1,
         "employee.user.lastName": 1,
         "service.desc": 1,
@@ -87,14 +107,84 @@ exports.newAppointment = async confirmationId => {
         "company.email": 1,
         "company.website": 1,
         "company.phone": 1,
-        "company.address": 1
+        "company.address": 1,
+        "company.settings.appointment.rules": 1
       }
     }
   ]).exec();
 
-  console.log(appointment);
+  text = `${appointment[0].company.companyNickname}
+=================================================
 
-  text = ``;
+
+Olá, ${appointment[0].costumer.firstName}!
+Seu agendamento foi concluído com sucesso.
+
+Verifique as informações a seguir.
+Qualquer dúvida entre em contato com ${appointment[0].company.companyNickname}
+através de um dos meios informados.
+
+
+Serviços agendados
+------------------
+`;
+
+  appointment.forEach(appointment => {
+    text += `
+${appointment.service.desc}
+Com ${appointment.employee.user.firstName +
+      " " +
+      appointment.employee.user.lastName}
+${moment(appointment.start).format("DD [de] MMMM [de] YYYY")}
+De ${moment(appointment.start).format("HH:mm")} às ${moment(
+      appointment.end
+    ).format("HH:mm")}
+    `;
+  });
+
+  text += `
+
+Sobre nossa empresa
+-------------------
+
+${appointment[0].company.address.street} - ${
+    appointment[0].company.address.number
+  }
+${appointment[0].company.address.neighborhood}
+${appointment[0].company.address.city} - ${appointment[0].company.address.state}
+
+`;
+
+  appointment[0].company.phone.forEach(phone => {
+    text += `${formatBrazilianPhoneNumber(phone.number)}\n`;
+  });
+
+  text += `
+${appointment[0].company.email}
+${appointment[0].company.website}
+
+
+Observações
+-----------
+
+`;
+  appointment[0].company.settings.appointment.rules.forEach(rule => {
+    text += `- ${rule}\n`;
+  });
+
+  text += `
+
+Para cancelar o agendamento:
+${config.baseURI}/appointment/cancel/${appointment[0].confirmationId}/${
+    appointment[0].costumer.email
+  }
+  
+Ou entre em contato com a empresa.
+
+
+www.bukk.com.br
+Todos os direitos reservados`;
+
   html = `<!DOCTYPE html>
   <html
     lang="en"
@@ -397,15 +487,14 @@ exports.newAppointment = async confirmationId => {
                       >
                         Olá, ${
                           appointment[0].costumer.firstName
-                        }.<br />Seu agendamento foi concluído
+                        }!<br />Seu agendamento foi concluído
                         com&nbsp;sucesso
                       </h1>
                       <p style="margin: 0; color: #555;">
-                        Confira os dados do seu
-                        agendamento.<br />Qualquer dúvida entre em contato com <strong>
+                        Verifique as informações a seguir.<br />Qualquer dúvida entre em contato com <strong>
                         ${
                           appointment[0].company.companyNickname
-                        }</strong> através de um dos meios&nbsp;informados.
+                        }</strong><br />através de um dos meios&nbsp;informados.
                       </p>
                     </td>
                   </tr>
@@ -426,8 +515,10 @@ exports.newAppointment = async confirmationId => {
     <td
       style="padding: 10px 20px; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;"
     >
-        <p style="margin: 0; color: #555">${appointment.service.desc}</p>
-        <p style="margin: 0; color: #555">${appointment.employee.user
+        <p style="margin: 0; color: #555; font-weight: 700">${
+          appointment.service.desc
+        }</p>
+        <p style="margin: 0; color: #555">Com ${appointment.employee.user
           .firstName +
           " " +
           appointment.employee.user.lastName}</p>
@@ -466,7 +557,9 @@ exports.newAppointment = async confirmationId => {
   `;
 
   appointment[0].company.phone.forEach(phone => {
-    html += `<p style="margin: 0; color: #555">${phone.number}</p>`;
+    html += `<p style="margin: 0; color: #555">${formatBrazilianPhoneNumber(
+      phone.number
+    )}</p>`;
   });
 
   html += `
@@ -495,23 +588,15 @@ exports.newAppointment = async confirmationId => {
                       style="padding: 0 20px; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;"
                     >
                       <ul style="margin: 0">
-                        <li style="margin: 0; color: #555">
-                          Nullam at sodales leo, dapibus fermentum lorem.
-                        </li>
-                        <li style="margin: 0; color: #555">
-                          Morbi aliquam ornare mollis.
-                        </li>
-                        <li style="margin: 0; color: #555">
-                          Pellentesque dignissim leo tortor, eget mattis augue
-                          elementum id.
-                        </li>
-                        <li style="margin: 0; color: #555">
-                          Mauris sit amet bibendum orci, tincidunt scelerisque
-                          tellus.
-                        </li>
-                        <li style="margin: 0; color: #555">
-                          Pellentesque blandit at nulla id molestie.
-                        </li>
+                        `;
+
+  appointment[0].company.settings.appointment.rules.forEach(rule => {
+    html += `<li style="margin: 0; color: #555">
+                          ${rule}
+                        </li>`;
+  });
+
+  html += `
                       </ul>
                       <p>&nbsp;</p>
                     </td>
@@ -568,7 +653,9 @@ exports.newAppointment = async confirmationId => {
                           >
                             <a
                               class="button-a button-a-primary"
-                              href="https://google.com/"
+                              href="${config.baseURI}/appointment/cancel/${
+    appointment[0].confirmationId
+  }/${appointment[0].costumer.email}"
                               style="border: 2px solid #D81159; background: #FFF; font-family: sans-serif; font-size: 15px; line-height: 15px; text-decoration: none; padding: 13px 17px; color: #D81159; display: block; border-radius: 4px; font-weight: 700"
                               >Cancelar agendamento</a
                             >

@@ -1,6 +1,6 @@
 const _ = require("lodash");
 const moment = require("moment");
-const keys = require("../config/keys");
+const keys = require("../config/config");
 const mongoose = require("mongoose");
 const faker = require("faker");
 faker.locale = "pt_BR";

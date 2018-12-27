@@ -5,7 +5,7 @@ const fastify = require("fastify")({
   logger: true
 });
 
-const config = require("./config/keys");
+const config = require("./config/config");
 
 const routes = require("./routes");
 
@@ -15,7 +15,7 @@ mongoose
     config.mongoURI,
     { useNewUrlParser: true }
   )
-  .then(() => console.log("MongoDB connected"))
+  .then(() => console.log("✅ MongoDB connected"))
   .catch(err => console.log(err));
 
 // // Declare a route

@@ -10,7 +10,7 @@ const imageRoutes = require("./components/image/imageAPI");
 const appointmentRoutes = require("./components/appointment/appointmentAPI");
 const qrcodeRoutes = require("./components/qrcode/qrcodeAPI");
 
-const keys = require("./config/keys");
+const keys = require("./config/config");
 
 // config consts
 const PORT = 4000;
