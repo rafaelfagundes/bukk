@@ -148,7 +148,7 @@ exports.getEmployeesByCompany = async (req, reply) => {
     const employees = await User.aggregate([
       {
         $match: {
-          company: new mongoose.Types.ObjectId("5c0edd683743257844de6e69"),
+          company: new mongoose.Types.ObjectId(companyId),
           role: "employee"
         }
       },

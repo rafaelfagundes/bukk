@@ -143,7 +143,17 @@ const createCompany = () => {
         icon:
           "https://res.cloudinary.com/bukkapp/image/upload/v1543529964/Bukk/Assets/Payment%20Types/cash.png"
       }
-    ]
+    ],
+    settings: {
+      appointment: {
+        rules: [
+          "Favor chegar com 30 minutos de antecedência",
+          "Não aceitamos cheques",
+          "O preço pode variar em caso de mudança nos produtos e quantidades",
+          "Dividimos em até 3x sem juros"
+        ]
+      }
+    }
   };
 
   Company.create(company, (err, company) => {

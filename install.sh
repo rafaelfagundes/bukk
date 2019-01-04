@@ -23,7 +23,7 @@ sudo mkdir -p /data/db
 sudo npm install -g nodemon
 
 # npm install Backend
-cd backend/v1
+cd backend/fastify
 npm install
 
 # npm install Frontend
