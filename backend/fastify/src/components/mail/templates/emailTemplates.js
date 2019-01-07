@@ -189,7 +189,7 @@ Observações
   text += `
 
 Para cancelar o agendamento:
-${config.baseURI}/appointment/cancel/${appointment[0].confirmationId}/${
+${config.baseURI}/api/appointments/cancel/${appointment[0].confirmationId}/${
     appointment[0].costumer.email
   }
   
@@ -695,7 +695,7 @@ Todos os direitos reservados`;
                           >
                             <a
                               class="button-a button-a-primary"
-                              href="${config.baseURI}/appointment/cancel/${
+                              href="${config.baseURI}/api/appointments/cancel/${
     appointment[0].confirmationId
   }/${appointment[0].costumer.email}"
                               style="border: 2px solid #D81159; background: #FFF; font-family: sans-serif; font-size: 15px; line-height: 15px; text-decoration: none; padding: 13px 17px; color: #D81159; display: block; border-radius: 4px; font-weight: 700"

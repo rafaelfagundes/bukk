@@ -36,6 +36,11 @@ const routes = [
     url: "/api/appointments/:id",
     handler: appointmentController.deleteAppointment
   },
+  {
+    method: "GET",
+    url: "/api/appointments/cancel/:id/:email",
+    handler: appointmentController.deleteAppointmentViaUrl
+  },
   /*
   ===========================================================
   Companies

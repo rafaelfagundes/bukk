@@ -164,12 +164,109 @@ exports.updateAppointment = async (req, reply) => {
   }
 };
 
-// Delete a appointment
+// Delete an appointment
 exports.deleteAppointment = async (req, reply) => {
   try {
     const id = req.params.id;
     const appointment = await Appointment.findByIdAndRemove(id);
     return appointment;
+  } catch (err) {
+    throw boom.boomify(err);
+  }
+};
+
+// Delete an appointment
+exports.deleteAppointmentViaUrl = async (req, reply) => {
+  try {
+    reply.code(200);
+    reply.header("Content-Type", "text/html");
+    reply.type("text/html");
+
+    const _id = req.params.id;
+    const _email = req.params.email;
+
+    const appointments = await Appointment.aggregate([
+      {
+        $lookup: {
+          from: "costumers",
+          localField: "costumer",
+          foreignField: "_id",
+          as: "costumer"
+        }
+      },
+      {
+        $unwind: {
+          path: "$costumer"
+        }
+      },
+      {
+        $match: {
+          confirmationId: _id,
+          "costumer.email": _email
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          "costumer.firstName": 1
+        }
+      }
+    ]);
+
+    let ids = [];
+    appointments.forEach(app => {
+      ids.push(app._id);
+    });
+
+    const result = await Appointment.deleteMany({ _id: { $in: ids } });
+    return `<!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>Agendamento cancelado</title>
+        <link
+          href="https://fonts.googleapis.com/css?family=Lato"
+          rel="stylesheet"
+        />
+        <style>
+          * {
+            font-family: Lato, sans-serif;
+          }
+          .container {
+            margin: 40px 0 0 0;
+            text-align: center;
+            padding: 20px;
+          }
+          .icon {
+            width: 150px;
+            opacity: 0.75;
+          }
+          h1 {
+            color: #a93e3e;
+          }
+          p {
+            opacity: 0.75;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <img
+            class="icon"
+            src="https://res.cloudinary.com/bukkapp/image/upload/v1546886912/Bukk/Assets/Email/calendar.png"
+            alt="Agendamento cancelado"
+          />
+          <h1>Agendamento Cancelado</h1>
+          <p>${
+            appointments[0].costumer.firstName
+          }, seu agendamento foi cancelado.</p>
+          <p>Caso mude de ideia, faça um novo agendamento.</p>
+        </div>
+      </body>
+    </html>
+    `;
   } catch (err) {
     throw boom.boomify(err);
   }
