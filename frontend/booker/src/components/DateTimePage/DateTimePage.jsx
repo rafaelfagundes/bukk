@@ -815,7 +815,7 @@ class DateTimePage extends Component {
               id="save-button"
             >
               {this.props.isMobile ? "Salvar" : "Salvar este agendamento"}
-              <Icon name="save" />
+              <Icon name="check circle" />
             </Button>
             <Popup
               trigger={

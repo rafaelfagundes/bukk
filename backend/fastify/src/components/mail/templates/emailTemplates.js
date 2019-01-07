@@ -1,5 +1,6 @@
 const Appointment = require("../../appointment/Appointment");
 const moment = require("moment");
+moment.locale("pt-BR");
 const config = require("../../../config/config");
 
 const formatBrazilianPhoneNumber = phone => {
@@ -21,6 +22,7 @@ const formatBrazilianPhoneNumber = phone => {
 };
 
 exports.newAppointment = async confirmationId => {
+  let totalValue = 0;
   let appointment = await Appointment.aggregate([
     {
       $match: {
@@ -103,6 +105,8 @@ exports.newAppointment = async confirmationId => {
         "employee.user.firstName": 1,
         "employee.user.lastName": 1,
         "service.desc": 1,
+        "service.value": 1,
+        "service.duration": 1,
         "company.companyNickname": 1,
         "company.email": 1,
         "company.website": 1,
@@ -121,8 +125,9 @@ Olá, ${appointment[0].costumer.firstName}!
 Seu agendamento foi concluído com sucesso.
 
 Verifique as informações a seguir.
-Qualquer dúvida entre em contato com ${appointment[0].company.companyNickname}
-através de um dos meios informados.
+Qualquer dúvida entre em contato com ${
+    appointment[0].company.companyNickname
+  } através de um dos meios informados.
 
 
 Serviços agendados
@@ -130,6 +135,7 @@ Serviços agendados
 `;
 
   appointment.forEach(appointment => {
+    totalValue += Number(appointment.service.value);
     text += `
 ${appointment.service.desc}
 Com ${appointment.employee.user.firstName +
@@ -139,10 +145,18 @@ ${moment(appointment.start).format("DD [de] MMMM [de] YYYY")}
 De ${moment(appointment.start).format("HH:mm")} às ${moment(
       appointment.end
     ).format("HH:mm")}
-    `;
+Valor: R$ ${appointment.service.value}
+Duração: ${appointment.service.duration} minutos`;
   });
 
   text += `
+
+
+Valor total dos serviços
+------------------------
+
+R$ ${totalValue}
+
 
 Sobre nossa empresa
 -------------------
@@ -401,9 +415,9 @@ Todos os direitos reservados`;
         <div
           style="display: none; font-size: 1px; line-height: 1px; max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden; mso-hide: all; font-family: sans-serif;"
         >
-          Olá, ${
-            appointment[0].costumer.firstName
-          }. Seu agendamento foi concluído com sucesso.
+          Olá, ${appointment[0].costumer.firstName}. O agendamento em ${
+    appointment[0].company.companyNickname
+  } está concluído.
         </div>
         <!-- Visually Hidden Preheader Text : END -->
   
@@ -412,7 +426,7 @@ Todos os direitos reservados`;
         <div
           style="display: none; font-size: 1px; line-height: 1px; max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden; mso-hide: all; font-family: sans-serif;"
         >
-          &zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;
+          &zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;
         </div>
         <!-- Preview Text Spacing Hack : END -->
   
@@ -494,7 +508,7 @@ Todos os direitos reservados`;
                         Verifique as informações a seguir.<br />Qualquer dúvida entre em contato com <strong>
                         ${
                           appointment[0].company.companyNickname
-                        }</strong><br />através de um dos meios&nbsp;informados.
+                        }</strong> através dos meios&nbsp;informados abaixo.
                       </p>
                     </td>
                   </tr>
@@ -528,11 +542,39 @@ Todos os direitos reservados`;
         <p style="margin: 0; color: #555">De ${moment(appointment.start).format(
           "HH:mm"
         )} às ${moment(appointment.end).format("HH:mm")}</p>
+        <p style="margin: 0; color: #555">Valor: R$ ${
+          appointment.service.value
+        }</p>
+        <p style="margin: 0; color: #555">Duração: ${
+          appointment.service.duration
+        } minutos</p>
       </td>
     </tr>`;
   });
 
   html += `
+                  <tr>
+                    <td
+                      style="padding: 20px 0 0 20px; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;"
+                    >
+                      <h2
+                        style="margin: 0 0 10px 0; font-family: sans-serif; font-size: 18px; line-height: 22px; color: #666; font-weight: 400;"
+                      >
+                        Valor total dos&nbsp;serviços
+                      </h2>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td
+                      style="padding: 5px 0 0 20px; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;"
+                    >
+                      <p
+                        style="margin: 0 0 10px 0; font-family: sans-serif; font-size: 16px; line-height: 16px; color: #666; font-weight: 700;"
+                      >
+                        R$ ${totalValue}
+                      </p>
+                    </td>
+                  </tr> 
                   <tr>
                     <td
                       style="padding: 20px 0 0 20px; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;"
@@ -714,7 +756,7 @@ Todos os direitos reservados`;
           cellpadding="0"
           border="0"
           width="100%"
-          style="background-color: #023618;"
+          style="background-color: #2aa95f;"
         >
           <tr>
             <td valign="top">
@@ -737,11 +779,10 @@ Todos os direitos reservados`;
                 >
                   <tr>
                     <td
-                      style="padding: 20px; text-align: left; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #ffffff;"
+                      style="padding: 20px; text-align: center; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #ffffff;"
                     >
                       <p style="margin: 0;">
-                        Guarde este email para futuras consultas. Evite imprimir.
-                        A natureza agradece :)
+                        Salve este email para futuras consultas<br />Preserve a natureza
                       </p>
                     </td>
                   </tr>
