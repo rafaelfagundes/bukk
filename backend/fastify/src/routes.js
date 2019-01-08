@@ -5,6 +5,10 @@ const serviceController = require("./components/service/serviceController");
 const employeeController = require("./components/employee/employeeController");
 const userController = require("./components/user/userController");
 
+const verifyToken = async (req, reply) => {
+  return false;
+};
+
 const routes = [
   /*
   ===========================================================
@@ -169,6 +173,12 @@ const routes = [
     method: "POST",
     url: "/api/users/login",
     handler: userController.login
+  },
+  {
+    method: "POST",
+    url: "/api/users/testAuth",
+    handler: userController.testAuth,
+    beforeHandler: verifyToken
   }
 ];
 

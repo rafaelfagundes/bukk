@@ -14,7 +14,7 @@ const keys = require("./config/config");
 
 // config consts
 const PORT = 4000;
-const BASE_URL = "/api/v1";
+const BASE_URL = "/api/";
 
 // console setup
 console.clear();
