@@ -3,6 +3,7 @@ const appointmentController = require("./components/appointment/appointmentContr
 const companyController = require("./components/company/companyController");
 const serviceController = require("./components/service/serviceController");
 const employeeController = require("./components/employee/employeeController");
+const userController = require("./components/user/userController");
 
 const routes = [
   /*
@@ -158,6 +159,16 @@ const routes = [
     method: "DELETE",
     url: "/api/specialists/:id",
     handler: employeeController.deleteEmployee
+  },
+  /*
+  ===========================================================
+  Users
+  ===========================================================
+  */
+  {
+    method: "POST",
+    url: "/api/users/login",
+    handler: userController.login
   }
 ];
 
