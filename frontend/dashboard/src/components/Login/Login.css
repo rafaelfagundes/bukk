@@ -1,0 +1,68 @@
+.outer {
+  display: table;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  /* background: url(https://res.cloudinary.com/bukkapp/image/upload/v1547066366/Bukk/Assets/login-bg.png); */
+  background-color: #f2f7ff;
+}
+
+.middle {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.inner {
+  margin-left: auto;
+  margin-right: auto;
+  width: 380px;
+  /*whatever width you want*/
+}
+
+.Login * {
+  box-sizing: border-box !important;
+}
+
+.Login {
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  padding: 40px 30px;
+  background-color: white;
+}
+
+.login-img {
+  margin: 0 auto;
+  margin-bottom: 40px;
+}
+
+.login-email {
+  margin-bottom: 20px;
+}
+
+.login-forget {
+  margin-top: 5px;
+  margin-bottom: 40px;
+}
+
+.login-create {
+  font-weight: 700;
+  line-height: 36px;
+  margin: 0;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: row;
+}
+
+.buttons a {
+  width: 70%;
+}
+.buttons button {
+  width: 30%;
+}

@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import { Container, Grid } from "semantic-ui-react";
 import TopMenu from "./TopMenu/TopMenu";
 import SideMenu from "./SideMenu/SideMenu";
@@ -7,6 +7,22 @@ import Overview from "./Overview/Overview";
 import Reports from "./Reports/Reports";
 import Clients from "./Clients/Clients";
 import "./Dashboard.css";
+import { isAuthenticated } from "../auth";
+
+const PrivateRoute = ({ component: Component, ...rest }) => (
+  <Route
+    {...rest}
+    render={props =>
+      isAuthenticated() ? (
+        <Component {...props} />
+      ) : (
+        <Redirect
+          to={{ pathname: "/dashboard/login", state: { from: props.location } }}
+        />
+      )
+    }
+  />
+);
 
 const Dashboard = () => (
   <div className="Dashboard">
@@ -18,9 +34,12 @@ const Dashboard = () => (
           <div id="content">
             <BrowserRouter>
               <Switch>
-                <Route path="/dashboard/" exact component={Overview} />
-                <Route path="/dashboard/relatorios" component={Reports} />
-                <Route path="/dashboard/clientes" component={Clients} />
+                <PrivateRoute path="/dashboard/" exact component={Overview} />
+                <PrivateRoute
+                  path="/dashboard/relatorios"
+                  component={Reports}
+                />
+                <PrivateRoute path="/dashboard/clientes" component={Clients} />
               </Switch>
             </BrowserRouter>
           </div>

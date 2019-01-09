@@ -1,20 +1,6 @@
-import React, { Component } from "react";
-import "./App.css";
-import Dashboard from "./components/Dashboard";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import React from "react";
+import Routes from "./routes";
 
-class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <BrowserRouter>
-          <Switch>
-            <Route path="/dashboard/" component={Dashboard} />
-          </Switch>
-        </BrowserRouter>
-      </div>
-    );
-  }
-}
+const App = () => <Routes />;
 
 export default App;
