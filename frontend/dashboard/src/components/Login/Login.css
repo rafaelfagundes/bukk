@@ -41,12 +41,28 @@
 }
 
 .login-email {
-  margin-bottom: 20px;
+  margin-bottom: 20px !important;
+}
+
+.login-password-error,
+.login-email-error {
+  color: red;
+  display: block;
+}
+.login-email-error {
+  margin-top: -20px !important;
+  margin-bottom: 20px !important;
+}
+
+.login-password-error {
+  margin-top: -14px !important;
+  margin-bottom: 20px !important;
 }
 
 .login-forget {
-  margin-top: 5px;
-  margin-bottom: 40px;
+  margin-top: -10px !important;
+  padding-bottom: 40px;
+  display: block;
 }
 
 .login-create {
@@ -63,6 +79,10 @@
 .buttons a {
   width: 70%;
 }
-.buttons button {
+.buttons > .field {
   width: 30%;
+}
+
+.buttons > .field > button {
+  width: 100%;
 }
