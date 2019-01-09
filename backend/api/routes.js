@@ -11,7 +11,7 @@ const user = require("./components/user/userController");
 const BASE_URL = "/api";
 
 function verifyToken(req, res, next) {
-  const bearerHeader = req.headers.auth;
+  const bearerHeader = req.headers.authorization;
   if (typeof bearerHeader !== "undefined") {
     req.token = bearerHeader.split(" ")[1];
     next(); // Next middleware
