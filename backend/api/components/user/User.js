@@ -14,6 +14,7 @@ const UserSchema = new Schema({
     type: String,
     required: [true, "O nome de usuário é obrigatório"]
   },
+  avatar: { type: String },
   gender: { type: String, enum: ["M", "F", "O"] },
   birthday: { type: Date },
   email: { type: String, required: [true, "O email é obrigatório"] },

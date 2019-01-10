@@ -11,9 +11,6 @@ class SideMenu extends Component {
     const { activeItem } = this.state;
     return (
       <Menu className="SideMenu" id="side-menu" vertical inverted>
-        <Menu.Item>
-          <Input iconPosition="left" icon="search" placeholder="Procurar..." />
-        </Menu.Item>
         <Menu.Item
           href="/dashboard/"
           name="Geral"

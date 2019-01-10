@@ -113,7 +113,7 @@ class DateTimePage extends Component {
       serviceId: _service.id,
       serviceDesc: _service.desc,
       specialistName: _specialist.firstName + " " + _specialist.lastName,
-      specialistImage: _specialist.employee.avatar,
+      specialistImage: _specialist.avatar,
       dateTime:
         this.state.appointmentDate.format("DD [de] MMMM [de] YYYY") +
         " às " +
@@ -746,7 +746,7 @@ class DateTimePage extends Component {
                     key={specialist.employee._id}
                     firstName={specialist.firstName}
                     lastName={specialist.lastName}
-                    image={specialist.employee.avatar}
+                    image={specialist.avatar}
                     desc={specialist.employee.title}
                     value={specialist.employee._id}
                     selected={specialist.selected}

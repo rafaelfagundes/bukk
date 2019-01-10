@@ -227,6 +227,8 @@ const createUser = company => {
     lastName: "Fagundes",
     username: "rafaelfagundes",
     gender: "M",
+    avatar:
+      "https://res.cloudinary.com/bukkapp/image/upload/v1547090194/Bukk/Assets/User/007-avatar-6.png",
     birthday: moment()
       .set({ year: 1986, month: 10, date: 18 })
       .toDate(),
@@ -304,8 +306,7 @@ const createEmployee = user => {
     salesCommission: 30,
     worksSince: faker.date.past(),
     salary: 3600,
-    services: [],
-    avatar: faker.image.avatar()
+    services: []
   };
 
   Employee.create(employee, (err, employee) => {
@@ -365,7 +366,8 @@ const createEmployeeUser = company => {
         lng: faker.address.longitude()
       }
     },
-    company: company.id
+    company: company.id,
+    avatar: faker.image.avatar()
   };
 
   User.create(user, (err, user) => {

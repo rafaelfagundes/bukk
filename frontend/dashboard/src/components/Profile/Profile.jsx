@@ -3,12 +3,17 @@ import { connect } from "react-redux";
 import { Image, Card, Icon } from "semantic-ui-react";
 import moment from "moment";
 import calendarLocale from "./CalendarLocale";
+import DashboardHeader from "../DashboardHeader/DashboardHeader";
 moment.locale("pt-br", calendarLocale);
 
 const mapRole = role => {
   switch (role) {
     case "owner":
-      return "Proprietário";
+      return "Administrador";
+    case "manager":
+      return "Gerente";
+    case "supervisor":
+      return "Supervisor";
     default:
       break;
   }
@@ -18,8 +23,13 @@ class Profile extends Component {
   render() {
     return (
       <>
+        <DashboardHeader
+          icon="user circle"
+          title="Perfil"
+          subtitle="Informações sobre seu usuário"
+        />
         <Card>
-          <Image src="https://res.cloudinary.com/bukkapp/image/upload/v1547090194/Bukk/Assets/User/007-avatar-6.png" />
+          <Image src={this.props.user.avatar} />
           <Card.Content>
             <Card.Header>
               {this.props.user.firstName + " " + this.props.user.lastName}

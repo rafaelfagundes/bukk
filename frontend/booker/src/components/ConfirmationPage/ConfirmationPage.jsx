@@ -74,7 +74,7 @@ class ConfirmationPage extends Component {
           if (_specialist && _service) {
             _servicesList.push({
               serviceKey: service.serviceKey,
-              specialistPhoto: _specialist.employee.avatar,
+              specialistPhoto: _specialist.avatar,
               serviceDesc: _service.desc,
               specialistName:
                 _specialist.firstName + " " + _specialist.lastName,

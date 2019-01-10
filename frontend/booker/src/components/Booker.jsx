@@ -115,7 +115,7 @@ class Booker extends Component {
           );
           service.specialistName =
             _specialist.firstName + " " + _specialist.lastName;
-          service.specialistImage = _specialist.employee.avatar;
+          service.specialistImage = _specialist.avatar;
           service.specialistTitle = _specialist.desc;
           service.serviceDesc = _service.desc;
           service.time =

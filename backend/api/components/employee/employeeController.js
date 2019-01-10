@@ -170,6 +170,7 @@ exports.getEmployeesByCompany = async (req, res) => {
           _id: 0,
           firstName: 1,
           lastName: 1,
+          avatar: 1,
           "employee._id": 1,
           "employee.services": 1,
           "employee.title": 1,

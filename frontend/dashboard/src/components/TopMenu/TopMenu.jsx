@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Menu, Icon, Dropdown, Image } from "semantic-ui-react";
+import { Menu, Icon, Dropdown, Image, Input } from "semantic-ui-react";
 import "./TopMenu.css";
 import { connect } from "react-redux";
 
@@ -21,16 +21,9 @@ class TopMenu extends Component {
         <Menu.Item>
           <Image src="http://acmelogos.com/images/logo-7.svg" />
         </Menu.Item>
-        <Menu.Item
-          name="home"
-          active={activeItem === "home"}
-          onClick={this.handleItemClick}
-        >
-          <Icon name="bars" />
-        </Menu.Item>
-        {/* <Menu.Item>
+        <Menu.Item>
           <Input icon="search" placeholder="Procurar..." />
-        </Menu.Item> */}
+        </Menu.Item>
 
         <Menu.Menu position="right">
           <Menu.Item name="notifications">
@@ -57,10 +50,7 @@ class TopMenu extends Component {
             </Dropdown>
           </Menu.Item>
           <Menu.Item>
-            <Image
-              src="https://colorlib.com//polygon/admindek/files/assets/images/avatar-4.jpg"
-              avatar
-            />
+            <Image src={this.props.user.avatar} avatar />
             <Dropdown
               text={this.props.user.firstName + " " + this.props.user.lastName}
             >
