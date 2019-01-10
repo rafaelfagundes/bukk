@@ -56,6 +56,7 @@ router.post(BASE_URL + "/appointments", appointment.addAppointment);
 /*============================================================
 User
 ============================================================*/
+router.post(BASE_URL + "/users/", verifyToken, user.getUser);
 router.post(BASE_URL + "/users/login", user.login);
 router.post(BASE_URL + "/users/testAuth", verifyToken, user.testAuth);
 

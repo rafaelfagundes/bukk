@@ -1,6 +1,13 @@
 import React, { Component } from "react";
 import { Menu, Icon, Dropdown, Image } from "semantic-ui-react";
 import "./TopMenu.css";
+import { connect } from "react-redux";
+
+const mapStateToProps = state => {
+  return {
+    user: state.dashboard.user
+  };
+};
 
 class TopMenu extends Component {
   state = {};
@@ -54,13 +61,25 @@ class TopMenu extends Component {
               src="https://colorlib.com//polygon/admindek/files/assets/images/avatar-4.jpg"
               avatar
             />
-            <Dropdown text="Rafael Fagundes">
+            <Dropdown
+              text={this.props.user.firstName + " " + this.props.user.lastName}
+            >
               <Dropdown.Menu id="user-menu">
-                <Dropdown.Item icon="user" text="Perfil" />
+                <Dropdown.Item
+                  icon="user"
+                  as="a"
+                  href="/dashboard/perfil"
+                  text="Perfil"
+                />
                 <Dropdown.Item icon="wrench" text="Configurações" />
                 <Dropdown.Item icon="help" text="Ajuda" />
                 <Dropdown.Divider />
-                <Dropdown.Item icon="sign-out" text="Sair" />
+                <Dropdown.Item
+                  as="a"
+                  href="/dashboard/logout"
+                  icon="sign-out"
+                  text="Sair"
+                />
               </Dropdown.Menu>
             </Dropdown>
           </Menu.Item>
@@ -73,4 +92,7 @@ class TopMenu extends Component {
   }
 }
 
-export default TopMenu;
+export default connect(
+  mapStateToProps,
+  null
+)(TopMenu);

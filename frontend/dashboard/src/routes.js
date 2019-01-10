@@ -1,6 +1,7 @@
 import React from "react";
 import Dashboard from "./components/Dashboard";
 import Login from "./components/Login/Login";
+import Logout from "./components/Logout/Logout";
 import { isAuthenticated } from "./auth";
 
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
@@ -24,6 +25,7 @@ const Routes = () => (
   <BrowserRouter>
     <Switch>
       <Route path="/dashboard/login" component={Login} />
+      <Route path="/dashboard/logout" component={Logout} />
       <PrivateRoute path="/dashboard/" component={Dashboard} />
     </Switch>
   </BrowserRouter>

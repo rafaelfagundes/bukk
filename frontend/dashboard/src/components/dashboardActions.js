@@ -1,26 +1,8 @@
-export const setSomething = x => {
+export const setUser = user => {
   return (dispatch, getState) => {
     dispatch({
-      type: "SET_SOMETHING",
-      x
-    });
-  };
-};
-
-export const addClient = x => {
-  return (dispatch, getState) => {
-    dispatch({
-      type: "SET_SOMETHING",
-      x
-    });
-  };
-};
-
-export const allClients = x => {
-  return (dispatch, getState) => {
-    dispatch({
-      type: "SET_SOMETHING",
-      x
+      type: "SET_USER",
+      user
     });
   };
 };

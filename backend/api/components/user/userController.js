@@ -5,6 +5,27 @@ const auth = require("../../auth");
 // Get Data Models
 const User = require("./User");
 
+// Get User Data
+exports.getUser = async (req, res) => {
+  const token = auth.verify(req.token);
+  if (!token) {
+    res.status(403).json({
+      msg: "Invalid token"
+    });
+  }
+  try {
+    const user = await User.findById(
+      token.id,
+      "address role firstName lastName gender birthday email createdAt"
+    );
+    res.status(200).send(user);
+  } catch (error) {
+    res.status(403).json({
+      msg: "Something went wrong"
+    });
+  }
+};
+
 // Login user
 exports.login = async (req, res) => {
   try {
