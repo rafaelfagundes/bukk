@@ -20,6 +20,10 @@
   margin-top: 15px;
 }
 
+.user-menu-trigger {
+  cursor: pointer;
+}
+
 .top-menu-title {
   min-width: 400px;
   line-height: 80px;

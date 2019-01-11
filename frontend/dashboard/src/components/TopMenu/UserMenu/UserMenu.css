@@ -9,11 +9,13 @@
   min-width: 300px;
   transform: translateZ(0);
   backface-visibility: hidden;
+  border-radius: 4px;
 }
 
 .user-menu-inner {
   background-color: #fff;
   box-shadow: 0px 5px 15px 1px rgba(69, 65, 78, 0.2);
+  border-radius: 4px;
 }
 
 .user-menu-header {

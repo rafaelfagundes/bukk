@@ -1,0 +1,39 @@
+.profile-menu {
+  margin-bottom: 40px !important;
+}
+
+.profile-bottom-divider {
+  margin-top: 40px !important;
+}
+
+.profile-general-inner {
+  display: flex;
+  flex-direction: row;
+}
+
+.profile-general-view,
+.profile-general-edit {
+  padding: 0 20px 0 30px;
+}
+
+.profile-general-view h2 {
+  font-weight: 400;
+  color: #777;
+  padding: 0 !important;
+  margin: 0 0 10px 0 !important;
+}
+
+.profile-general-view ul {
+  padding: 0 0 0 0px;
+  margin: 0 0 30px 0 !important;
+}
+
+.profile-general-view li {
+  list-style: none;
+  line-height: 25px;
+  opacity: 0.9;
+}
+
+.profile-details-label {
+  opacity: 0.8;
+}

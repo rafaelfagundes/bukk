@@ -57,8 +57,16 @@ class TopMenu extends Component {
     return (
       <Menu secondary className="TopMenu" id="top-menu">
         <div id="top-menu-title" className="top-menu-title">
-          <Icon name={this.props.currentPage.icon} />
-          {this.props.currentPage.title}
+          <Icon
+            name={
+              this.props.currentPage === undefined
+                ? "home"
+                : this.props.currentPage.icon
+            }
+          />
+          {this.props.currentPage === undefined
+            ? ""
+            : this.props.currentPage.title}
         </div>
 
         <Menu.Menu position="right">
@@ -101,7 +109,7 @@ class TopMenu extends Component {
           </Menu.Item>
           <Menu.Item>
             <Image
-              src={this.props.user.avatar}
+              src={this.props.user === undefined ? "" : this.props.user.avatar}
               avatar
               size="mini"
               onClick={this.toggleUserMenu}

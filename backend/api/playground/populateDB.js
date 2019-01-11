@@ -351,7 +351,7 @@ const createEmployeeUser = company => {
     gender: "F",
     birthday: faker.date.past(),
     email: faker.internet.email(),
-    password: faker.internet.password(),
+    password: "123456",
     role: "employee",
     address: {
       street: faker.address.streetName(),
