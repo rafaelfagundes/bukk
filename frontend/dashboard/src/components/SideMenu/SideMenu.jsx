@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Menu, Icon, Input } from "semantic-ui-react";
+import { Menu, Icon } from "semantic-ui-react";
 import "./SideMenu.css";
 
 class SideMenu extends Component {
@@ -11,6 +11,12 @@ class SideMenu extends Component {
     const { activeItem } = this.state;
     return (
       <Menu className="SideMenu" id="side-menu" vertical inverted>
+        <div className="menu-logo">
+          <img
+            src="https://res.cloudinary.com/bukkapp/image/upload/v1542735688/Bukk/Assets/logo.png"
+            alt="Logo"
+          />
+        </div>
         <Menu.Item
           href="/dashboard/"
           name="Geral"

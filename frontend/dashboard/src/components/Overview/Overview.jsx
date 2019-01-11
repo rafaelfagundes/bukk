@@ -1,12 +1,17 @@
 import React, { Component } from "react";
 // import PropTypes from "prop-types";
 import "./Overview.css";
-import DashboardHeader from "../DashboardHeader/DashboardHeader";
 import { LineChart, XAxis, Tooltip, CartesianGrid, Line } from "recharts";
+import { connect } from "react-redux";
+import { setCurrentPage } from "../dashboardActions";
 
 class Overview extends Component {
   static defaultProps = {};
   static propTypes = {};
+
+  componentDidMount() {
+    this.props.setCurrentPage({ title: "Início", icon: "home" });
+  }
 
   render() {
     const data = [
@@ -21,11 +26,6 @@ class Overview extends Component {
 
     return (
       <div className="Overview">
-        <DashboardHeader
-          icon="dashboard"
-          title="Geral"
-          subtitle="Informações sobre sua empresa"
-        />
         <LineChart
           width={250}
           height={250}
@@ -43,4 +43,20 @@ class Overview extends Component {
   }
 }
 
-export default Overview;
+const mapStateToProps = state => {
+  return {
+    user: state.dashboard.user,
+    currentPage: state.dashboard.currentPage
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    setCurrentPage: currentPage => dispatch(setCurrentPage(currentPage))
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Overview);

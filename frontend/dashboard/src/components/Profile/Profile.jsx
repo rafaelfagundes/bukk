@@ -3,7 +3,9 @@ import { connect } from "react-redux";
 import { Image, Card, Icon } from "semantic-ui-react";
 import moment from "moment";
 import calendarLocale from "./CalendarLocale";
-import DashboardHeader from "../DashboardHeader/DashboardHeader";
+import { setCurrentPage } from "../dashboardActions";
+
+// Locale file for moment
 moment.locale("pt-br", calendarLocale);
 
 const mapRole = role => {
@@ -20,14 +22,16 @@ const mapRole = role => {
 };
 
 class Profile extends Component {
+  componentDidMount() {
+    this.props.setCurrentPage({
+      title: "Perfil",
+      icon: "user circle"
+    });
+  }
+
   render() {
     return (
       <>
-        <DashboardHeader
-          icon="user circle"
-          title="Perfil"
-          subtitle="Informações sobre seu usuário"
-        />
         <Card>
           <Image src={this.props.user.avatar} />
           <Card.Content>
@@ -54,11 +58,18 @@ class Profile extends Component {
   }
 }
 
-const mapStateToProps = state => ({
-  user: state.dashboard.user
-});
+const mapStateToProps = state => {
+  return {
+    user: state.dashboard.user,
+    currentPage: state.dashboard.currentPage
+  };
+};
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = dispatch => {
+  return {
+    setCurrentPage: currentPage => dispatch(setCurrentPage(currentPage))
+  };
+};
 
 export default connect(
   mapStateToProps,

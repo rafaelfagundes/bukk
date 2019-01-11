@@ -53,41 +53,51 @@ class Dashboard extends Component {
       }
     };
 
-    Axios.post(config.api + "/users", null, requestConfig)
-      .then(response => {
-        this.props.setUser(response.data);
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    if (localStorage.user !== undefined) {
+      const user = JSON.parse(localStorage.user);
+      this.props.setUser(user);
+    } else {
+      Axios.post(config.api + "/users", null, requestConfig)
+        .then(response => {
+          this.props.setUser(response.data);
+          localStorage.setItem("user", JSON.stringify(response.data));
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
   }
 
   render() {
     return (
       <div className="Dashboard">
         <Container fluid>
-          <TopMenu />
           <Grid>
             <Grid.Row>
               <SideMenu />
+
               <div id="content">
-                <BrowserRouter>
-                  <Switch>
-                    <PrivateRoute
-                      path="/dashboard/"
-                      exact
-                      component={Overview}
-                    />
-                    <PrivateRoute
-                      path="/dashboard/relatorios"
-                      component={Reports}
-                    />
-                    <PrivateRoute
-                      path="/dashboard/perfil"
-                      component={Profile}
-                    />
-                  </Switch>
-                </BrowserRouter>
+                <TopMenu className="top-menu" />
+
+                <div id="pages">
+                  <BrowserRouter>
+                    <Switch>
+                      <PrivateRoute
+                        path="/dashboard/"
+                        exact
+                        component={Overview}
+                      />
+                      <PrivateRoute
+                        path="/dashboard/relatorios"
+                        component={Reports}
+                      />
+                      <PrivateRoute
+                        path="/dashboard/perfil"
+                        component={Profile}
+                      />
+                    </Switch>
+                  </BrowserRouter>
+                </div>
               </div>
             </Grid.Row>
           </Grid>

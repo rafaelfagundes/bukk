@@ -1,9 +1,9 @@
 .SideMenu {
   text-align: left;
   position: fixed;
-  top: 63px;
+  top: 0px;
   left: 0px;
-  background-color: #313048 !important;
+  background-color: #800080 !important;
   height: 100vh;
   width: 200px !important;
   box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.3) !important;
@@ -16,4 +16,14 @@
   float: left;
   margin: 0 0.7em 0 0;
   opacity: 0.8;
+}
+
+.menu-logo {
+  padding-top: 22px;
+  padding-bottom: 22px;
+  display: flex;
+}
+
+.menu-logo img {
+  margin-left: 16px;
 }

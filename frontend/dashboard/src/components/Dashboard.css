@@ -1,12 +1,12 @@
-#content {
+#pages {
   position: fixed;
   min-width: calc(100% - 200px);
-  margin-left: 214px;
-  top: 63px;
+  top: 80px;
   bottom: -25px;
   padding: 40px;
-  overflow-y: scroll;
+  overflow-y: auto;
   z-index: 98;
-  height: calc(100vh - 63px);
-  background-color: #fafafa;
+  height: calc(100vh - 50px);
+  background-color: white;
+  margin-left: 214px;
 }

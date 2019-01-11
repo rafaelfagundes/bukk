@@ -6,3 +6,12 @@ export const setUser = user => {
     });
   };
 };
+
+export const setCurrentPage = currentPage => {
+  return (dispatch, getState) => {
+    dispatch({
+      type: "SET_CURRENTPAGE",
+      currentPage
+    });
+  };
+};
