@@ -1,5 +1,6 @@
 // External Dependancies
 const boom = require("boom");
+const auth = require("../../auth");
 const mongoose = require("mongoose");
 const moment = require("moment");
 const _ = require("lodash");
@@ -184,6 +185,28 @@ exports.getEmployeesByCompany = async (req, res) => {
   }
 };
 
+// Get single employee by User ID
+exports.getEmployeeByUserId = async (req, res) => {
+  try {
+    const token = auth.verify(req.token);
+    if (!token) {
+      res.status(403).json({
+        msg: "Invalid token"
+      });
+    }
+    const employee = await Employee.findOne(
+      { user: token.id },
+      "services workingDays title worksSince createdAt"
+    );
+    if (employee) {
+      res.send(employee);
+    } else {
+      res.status(403).send({ msg: "Something went wrong" });
+    }
+  } catch (err) {
+    res.send(boom.boomify(err));
+  }
+};
 // Get single employee by ID
 exports.getSingleEmployee = async (req, res) => {
   try {

@@ -3,24 +3,11 @@ import { connect } from "react-redux";
 import { Image, Card, Icon, Button, Divider } from "semantic-ui-react";
 import moment from "moment";
 import calendarLocale from "../../config/CalendarLocale";
-import { setCurrentPage } from "../dashboardActions";
+import { setCurrentPage, setEmployee } from "../dashboardActions";
 import "./Profile.css";
 
 // Locale file for moment
 moment.locale("pt-br", calendarLocale);
-
-const mapRole = role => {
-  switch (role) {
-    case "owner":
-      return "Administrador";
-    case "manager":
-      return "Gerente";
-    case "supervisor":
-      return "Supervisor";
-    default:
-      break;
-  }
-};
 
 class Profile extends Component {
   state = {
@@ -29,6 +16,23 @@ class Profile extends Component {
   };
 
   handleItemClick = (e, { name }) => this.setState({ activeItem: name });
+
+  mapRole = role => {
+    switch (role) {
+      case "owner":
+        return "Administrador";
+      case "manager":
+        return "Gerente";
+      case "supervisor":
+        return "Supervisor";
+      case "employee":
+        return this.props.employee === undefined
+          ? ""
+          : this.props.employee.title;
+      default:
+        break;
+    }
+  };
 
   formatCEP = cep => {
     const c = String(cep);
@@ -130,6 +134,7 @@ class Profile extends Component {
                         ? ""
                         : this.props.user.avatar
                     }
+                    className="profile-avatar-img"
                   />
                   <Card.Content>
                     <Card.Header>
@@ -152,7 +157,7 @@ class Profile extends Component {
                     <Card.Description>
                       {this.props.user === undefined
                         ? ""
-                        : mapRole(this.props.user.role)}
+                        : this.mapRole(this.props.user.role)}
                     </Card.Description>
                   </Card.Content>
                   <Card.Content extra>
@@ -248,13 +253,15 @@ class Profile extends Component {
 const mapStateToProps = state => {
   return {
     user: state.dashboard.user,
+    employee: state.dashboard.employee,
     currentPage: state.dashboard.currentPage
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    setCurrentPage: currentPage => dispatch(setCurrentPage(currentPage))
+    setCurrentPage: currentPage => dispatch(setCurrentPage(currentPage)),
+    setEmployee: employee => dispatch(setEmployee(employee))
   };
 };
 

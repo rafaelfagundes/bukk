@@ -6,6 +6,10 @@
   margin-top: 40px !important;
 }
 
+.profile-avatar-img {
+  min-width: 290px;
+  min-height: 290px;
+}
 .profile-general-inner {
   display: flex;
   flex-direction: row;

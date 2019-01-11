@@ -7,6 +7,15 @@ export const setUser = user => {
   };
 };
 
+export const setEmployee = employee => {
+  return (dispatch, getState) => {
+    dispatch({
+      type: "SET_EMPLOYEE",
+      employee
+    });
+  };
+};
+
 export const setCurrentPage = currentPage => {
   return (dispatch, getState) => {
     dispatch({

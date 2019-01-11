@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import { Container, Grid } from "semantic-ui-react";
 import { connect } from "react-redux";
-import { setUser } from "./dashboardActions";
+import { setUser, setEmployee } from "./dashboardActions";
 
 import TopMenu from "./TopMenu/TopMenu";
 import SideMenu from "./SideMenu/SideMenu";
@@ -34,13 +34,15 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
 
 const mapStateToProps = state => {
   return {
-    user: state.dashboard.user
+    user: state.dashboard.user,
+    employee: state.dashboard.employee
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    setUser: user => dispatch(setUser(user))
+    setUser: user => dispatch(setUser(user)),
+    setEmployee: employee => dispatch(setEmployee(employee))
   };
 };
 
@@ -61,10 +63,25 @@ class Dashboard extends Component {
         .then(response => {
           this.props.setUser(response.data);
           localStorage.setItem("user", JSON.stringify(response.data));
+          if (response.data.role === "employee") {
+            Axios.post(config.api + "/specialists/user", null, requestConfig)
+              .then(response => {
+                this.props.setEmployee(response.data);
+                localStorage.setItem("employee", JSON.stringify(response.data));
+              })
+              .catch(err => {
+                console.log(err);
+              });
+          }
         })
         .catch(err => {
           console.log(err);
         });
+    }
+
+    if (localStorage.employee !== undefined) {
+      const employee = JSON.parse(localStorage.employee);
+      this.props.setEmployee(employee);
     }
   }
 

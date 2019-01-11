@@ -42,6 +42,12 @@ router.get(
   specialist.getEmployeesByCompany
 );
 
+router.post(
+  BASE_URL + "/specialists/user",
+  verifyToken,
+  specialist.getEmployeeByUserId
+);
+
 router.get(
   BASE_URL +
     "/specialists/schedule/:companyId/date/:date/duration/:serviceDuration",
