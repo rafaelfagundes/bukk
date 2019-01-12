@@ -15,8 +15,7 @@
   flex-direction: row;
 }
 
-.profile-general-view,
-.profile-general-edit {
+.profile-general-view {
   padding: 0 20px 0 30px;
 }
 
@@ -40,4 +39,20 @@
 
 .profile-details-label {
   opacity: 0.8;
+}
+
+.profile-general-edit {
+  width: 100%;
+}
+
+.profile-form-header {
+  font-size: 1.2rem;
+  border-bottom: 1px solid #eee;
+  padding: 10px 0px 5px 0;
+  margin: 20px 0 20px 0;
+  font-weight: 300;
+}
+
+.profile-form-header:first-child {
+  margin: 0px 0 20px 0;
 }
