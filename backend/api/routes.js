@@ -65,5 +65,6 @@ User
 router.post(BASE_URL + "/users/", verifyToken, user.getUser);
 router.post(BASE_URL + "/users/login", user.login);
 router.post(BASE_URL + "/users/testAuth", verifyToken, user.testAuth);
+router.patch(BASE_URL + "/users/update", verifyToken, user.updateUser);
 
 module.exports = router;

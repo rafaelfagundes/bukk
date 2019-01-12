@@ -55,6 +55,31 @@ exports.login = async (req, res) => {
   }
 };
 
+// Update user
+exports.updateUser = async (req, res) => {
+  const token = auth.verify(req.token);
+  if (!token) {
+    res.status(403).json({
+      msg: "Invalid token"
+    });
+  }
+
+  try {
+    const user = await User.updateOne({ _id: token.id }, req.body);
+    if (user) {
+      res.status(200).send(user);
+    } else {
+      res.status(404).json({
+        msg: "Error: can not update User"
+      });
+    }
+  } catch (error) {
+    res.status(404).json({
+      msg: "Error: can not update User"
+    });
+  }
+};
+
 exports.testAuth = async (req, res) => {
   const token = auth.verify(req.token);
   if (token) {

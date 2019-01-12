@@ -3,9 +3,10 @@ import { connect } from "react-redux";
 import { Image, Card, Icon, Button, Divider, Form } from "semantic-ui-react";
 import moment from "moment";
 import calendarLocale from "../../config/CalendarLocale";
-import { setCurrentPage, setEmployee } from "../dashboardActions";
+import { setCurrentPage, setEmployee, setUser } from "../dashboardActions";
 import "./Profile.css";
 import Axios from "axios";
+import config from "../../config";
 
 // Locale file for moment
 moment.locale("pt-br", calendarLocale);
@@ -162,6 +163,24 @@ class Profile extends Component {
   };
 
   saveGeneral = () => {
+    // console.log(this.state.user);
+    // console.log(this.state.employee);
+    const token = localStorage.getItem("token");
+    let requestConfig = {
+      headers: {
+        Authorization: token
+      }
+    };
+
+    Axios.patch(config.api + "/users/update", this.state.user, requestConfig)
+      .then(response => {
+        if (response.data.ok === 1) {
+          localStorage.setItem("user", JSON.stringify(this.state.user));
+          this.props.setUser(this.state.user);
+        }
+      })
+      .catch(error => {});
+
     this.setState({ editGeneral: false });
   };
 
@@ -539,7 +558,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     setCurrentPage: currentPage => dispatch(setCurrentPage(currentPage)),
-    setEmployee: employee => dispatch(setEmployee(employee))
+    setEmployee: employee => dispatch(setEmployee(employee)),
+    setUser: user => dispatch(setUser(user))
   };
 };
 
