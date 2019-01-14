@@ -54,6 +54,12 @@ router.get(
   specialist.getSchedule
 );
 
+router.patch(
+  BASE_URL + "/specialists/update",
+  verifyToken,
+  specialist.updateEmployee
+);
+
 /*============================================================
 Appointment
 ============================================================*/

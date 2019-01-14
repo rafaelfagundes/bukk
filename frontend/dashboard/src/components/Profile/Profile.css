@@ -8,7 +8,6 @@
 
 .profile-avatar-img {
   min-width: 290px;
-  min-height: 290px;
 }
 .profile-general-inner {
   display: flex;
@@ -35,6 +34,15 @@
   list-style: none;
   line-height: 25px;
   opacity: 0.9;
+}
+
+.profile-card-links {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-card-link {
+  margin-bottom: 5px;
 }
 
 .profile-details-label {

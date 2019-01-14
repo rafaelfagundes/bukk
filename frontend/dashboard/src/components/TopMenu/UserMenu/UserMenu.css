@@ -31,7 +31,8 @@
 }
 
 .user-menu-header-user-card-img img {
-  width: 70px;
+  width: 72px;
+  min-height: 72px;
   border-radius: 50%;
 }
 .user-menu-header-user-card-details {

@@ -111,7 +111,7 @@ class TopMenu extends Component {
             <Image
               src={this.props.user === undefined ? "" : this.props.user.avatar}
               avatar
-              size="mini"
+              rounded
               onClick={this.toggleUserMenu}
               className="user-menu-trigger"
             />

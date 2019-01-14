@@ -256,18 +256,31 @@ exports.addEmployee = async (req, res) => {
   }
 };
 
-// Update an existing employee
+// Update Employee
 exports.updateEmployee = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const employee = req.body;
-    const { ...updateData } = employee;
-    const update = await Employee.findByIdAndUpdate(id, updateData, {
-      new: true
+  const token = auth.verify(req.token);
+  if (!token) {
+    res.status(403).json({
+      msg: "Invalid token"
     });
-    return update;
-  } catch (err) {
-    throw boom.boomify(err);
+  }
+
+  console.log(req.body);
+
+  try {
+    const employee = await Employee.updateOne({ user: token.id }, req.body);
+    if (employee) {
+      res.status(200).send(employee);
+    } else {
+      console.log(employee);
+      res.status(404).json({
+        msg: "Error: can not update employee"
+      });
+    }
+  } catch (error) {
+    res.status(404).json({
+      msg: "Error: can not update employee: " + error
+    });
   }
 };
 

@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Image, Card, Icon, Button, Divider, Form } from "semantic-ui-react";
 import moment from "moment";
+import MaskedInput from "react-text-mask";
 import calendarLocale from "../../config/CalendarLocale";
 import { setCurrentPage, setEmployee, setUser } from "../dashboardActions";
 import "./Profile.css";
@@ -73,7 +74,7 @@ class Profile extends Component {
 
   handleItemClick = (e, { name }) => this.setState({ activeItem: name });
 
-  handleValue = (e, { id, value }) => {
+  handleUser = (e, { id, value }) => {
     let _value = "";
     let _id = "";
     if (!e.currentTarget.value) {
@@ -87,6 +88,39 @@ class Profile extends Component {
     this.setState({
       user: {
         ...this.state.user,
+        [_id]: _value
+      }
+    });
+  };
+
+  handleUserBirthday = e => {
+    try {
+      if (e.currentTarget.value.indexOf("_") < 0) {
+        const birthday = moment(e.currentTarget.value, "DD/MM/YYYY");
+        this.setState({
+          user: {
+            ...this.state.user,
+            birthday: birthday.toDate()
+          }
+        });
+      }
+    } catch (error) {}
+  };
+
+  handleEmployee = (e, { id, value }) => {
+    let _value = "";
+    let _id = "";
+    if (!e.currentTarget.value) {
+      _value = value;
+      _id = id;
+    } else {
+      _value = e.currentTarget.value;
+      _id = e.currentTarget.id;
+    }
+
+    this.setState({
+      employee: {
+        ...this.state.employee,
         [_id]: _value
       }
     });
@@ -163,8 +197,6 @@ class Profile extends Component {
   };
 
   saveGeneral = () => {
-    // console.log(this.state.user);
-    // console.log(this.state.employee);
     const token = localStorage.getItem("token");
     let requestConfig = {
       headers: {
@@ -177,6 +209,23 @@ class Profile extends Component {
         if (response.data.ok === 1) {
           localStorage.setItem("user", JSON.stringify(this.state.user));
           this.props.setUser(this.state.user);
+          if (this.state.user.role === "employee") {
+            Axios.patch(
+              config.api + "/specialists/update",
+              this.state.employee,
+              requestConfig
+            )
+              .then(response => {
+                if (response.data.ok === 1) {
+                  localStorage.setItem(
+                    "employee",
+                    JSON.stringify(this.state.user)
+                  );
+                  this.props.setEmployee(this.state.employee);
+                }
+              })
+              .catch(err => {});
+          }
         }
       })
       .catch(error => {});
@@ -295,10 +344,20 @@ class Profile extends Component {
                               : this.mapRole(this.props.user.role)}
                           </Card.Description>
                         </Card.Content>
-                        <Card.Content extra>
-                          <a href="/change-picture">
+                        <Card.Content extra className="profile-card-links">
+                          <a
+                            href="/change-picture"
+                            className="profile-card-link"
+                          >
                             <Icon name="photo" />
                             Alterar imagem
+                          </a>
+                          <a
+                            href="/change-password"
+                            className="profile-card-link"
+                          >
+                            <Icon name="key" />
+                            Alterar senha
                           </a>
                         </Card.Content>
                       </Card>
@@ -354,7 +413,7 @@ class Profile extends Component {
                           label="Nome"
                           placeholder="Nome"
                           required
-                          onChange={this.handleValue}
+                          onChange={this.handleUser}
                           id="firstName"
                           value={
                             this.state.user !== undefined
@@ -367,7 +426,7 @@ class Profile extends Component {
                           label="Sobrenome"
                           placeholder="Sobrenome"
                           required
-                          onChange={this.handleValue}
+                          onChange={this.handleUser}
                           id="lastName"
                           value={
                             this.state.user !== undefined
@@ -384,7 +443,7 @@ class Profile extends Component {
                           placeholder="Sexo"
                           required
                           width="2"
-                          onChange={this.handleValue}
+                          onChange={this.handleUser}
                           id="gender"
                           value={
                             this.state.user !== undefined
@@ -398,7 +457,7 @@ class Profile extends Component {
                           placeholder="Email"
                           required
                           width="6"
-                          onChange={this.handleValue}
+                          onChange={this.handleUser}
                           id="email"
                           value={
                             this.state.user !== undefined
@@ -406,6 +465,35 @@ class Profile extends Component {
                               : ""
                           }
                         />
+                      </Form.Group>
+                      <Form.Group>
+                        <div className="required two wide field">
+                          <label htmlFor="birthday">Data de Nascimento</label>
+                          <MaskedInput
+                            mask={[
+                              /\d/,
+                              /\d/,
+                              "/",
+                              /\d/,
+                              /\d/,
+                              "/",
+                              /\d/,
+                              /\d/,
+                              /\d/,
+                              /\d/
+                            ]}
+                            name="birthday"
+                            id="birthday"
+                            onChange={this.handleUserBirthday}
+                            value={
+                              this.state.user !== undefined
+                                ? moment(this.state.user.birthday).format(
+                                    "DD/MM/YYYY"
+                                  )
+                                : ""
+                            }
+                          />
+                        </div>
                       </Form.Group>
                       <div className="profile-form-header">Endereço</div>
                       <Form.Group />
@@ -507,6 +595,32 @@ class Profile extends Component {
                           }
                         />
                       </Form.Group>
+                      {this.state.user !== undefined && (
+                        <>
+                          {this.state.user.role === "employee" && (
+                            <>
+                              <div className="profile-form-header">
+                                Dados profissionais
+                              </div>
+                              <Form.Group>
+                                <Form.Input
+                                  fluid
+                                  label="Cargo"
+                                  placeholder="Cargo"
+                                  width="4"
+                                  onChange={this.handleEmployee}
+                                  id="title"
+                                  value={
+                                    this.state.employee !== undefined
+                                      ? this.state.employee.title
+                                      : ""
+                                  }
+                                />
+                              </Form.Group>
+                            </>
+                          )}
+                        </>
+                      )}
                     </Form>
                   </div>
                 )}
