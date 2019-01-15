@@ -7,6 +7,15 @@ export const setUser = user => {
   };
 };
 
+export const setUserAvatar = avatar => {
+  return (dispatch, getState) => {
+    dispatch({
+      type: "SET_USER_AVATAR",
+      avatar
+    });
+  };
+};
+
 export const setEmployee = employee => {
   return (dispatch, getState) => {
     dispatch({

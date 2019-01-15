@@ -6,6 +6,14 @@ const dashboardReducer = (state = initialState, action) => {
   switch (action.type) {
     case "SET_USER":
       return assign({}, state, action);
+    case "SET_USER_AVATAR":
+      const user = {
+        user: {
+          ...state.user,
+          avatar: action.avatar.avatar
+        }
+      };
+      return assign({}, state, user);
     case "SET_EMPLOYEE":
       return assign({}, state, action);
     case "SET_CURRENTPAGE":

@@ -48,6 +48,9 @@ app.use(bodyParser.json());
 // routes
 app.use(require("./routes"));
 
+// image routes
+app.use(require("./components/image/imageAPI"));
+
 const server = app.listen(process.env.port || PORT, function() {
   console.log(
     `🔌 Server listening. ${server.address().address}:${server.address().port}`

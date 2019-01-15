@@ -1,10 +1,24 @@
 import React, { Component } from "react";
+import ReactDOM from "react-dom";
 import { connect } from "react-redux";
-import { Image, Card, Icon, Button, Divider, Form } from "semantic-ui-react";
+import {
+  Image,
+  Card,
+  Icon,
+  Button,
+  Divider,
+  Form,
+  Label
+} from "semantic-ui-react";
 import moment from "moment";
 import MaskedInput from "react-text-mask";
 import calendarLocale from "../../config/CalendarLocale";
-import { setCurrentPage, setEmployee, setUser } from "../dashboardActions";
+import {
+  setCurrentPage,
+  setEmployee,
+  setUser,
+  setUserAvatar
+} from "../dashboardActions";
 import "./Profile.css";
 import Axios from "axios";
 import config from "../../config";
@@ -69,7 +83,7 @@ const stateOptions = [
 class Profile extends Component {
   state = {
     activeItem: "geral",
-    editGeneral: true,
+    editGeneral: false,
     user: undefined,
     employee: undefined,
     errors: {
@@ -80,7 +94,8 @@ class Profile extends Component {
       addressCEP: { msg: "", error: false },
       phone: { msg: "", error: false },
       workTitle: { msg: "", error: false }
-    }
+    },
+    loadingAvatarUpload: false
   };
 
   validateGeneral = () => {
@@ -287,6 +302,32 @@ class Profile extends Component {
     });
   };
 
+  handleAvatarImage = e => {
+    this.setState({ loadingAvatarUpload: true });
+    ReactDOM.findDOMNode(this.refs.formAvatarImage).dispatchEvent(
+      new Event("submit")
+    );
+  };
+
+  submitAvatarImage = e => {
+    const data = new FormData(e.target);
+    const token = localStorage.getItem("token");
+    let requestConfig = {
+      headers: {
+        Authorization: token
+      }
+    };
+    Axios.post(config.api + "/images/avatar", data, requestConfig)
+      .then(response => {
+        this.props.setUserAvatar({
+          avatar: response.data.avatarUrl
+        });
+        this.setState({ user: this.props.user, loadingAvatarUpload: false });
+        localStorage.setItem("user", JSON.stringify(this.props.user));
+      })
+      .catch(err => {});
+  };
+
   mapRole = role => {
     switch (role) {
       case "owner":
@@ -313,17 +354,6 @@ class Profile extends Component {
       default:
         return "Outro";
     }
-  };
-
-  buscaCEP = e => {
-    console.log(e.currentTarget.value);
-    Axios.get(`http://viacep.com.br/ws/${e.currentTarget.value}/json/`)
-      .then(response => {
-        console.log(response.data);
-      })
-      .catch(err => {
-        console.log(err);
-      });
   };
 
   editGeneral = () => {
@@ -493,13 +523,36 @@ class Profile extends Component {
                           </Card.Description>
                         </Card.Content>
                         <Card.Content extra className="profile-card-links">
-                          <a
-                            href="/change-picture"
-                            className="profile-card-link"
+                          <Form
+                            onSubmit={this.submitAvatarImage}
+                            id="form-avatar-image"
+                            ref="formAvatarImage"
                           >
-                            <Icon name="photo" />
-                            Alterar imagem
-                          </a>
+                            <Label
+                              as="label"
+                              htmlFor="avatar-image"
+                              size="large"
+                              className="profile-card-link"
+                            >
+                              {!this.state.loadingAvatarUpload && (
+                                <Icon name="photo" />
+                              )}
+                              {this.state.loadingAvatarUpload && (
+                                <Icon
+                                  name="asterisk"
+                                  className="image-upload-spinner"
+                                />
+                              )}
+                              Alterar imagem
+                            </Label>
+                            <input
+                              id="avatar-image"
+                              name="avatar-image"
+                              hidden
+                              type="file"
+                              onChange={this.handleAvatarImage}
+                            />
+                          </Form>
                           <a
                             href="/change-password"
                             className="profile-card-link"
@@ -866,7 +919,8 @@ const mapDispatchToProps = dispatch => {
   return {
     setCurrentPage: currentPage => dispatch(setCurrentPage(currentPage)),
     setEmployee: employee => dispatch(setEmployee(employee)),
-    setUser: user => dispatch(setUser(user))
+    setUser: user => dispatch(setUser(user)),
+    setUserAvatar: avatar => dispatch(setUserAvatar(avatar))
   };
 };
 

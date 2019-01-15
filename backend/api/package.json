@@ -18,6 +18,7 @@
     "bcrypt": "^3.0.3",
     "body-parser": "^1.18.3",
     "boom": "^7.3.0",
+    "cloudinary": "^1.13.2",
     "express": "^4.16.4",
     "jsonwebtoken": "^8.4.0",
     "lodash": "^4.17.11",
@@ -25,6 +26,8 @@
     "moment": "^2.23.0",
     "mongoose": "^5.4.2",
     "morgan": "^1.9.1",
+    "multer": "^1.4.1",
+    "multer-storage-cloudinary": "^2.2.1",
     "passport": "^0.4.0",
     "shortid": "^2.2.14"
   },

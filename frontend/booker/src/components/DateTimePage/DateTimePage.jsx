@@ -383,7 +383,6 @@ class DateTimePage extends Component {
         }
       );
     } else {
-      // TODO: remover comentário
       _specialistsList = _.shuffle(_specialistsList);
       this.setState(
         {

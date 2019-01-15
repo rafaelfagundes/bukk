@@ -9,6 +9,18 @@
 .profile-avatar-img {
   min-width: 290px;
 }
+
+.image-upload-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
 .profile-general-inner {
   display: flex;
   flex-direction: row;
@@ -42,7 +54,20 @@
 }
 
 .profile-card-link {
-  margin-bottom: 5px;
+  margin-bottom: 5px !important;
+  background: transparent !important;
+  padding: 0 !important;
+  font-weight: 400 !important;
+  opacity: 0.8;
+}
+
+.profile-card-link i {
+  margin-right: 5px !important;
+}
+
+.profile-card-link:hover {
+  opacity: 1;
+  cursor: pointer;
 }
 
 .profile-details-label {
