@@ -54,11 +54,16 @@
 }
 
 .profile-card-link {
-  margin-bottom: 5px !important;
   background: transparent !important;
   padding: 0 !important;
   font-weight: 400 !important;
   opacity: 0.8;
+  margin-bottom: 5px !important;
+}
+
+.profile-card-link:first-child {
+  margin-top: 5px !important;
+  margin-bottom: 10px !important;
 }
 
 .profile-card-link i {

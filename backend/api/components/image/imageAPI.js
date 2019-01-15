@@ -28,7 +28,9 @@ cloudinary.config({
 const storage = cloudinaryStorage({
   cloudinary: cloudinary,
   folder: "Bukk/Assets/User/Uploads",
-  allowedFormats: ["jpg", "png"]
+  allowedFormats: ["jpg", "png"],
+  format: "jpg",
+  transformation: { gravity: "auto", height: 300, width: 300, crop: "fill" }
 });
 
 const parser = multer({ storage: storage });

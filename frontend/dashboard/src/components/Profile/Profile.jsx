@@ -326,6 +326,7 @@ class Profile extends Component {
         localStorage.setItem("user", JSON.stringify(this.props.user));
       })
       .catch(err => {});
+    e.target.reset();
   };
 
   mapRole = role => {
@@ -875,7 +876,7 @@ class Profile extends Component {
               {!this.state.editGeneral && (
                 <Button icon labelPosition="left" onClick={this.editGeneral}>
                   <Icon name="pencil" />
-                  Editar
+                  Editar Informações
                 </Button>
               )}
               {this.state.editGeneral && (
