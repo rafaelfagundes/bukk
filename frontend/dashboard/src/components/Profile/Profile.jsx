@@ -25,6 +25,7 @@ import Axios from "axios";
 import config from "../../config";
 import { formatCEP, formatBrazilianPhoneNumber } from "../utils";
 import validator from "validator";
+import Notification from "../Notification/Notification";
 
 // Locale file for moment
 moment.locale("pt-br", calendarLocale);
@@ -328,7 +329,13 @@ class Profile extends Component {
         requestConfig
       )
         .then(response => {
-          toast.success("Senha atualizada com sucesso!");
+          toast(
+            <Notification
+              type="success"
+              title="Senha atualizada com sucesso"
+              text="A senha foi atualizada com sucesso."
+            />
+          );
           this.setState({ page: "general" });
         })
         .catch(error => {
@@ -455,10 +462,22 @@ class Profile extends Component {
         });
         this.setState({ user: this.props.user, loadingAvatarUpload: false });
         localStorage.setItem("user", JSON.stringify(this.props.user));
-        toast.success("Imagem atualizada com sucesso");
+        toast(
+          <Notification
+            type="success"
+            title="Imagem atualizada com sucesso"
+            text="A imagem encontra-se salva no servidor."
+          />
+        );
       })
       .catch(err => {
-        toast.error("Erro ao atualizar imagem");
+        toast(
+          <Notification
+            type="erro"
+            title="Erro ao atualizar imagem"
+            text={err.response.data.msg}
+          />
+        );
       });
     e.target.reset();
   };
@@ -543,13 +562,44 @@ class Profile extends Component {
                     JSON.stringify(this.state.employee)
                   );
                   this.props.setEmployee(this.state.employee);
+                  toast(
+                    <Notification
+                      type="success"
+                      title="Informações atualizadas"
+                      text="As novas informações foram salvas com sucesso. "
+                    />
+                  );
                 }
               })
-              .catch(err => {});
+              .catch(err => {
+                toast(
+                  <Notification
+                    type="error"
+                    title="Erro ao atualizar informações"
+                    text="Houve um erro ao atualizar as informações. Tente novamente."
+                  />
+                );
+              });
+          } else {
+            toast(
+              <Notification
+                type="success"
+                title="Informações atualizadas"
+                text="As novas informações foram salvas com sucesso. "
+              />
+            );
           }
         }
       })
-      .catch(error => {});
+      .catch(error => {
+        toast(
+          <Notification
+            type="error"
+            title="Erro ao atualizar informações"
+            text="Houve um erro ao atualizar as informações. Tente novamente."
+          />
+        );
+      });
 
     this.setState({ page: "general" });
   };
@@ -697,7 +747,7 @@ class Profile extends Component {
                             />
                           </Form>
                           <Button
-                            className="profile-card-link"
+                            className="profile-card-password-change"
                             onClick={this.changePasswordPage}
                           >
                             <Icon name="key" />
@@ -1073,7 +1123,6 @@ class Profile extends Component {
                 <Button
                   icon
                   labelPosition="left"
-                  floated="right"
                   color="green"
                   onClick={this.saveGeneral}
                 >
@@ -1084,9 +1133,8 @@ class Profile extends Component {
               {this.state.page === "changePassword" && (
                 <Button
                   icon
-                  floated="right"
                   labelPosition="left"
-                  color="blue"
+                  color="green"
                   onClick={this.changePassword}
                 >
                   <Icon name="key" />
@@ -1094,7 +1142,12 @@ class Profile extends Component {
                 </Button>
               )}
               {this.state.page !== "general" && (
-                <Button icon labelPosition="left" onClick={this.generalPage}>
+                <Button
+                  icon
+                  labelPosition="left"
+                  floated="right"
+                  onClick={this.generalPage}
+                >
                   <Icon name="cancel" />
                   Cancelar
                 </Button>

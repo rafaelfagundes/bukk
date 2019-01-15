@@ -91,7 +91,12 @@ class Dashboard extends Component {
   render() {
     return (
       <div className="Dashboard">
-        <ToastContainer />
+        <ToastContainer
+          className="bukk-notification"
+          hideProgressBar={true}
+          position="bottom-left"
+          newestOnTop={true}
+        />
         <Container fluid>
           <Grid>
             <Grid.Row>

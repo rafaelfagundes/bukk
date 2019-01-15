@@ -1,0 +1,36 @@
+.Notification {
+  display: flex;
+  flex-direction: row;
+}
+
+.notification-image {
+  width: 48px !important;
+  height: 48px !important;
+}
+
+.notification-content {
+  padding: 0 10px 0 10px;
+  width: 230px;
+}
+
+.notification-title h1 {
+  font-size: 1rem !important;
+}
+
+/* =============================
+Toastify
+============================= */
+
+.bukk-notification .Toastify__toast {
+  background-color: rgba(247, 247, 247, 0.98);
+}
+
+.bukk-notification * {
+  border-radius: 4px;
+  font-family: "Lato", "sans-serif";
+}
+
+.bukk-notification .Toastify__toast-body {
+  color: #444;
+  font-weight: 400;
+}

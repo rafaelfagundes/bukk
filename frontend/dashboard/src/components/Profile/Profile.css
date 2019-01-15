@@ -57,22 +57,43 @@
   background: transparent !important;
   padding: 0 !important;
   font-weight: 400 !important;
-  opacity: 0.8;
   margin-bottom: 5px !important;
+  color: rgba(0, 0, 0, 0.8) !important;
+}
+
+.profile-card-link:hover {
+  opacity: 1.5;
+  cursor: pointer;
+  color: rgba(0, 5, 70, 0.8) !important;
 }
 
 .profile-card-link:first-child {
   margin-top: 5px !important;
-  margin-bottom: 10px !important;
+  margin-bottom: 15px !important;
 }
 
 .profile-card-link i {
   margin-right: 5px !important;
 }
 
-.profile-card-link:hover {
-  opacity: 1;
-  cursor: pointer;
+.profile-card-password-change {
+  color: rgba(0, 0, 0, 0.8) !important;
+  background: transparent !important;
+  padding: 0 !important;
+  font-weight: 400 !important;
+  margin-bottom: 5px !important;
+  text-align: left !important;
+  opacity: 1 !important;
+}
+
+.profile-card-password-change:hover {
+  color: rgba(0, 5, 70, 0.8) !important;
+  opacity: 1 !important;
+}
+
+.profile-card-password-change i {
+  margin: 0 3px 0 0 !important;
+  opacity: 1 !important;
 }
 
 .profile-details-label {
