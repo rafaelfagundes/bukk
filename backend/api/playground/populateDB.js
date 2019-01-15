@@ -233,6 +233,7 @@ const createUser = company => {
       .set({ year: 1986, month: 10, date: 18 })
       .toDate(),
     email: "rafaelcflima@gmail.com",
+    phone: "32991267913",
     password: "123456",
     role: "owner",
     address: {
@@ -351,6 +352,7 @@ const createEmployeeUser = company => {
     gender: "F",
     birthday: faker.date.past(),
     email: faker.internet.email(),
+    phone: "32991267913",
     password: "123456",
     role: "employee",
     address: {

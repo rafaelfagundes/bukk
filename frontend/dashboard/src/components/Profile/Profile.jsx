@@ -8,6 +8,8 @@ import { setCurrentPage, setEmployee, setUser } from "../dashboardActions";
 import "./Profile.css";
 import Axios from "axios";
 import config from "../../config";
+import { formatCEP, formatBrazilianPhoneNumber } from "../utils";
+import validator from "validator";
 
 // Locale file for moment
 moment.locale("pt-br", calendarLocale);
@@ -69,7 +71,111 @@ class Profile extends Component {
     activeItem: "geral",
     editGeneral: true,
     user: undefined,
-    employee: undefined
+    employee: undefined,
+    errors: {
+      firstName: { msg: "", error: false },
+      lastName: { msg: "", error: false },
+      birthday: { msg: "", error: false },
+      addressNumber: { msg: "", error: false },
+      addressCEP: { msg: "", error: false },
+      phone: { msg: "", error: false },
+      workTitle: { msg: "", error: false }
+    }
+  };
+
+  validateGeneral = () => {
+    let errorsCount = 0;
+    let _errors = {
+      firstName: { msg: "", error: false },
+      lastName: { msg: "", error: false },
+      birthday: { msg: "", error: false },
+      addressNumber: { msg: "", error: false },
+      addressCEP: { msg: "", error: false },
+      phone: { msg: "", error: false },
+      workTitle: { msg: "", error: false }
+    };
+
+    if (validator.isEmpty(String(this.state.user.firstName))) {
+      errorsCount++;
+      _errors.firstName.msg = "Por favor, preencha o nome.";
+      _errors.firstName.error = true;
+    }
+    if (
+      !validator.isAlpha(String(this.state.user.firstName.replace(" ", "")))
+    ) {
+      errorsCount++;
+      _errors.firstName.msg =
+        "Nome inválido. Por favor, preencha somente letras.";
+      _errors.firstName.error = true;
+    }
+
+    if (validator.isEmpty(String(this.state.user.lastName))) {
+      errorsCount++;
+      _errors.lastName.msg = "Por favor, preencha o sobrenome.";
+      _errors.lastName.error = true;
+    }
+
+    if (!validator.isAlpha(String(this.state.user.lastName.replace(" ", "")))) {
+      errorsCount++;
+      _errors.lastName.msg =
+        "Sobrenome inválido. Por favor, preencha somente letras.";
+      _errors.lastName.error = true;
+    }
+
+    if (validator.isEmpty(String(this.state.user.birthday))) {
+      errorsCount++;
+      _errors.birthday.msg = "Por favor, preencha a data de nascimento.";
+      _errors.birthday.error = true;
+    }
+
+    if (!moment(this.state.user.birthday).isValid()) {
+      errorsCount++;
+      _errors.birthday.msg = "Data de nascimento inválida.";
+      _errors.birthday.error = true;
+    }
+
+    if (
+      this.state.user.phone.length < 10 ||
+      this.state.user.phone.length > 11
+    ) {
+      errorsCount++;
+      _errors.phone.msg = "O telefone deve conter 10 ou 11 algarismos.";
+      _errors.phone.error = true;
+    }
+
+    if (this.state.user.address.postalCode.length !== 8) {
+      if (this.state.user.address.postalCode.length > 0) {
+        errorsCount++;
+        _errors.addressCEP.msg = "O CEP deve conter 8 algarismos.";
+        _errors.addressCEP.error = true;
+      }
+    }
+
+    if (
+      !validator.isAlphanumeric(this.state.user.address.number.replace(" ", ""))
+    ) {
+      errorsCount++;
+      _errors.addressNumber.msg =
+        "O número da residência deve conter somente letras e números.";
+      _errors.addressNumber.error = true;
+    }
+
+    if (this.state.user.role === "employee") {
+      if (validator.isEmpty(this.state.employee.title)) {
+        errorsCount++;
+        _errors.workTitle.msg = "Por favor, preencha o cargo.";
+        _errors.workTitle.error = true;
+      }
+    }
+
+    if (errorsCount === 0) {
+      return true;
+    } else {
+      this.setState({
+        errors: _errors
+      });
+      return false;
+    }
   };
 
   handleItemClick = (e, { name }) => this.setState({ activeItem: name });
@@ -105,6 +211,17 @@ class Profile extends Component {
         });
       }
     } catch (error) {}
+  };
+
+  handleUserPhone = e => {
+    const phone = e.currentTarget.value.replace(/\D+/g, "");
+
+    this.setState({
+      user: {
+        ...this.state.user,
+        phone
+      }
+    });
   };
 
   handleEmployee = (e, { id, value }) => {
@@ -148,6 +265,28 @@ class Profile extends Component {
     });
   };
 
+  handleAddressCEP = (e, { id, value }) => {
+    let _value = "";
+    let _id = "";
+    if (!e.currentTarget.value) {
+      _value = value;
+      _id = id;
+    } else {
+      _value = e.currentTarget.value;
+      _id = e.currentTarget.id;
+    }
+
+    this.setState({
+      user: {
+        ...this.state.user,
+        address: {
+          ...this.state.user.address,
+          [_id]: _value
+        }
+      }
+    });
+  };
+
   mapRole = role => {
     switch (role) {
       case "owner":
@@ -163,11 +302,6 @@ class Profile extends Component {
       default:
         break;
     }
-  };
-
-  formatCEP = cep => {
-    const c = String(cep);
-    return c[0] + c[1] + c[2] + c[3] + c[4] + "-" + c[5] + c[6] + c[7];
   };
 
   formatGender = gender => {
@@ -193,10 +327,24 @@ class Profile extends Component {
   };
 
   editGeneral = () => {
-    this.setState({ editGeneral: true });
+    this.setState({
+      editGeneral: true,
+      errors: {
+        firstName: { msg: "", error: false },
+        lastName: { msg: "", error: false },
+        birthday: { msg: "", error: false },
+        addressNumber: { msg: "", error: false },
+        addressCEP: { msg: "", error: false },
+        phone: { msg: "", error: false },
+        workTitle: { msg: "", error: false }
+      }
+    });
   };
 
   saveGeneral = () => {
+    if (!this.validateGeneral()) {
+      return false;
+    }
     const token = localStorage.getItem("token");
     let requestConfig = {
       headers: {
@@ -219,7 +367,7 @@ class Profile extends Component {
                 if (response.data.ok === 1) {
                   localStorage.setItem(
                     "employee",
-                    JSON.stringify(this.state.user)
+                    JSON.stringify(this.state.employee)
                   );
                   this.props.setEmployee(this.state.employee);
                 }
@@ -373,9 +521,23 @@ class Profile extends Component {
                             {this.props.user.address.city} -{" "}
                             {this.props.user.address.state}
                           </li>
-                          <li>{this.props.user.address.country}</li>
                           <li>
-                            {this.formatCEP(this.props.user.address.postalCode)}
+                            {formatCEP(this.props.user.address.postalCode)}
+                          </li>
+                        </ul>
+                        <h2>Contato</h2>
+                        <ul>
+                          <li>
+                            <span className="profile-details-label">
+                              Email:
+                            </span>{" "}
+                            {this.props.user.email}
+                          </li>
+                          <li>
+                            <span className="profile-details-label">
+                              Telefone:
+                            </span>{" "}
+                            {formatBrazilianPhoneNumber(this.props.user.phone)}
                           </li>
                         </ul>
                         <h2>Outros</h2>
@@ -391,13 +553,6 @@ class Profile extends Component {
                             {moment(this.props.user.birthday).format(
                               "DD [de] MMMM [de] YYYY"
                             )}
-                          </li>
-
-                          <li>
-                            <span className="profile-details-label">
-                              Email:
-                            </span>{" "}
-                            {this.props.user.email}
                           </li>
                         </ul>
                       </div>
@@ -420,6 +575,7 @@ class Profile extends Component {
                               ? this.state.user.firstName
                               : ""
                           }
+                          error={this.state.errors.firstName.error}
                         />
                         <Form.Input
                           fluid
@@ -433,6 +589,7 @@ class Profile extends Component {
                               ? this.state.user.lastName
                               : ""
                           }
+                          error={this.state.errors.lastName.error}
                         />
                       </Form.Group>
                       <Form.Group>
@@ -442,7 +599,7 @@ class Profile extends Component {
                           options={genderOptions}
                           placeholder="Sexo"
                           required
-                          width="2"
+                          width="4"
                           onChange={this.handleUser}
                           id="gender"
                           value={
@@ -451,23 +608,8 @@ class Profile extends Component {
                               : ""
                           }
                         />
-                        <Form.Input
-                          fluid
-                          label="Email"
-                          placeholder="Email"
-                          required
-                          width="6"
-                          onChange={this.handleUser}
-                          id="email"
-                          value={
-                            this.state.user !== undefined
-                              ? this.state.user.email
-                              : ""
-                          }
-                        />
-                      </Form.Group>
-                      <Form.Group>
-                        <div className="required two wide field">
+
+                        <div className="required three wide field">
                           <label htmlFor="birthday">Data de Nascimento</label>
                           <MaskedInput
                             mask={[
@@ -495,8 +637,43 @@ class Profile extends Component {
                           />
                         </div>
                       </Form.Group>
-                      <div className="profile-form-header">Endereço</div>
-                      <Form.Group />
+                      {this.state.errors.firstName.error && (
+                        <div className="profile-form-error">
+                          {this.state.errors.firstName.msg}
+                        </div>
+                      )}
+                      {this.state.errors.lastName.error && (
+                        <div className="profile-form-error">
+                          {this.state.errors.lastName.msg}
+                        </div>
+                      )}
+                      {this.state.errors.birthday.error && (
+                        <div className="profile-form-error">
+                          {this.state.errors.birthday.msg}
+                        </div>
+                      )}
+
+                      <div className="profile-form-header">
+                        Endereço e Contato
+                      </div>
+                      <Form.Group>
+                        <Form.Input
+                          fluid
+                          label="Telefone"
+                          placeholder="Telefone"
+                          width="4"
+                          onChange={this.handleUserPhone}
+                          id="phone"
+                          value={
+                            this.state.user !== undefined
+                              ? formatBrazilianPhoneNumber(
+                                  this.state.user.phone
+                                )
+                              : ""
+                          }
+                          error={this.state.errors.phone.error}
+                        />
+                      </Form.Group>
                       <Form.Group>
                         <Form.Input
                           fluid
@@ -533,9 +710,10 @@ class Profile extends Component {
                           id="postalCode"
                           value={
                             this.state.user !== undefined
-                              ? this.state.user.address.postalCode
+                              ? formatCEP(this.state.user.address.postalCode)
                               : ""
                           }
+                          error={this.state.errors.addressCEP.error}
                         />
                       </Form.Group>
                       <Form.Group>
@@ -552,6 +730,8 @@ class Profile extends Component {
                               : ""
                           }
                         />
+                      </Form.Group>
+                      <Form.Group>
                         <Form.Input
                           fluid
                           label="Cidade"
@@ -565,8 +745,6 @@ class Profile extends Component {
                               : ""
                           }
                         />
-                      </Form.Group>
-                      <Form.Group>
                         <Form.Select
                           fluid
                           label="Estado"
@@ -581,20 +759,29 @@ class Profile extends Component {
                               : ""
                           }
                         />
-                        <Form.Input
-                          fluid
-                          label="País"
-                          placeholder="País"
-                          width="4"
-                          onChange={this.handleAddressValue}
-                          id="country"
-                          value={
-                            this.state.user !== undefined
-                              ? this.state.user.address.country
-                              : ""
-                          }
-                        />
                       </Form.Group>
+                      {this.state.errors.phone.error && (
+                        <div className="profile-form-error">
+                          {this.state.errors.phone.msg}
+                        </div>
+                      )}
+
+                      {this.state.errors.addressNumber.error && (
+                        <div className="profile-form-error">
+                          {this.state.errors.addressNumber.msg}
+                        </div>
+                      )}
+                      {this.state.errors.addressCEP.error && (
+                        <div className="profile-form-error">
+                          {this.state.errors.addressCEP.msg}
+                        </div>
+                      )}
+                      {this.state.errors.addressCEP.error && (
+                        <div className="profile-form-error">
+                          {this.state.errors.addressNumber.msg}
+                        </div>
+                      )}
+
                       {this.state.user !== undefined && (
                         <>
                           {this.state.user.role === "employee" && (
@@ -605,9 +792,10 @@ class Profile extends Component {
                               <Form.Group>
                                 <Form.Input
                                   fluid
-                                  label="Cargo"
+                                  required
+                                  label="Cargo / Função / Habilidade"
                                   placeholder="Cargo"
-                                  width="4"
+                                  width="8"
                                   onChange={this.handleEmployee}
                                   id="title"
                                   value={
@@ -617,6 +805,11 @@ class Profile extends Component {
                                   }
                                 />
                               </Form.Group>
+                              {this.state.errors.workTitle.error && (
+                                <div className="profile-form-error">
+                                  {this.state.errors.workTitle.msg}
+                                </div>
+                              )}
                             </>
                           )}
                         </>

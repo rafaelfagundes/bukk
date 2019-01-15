@@ -18,6 +18,10 @@ const UserSchema = new Schema({
   gender: { type: String, enum: ["M", "F", "O"] },
   birthday: { type: Date },
   email: { type: String, required: [true, "O email é obrigatório"] },
+  phone: {
+    type: String,
+    required: true
+  },
   password: { type: String, required: [true, "A senha é obrigatória"] },
   createdAt: { type: Date, default: Date.now },
   role: {
@@ -32,7 +36,7 @@ const UserSchema = new Schema({
       required: true
     },
     number: {
-      type: Number,
+      type: String,
       required: true
     },
     neighborhood: {
@@ -52,7 +56,7 @@ const UserSchema = new Schema({
       required: true
     },
     postalCode: {
-      type: Number,
+      type: String,
       required: true
     },
     geolocation: {

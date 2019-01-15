@@ -16,7 +16,7 @@ exports.getUser = async (req, res) => {
   try {
     const user = await User.findById(
       token.id,
-      "address role firstName lastName gender birthday email createdAt avatar"
+      "address role firstName lastName gender birthday email createdAt avatar phone"
     );
     res.status(200).send(user);
   } catch (error) {

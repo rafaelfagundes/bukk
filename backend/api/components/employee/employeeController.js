@@ -264,9 +264,6 @@ exports.updateEmployee = async (req, res) => {
       msg: "Invalid token"
     });
   }
-
-  console.log(req.body);
-
   try {
     const employee = await Employee.updateOne({ user: token.id }, req.body);
     if (employee) {
