@@ -98,3 +98,7 @@
 .profile-form-error {
   color: red;
 }
+
+.profile-change-password {
+  width: 100%;
+}

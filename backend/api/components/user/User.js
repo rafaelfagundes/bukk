@@ -96,12 +96,24 @@ UserSchema.pre("save", function(next) {
   });
 });
 
-// UserSchema.methods.comparePassword = function(candidatePassword, cb) {
-//   bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
-//     if (err) return cb(err);
-//     cb(null, isMatch);
-//   });
-// };
+UserSchema.pre("update", function(next) {
+  const password = this.getUpdate().password;
+
+  // if not password change
+  if (!password) {
+    return next();
+  }
+  try {
+    const salt = bcrypt.genSaltSync(SALT_WORK_FACTOR);
+    console.log(salt);
+    const hash = bcrypt.hashSync(password, salt);
+    console.log(hash);
+    this.getUpdate().password = hash;
+    next();
+  } catch (error) {
+    return next(error);
+  }
+});
 
 UserSchema.methods.comparePassword = function(candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
+import { toast } from "react-toastify";
 import { connect } from "react-redux";
 import {
   Image,
@@ -83,7 +84,7 @@ const stateOptions = [
 class Profile extends Component {
   state = {
     activeItem: "geral",
-    editGeneral: false,
+    page: "general",
     user: undefined,
     employee: undefined,
     errors: {
@@ -95,7 +96,16 @@ class Profile extends Component {
       phone: { msg: "", error: false },
       workTitle: { msg: "", error: false }
     },
-    loadingAvatarUpload: false
+    loadingAvatarUpload: false,
+    password: {
+      actual: "",
+      new: "",
+      confirmation: "",
+      error: {
+        error: false,
+        msg: ""
+      }
+    }
   };
 
   validateGeneral = () => {
@@ -214,6 +224,127 @@ class Profile extends Component {
     });
   };
 
+  handlePassword = (e, { id, value }) => {
+    let _value = e.currentTarget.value;
+    let _id = e.currentTarget.id;
+
+    this.setState({
+      password: {
+        ...this.state.password,
+        [_id]: _value
+      }
+    });
+  };
+
+  changePassword = () => {
+    let errorsCount = 0;
+    if (validator.isEmpty(this.state.password.confirmation)) {
+      errorsCount++;
+      this.setState({
+        password: {
+          ...this.state.password,
+          error: {
+            error: true,
+            msg: "Por favor, preencha a confirmação de senha."
+          }
+        }
+      });
+    }
+    if (validator.isEmpty(this.state.password.new)) {
+      errorsCount++;
+      this.setState({
+        password: {
+          ...this.state.password,
+          error: {
+            error: true,
+            msg: "Por favor, preencha a nova senha."
+          }
+        }
+      });
+    }
+    if (validator.isEmpty(this.state.password.actual)) {
+      errorsCount++;
+      this.setState({
+        password: {
+          ...this.state.password,
+          error: {
+            error: true,
+            msg: "Por favor, preencha a senha atual."
+          }
+        }
+      });
+    }
+
+    if (this.state.password.new.length < 6) {
+      errorsCount++;
+      this.setState({
+        password: {
+          ...this.state.password,
+          error: {
+            error: true,
+            msg: "A nova senha deve conter no mínimo 6 caracteres."
+          }
+        }
+      });
+    }
+    if (this.state.password.new === this.state.password.actual) {
+      errorsCount++;
+      this.setState({
+        password: {
+          ...this.state.password,
+          error: {
+            error: true,
+            msg: "A nova senha deve ser diferente da atual."
+          }
+        }
+      });
+    }
+
+    if (this.state.password.confirmation !== this.state.password.new) {
+      errorsCount++;
+      this.setState({
+        password: {
+          ...this.state.password,
+          error: {
+            error: true,
+            msg: "A nova senha e a confirmação não coincidem."
+          }
+        }
+      });
+    }
+
+    if (errorsCount > 0) {
+      return false;
+    } else {
+      const token = localStorage.getItem("token");
+      let requestConfig = {
+        headers: {
+          Authorization: token
+        }
+      };
+      Axios.post(
+        config.api + "/users/changePassword",
+        this.state.password,
+        requestConfig
+      )
+        .then(response => {
+          toast.success("Senha atualizada com sucesso!");
+          this.setState({ page: "general" });
+        })
+        .catch(error => {
+          this.setState({
+            password: {
+              ...this.state.password,
+              error: {
+                error: true,
+                msg: error.response.data.msg
+              }
+            }
+          });
+        });
+    }
+  };
+
   handleUserBirthday = e => {
     try {
       if (e.currentTarget.value.indexOf("_") < 0) {
@@ -324,8 +455,11 @@ class Profile extends Component {
         });
         this.setState({ user: this.props.user, loadingAvatarUpload: false });
         localStorage.setItem("user", JSON.stringify(this.props.user));
+        toast.success("Imagem atualizada com sucesso");
       })
-      .catch(err => {});
+      .catch(err => {
+        toast.error("Erro ao atualizar imagem");
+      });
     e.target.reset();
   };
 
@@ -359,7 +493,7 @@ class Profile extends Component {
 
   editGeneral = () => {
     this.setState({
-      editGeneral: true,
+      page: "editProfile",
       errors: {
         firstName: { msg: "", error: false },
         lastName: { msg: "", error: false },
@@ -370,6 +504,14 @@ class Profile extends Component {
         workTitle: { msg: "", error: false }
       }
     });
+  };
+
+  changePasswordPage = () => {
+    this.setState({ page: "changePassword" });
+  };
+
+  generalPage = () => {
+    this.setState({ page: "general" });
   };
 
   saveGeneral = () => {
@@ -409,7 +551,7 @@ class Profile extends Component {
       })
       .catch(error => {});
 
-    this.setState({ editGeneral: false });
+    this.setState({ page: "general" });
   };
 
   componentDidMount() {
@@ -487,7 +629,7 @@ class Profile extends Component {
           {this.state.activeItem === "geral" && (
             <div className="profile-general">
               <div className="profile-general-inner">
-                {!this.state.editGeneral &&
+                {this.state.page === "general" &&
                   (this.props.user !== undefined && (
                     <>
                       <Card>
@@ -554,13 +696,13 @@ class Profile extends Component {
                               onChange={this.handleAvatarImage}
                             />
                           </Form>
-                          <a
-                            href="/change-password"
+                          <Button
                             className="profile-card-link"
+                            onClick={this.changePasswordPage}
                           >
                             <Icon name="key" />
                             Alterar senha
-                          </a>
+                          </Button>
                         </Card.Content>
                       </Card>
                       <div className="profile-general-view">
@@ -612,7 +754,55 @@ class Profile extends Component {
                       </div>
                     </>
                   ))}
-                {this.state.editGeneral && (
+                {this.state.page === "changePassword" && (
+                  <div className="profile-change-password">
+                    <div className="profile-form-header">Alterar Senha</div>
+                    <Form
+                      className="change-password-form"
+                      onSubmit={this.changePassword}
+                    >
+                      <Form.Group widths="8">
+                        <Form.Input
+                          label="Senha atual"
+                          type="password"
+                          width="8"
+                          id="actual"
+                          onChange={this.handlePassword}
+                          value={this.state.password.actual}
+                          required
+                        />
+                      </Form.Group>
+                      <Form.Group widths="8">
+                        <Form.Input
+                          label="Nova senha"
+                          type="password"
+                          width="8"
+                          id="new"
+                          onChange={this.handlePassword}
+                          value={this.state.password.new}
+                          required
+                        />
+                      </Form.Group>
+                      <Form.Group widths="8">
+                        <Form.Input
+                          label="Confirme a nova senha"
+                          type="password"
+                          width="8"
+                          id="confirmation"
+                          onChange={this.handlePassword}
+                          value={this.state.password.confirmation}
+                          required
+                        />
+                      </Form.Group>
+                    </Form>
+                    {this.state.password.error.error && (
+                      <div className="profile-form-error">
+                        {this.state.password.error.msg}
+                      </div>
+                    )}
+                  </div>
+                )}
+                {this.state.page === "editProfile" && (
                   <div className="profile-general-edit">
                     <Form>
                       <div className="profile-form-header">Dados pessoais</div>
@@ -873,13 +1063,13 @@ class Profile extends Component {
                 )}
               </div>
               <Divider className="profile-bottom-divider" />
-              {!this.state.editGeneral && (
+              {this.state.page === "general" && (
                 <Button icon labelPosition="left" onClick={this.editGeneral}>
                   <Icon name="pencil" />
                   Editar Informações
                 </Button>
               )}
-              {this.state.editGeneral && (
+              {this.state.page === "editProfile" && (
                 <Button
                   icon
                   labelPosition="left"
@@ -889,6 +1079,24 @@ class Profile extends Component {
                 >
                   <Icon name="cloud" />
                   Salvar
+                </Button>
+              )}
+              {this.state.page === "changePassword" && (
+                <Button
+                  icon
+                  floated="right"
+                  labelPosition="left"
+                  color="blue"
+                  onClick={this.changePassword}
+                >
+                  <Icon name="key" />
+                  Alterar Senha
+                </Button>
+              )}
+              {this.state.page !== "general" && (
+                <Button icon labelPosition="left" onClick={this.generalPage}>
+                  <Icon name="cancel" />
+                  Cancelar
                 </Button>
               )}
             </div>

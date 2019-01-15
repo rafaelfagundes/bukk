@@ -1,5 +1,8 @@
 import React, { Component } from "react";
 
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import { Container, Grid } from "semantic-ui-react";
 import { connect } from "react-redux";
@@ -88,6 +91,7 @@ class Dashboard extends Component {
   render() {
     return (
       <div className="Dashboard">
+        <ToastContainer />
         <Container fluid>
           <Grid>
             <Grid.Row>

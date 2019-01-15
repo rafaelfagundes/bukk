@@ -10,7 +10,7 @@ exports.getUser = async (req, res) => {
   const token = auth.verify(req.token);
   if (!token) {
     res.status(403).json({
-      msg: "Invalid token"
+      msg: "Token inválido."
     });
   }
   try {
@@ -60,7 +60,7 @@ exports.updateUser = async (req, res) => {
   const token = auth.verify(req.token);
   if (!token) {
     res.status(403).json({
-      msg: "Invalid token"
+      msg: "Token inválido."
     });
   }
 
@@ -80,6 +80,36 @@ exports.updateUser = async (req, res) => {
   }
 };
 
+// Update user
+exports.updateUserPassword = async (req, res) => {
+  try {
+    const token = auth.verify(req.token);
+    if (!token) {
+      res.status(403).json({
+        msg: "Token inválido."
+      });
+    }
+    const user = await User.findOne({ _id: token.id });
+    const result = await user.comparePassword(req.body.actual);
+
+    if (!result) {
+      res.status(403).send({ msg: "A senha atual está incorreta." });
+    }
+    if (req.body.new !== req.body.confirmation) {
+      res
+        .status(400)
+        .send({ msg: "A senha nova e a confimação não coincidem." });
+    }
+    const update = await User.update(
+      { _id: token.id },
+      { password: req.body.new }
+    );
+    console.log(update);
+
+    res.status(200).send({ msg: "OK" });
+  } catch (error) {}
+};
+
 exports.testAuth = async (req, res) => {
   const token = auth.verify(req.token);
   if (token) {
@@ -89,7 +119,7 @@ exports.testAuth = async (req, res) => {
     });
   } else {
     res.status(403).json({
-      msg: "Invalid token"
+      msg: "Token inválido."
     });
   }
 };
