@@ -1,8 +1,9 @@
 import React, { Component } from "react";
-import { Menu, Icon, Dropdown, Image } from "semantic-ui-react";
+import { Menu, Icon, Image } from "semantic-ui-react";
 import "./TopMenu.css";
 import UserMenu from "./UserMenu/UserMenu";
 import { connect } from "react-redux";
+import { NotificationArea } from "./NotificationArea/NotificationArea";
 
 const mapStateToProps = state => {
   return {
@@ -73,39 +74,12 @@ class TopMenu extends Component {
           {/* <Menu.Item>
             <Input icon="search" placeholder="Procurar..." />
           </Menu.Item> */}
-          <Menu.Item name="notifications">
-            {/* <Dropdown icon="bell outline" text="12" iconPosition="right"> */}
-
-            {/* icon bell outline when new notification and new-notification class */}
-            <Dropdown
-              text="12"
-              icon="bell"
-              floating
-              labeled
-              button
-              className="icon new-notification"
-            >
-              <Dropdown.Menu id="notifications">
-                <Dropdown.Item
-                  icon="folder outline"
-                  text="Nova pasta de clientes criada"
-                />
-                <Dropdown.Item
-                  icon="calendar plus outline"
-                  text="Novo agendamento"
-                />
-                <Dropdown.Item
-                  icon="calendar plus outline"
-                  text="Novo agendamento"
-                />
-                <Dropdown.Item
-                  icon="calendar plus outline"
-                  text="Novo agendamento"
-                />
-                <Dropdown.Item icon="user" text="Novo cliente se cadastrou" />
-              </Dropdown.Menu>
-            </Dropdown>
-            {/* <div className="top-menu-notification-number">12</div> */}
+          <Menu.Item className="notification-area-trigger">
+            <div>
+              <Icon name="bell outline" />
+              <span>4</span>
+            </div>
+            <NotificationArea triggerClass="notification-area-trigger" />
           </Menu.Item>
           <Menu.Item>
             <Image
