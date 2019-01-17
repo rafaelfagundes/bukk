@@ -107,27 +107,29 @@ class Dashboard extends Component {
                 <TopMenu className="top-menu" />
 
                 <div id="pages">
-                  <BrowserRouter>
-                    <Switch>
-                      <PrivateRoute
-                        path="/dashboard/"
-                        exact
-                        component={Overview}
-                      />
-                      <PrivateRoute
-                        path="/dashboard/relatorios"
-                        component={Reports}
-                      />
-                      <PrivateRoute
-                        path="/dashboard/perfil"
-                        component={Profile}
-                      />
-                      <PrivateRoute
-                        path="/dashboard/configuracoes-empresa"
-                        component={CompanyConfig}
-                      />
-                    </Switch>
-                  </BrowserRouter>
+                  <div className="pages-inner">
+                    <BrowserRouter>
+                      <Switch>
+                        <PrivateRoute
+                          path="/dashboard/"
+                          exact
+                          component={Overview}
+                        />
+                        <PrivateRoute
+                          path="/dashboard/relatorios"
+                          component={Reports}
+                        />
+                        <PrivateRoute
+                          path="/dashboard/perfil"
+                          component={Profile}
+                        />
+                        <PrivateRoute
+                          path="/dashboard/configuracoes-empresa"
+                          component={CompanyConfig}
+                        />
+                      </Switch>
+                    </BrowserRouter>
+                  </div>
                 </div>
               </div>
             </Grid.Row>

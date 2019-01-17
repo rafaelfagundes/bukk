@@ -1,25 +1,7 @@
-.company-config-header {
-  font-size: 1.2rem;
-  border-bottom: 1px solid #eee;
-  padding: 10px 0px 5px 0;
-  margin: 20px 0 20px 0;
-  font-weight: 300;
-}
-
-.company-config-subheader {
-  font-size: 1rem;
-  padding: 10px 0px 5px 0;
-  margin: 20px 0 20px 0;
-  font-weight: 400;
-}
-
-.company-config-header:first-child {
-  margin: 0px 0 20px 0;
-}
-
 .company-payment-types {
   display: flex;
   flex-direction: row;
+  width: 1000px;
 }
 
 .company-payment-type {
@@ -28,7 +10,7 @@
   width: 128px;
   box-sizing: border-box;
   /* background-color: yellow; */
-  margin-right: 30px;
+  margin-right: 14px;
 }
 
 .company-payment-type:last-child {

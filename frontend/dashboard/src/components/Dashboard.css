@@ -1,6 +1,6 @@
 #pages {
   position: fixed;
-  min-width: calc(100% - 200px);
+  min-width: calc(100vw - 200px);
   top: 80px;
   bottom: -25px;
   padding: 40px;
@@ -9,4 +9,9 @@
   height: calc(100vh - 50px);
   background-color: white;
   margin-left: 214px;
+}
+
+.pages-inner * {
+  max-width: 1000px;
+  box-sizing: border-box;
 }

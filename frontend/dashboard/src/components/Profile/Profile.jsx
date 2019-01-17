@@ -27,6 +27,7 @@ import { formatCEP, formatBrazilianPhoneNumber } from "../utils";
 import { states } from "../../config/BrasilAddress";
 import validator from "validator";
 import Notification from "../Notification/Notification";
+import FormTitle from "../Common/FormTitle";
 
 // Locale file for moment
 moment.locale("pt-br", calendarLocale);
@@ -711,7 +712,7 @@ class Profile extends Component {
                         </Card.Content>
                       </Card>
                       <div className="profile-general-view">
-                        <h2>Endereço</h2>
+                        <FormTitle first text="Endereço" />
                         <ul>
                           <li>
                             {this.props.user.address.street},{" "}
@@ -726,7 +727,7 @@ class Profile extends Component {
                             {formatCEP(this.props.user.address.postalCode)}
                           </li>
                         </ul>
-                        <h2>Contato</h2>
+                        <FormTitle text="Contato" />
                         <ul>
                           <li>
                             <span className="profile-details-label">
@@ -741,7 +742,7 @@ class Profile extends Component {
                             {formatBrazilianPhoneNumber(this.props.user.phone)}
                           </li>
                         </ul>
-                        <h2>Outros</h2>
+                        <FormTitle text="Outros" />
                         <ul>
                           <li>
                             <span className="profile-details-label">Sexo:</span>{" "}
@@ -761,7 +762,7 @@ class Profile extends Component {
                   ))}
                 {this.state.page === "changePassword" && (
                   <div className="profile-change-password">
-                    <div className="profile-form-header">Alterar Senha</div>
+                    <FormTitle first text="Alterar Senha" />
                     <Form
                       className="change-password-form"
                       onSubmit={this.changePassword}
@@ -810,7 +811,7 @@ class Profile extends Component {
                 {this.state.page === "editProfile" && (
                   <div className="profile-general-edit">
                     <Form>
-                      <div className="profile-form-header">Dados pessoais</div>
+                      <FormTitle text="Dados pessoais" first />
                       <Form.Group widths="4">
                         <Form.Input
                           fluid
@@ -902,9 +903,7 @@ class Profile extends Component {
                         </div>
                       )}
 
-                      <div className="profile-form-header">
-                        Endereço e Contato
-                      </div>
+                      <FormTitle text="Endereço e Contato" />
                       <Form.Group>
                         <Form.Input
                           fluid

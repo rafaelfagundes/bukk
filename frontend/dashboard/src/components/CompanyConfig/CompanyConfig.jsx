@@ -7,6 +7,8 @@ import config from "../../config";
 import "./CompanyConfig.css";
 import { states } from "../../config/BrasilAddress";
 import { formatCEP, formatBrazilianPhoneNumber, formatCpfCnpj } from "../utils";
+import FormTitle from "../Common/FormTitle";
+import FormSubTitle from "../Common/FormSubTitle";
 
 export class CompanyConfig extends Component {
   state = {
@@ -179,9 +181,7 @@ export class CompanyConfig extends Component {
                 <>
                   <div className="company-config-general">
                     <Form>
-                      <div className="company-config-header">
-                        Dados da Empresa
-                      </div>
+                      <FormTitle text="Dados da Empresa" first />
                       <Form.Group inline>
                         <label>Tipo de pessoa</label>
                         <Form.Radio
@@ -234,8 +234,7 @@ export class CompanyConfig extends Component {
                         id="cpfCnpj"
                         width={4}
                       />
-                      <Form.Group />
-                      <div className="company-config-header">Endereço</div>
+                      <FormTitle text="Endereço" />
                       <Form.Group widths="equal">
                         <Form.Input
                           fluid
@@ -300,7 +299,7 @@ export class CompanyConfig extends Component {
                           value={this.state.company.address.state}
                         />
                       </Form.Group>
-                      <div className="company-config-header">Contato</div>
+                      <FormTitle text="Contato" />
                       <Form.Group>
                         <Form.Input
                           label="Email"
@@ -328,12 +327,8 @@ export class CompanyConfig extends Component {
                           />
                         ))}
                       </FormGroup>
-                      <div className="company-config-header">
-                        Formas de Pagamento
-                      </div>
-                      <div className="company-config-subheader">
-                        Cartões de Crédito
-                      </div>
+                      <FormTitle text="Formas de Pagamento" />
+                      <FormSubTitle text="Cartões de Crédito" />
                       <div className="company-payment-types">
                         <div className="company-payment-type">
                           <img
@@ -421,9 +416,7 @@ export class CompanyConfig extends Component {
                           />
                         </div>
                       </div>
-                      <div className="company-config-subheader">
-                        Outras modalidades
-                      </div>
+                      <FormSubTitle text="Outras modalidades" />
                       <div className="company-payment-types">
                         <div className="company-payment-type">
                           <img
