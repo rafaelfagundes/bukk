@@ -26,8 +26,6 @@ exports.getCompany = async (req, res) => {
       });
     }
 
-    console.log("no controller");
-
     const user = await User.findById(token.id);
 
     if (user.role !== "owner") {

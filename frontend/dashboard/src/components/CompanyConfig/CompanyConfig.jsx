@@ -23,10 +23,10 @@ export class CompanyConfig extends Component {
           icon:
             "https://res.cloudinary.com/bukkapp/image/upload/v1547692315/Bukk/Assets/Payment%20Icons/amex.png"
         },
-        dinersClub: {
+        dinersclub: {
           enabled: false,
           name: "Diners Club",
-          id: "dinersClub",
+          id: "dinersclub",
           icon:
             "https://res.cloudinary.com/bukkapp/image/upload/v1547692315/Bukk/Assets/Payment%20Icons/dinersclub.png"
         },
@@ -51,10 +51,10 @@ export class CompanyConfig extends Component {
           icon:
             "https://res.cloudinary.com/bukkapp/image/upload/v1547692316/Bukk/Assets/Payment%20Icons/hipercard.png"
         },
-        masterCard: {
+        mastercard: {
           enabled: false,
           name: "MasterCard",
-          id: "visa",
+          id: "mastercard",
           icon:
             "https://res.cloudinary.com/bukkapp/image/upload/v1547692316/Bukk/Assets/Payment%20Icons/mastercard.png"
         },
@@ -91,7 +91,54 @@ export class CompanyConfig extends Component {
     });
   };
 
-  handlePaymentType = e => {};
+  handlePaymentTypeCc = e => {
+    let _checked = undefined;
+    let _id = undefined;
+
+    if (e.currentTarget.id.indexOf("-img") >= 0) {
+      _checked = !e.currentTarget.checked;
+      _id = e.currentTarget.id.replace("-img", "");
+    } else {
+      _checked = e.currentTarget.checked;
+      _id = e.currentTarget.id;
+    }
+
+    this.setState({
+      paymentTypes: {
+        ...this.state.paymentTypes,
+        cc: {
+          ...this.state.paymentTypes.cc,
+          [_id]: {
+            ...this.state.paymentTypes.cc[_id],
+            enabled: _checked
+          }
+        }
+      }
+    });
+  };
+
+  handlePaymentTypeOther = e => {
+    let _checked = undefined;
+    let _id = undefined;
+
+    if (e.currentTarget.id.indexOf("-img") >= 0) {
+      _checked = !e.currentTarget.checked;
+      _id = e.currentTarget.id.replace("-img", "");
+    } else {
+      _checked = e.currentTarget.checked;
+      _id = e.currentTarget.id;
+    }
+
+    this.setState({
+      paymentTypes: {
+        ...this.state.paymentTypes,
+        other: {
+          ...this.state.paymentTypes.other,
+          [_id]: _checked
+        }
+      }
+    });
+  };
 
   handleChange = e => {
     const _id = e.currentTarget.id;
@@ -135,7 +182,37 @@ export class CompanyConfig extends Component {
 
   componentDidUpdate() {
     if (this.state.company === undefined && this.props.company) {
-      this.setState({ company: this.props.company });
+      this.setState({ company: this.props.company }, () => {
+        let _state = { paymentTypes: this.state.paymentTypes };
+
+        this.state.company.paymentOptions.forEach(pt => {
+          if (pt.paymentType === "cc") {
+            _state = {
+              paymentTypes: {
+                ..._state.paymentTypes,
+                cc: {
+                  ..._state.paymentTypes.cc,
+                  [pt.paymentId]: {
+                    ..._state.paymentTypes.cc[pt.paymentId],
+                    enabled: true
+                  }
+                }
+              }
+            };
+          } else {
+            _state = {
+              paymentTypes: {
+                ..._state.paymentTypes,
+                other: {
+                  ..._state.paymentTypes.other,
+                  [pt.paymentId]: true
+                }
+              }
+            };
+          }
+        });
+        this.setState(_state);
+      });
     }
   }
 
@@ -334,30 +411,49 @@ export class CompanyConfig extends Component {
                           <img
                             src={this.state.paymentTypes.cc.amex.icon}
                             alt={this.state.paymentTypes.cc.amex.name}
+                            onClick={this.handlePaymentTypeCc}
+                            id={this.state.paymentTypes.cc.amex.id + "-img"}
+                            checked={this.state.paymentTypes.cc.amex.enabled}
                           />
                           <Checkbox
                             label={this.state.paymentTypes.cc.amex.name}
                             className="company-payment-type-chkbox"
                             checked={this.state.paymentTypes.cc.amex.enabled}
+                            id={this.state.paymentTypes.cc.amex.id}
+                            onChange={this.handlePaymentTypeCc}
                           />
                         </div>
                         <div className="company-payment-type">
                           <img
-                            src={this.state.paymentTypes.cc.dinersClub.icon}
-                            alt={this.state.paymentTypes.cc.dinersClub.name}
+                            src={this.state.paymentTypes.cc.dinersclub.icon}
+                            alt={this.state.paymentTypes.cc.dinersclub.name}
+                            onClick={this.handlePaymentTypeCc}
+                            id={
+                              this.state.paymentTypes.cc.dinersclub.id + "-img"
+                            }
+                            checked={
+                              this.state.paymentTypes.cc.dinersclub.enabled
+                            }
                           />
                           <Checkbox
-                            label={this.state.paymentTypes.cc.dinersClub.name}
+                            label={this.state.paymentTypes.cc.dinersclub.name}
                             className="company-payment-type-chkbox"
                             checked={
-                              this.state.paymentTypes.cc.dinersClub.enabled
+                              this.state.paymentTypes.cc.dinersclub.enabled
                             }
+                            id={this.state.paymentTypes.cc.dinersclub.id}
+                            onChange={this.handlePaymentTypeCc}
                           />
                         </div>
                         <div className="company-payment-type">
                           <img
                             src={this.state.paymentTypes.cc.discover.icon}
                             alt={this.state.paymentTypes.cc.discover.name}
+                            onClick={this.handlePaymentTypeCc}
+                            id={this.state.paymentTypes.cc.discover.id + "-img"}
+                            checked={
+                              this.state.paymentTypes.cc.discover.enabled
+                            }
                           />
                           <Checkbox
                             label={this.state.paymentTypes.cc.discover.name}
@@ -365,23 +461,37 @@ export class CompanyConfig extends Component {
                             checked={
                               this.state.paymentTypes.cc.discover.enabled
                             }
+                            id={this.state.paymentTypes.cc.discover.id}
+                            onChange={this.handlePaymentTypeCc}
                           />
                         </div>
                         <div className="company-payment-type">
                           <img
                             src={this.state.paymentTypes.cc.elo.icon}
                             alt={this.state.paymentTypes.cc.elo.name}
+                            onClick={this.handlePaymentTypeCc}
+                            id={this.state.paymentTypes.cc.elo.id + "-img"}
+                            checked={this.state.paymentTypes.cc.elo.enabled}
                           />
                           <Checkbox
                             label={this.state.paymentTypes.cc.elo.name}
                             className="company-payment-type-chkbox"
                             checked={this.state.paymentTypes.cc.elo.enabled}
+                            id={this.state.paymentTypes.cc.elo.id}
+                            onChange={this.handlePaymentTypeCc}
                           />
                         </div>
                         <div className="company-payment-type">
                           <img
                             src={this.state.paymentTypes.cc.hipercard.icon}
                             alt={this.state.paymentTypes.cc.hipercard.name}
+                            onClick={this.handlePaymentTypeCc}
+                            id={
+                              this.state.paymentTypes.cc.hipercard.id + "-img"
+                            }
+                            checked={
+                              this.state.paymentTypes.cc.hipercard.enabled
+                            }
                           />
                           <Checkbox
                             label={this.state.paymentTypes.cc.hipercard.name}
@@ -389,30 +499,46 @@ export class CompanyConfig extends Component {
                             checked={
                               this.state.paymentTypes.cc.hipercard.enabled
                             }
+                            id={this.state.paymentTypes.cc.hipercard.id}
+                            onChange={this.handlePaymentTypeCc}
                           />
                         </div>
                         <div className="company-payment-type">
                           <img
-                            src={this.state.paymentTypes.cc.masterCard.icon}
-                            alt={this.state.paymentTypes.cc.masterCard.name}
+                            src={this.state.paymentTypes.cc.mastercard.icon}
+                            alt={this.state.paymentTypes.cc.mastercard.name}
+                            onClick={this.handlePaymentTypeCc}
+                            id={
+                              this.state.paymentTypes.cc.mastercard.id + "-img"
+                            }
+                            checked={
+                              this.state.paymentTypes.cc.mastercard.enabled
+                            }
                           />
                           <Checkbox
-                            label={this.state.paymentTypes.cc.masterCard.name}
+                            label={this.state.paymentTypes.cc.mastercard.name}
                             className="company-payment-type-chkbox"
                             checked={
-                              this.state.paymentTypes.cc.masterCard.enabled
+                              this.state.paymentTypes.cc.mastercard.enabled
                             }
+                            id={this.state.paymentTypes.cc.mastercard.id}
+                            onChange={this.handlePaymentTypeCc}
                           />
                         </div>
                         <div className="company-payment-type">
                           <img
                             src={this.state.paymentTypes.cc.visa.icon}
                             alt={this.state.paymentTypes.cc.visa.name}
+                            onClick={this.handlePaymentTypeCc}
+                            id={this.state.paymentTypes.cc.visa.id + "-img"}
+                            checked={this.state.paymentTypes.cc.visa.enabled}
                           />
                           <Checkbox
                             label={this.state.paymentTypes.cc.visa.name}
                             className="company-payment-type-chkbox"
                             checked={this.state.paymentTypes.cc.visa.enabled}
+                            id={this.state.paymentTypes.cc.visa.id}
+                            onChange={this.handlePaymentTypeCc}
                           />
                         </div>
                       </div>
@@ -422,55 +548,80 @@ export class CompanyConfig extends Component {
                           <img
                             src="https://res.cloudinary.com/bukkapp/image/upload/v1547692315/Bukk/Assets/Payment%20Icons/boleto.png"
                             alt="Boleto"
+                            onClick={this.handlePaymentTypeOther}
+                            id="boleto-img"
+                            checked={this.state.paymentTypes.other.boleto}
                           />
                           <Checkbox
                             label="Boleto"
                             className="company-payment-type-chkbox"
                             checked={this.state.paymentTypes.other.boleto}
+                            onChange={this.handlePaymentTypeOther}
+                            id="boleto"
                           />
                         </div>
                         <div className="company-payment-type">
                           <img
                             src="https://res.cloudinary.com/bukkapp/image/upload/v1547692315/Bukk/Assets/Payment%20Icons/debitcard.png"
                             alt="Cartão de Débito"
+                            onClick={this.handlePaymentTypeOther}
+                            id="debitCard-img"
+                            checked={this.state.paymentTypes.other.debitCard}
                           />
                           <Checkbox
                             label="Cartão de Débito"
                             className="company-payment-type-chkbox"
                             checked={this.state.paymentTypes.other.debitCard}
+                            onChange={this.handlePaymentTypeOther}
+                            id="debitCard"
                           />
                         </div>
                         <div className="company-payment-type">
                           <img
                             src="https://res.cloudinary.com/bukkapp/image/upload/v1547692315/Bukk/Assets/Payment%20Icons/crypto.png"
                             alt="Cryptomoeda"
+                            onClick={this.handlePaymentTypeOther}
+                            id="crypto-img"
+                            checked={this.state.paymentTypes.other.crypto}
                           />
                           <Checkbox
                             label="Cryptomoeda"
                             className="company-payment-type-chkbox"
                             checked={this.state.paymentTypes.other.crypto}
+                            onChange={this.handlePaymentTypeOther}
+                            id="crypto"
                           />
                         </div>
                         <div className="company-payment-type">
                           <img
                             src="https://res.cloudinary.com/bukkapp/image/upload/v1547692315/Bukk/Assets/Payment%20Icons/cash.png"
                             alt="Dinheiro"
+                            onClick={this.handlePaymentTypeOther}
+                            id="cash-img"
+                            checked={this.state.paymentTypes.other.cash}
                           />
                           <Checkbox
                             label="Dinheiro"
                             className="company-payment-type-chkbox"
                             checked={this.state.paymentTypes.other.cash}
+                            onChange={this.handlePaymentTypeOther}
+                            id="cash"
                           />
                         </div>
                         <div className="company-payment-type">
                           <img
                             src="https://res.cloudinary.com/bukkapp/image/upload/v1547692316/Bukk/Assets/Payment%20Icons/transfer.png"
                             alt="Transferência"
+                            onClick={this.handlePaymentTypeOther}
+                            id="wireTransfer-img"
+                            checked={this.state.paymentTypes.other.wireTransfer}
                           />
                           <Checkbox
                             label="Transferência"
                             className="company-payment-type-chkbox"
                             checked={this.state.paymentTypes.other.wireTransfer}
+                            onChange={this.handlePaymentTypeOther}
+                            id="wireTransfer"
                           />
                         </div>
                       </div>

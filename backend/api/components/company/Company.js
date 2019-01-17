@@ -76,7 +76,7 @@ const CompanySchema = new Schema({
       paymentId: { type: String },
       paymentType: {
         type: String,
-        enum: ["cc", "cash", "wireTransfer", "boleto", "crypto", "debitCard"]
+        enum: ["cc", "other"]
       },
       name: { type: String },
       icon: { type: String }
