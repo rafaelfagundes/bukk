@@ -33,3 +33,12 @@ export const setCurrentPage = currentPage => {
     });
   };
 };
+
+export const setCompany = company => {
+  return (dispatch, getState) => {
+    dispatch({
+      type: "SET_COMPANY",
+      company
+    });
+  };
+};

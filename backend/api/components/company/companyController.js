@@ -1,14 +1,44 @@
 // External Dependancies
 const boom = require("boom");
+const auth = require("../../auth");
 
 // Get Data Models
 const Company = require("./Company");
+const User = require("../user/User");
 
 // Get all companies
 exports.getCompanies = async (req, res) => {
   try {
     const companies = await Company.find();
     return companies;
+  } catch (err) {
+    throw boom.boomify(err);
+  }
+};
+
+// Get all companies
+exports.getCompany = async (req, res) => {
+  try {
+    const token = auth.verify(req.token);
+    if (!token) {
+      res.status(403).json({
+        msg: "Token inválido."
+      });
+    }
+
+    console.log("no controller");
+
+    const user = await User.findById(token.id);
+
+    if (user.role !== "owner") {
+      res.status(403).send({ msg: "Usuário não autorizado." });
+    }
+
+    const company = await Company.findById(
+      user.company,
+      "id address settings companyName tradingName companyNickname cpfCnpj businessType logo website email social workingDays phone paymentOptions"
+    );
+    res.status(200).send({ msg: "OK", company });
   } catch (err) {
     throw boom.boomify(err);
   }
@@ -381,17 +411,6 @@ exports.updateCompany = async (req, res) => {
       new: true
     });
     return update;
-  } catch (err) {
-    throw boom.boomify(err);
-  }
-};
-
-// Delete a company
-exports.deleteCompany = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const company = await Company.findByIdAndRemove(id);
-    return company;
   } catch (err) {
     throw boom.boomify(err);
   }

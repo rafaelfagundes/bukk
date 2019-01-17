@@ -76,7 +76,9 @@ export class UserMenu extends Component {
                   </li>
                   <li>
                     <Icon name="setting" />
-                    <a href="/dashboard/config">Configurações</a>
+                    <a href="/dashboard/configuracoes-empresa">
+                      Configurações da empresa
+                    </a>
                   </li>
                   <li>
                     <Icon name="help" />

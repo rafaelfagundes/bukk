@@ -1,0 +1,53 @@
+.company-config-header {
+  font-size: 1.2rem;
+  border-bottom: 1px solid #eee;
+  padding: 10px 0px 5px 0;
+  margin: 20px 0 20px 0;
+  font-weight: 300;
+}
+
+.company-config-subheader {
+  font-size: 1rem;
+  padding: 10px 0px 5px 0;
+  margin: 20px 0 20px 0;
+  font-weight: 400;
+}
+
+.company-config-header:first-child {
+  margin: 0px 0 20px 0;
+}
+
+.company-payment-types {
+  display: flex;
+  flex-direction: row;
+}
+
+.company-payment-type {
+  display: flex;
+  flex-direction: column;
+  width: 128px;
+  box-sizing: border-box;
+  /* background-color: yellow; */
+  margin-right: 30px;
+}
+
+.company-payment-type:last-child {
+  margin-right: 0px;
+}
+
+.company-payment-type img {
+  width: 128px;
+  height: 128px;
+  margin: 0 auto;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  border: 2px solid #f5f5f5;
+}
+.company-payment-type label {
+  padding-left: 23px !important;
+  font-size: 0.9rem !important;
+}
+
+.company-payment-type-chkbox {
+  margin: 0 auto;
+}

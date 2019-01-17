@@ -16,6 +16,8 @@ const dashboardReducer = (state = initialState, action) => {
       return assign({}, state, user);
     case "SET_EMPLOYEE":
       return assign({}, state, action);
+    case "SET_COMPANY":
+      return assign({}, state, action);
     case "SET_CURRENTPAGE":
       return assign({}, state, action);
     default:

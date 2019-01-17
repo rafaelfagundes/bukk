@@ -13,6 +13,7 @@ import SideMenu from "./SideMenu/SideMenu";
 import Overview from "./Overview/Overview";
 import Reports from "./Reports/Reports";
 import Profile from "./Profile/Profile";
+import CompanyConfig from "./CompanyConfig/CompanyConfig";
 
 import "./Dashboard.css";
 import { isAuthenticated } from "../auth";
@@ -120,6 +121,10 @@ class Dashboard extends Component {
                       <PrivateRoute
                         path="/dashboard/perfil"
                         component={Profile}
+                      />
+                      <PrivateRoute
+                        path="/dashboard/configuracoes-empresa"
+                        component={CompanyConfig}
                       />
                     </Switch>
                   </BrowserRouter>

@@ -26,3 +26,18 @@ exports.formatCEP = cep => {
     return String(cep).replace("-", "");
   }
 };
+
+exports.formatCpfCnpj = c => {
+  c = String(c);
+  if (c.length === 11) {
+    return `${c[0]}${c[1]}${c[2]}.${c[3]}${c[4]}${c[5]}.${c[6]}${c[7]}${c[8]}-${
+      c[9]
+    }${c[10]}`;
+  }
+  if (c.length === 14) {
+    return `${c[0]}${c[1]}.${c[2]}${c[3]}${c[4]}.${c[5]}${c[6]}${c[7]}/${c[8]}${
+      c[9]
+    }${c[10]}${c[11]}-${c[12]}${c[13]}`;
+  }
+  return c;
+};

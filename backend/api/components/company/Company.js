@@ -15,7 +15,7 @@ const CompanySchema = new Schema({
       required: true
     },
     number: {
-      type: Number,
+      type: String,
       required: true
     },
     neighborhood: {
@@ -35,7 +35,7 @@ const CompanySchema = new Schema({
       required: true
     },
     postalCode: {
-      type: Number,
+      type: String,
       required: true
     },
     geolocation: {
@@ -76,7 +76,7 @@ const CompanySchema = new Schema({
       paymentId: { type: String },
       paymentType: {
         type: String,
-        enum: ["credit card", "cash", "money transfer", "boleto"]
+        enum: ["cc", "cash", "wireTransfer", "boleto", "crypto", "debitCard"]
       },
       name: { type: String },
       icon: { type: String }
