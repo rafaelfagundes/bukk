@@ -14,6 +14,16 @@ const dashboardReducer = (state = initialState, action) => {
         }
       };
       return assign({}, state, user);
+    case "SET_COMPANY_LOGO":
+      console.log(action);
+      const company = {
+        company: {
+          ...state.company,
+          logo: action.logo
+        }
+      };
+      console.log(company);
+      return assign({}, state, company);
     case "SET_EMPLOYEE":
       return assign({}, state, action);
     case "SET_COMPANY":

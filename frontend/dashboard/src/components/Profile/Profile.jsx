@@ -560,16 +560,16 @@ class Profile extends Component {
     this.setState({ page: "general" });
   };
 
-  componentDidMount() {
-    this.props.setCurrentPage({
-      title: "Perfil",
-      icon: "user circle"
-    });
-  }
-
   componentDidUpdate() {
     if (this.state.user === undefined) {
       this.setState({ user: this.props.user, employee: this.props.employee });
+    }
+
+    if (this.props.user && !this.props.currentPage) {
+      this.props.setCurrentPage({
+        title: "Perfil de " + this.props.user.firstName,
+        icon: "user circle"
+      });
     }
   }
 

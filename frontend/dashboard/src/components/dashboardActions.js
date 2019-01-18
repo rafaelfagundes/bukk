@@ -16,6 +16,15 @@ export const setUserAvatar = avatar => {
   };
 };
 
+export const setCompanyLogo = logo => {
+  return (dispatch, getState) => {
+    dispatch({
+      type: "SET_COMPANY_LOGO",
+      logo
+    });
+  };
+};
+
 export const setEmployee = employee => {
   return (dispatch, getState) => {
     dispatch({

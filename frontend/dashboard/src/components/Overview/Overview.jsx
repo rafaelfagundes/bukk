@@ -10,7 +10,18 @@ class Overview extends Component {
   static propTypes = {};
 
   componentDidMount() {
-    this.props.setCurrentPage({ title: "Início", icon: "home" });
+    // this.props.setCurrentPage({
+    //   title: this.props.company ? this.props.company.companyNickname : "",
+    //   icon: "home"
+    // });
+  }
+  componentDidUpdate() {
+    if (this.props.company && !this.props.currentPage) {
+      this.props.setCurrentPage({
+        title: this.props.company ? this.props.company.companyNickname : "",
+        icon: "home"
+      });
+    }
   }
 
   render() {
@@ -46,6 +57,7 @@ class Overview extends Component {
 const mapStateToProps = state => {
   return {
     user: state.dashboard.user,
+    company: state.dashboard.company,
     currentPage: state.dashboard.currentPage
   };
 };

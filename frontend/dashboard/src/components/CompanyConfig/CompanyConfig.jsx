@@ -1,6 +1,11 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { setCurrentPage, setCompany } from "../dashboardActions";
+import { toast } from "react-toastify";
+import {
+  setCurrentPage,
+  setCompany,
+  setCompanyLogo
+} from "../dashboardActions";
 import {
   Button,
   Form,
@@ -9,13 +14,14 @@ import {
   Icon,
   Divider
 } from "semantic-ui-react";
-import Axios from "axios";
-import config from "../../config";
 import "./CompanyConfig.css";
 import { states } from "../../config/BrasilAddress";
 import { formatCEP, formatBrazilianPhoneNumber, formatCpfCnpj } from "../utils";
 import FormTitle from "../Common/FormTitle";
 import FormSubTitle from "../Common/FormSubTitle";
+import Notification from "../Notification/Notification";
+import Axios from "axios";
+import config from "../../config";
 
 export class CompanyConfig extends Component {
   state = {
@@ -188,14 +194,58 @@ export class CompanyConfig extends Component {
     }
   };
 
-  componentDidMount() {
-    this.props.setCurrentPage({
-      title: "Configurações da Empresa",
-      icon: "building"
-    });
-  }
+  saveCompanyInfo = e => {
+    if (!this.imageInput.value) {
+    } else {
+      toast(
+        <Notification
+          type="notification"
+          title="Enviando imagem"
+          text="Estamos salvando o seu novo logo"
+        />
+      );
+      const data = new FormData(e.currentTarget);
+
+      const token = localStorage.getItem("token");
+      let requestConfig = {
+        headers: {
+          Authorization: token
+        }
+      };
+      Axios.post(config.api + "/images/logo", data, requestConfig)
+        .then(response => {
+          toast(
+            <Notification
+              type="success"
+              title="Imagem enviada com sucesso"
+              text="O seu novo logo está armazenado"
+            />
+          );
+          this.props.setCompanyLogo(response.data.logoUrl);
+          this.setState({ company: this.props.company });
+          localStorage.setItem("company", JSON.stringify(this.props.company));
+        })
+        .catch(err => {
+          toast(
+            <Notification
+              type="erro"
+              title="Erro ao atualizar imagem"
+              text={err.response.data.msg}
+            />
+          );
+        });
+      e.currentTarget.reset();
+    }
+  };
 
   componentDidUpdate() {
+    if (this.props.company && !this.props.currentPage) {
+      this.props.setCurrentPage({
+        title: "Configurações de " + this.props.company.companyNickname,
+        icon: "building"
+      });
+    }
+
     if (this.state.company === undefined && this.props.company) {
       this.setState({ company: this.props.company }, () => {
         let _state = { paymentTypes: this.state.paymentTypes };
@@ -291,7 +341,10 @@ export class CompanyConfig extends Component {
               {this.state.activeItem === "geral" && (
                 <>
                   <div className="company-config-general">
-                    <Form>
+                    <Form
+                      ref={formCompany => (this.formCompany = formCompany)}
+                      onSubmit={this.saveCompanyInfo}
+                    >
                       <FormTitle text="Logotipo" first />
                       <div className="company-config-logo">
                         <canvas
@@ -307,17 +360,18 @@ export class CompanyConfig extends Component {
                         </span>
                         <label
                           className="ui icon left labeled button"
-                          htmlFor="logoUpload"
+                          htmlFor="logo-image"
                         >
                           <Icon name="pencil" />
                           Alterar logotipo
                         </label>
                         <input
                           type="file"
-                          name="logoUpload"
-                          id="logoUpload"
+                          name="logo-image"
+                          id="logo-image"
                           onChange={this.handleLogo}
-                          style={{ display: "none" }}
+                          ref={imageInput => (this.imageInput = imageInput)}
+                          hidden
                         />
                       </div>
                       <FormTitle text="Dados da Empresa" />
@@ -687,21 +741,21 @@ export class CompanyConfig extends Component {
                           />
                         </div>
                       </div>
+                      <Divider style={{ marginTop: "40px" }} />
+                      <Button
+                        icon
+                        labelPosition="left"
+                        color="green"
+                        type="submit"
+                      >
+                        <Icon name="cloud" />
+                        Salvar
+                      </Button>
                     </Form>
                   </div>
                 </>
               )}
             </div>
-            <Divider style={{ marginTop: "40px" }} />
-            <Button
-              icon
-              labelPosition="left"
-              color="green"
-              onClick={this.saveGeneral}
-            >
-              <Icon name="cloud" />
-              Salvar
-            </Button>
           </div>
         )}
       </>
@@ -719,7 +773,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     setCurrentPage: currentPage => dispatch(setCurrentPage(currentPage)),
-    setCompany: company => dispatch(setCompany(company))
+    setCompany: company => dispatch(setCompany(company)),
+    setCompanyLogo: logo => dispatch(setCompanyLogo(logo))
   };
 };
 

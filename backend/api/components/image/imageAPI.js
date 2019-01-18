@@ -5,6 +5,7 @@ const cloudinary = require("cloudinary");
 const cloudinaryStorage = require("multer-storage-cloudinary");
 const config = require("../../config/config");
 const User = require("../user/User");
+const Company = require("../company/Company");
 const auth = require("../../auth");
 
 const BASE_URL = "/api";
@@ -25,19 +26,22 @@ cloudinary.config({
   api_secret: config.cloudinary.api_secret
 });
 
-const storage = cloudinaryStorage({
-  cloudinary: cloudinary,
-  folder: "Bukk/Assets/User/Uploads",
-  allowedFormats: ["jpg", "png"],
-  format: "jpg",
-  transformation: { gravity: "auto", height: 300, width: 300, crop: "fill" }
-});
+function getAvatarParser() {
+  const storage = cloudinaryStorage({
+    cloudinary: cloudinary,
+    folder: "Bukk/Uploads/Avatar",
+    allowedFormats: ["jpg", "png"],
+    format: "jpg",
+    transformation: { gravity: "auto", height: 300, width: 300, crop: "fill" }
+  });
 
-const parser = multer({ storage: storage });
+  const parser = multer({ storage: storage });
+  return parser;
+}
 
 router.post(
   BASE_URL + "/images/avatar",
-  parser.single("avatar-image"),
+  getAvatarParser().single("avatar-image"),
   verifyToken,
   (req, res) => {
     const token = auth.verify(req.token);
@@ -54,6 +58,44 @@ router.post(
         .catch(err => {
           res.status(500).send({ msg: err });
         });
+    }
+  }
+);
+
+function getLogoParser() {
+  const storage = cloudinaryStorage({
+    cloudinary: cloudinary,
+    folder: "Bukk/Uploads/Logo",
+    allowedFormats: ["jpg", "png"],
+    format: "png",
+    transformation: { if: "w_gt_500", width: 500, crop: "scale" }
+  });
+
+  const parser = multer({ storage: storage });
+  return parser;
+}
+
+router.post(
+  BASE_URL + "/images/logo",
+  getLogoParser().single("logo-image"),
+  verifyToken,
+  (req, res) => {
+    if (!req.file) {
+      res.status(500).send({ msg: "Erro ao carregar imagem" });
+    }
+    const token = auth.verify(req.token);
+    if (!token) {
+      res.status(403).json({
+        msg: "Invalid token"
+      });
+    } else {
+      if (token.role === "owner") {
+        res.status(200).send({ msg: "OK", logoUrl: req.file.url });
+      } else {
+        res.status(403).json({
+          msg: "Usuário não autorizado"
+        });
+      }
     }
   }
 );
