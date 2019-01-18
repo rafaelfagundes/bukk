@@ -32,9 +32,12 @@
   line-height: 80px;
   font-size: 1.5rem;
   font-weight: 400;
-  opacity: 0.8;
   padding-left: 38px;
-  /* border-bottom: 1px solid #ddd; */
+  color: #333;
+}
+
+.top-menu-title i {
+  color: #5b005b;
 }
 
 .top-menu-notification-number {

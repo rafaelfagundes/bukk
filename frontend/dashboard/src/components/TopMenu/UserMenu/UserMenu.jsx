@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
-import { Button, Icon } from "semantic-ui-react";
+import { Icon } from "semantic-ui-react";
 import { connect } from "react-redux";
 
 import "./UserMenu.css";
@@ -84,10 +84,12 @@ export class UserMenu extends Component {
                     <Icon name="help" />
                     <a href="/dashboard/help">Ajuda</a>
                   </li>
+                  <li />
+                  <li>
+                    <Icon name="log out" />
+                    <a href="/dashboard/logout">Sair</a>
+                  </li>
                 </ul>
-                <Button as="a" href="/dashboard/logout">
-                  Sair
-                </Button>
               </div>
             </div>
           </div>

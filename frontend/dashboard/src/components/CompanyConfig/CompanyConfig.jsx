@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { setCurrentPage, setCompany } from "../dashboardActions";
-import { Button, Form, FormGroup, Checkbox } from "semantic-ui-react";
+import { Button, Form, FormGroup, Checkbox, Icon } from "semantic-ui-react";
 import Axios from "axios";
 import config from "../../config";
 import "./CompanyConfig.css";
@@ -151,6 +151,36 @@ export class CompanyConfig extends Component {
     });
   };
 
+  handleLogo = e => {
+    var input, file, fr, img, canvasLogo;
+
+    canvasLogo = this.canvasLogo;
+
+    if (typeof window.FileReader !== "function") {
+      alert("Impossivel enviar imagem. Navegador não suportado.");
+      return;
+    }
+
+    input = e.currentTarget;
+    file = input.files[0];
+    fr = new FileReader();
+    fr.onload = createImage;
+    fr.readAsDataURL(file);
+
+    function createImage() {
+      img = new Image();
+      img.onload = imageLoaded;
+      img.src = fr.result;
+    }
+
+    function imageLoaded() {
+      canvasLogo.width = img.width;
+      canvasLogo.height = img.height;
+      var ctx = canvasLogo.getContext("2d");
+      ctx.drawImage(img, 0, 0);
+    }
+  };
+
   componentDidMount() {
     this.props.setCurrentPage({
       title: "Configurações da Empresa",
@@ -214,6 +244,25 @@ export class CompanyConfig extends Component {
         this.setState(_state);
       });
     }
+
+    // Load logo on Canvas
+    if (this.state.company !== undefined && this.canvasLogo) {
+      this.canvasLogo.style.backgroundColor = this.state.company.settings.colors.primary;
+
+      const context = this.canvasLogo.getContext("2d");
+      const image = new Image();
+      image.src = this.state.company.logo;
+
+      image.onload = () => {
+        this.canvasLogo.width = image.width;
+        this.canvasLogo.height = image.height;
+        context.drawImage(
+          image,
+          this.canvasLogo.width / 2 - image.width / 2,
+          this.canvasLogo.height / 2 - image.height / 2
+        );
+      };
+    }
   }
 
   render() {
@@ -258,7 +307,35 @@ export class CompanyConfig extends Component {
                 <>
                   <div className="company-config-general">
                     <Form>
-                      <FormTitle text="Dados da Empresa" first />
+                      <FormTitle text="Logotipo" first />
+                      <div className="company-config-logo">
+                        <canvas
+                          id="company-config-logo-canvas"
+                          ref={canvasLogo => (this.canvasLogo = canvasLogo)}
+                          height="10"
+                          width="10"
+                        />
+                        <span className="company-config-logo-info">
+                          <strong>Dica:</strong> A cor de fundo acima é a mesma
+                          de onde seu logotipo será exibido, portanto tente
+                          deixar seu logo bem visível.
+                        </span>
+                        <label
+                          className="ui icon left labeled button"
+                          htmlFor="logoUpload"
+                        >
+                          <Icon name="pencil" />
+                          Alterar logotipo
+                        </label>
+                        <input
+                          type="file"
+                          name="logoUpload"
+                          id="logoUpload"
+                          onChange={this.handleLogo}
+                          style={{ display: "none" }}
+                        />
+                      </div>
+                      <FormTitle text="Dados da Empresa" />
                       <Form.Group inline>
                         <label>Tipo de pessoa</label>
                         <Form.Radio

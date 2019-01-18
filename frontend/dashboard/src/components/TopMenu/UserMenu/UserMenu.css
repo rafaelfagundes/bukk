@@ -65,7 +65,11 @@
 
 .user-menu-body ul {
   padding: 0;
-  margin: 0 0 20px 0;
+  margin: 0;
+}
+
+.user-menu-body ul li i {
+  opacity: 0.65;
 }
 
 .user-menu-body li {

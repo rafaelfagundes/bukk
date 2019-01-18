@@ -1,3 +1,25 @@
+.company-config-logo {
+  display: block;
+}
+
+.company-config-logo canvas {
+  background-color: #ccc;
+  padding: 20px;
+  border-radius: 4px;
+  display: block;
+  max-width: 700px;
+}
+
+.company-config-logo-info {
+  display: block;
+  padding: 5px 0 20px 0;
+  color: rgb(102, 97, 143);
+}
+
+.company-config-logo button {
+  display: block;
+}
+
 .company-payment-types {
   display: flex;
   flex-direction: row;
@@ -9,7 +31,6 @@
   flex-direction: column;
   width: 128px;
   box-sizing: border-box;
-  /* background-color: yellow; */
   margin-right: 14px;
 }
 

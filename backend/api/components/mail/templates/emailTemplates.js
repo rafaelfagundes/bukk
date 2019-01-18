@@ -112,6 +112,7 @@ exports.newAppointment = async confirmationId => {
         "company.website": 1,
         "company.phone": 1,
         "company.address": 1,
+        "company.logo": 1,
         "company.settings.appointment.rules": 1
       }
     }
@@ -456,10 +457,10 @@ Todos os direitos reservados`;
             <tr style="background-color: #800080">
               <td style="padding: 20px 0; text-align: center">
                 <img
-                  src="https://res.cloudinary.com/bukkapp/image/upload/v1542735688/Bukk/Assets/logo.png"
+                  src="${appointment[0].company.logo}"
                   alt="alt_text"
                   border="0"
-                  style="height: auto; font-family: sans-serif; font-size: 15px; line-height: 15px; color: #555555; max-width: 300px;"
+                  style="height: auto; font-family: sans-serif; font-size: 15px; line-height: 15px; color: #555555; max-width: 200px;"
                 />
               </td>
             </tr>
