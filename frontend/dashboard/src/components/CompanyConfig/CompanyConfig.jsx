@@ -194,9 +194,16 @@ export class CompanyConfig extends Component {
     }
   };
 
+  validateCompany = e => {
+    console.log("not validated");
+    return false;
+  };
+
   saveCompanyInfo = e => {
-    if (!this.imageInput.value) {
-    } else {
+    if (!this.validateCompany()) {
+      return false;
+    }
+    if (this.imageInput.value) {
       toast(
         <Notification
           type="notification"
