@@ -1,7 +1,14 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { setCurrentPage, setCompany } from "../dashboardActions";
-import { Button, Form, FormGroup, Checkbox, Icon } from "semantic-ui-react";
+import {
+  Button,
+  Form,
+  FormGroup,
+  Checkbox,
+  Icon,
+  Divider
+} from "semantic-ui-react";
 import Axios from "axios";
 import config from "../../config";
 import "./CompanyConfig.css";
@@ -186,28 +193,6 @@ export class CompanyConfig extends Component {
       title: "Configurações da Empresa",
       icon: "building"
     });
-
-    const token = localStorage.getItem("token");
-    let requestConfig = {
-      headers: {
-        Authorization: token
-      }
-    };
-
-    const company = localStorage.getItem("company");
-    if (company) {
-      this.props.setCompany(JSON.parse(company));
-    } else {
-      Axios.post(config.api + "/companies", null, requestConfig)
-        .then(response => {
-          this.props.setCompany(response.data.company);
-          localStorage.setItem(
-            "company",
-            JSON.stringify(response.data.company)
-          );
-        })
-        .catch();
-    }
   }
 
   componentDidUpdate() {
@@ -707,6 +692,16 @@ export class CompanyConfig extends Component {
                 </>
               )}
             </div>
+            <Divider style={{ marginTop: "40px" }} />
+            <Button
+              icon
+              labelPosition="left"
+              color="green"
+              onClick={this.saveGeneral}
+            >
+              <Icon name="cloud" />
+              Salvar
+            </Button>
           </div>
         )}
       </>

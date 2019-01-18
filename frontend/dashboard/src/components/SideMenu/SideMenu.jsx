@@ -1,19 +1,30 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 import { Menu, Icon } from "semantic-ui-react";
 import "./SideMenu.css";
 
 class SideMenu extends Component {
-  state = {};
+  state = { activeItem: "Geral" };
 
   handleItemClick = (e, { name }) => this.setState({ activeItem: name });
 
   render() {
     const { activeItem } = this.state;
     return (
-      <Menu className="SideMenu" id="side-menu" vertical inverted>
+      <Menu
+        className="SideMenu"
+        style={{
+          backgroundColor: this.props.company
+            ? this.props.company.settings.colors.primary
+            : "#888"
+        }}
+        id="side-menu"
+        vertical
+        inverted
+      >
         <div className="menu-logo">
           <img
-            src="https://res.cloudinary.com/bukkapp/image/upload/v1542735688/Bukk/Assets/logo.png"
+            src={this.props.company ? this.props.company.logo : ""}
             alt="Logo"
           />
         </div>
@@ -61,17 +72,20 @@ class SideMenu extends Component {
           Messages
           <Icon name="chat" />
         </Menu.Item>
-
-        {/* <Dropdown item text="Outros">
-          <Dropdown.Menu>
-            <Dropdown.Item icon="edit" text="Edit Profile" />
-            <Dropdown.Item icon="globe" text="Choose Language" />
-            <Dropdown.Item icon="settings" text="Account Settings" />
-          </Dropdown.Menu>
-        </Dropdown> */}
       </Menu>
     );
   }
 }
 
-export default SideMenu;
+const mapStateToProps = state => {
+  return {
+    company: state.dashboard.company
+  };
+};
+
+const mapDispatchToProps = {};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(SideMenu);

@@ -6,7 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import { Container, Grid } from "semantic-ui-react";
 import { connect } from "react-redux";
-import { setUser, setEmployee } from "./dashboardActions";
+import { setUser, setEmployee, setCompany } from "./dashboardActions";
 
 import TopMenu from "./TopMenu/TopMenu";
 import SideMenu from "./SideMenu/SideMenu";
@@ -46,7 +46,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     setUser: user => dispatch(setUser(user)),
-    setEmployee: employee => dispatch(setEmployee(employee))
+    setEmployee: employee => dispatch(setEmployee(employee)),
+    setCompany: company => dispatch(setCompany(company))
   };
 };
 
@@ -86,6 +87,21 @@ class Dashboard extends Component {
     if (localStorage.employee !== undefined) {
       const employee = JSON.parse(localStorage.employee);
       this.props.setEmployee(employee);
+    }
+
+    if (localStorage.company !== undefined) {
+      const company = JSON.parse(localStorage.company);
+      this.props.setCompany(company);
+    } else {
+      Axios.post(config.api + "/companies", null, requestConfig)
+        .then(response => {
+          this.props.setCompany(response.data.company);
+          localStorage.setItem(
+            "company",
+            JSON.stringify(response.data.company)
+          );
+        })
+        .catch();
     }
   }
 

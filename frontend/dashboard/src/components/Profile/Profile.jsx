@@ -1066,7 +1066,7 @@ class Profile extends Component {
                   </div>
                 )}
               </div>
-              <Divider className="profile-bottom-divider" />
+              <Divider style={{ marginTop: "40px" }} />
               {this.state.page === "general" && (
                 <Button icon labelPosition="left" onClick={this.editGeneral}>
                   <Icon name="pencil" />
