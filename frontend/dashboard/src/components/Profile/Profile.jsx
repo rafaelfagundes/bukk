@@ -26,6 +26,7 @@ import config from "../../config";
 import { formatCEP, formatBrazilianPhoneNumber } from "../utils";
 import { states } from "../../config/BrasilAddress";
 import validator from "validator";
+import { isAlpha, isAlphaNumeric } from "../validation";
 import Notification from "../Notification/Notification";
 import FormTitle from "../Common/FormTitle";
 
@@ -82,9 +83,7 @@ class Profile extends Component {
       _errors.firstName.msg = "Por favor, preencha o nome.";
       _errors.firstName.error = true;
     }
-    if (
-      !validator.isAlpha(String(this.state.user.firstName.replace(" ", "")))
-    ) {
+    if (!isAlpha(String(this.state.user.firstName.replace(/\s/g, "")))) {
       errorsCount++;
       _errors.firstName.msg =
         "Nome inválido. Por favor, preencha somente letras.";
@@ -97,7 +96,7 @@ class Profile extends Component {
       _errors.lastName.error = true;
     }
 
-    if (!validator.isAlpha(String(this.state.user.lastName.replace(" ", "")))) {
+    if (!isAlpha(String(this.state.user.lastName.replace(/\s/g, "")))) {
       errorsCount++;
       _errors.lastName.msg =
         "Sobrenome inválido. Por favor, preencha somente letras.";
@@ -133,9 +132,7 @@ class Profile extends Component {
       }
     }
 
-    if (
-      !validator.isAlphanumeric(this.state.user.address.number.replace(" ", ""))
-    ) {
+    if (!isAlphaNumeric(this.state.user.address.number.replace(/\s/g, ""))) {
       errorsCount++;
       _errors.addressNumber.msg =
         "O número da residência deve conter somente letras e números.";

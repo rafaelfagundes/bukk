@@ -17,27 +17,32 @@ exports.formatBrazilianPhoneNumber = phone => {
 };
 
 exports.formatCEP = cep => {
-  const _cep = String(cep).replace("-", "");
+  const _cep = String(cep.replace(/[^\d]+/g, ""));
 
   if (_cep.length === 8) {
     const c = String(cep);
     return c[0] + c[1] + c[2] + c[3] + c[4] + "-" + c[5] + c[6] + c[7];
   } else {
-    return String(cep).replace("-", "");
+    return String(cep.replace(/[^\d]+/g, ""));
   }
 };
 
-exports.formatCpfCnpj = c => {
-  c = String(c);
-  if (c.length === 11) {
-    return `${c[0]}${c[1]}${c[2]}.${c[3]}${c[4]}${c[5]}.${c[6]}${c[7]}${c[8]}-${
-      c[9]
-    }${c[10]}`;
-  }
+exports.formatCnpj = c => {
+  c = String(c.replace(/[^0-9]/g, ""));
   if (c.length === 14) {
     return `${c[0]}${c[1]}.${c[2]}${c[3]}${c[4]}.${c[5]}${c[6]}${c[7]}/${c[8]}${
       c[9]
     }${c[10]}${c[11]}-${c[12]}${c[13]}`;
+  }
+  return c;
+};
+
+exports.formatCpf = c => {
+  c = String(c.replace(/[^0-9]/g, ""));
+  if (c.length === 11) {
+    return `${c[0]}${c[1]}${c[2]}.${c[3]}${c[4]}${c[5]}.${c[6]}${c[7]}${c[8]}-${
+      c[9]
+    }${c[10]}`;
   }
   return c;
 };
