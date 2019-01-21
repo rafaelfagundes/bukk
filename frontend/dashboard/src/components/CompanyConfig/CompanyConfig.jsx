@@ -12,7 +12,8 @@ import {
   FormGroup,
   Checkbox,
   Icon,
-  Divider
+  Divider,
+  Table
 } from "semantic-ui-react";
 import "./CompanyConfig.css";
 import { states } from "../../config/BrasilAddress";
@@ -51,7 +52,8 @@ const errorList = {
   email: { msg: "", error: false },
   website: { msg: "", error: false },
   phone: { msg: "", error: false },
-  cellphone: { msg: "", error: false }
+  cellphone: { msg: "", error: false },
+  paymentTypes: { msg: "", error: false }
 };
 
 export class CompanyConfig extends Component {
@@ -116,6 +118,36 @@ export class CompanyConfig extends Component {
         crypto: false,
         debitCard: false,
         wireTransfer: false
+      }
+    },
+    workingDays: {
+      sunday: {
+        checked: false,
+        workingHours: []
+      },
+      monday: {
+        checked: false,
+        workingHours: []
+      },
+      tuesday: {
+        checked: false,
+        workingHours: []
+      },
+      wednesday: {
+        checked: false,
+        workingHours: []
+      },
+      thursday: {
+        checked: false,
+        workingHours: []
+      },
+      friday: {
+        checked: false,
+        workingHours: []
+      },
+      saturday: {
+        checked: false,
+        workingHours: []
       }
     },
     errors: JSON.parse(JSON.stringify(errorList))
@@ -379,11 +411,37 @@ export class CompanyConfig extends Component {
       } else {
         if (!isPhoneWithDDD(phone.number)) {
           _errorsCount++;
-          _errors.phone.msg = "O telfone fixo é inválido";
+          _errors.phone.msg = "O telefone fixo é inválido";
           _errors.phone.error = true;
         }
       }
     });
+
+    /* ====================================================
+     Formas de pagamento
+    ==================================================== */
+    let countEnabled = 0;
+    for (let key in this.state.paymentTypes) {
+      if (key === "cc") {
+        for (let type in this.state.paymentTypes[key]) {
+          if (this.state.paymentTypes[key][type].enabled) {
+            countEnabled++;
+          }
+        }
+      } else {
+        for (let type in this.state.paymentTypes[key]) {
+          if (this.state.paymentTypes[key][type]) {
+            countEnabled++;
+          }
+        }
+      }
+    }
+    if (countEnabled === 0) {
+      _errorsCount++;
+      _errors.paymentTypes.msg =
+        "Selecione ao menos 1 (uma) forma de pagamento";
+      _errors.paymentTypes.error = true;
+    }
 
     /* Finally */
     this.setState({ errors: _errors });
@@ -398,6 +456,13 @@ export class CompanyConfig extends Component {
     if (!this.validateCompany()) {
       return false;
     }
+    console.log("validação rolou irmão");
+
+    const _company = JSON.parse(JSON.stringify(this.state.company));
+
+    delete _company["settings"];
+    delete _company["social"]; // TODO: analisar se vale a pena colocar as redes sociais aqui ou não
+    console.log(_company);
     if (this.imageInput.value) {
       toast(
         <Notification
@@ -1035,6 +1100,74 @@ export class CompanyConfig extends Component {
                             />
                           </div>
                         </div>
+                        <br />
+                        <ValidationError
+                          show={this.state.errors.paymentTypes.error}
+                          error={this.state.errors.paymentTypes.msg}
+                        />
+                        <FormTitle text="Horário de Funcionamento" />
+                        <Table celled>
+                          <Table.Header>
+                            <Table.Row>
+                              <Table.HeaderCell>
+                                <Checkbox
+                                  label="Domingo"
+                                  checked={
+                                    this.state.workingDays.sunday.checked
+                                  }
+                                />
+                              </Table.HeaderCell>
+                              <Table.HeaderCell>
+                                <Checkbox
+                                  label="Segunda"
+                                  checked={
+                                    this.state.workingDays.monday.checked
+                                  }
+                                />
+                              </Table.HeaderCell>
+                              <Table.HeaderCell>
+                                <Checkbox
+                                  label="Terça"
+                                  checked={
+                                    this.state.workingDays.tuesday.checked
+                                  }
+                                />
+                              </Table.HeaderCell>
+                              <Table.HeaderCell>
+                                <Checkbox
+                                  label="Quarta"
+                                  checked={
+                                    this.state.workingDays.wednesday.checked
+                                  }
+                                />
+                              </Table.HeaderCell>
+                              <Table.HeaderCell>
+                                <Checkbox
+                                  label="Quinta"
+                                  checked={
+                                    this.state.workingDays.thursday.checked
+                                  }
+                                />
+                              </Table.HeaderCell>
+                              <Table.HeaderCell>
+                                <Checkbox
+                                  label="Sexta"
+                                  checked={
+                                    this.state.workingDays.friday.checked
+                                  }
+                                />
+                              </Table.HeaderCell>
+                              <Table.HeaderCell>
+                                <Checkbox
+                                  label="Sábado"
+                                  checked={
+                                    this.state.workingDays.saturday.checked
+                                  }
+                                />
+                              </Table.HeaderCell>
+                            </Table.Row>
+                          </Table.Header>
+                        </Table>
                         <Divider style={{ marginTop: "40px" }} />
                         <Button
                           icon
