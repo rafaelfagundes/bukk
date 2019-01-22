@@ -52,7 +52,7 @@ exports.formatHour = h => {
   if (h.length === 3) {
     let hour = h.substring(0, h.length - 2);
     let minute = h.substring(h.length - 2);
-    return `0${hour}:${minute}`;
+    return `${hour}:${minute}`;
   } else if (h.length === 4) {
     let hour = h.substring(0, h.length - 2);
     let minute = h.substring(h.length - 2);

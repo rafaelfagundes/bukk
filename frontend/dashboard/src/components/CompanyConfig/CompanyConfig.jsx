@@ -125,31 +125,31 @@ export class CompanyConfig extends Component {
     workingDays: {
       sunday: {
         checked: false,
-        workingHours: [{ start: "", end: "" }]
+        workingHours: []
       },
       monday: {
         checked: false,
-        workingHours: [{ start: "", end: "" }]
+        workingHours: []
       },
       tuesday: {
         checked: false,
-        workingHours: [{ start: "", end: "" }]
+        workingHours: []
       },
       wednesday: {
         checked: false,
-        workingHours: [{ start: "", end: "" }]
+        workingHours: []
       },
       thursday: {
         checked: false,
-        workingHours: [{ start: "", end: "" }]
+        workingHours: []
       },
       friday: {
         checked: false,
-        workingHours: [{ start: "", end: "" }]
+        workingHours: []
       },
       saturday: {
         checked: false,
-        workingHours: [{ start: "", end: "" }]
+        workingHours: []
       }
     },
     errors: JSON.parse(JSON.stringify(errorList))
@@ -160,7 +160,6 @@ export class CompanyConfig extends Component {
   handleWorkDay = e => {
     let _id = e.currentTarget.id;
     let _checked = e.currentTarget.checked;
-    console.log(_id, _checked);
 
     this.setState({
       workingDays: {
@@ -170,6 +169,69 @@ export class CompanyConfig extends Component {
           checked: _checked
         }
       }
+    });
+  };
+
+  handleWorkTime = e => {
+    let _day = e.currentTarget.id.split("-")[0];
+    let _index = e.currentTarget.id.split("-")[1];
+    let _startEnd = e.currentTarget.id.split("-")[2];
+    let _value = e.currentTarget.value;
+
+    let _item = {};
+    if (_startEnd === "start") {
+      _item = {
+        _id: this.state.workingDays[_day].workingHours[_index]._id,
+        start: _value,
+        end: this.state.workingDays[_day].workingHours[_index].end
+      };
+    } else {
+      _item = {
+        _id: this.state.workingDays[_day].workingHours[_index]._id,
+        start: this.state.workingDays[_day].workingHours[_index].start,
+        end: _value
+      };
+    }
+
+    let _workingHours = this.state.workingDays[_day].workingHours;
+    _workingHours[_index] = _item;
+
+    this.setState({
+      workingDays: {
+        ...this.state.workingDays,
+        [_day]: {
+          ...this.state.workingDays[_day],
+          workingHours: _workingHours
+        }
+      }
+    });
+  };
+
+  addWorkTime = e => {
+    let _day = e.currentTarget.dataset.day;
+    this.setState({
+      workingDays: {
+        ...this.state.workingDays,
+        [_day]: {
+          ...this.state.workingDays[_day],
+          workingHours: [
+            ...this.state.workingDays[_day].workingHours,
+            { start: "", end: "" }
+          ]
+        }
+      }
+    });
+  };
+
+  removeWorkTime = e => {
+    let _day = e.currentTarget.dataset.day;
+    let _index = e.currentTarget.dataset.index;
+
+    let _workingDays = JSON.parse(JSON.stringify(this.state.workingDays));
+    _workingDays[_day].workingHours.splice([_index], 1);
+
+    this.setState({
+      workingDays: _workingDays
     });
   };
 
@@ -658,7 +720,6 @@ export class CompanyConfig extends Component {
               break;
           }
         });
-        console.log(_state);
         this.setState(_state);
       });
     }
@@ -1299,228 +1360,403 @@ export class CompanyConfig extends Component {
                           </Table.Header>
                           <Table.Body>
                             <Table.Row>
+                              {/* Sunday */}
                               <Table.Cell>
                                 {this.state.workingDays.sunday.checked &&
                                   this.state.workingDays.sunday.workingHours.map(
-                                    h => (
+                                    (h, index) => (
                                       <span
                                         className="company-config-time"
-                                        key={h.start + "0"}
+                                        key={index}
                                       >
                                         <Input
+                                          onChange={this.handleWorkTime}
                                           value={formatHour(h.start)}
+                                          size="small"
                                           className="company-config-time-start"
-                                          disabled={
-                                            !this.state.workingDays.sunday
-                                              .checked
-                                          }
+                                          id={"sunday-" + index + "-start"}
                                         />{" "}
                                         às{" "}
                                         <Input
+                                          onChange={this.handleWorkTime}
                                           value={formatHour(h.end)}
+                                          size="small"
                                           className="company-config-time-end"
-                                          disabled={
-                                            !this.state.workingDays.sunday
-                                              .checked
-                                          }
+                                          id={"sunday-" + index + "-end"}
                                         />
+                                        <Button
+                                          size="mini"
+                                          compact
+                                          icon
+                                          labelPosition="left"
+                                          onClick={this.removeWorkTime}
+                                          data-day="sunday"
+                                          data-index={index}
+                                        >
+                                          <Icon name="delete" />
+                                          Remover
+                                        </Button>
                                       </span>
                                     )
                                   )}
                                 {!this.state.workingDays.sunday.checked && (
                                   <span>Não há expediente</span>
                                 )}
+                                {this.state.workingDays.sunday.checked && (
+                                  <Button
+                                    onClick={this.addWorkTime}
+                                    data-day="sunday"
+                                    size="mini"
+                                    compact
+                                    color="blue"
+                                    icon
+                                    labelPosition="left"
+                                  >
+                                    <Icon name="plus" />
+                                    Adicionar
+                                  </Button>
+                                )}
                               </Table.Cell>
+                              {/* Monday */}
                               <Table.Cell>
                                 {this.state.workingDays.monday.checked &&
                                   this.state.workingDays.monday.workingHours.map(
-                                    h => (
+                                    (h, index) => (
                                       <span
                                         className="company-config-time"
-                                        key={h.start + "1"}
+                                        key={index}
                                       >
                                         <Input
+                                          onChange={this.handleWorkTime}
                                           value={formatHour(h.start)}
+                                          size="small"
                                           className="company-config-time-start"
-                                          disabled={
-                                            !this.state.workingDays.monday
-                                              .checked
-                                          }
+                                          id={"monday-" + index + "-start"}
                                         />{" "}
                                         às{" "}
                                         <Input
+                                          onChange={this.handleWorkTime}
                                           value={formatHour(h.end)}
+                                          size="small"
                                           className="company-config-time-end"
-                                          disabled={
-                                            !this.state.workingDays.monday
-                                              .checked
-                                          }
+                                          id={"monday-" + index + "-end"}
                                         />
+                                        <Button
+                                          size="mini"
+                                          compact
+                                          icon
+                                          labelPosition="left"
+                                          onClick={this.removeWorkTime}
+                                          data-day="monday"
+                                          data-index={index}
+                                        >
+                                          <Icon name="delete" />
+                                          Remover
+                                        </Button>
                                       </span>
                                     )
                                   )}
                                 {!this.state.workingDays.monday.checked && (
                                   <span>Não há expediente</span>
                                 )}
+                                {this.state.workingDays.monday.checked && (
+                                  <Button
+                                    onClick={this.addWorkTime}
+                                    data-day="monday"
+                                    size="mini"
+                                    compact
+                                    color="blue"
+                                    icon
+                                    labelPosition="left"
+                                  >
+                                    <Icon name="plus" />
+                                    Adicionar
+                                  </Button>
+                                )}
                               </Table.Cell>
+                              {/* Tuesday */}
                               <Table.Cell>
                                 {this.state.workingDays.tuesday.checked &&
                                   this.state.workingDays.tuesday.workingHours.map(
-                                    h => (
+                                    (h, index) => (
                                       <span
                                         className="company-config-time"
-                                        key={h.start + "2"}
+                                        key={index}
                                       >
                                         <Input
+                                          onChange={this.handleWorkTime}
                                           value={formatHour(h.start)}
+                                          size="small"
                                           className="company-config-time-start"
-                                          disabled={
-                                            !this.state.workingDays.tuesday
-                                              .checked
-                                          }
+                                          id={"tuesday-" + index + "-start"}
                                         />{" "}
                                         às{" "}
                                         <Input
+                                          onChange={this.handleWorkTime}
                                           value={formatHour(h.end)}
+                                          size="small"
                                           className="company-config-time-end"
-                                          disabled={
-                                            !this.state.workingDays.tuesday
-                                              .checked
-                                          }
+                                          id={"tuesday-" + index + "-end"}
                                         />
+                                        <Button
+                                          size="mini"
+                                          compact
+                                          icon
+                                          labelPosition="left"
+                                          onClick={this.removeWorkTime}
+                                          data-day="tuesday"
+                                          data-index={index}
+                                        >
+                                          <Icon name="delete" />
+                                          Remover
+                                        </Button>
                                       </span>
                                     )
                                   )}
                                 {!this.state.workingDays.tuesday.checked && (
                                   <span>Não há expediente</span>
                                 )}
+                                {this.state.workingDays.tuesday.checked && (
+                                  <Button
+                                    onClick={this.addWorkTime}
+                                    data-day="tuesday"
+                                    size="mini"
+                                    compact
+                                    color="blue"
+                                    icon
+                                    labelPosition="left"
+                                  >
+                                    <Icon name="plus" />
+                                    Adicionar
+                                  </Button>
+                                )}
                               </Table.Cell>
+                              {/* Wednesday */}
                               <Table.Cell>
                                 {this.state.workingDays.wednesday.checked &&
                                   this.state.workingDays.wednesday.workingHours.map(
-                                    h => (
+                                    (h, index) => (
                                       <span
                                         className="company-config-time"
-                                        key={h.start + "3"}
+                                        key={index}
                                       >
                                         <Input
+                                          onChange={this.handleWorkTime}
                                           value={formatHour(h.start)}
+                                          size="small"
                                           className="company-config-time-start"
-                                          disabled={
-                                            !this.state.workingDays.wednesday
-                                              .checked
-                                          }
+                                          id={"wednesday-" + index + "-start"}
                                         />{" "}
                                         às{" "}
                                         <Input
+                                          onChange={this.handleWorkTime}
                                           value={formatHour(h.end)}
+                                          size="small"
                                           className="company-config-time-end"
-                                          disabled={
-                                            !this.state.workingDays.wednesday
-                                              .checked
-                                          }
+                                          id={"wednesday-" + index + "-end"}
                                         />
+                                        <Button
+                                          size="mini"
+                                          compact
+                                          icon
+                                          labelPosition="left"
+                                          onClick={this.removeWorkTime}
+                                          data-day="wednesday"
+                                          data-index={index}
+                                        >
+                                          <Icon name="delete" />
+                                          Remover
+                                        </Button>
                                       </span>
                                     )
                                   )}
                                 {!this.state.workingDays.wednesday.checked && (
                                   <span>Não há expediente</span>
                                 )}
+                                {this.state.workingDays.wednesday.checked && (
+                                  <Button
+                                    onClick={this.addWorkTime}
+                                    data-day="wednesday"
+                                    size="mini"
+                                    compact
+                                    color="blue"
+                                    icon
+                                    labelPosition="left"
+                                  >
+                                    <Icon name="plus" />
+                                    Adicionar
+                                  </Button>
+                                )}
                               </Table.Cell>
+                              {/* Thursday */}
                               <Table.Cell>
                                 {this.state.workingDays.thursday.checked &&
                                   this.state.workingDays.thursday.workingHours.map(
-                                    h => (
+                                    (h, index) => (
                                       <span
                                         className="company-config-time"
-                                        key={h.start + "4"}
+                                        key={index}
                                       >
                                         <Input
+                                          onChange={this.handleWorkTime}
                                           value={formatHour(h.start)}
+                                          size="small"
                                           className="company-config-time-start"
-                                          disabled={
-                                            !this.state.workingDays.thursday
-                                              .checked
-                                          }
+                                          id={"thursday-" + index + "-start"}
                                         />{" "}
                                         às{" "}
                                         <Input
+                                          onChange={this.handleWorkTime}
                                           value={formatHour(h.end)}
+                                          size="small"
                                           className="company-config-time-end"
-                                          disabled={
-                                            !this.state.workingDays.thursday
-                                              .checked
-                                          }
+                                          id={"thursday-" + index + "-end"}
                                         />
+                                        <Button
+                                          size="mini"
+                                          compact
+                                          icon
+                                          labelPosition="left"
+                                          onClick={this.removeWorkTime}
+                                          data-day="thursday"
+                                          data-index={index}
+                                        >
+                                          <Icon name="delete" />
+                                          Remover
+                                        </Button>
                                       </span>
                                     )
                                   )}
                                 {!this.state.workingDays.thursday.checked && (
                                   <span>Não há expediente</span>
                                 )}
+                                {this.state.workingDays.thursday.checked && (
+                                  <Button
+                                    onClick={this.addWorkTime}
+                                    data-day="thursday"
+                                    size="mini"
+                                    compact
+                                    color="blue"
+                                    icon
+                                    labelPosition="left"
+                                  >
+                                    <Icon name="plus" />
+                                    Adicionar
+                                  </Button>
+                                )}
                               </Table.Cell>
+                              {/* Friday */}
                               <Table.Cell>
                                 {this.state.workingDays.friday.checked &&
                                   this.state.workingDays.friday.workingHours.map(
-                                    h => (
+                                    (h, index) => (
                                       <span
                                         className="company-config-time"
-                                        key={h.start + "5"}
+                                        key={index}
                                       >
                                         <Input
+                                          onChange={this.handleWorkTime}
                                           value={formatHour(h.start)}
+                                          size="small"
                                           className="company-config-time-start"
-                                          disabled={
-                                            !this.state.workingDays.friday
-                                              .checked
-                                          }
+                                          id={"friday-" + index + "-start"}
                                         />{" "}
                                         às{" "}
                                         <Input
+                                          onChange={this.handleWorkTime}
                                           value={formatHour(h.end)}
+                                          size="small"
                                           className="company-config-time-end"
-                                          disabled={
-                                            !this.state.workingDays.friday
-                                              .checked
-                                          }
+                                          id={"friday-" + index + "-end"}
                                         />
+                                        <Button
+                                          size="mini"
+                                          compact
+                                          icon
+                                          labelPosition="left"
+                                          onClick={this.removeWorkTime}
+                                          data-day="friday"
+                                          data-index={index}
+                                        >
+                                          <Icon name="delete" />
+                                          Remover
+                                        </Button>
                                       </span>
                                     )
                                   )}
                                 {!this.state.workingDays.friday.checked && (
                                   <span>Não há expediente</span>
                                 )}
+                                {this.state.workingDays.friday.checked && (
+                                  <Button
+                                    onClick={this.addWorkTime}
+                                    data-day="friday"
+                                    size="mini"
+                                    compact
+                                    color="blue"
+                                    icon
+                                    labelPosition="left"
+                                  >
+                                    <Icon name="plus" />
+                                    Adicionar
+                                  </Button>
+                                )}
                               </Table.Cell>
+                              {/* Saturday */}
                               <Table.Cell>
                                 {this.state.workingDays.saturday.checked &&
                                   this.state.workingDays.saturday.workingHours.map(
-                                    h => (
+                                    (h, index) => (
                                       <span
                                         className="company-config-time"
-                                        key={h.start + "6"}
+                                        key={index}
                                       >
                                         <Input
+                                          onChange={this.handleWorkTime}
                                           value={formatHour(h.start)}
+                                          size="small"
                                           className="company-config-time-start"
-                                          disabled={
-                                            !this.state.workingDays.saturday
-                                              .checked
-                                          }
+                                          id={"saturday-" + index + "-start"}
                                         />{" "}
                                         às{" "}
                                         <Input
+                                          onChange={this.handleWorkTime}
                                           value={formatHour(h.end)}
+                                          size="small"
                                           className="company-config-time-end"
-                                          disabled={
-                                            !this.state.workingDays.saturday
-                                              .checked
-                                          }
+                                          id={"saturday-" + index + "-end"}
                                         />
+                                        <Button
+                                          size="mini"
+                                          compact
+                                          icon
+                                          labelPosition="left"
+                                          onClick={this.removeWorkTime}
+                                          data-day="saturday"
+                                          data-index={index}
+                                        >
+                                          <Icon name="delete" />
+                                          Remover
+                                        </Button>
                                       </span>
                                     )
                                   )}
                                 {!this.state.workingDays.saturday.checked && (
                                   <span>Não há expediente</span>
+                                )}
+                                {this.state.workingDays.saturday.checked && (
+                                  <Button
+                                    onClick={this.addWorkTime}
+                                    data-day="saturday"
+                                    size="mini"
+                                    compact
+                                    color="blue"
+                                    icon
+                                    labelPosition="left"
+                                  >
+                                    <Icon name="plus" />
+                                    Adicionar
+                                  </Button>
                                 )}
                               </Table.Cell>
                             </Table.Row>

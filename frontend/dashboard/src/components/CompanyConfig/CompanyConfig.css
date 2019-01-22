@@ -72,16 +72,18 @@
   text-align: center !important;
 }
 
+.company-timetable button {
+  /* min-width: 110px !important; */
+  width: 100%;
+}
+
 .company-config-time {
   display: block;
   margin-bottom: 10px;
   padding-bottom: 10px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid rgba(34, 36, 38, 0.1);
 }
 
-.company-config-time:last-child {
-  display: block;
-  margin-bottom: 0;
-  padding-bottom: 0;
-  border-bottom: none;
+.company-config-time-end {
+  margin-bottom: 5px;
 }
