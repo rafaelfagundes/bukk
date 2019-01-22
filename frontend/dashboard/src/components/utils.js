@@ -46,3 +46,18 @@ exports.formatCpf = c => {
   }
   return c;
 };
+
+exports.formatHour = h => {
+  h = String(h.replace(/[^0-9]/g, ""));
+  if (h.length === 3) {
+    let hour = h.substring(0, h.length - 2);
+    let minute = h.substring(h.length - 2);
+    return `0${hour}:${minute}`;
+  } else if (h.length === 4) {
+    let hour = h.substring(0, h.length - 2);
+    let minute = h.substring(h.length - 2);
+    return `${hour}:${minute}`;
+  } else {
+    return h;
+  }
+};

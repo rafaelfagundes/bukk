@@ -59,3 +59,29 @@
 .company-payment-type-chkbox {
   margin: 0 auto;
 }
+
+.company-timetable * {
+  box-sizing: border-box;
+}
+.company-timetable td {
+  text-align: center !important;
+  max-width: 143px;
+}
+
+.company-timetable input {
+  text-align: center !important;
+}
+
+.company-config-time {
+  display: block;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.company-config-time:last-child {
+  display: block;
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}

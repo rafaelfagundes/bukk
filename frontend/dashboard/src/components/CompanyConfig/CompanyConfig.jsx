@@ -13,7 +13,8 @@ import {
   Checkbox,
   Icon,
   Divider,
-  Table
+  Table,
+  Input
 } from "semantic-ui-react";
 import "./CompanyConfig.css";
 import { states } from "../../config/BrasilAddress";
@@ -21,7 +22,8 @@ import {
   formatCEP,
   formatBrazilianPhoneNumber,
   formatCpf,
-  formatCnpj
+  formatCnpj,
+  formatHour
 } from "../utils";
 import FormTitle from "../Common/FormTitle";
 import FormSubTitle from "../Common/FormSubTitle";
@@ -123,37 +125,54 @@ export class CompanyConfig extends Component {
     workingDays: {
       sunday: {
         checked: false,
-        workingHours: []
+        workingHours: [{ start: "", end: "" }]
       },
       monday: {
         checked: false,
-        workingHours: []
+        workingHours: [{ start: "", end: "" }]
       },
       tuesday: {
         checked: false,
-        workingHours: []
+        workingHours: [{ start: "", end: "" }]
       },
       wednesday: {
         checked: false,
-        workingHours: []
+        workingHours: [{ start: "", end: "" }]
       },
       thursday: {
         checked: false,
-        workingHours: []
+        workingHours: [{ start: "", end: "" }]
       },
       friday: {
         checked: false,
-        workingHours: []
+        workingHours: [{ start: "", end: "" }]
       },
       saturday: {
         checked: false,
-        workingHours: []
+        workingHours: [{ start: "", end: "" }]
       }
     },
     errors: JSON.parse(JSON.stringify(errorList))
   };
 
   handleItemClick = (e, { name }) => this.setState({ activeItem: name });
+
+  handleWorkDay = e => {
+    let _id = e.currentTarget.id;
+    let _checked = e.currentTarget.checked;
+    console.log(_id, _checked);
+
+    this.setState({
+      workingDays: {
+        ...this.state.workingDays,
+        [_id]: {
+          ...this.state.workingDays[_id],
+          checked: _checked
+        }
+      }
+    });
+  };
+
   handleChangeBizType = (e, { value }) => {
     this.setState({
       company: {
@@ -456,13 +475,12 @@ export class CompanyConfig extends Component {
     if (!this.validateCompany()) {
       return false;
     }
-    console.log("validação rolou irmão");
 
     const _company = JSON.parse(JSON.stringify(this.state.company));
 
     delete _company["settings"];
     delete _company["social"]; // TODO: analisar se vale a pena colocar as redes sociais aqui ou não
-    console.log(_company);
+
     if (this.imageInput.value) {
       toast(
         <Notification
@@ -515,11 +533,15 @@ export class CompanyConfig extends Component {
 
     if (this.state.company === undefined && this.props.company) {
       this.setState({ company: this.props.company }, () => {
-        let _state = { paymentTypes: this.state.paymentTypes };
+        let _state = {
+          paymentTypes: this.state.paymentTypes,
+          workingDays: this.state.workingDays
+        };
 
         this.state.company.paymentOptions.forEach(pt => {
           if (pt.paymentType === "cc") {
             _state = {
+              ..._state,
               paymentTypes: {
                 ..._state.paymentTypes,
                 cc: {
@@ -533,6 +555,7 @@ export class CompanyConfig extends Component {
             };
           } else {
             _state = {
+              ..._state,
               paymentTypes: {
                 ..._state.paymentTypes,
                 other: {
@@ -543,6 +566,99 @@ export class CompanyConfig extends Component {
             };
           }
         });
+
+        this.state.company.workingDays.forEach(wd => {
+          switch (wd.weekDay) {
+            case "sun":
+              _state = {
+                ..._state,
+                workingDays: {
+                  ..._state.workingDays,
+                  sunday: {
+                    checked: wd.workingHours.length > 0 ? true : false,
+                    workingHours: wd.workingHours
+                  }
+                }
+              };
+              break;
+            case "mon":
+              _state = {
+                ..._state,
+                workingDays: {
+                  ..._state.workingDays,
+                  monday: {
+                    checked: wd.workingHours.length > 0 ? true : false,
+                    workingHours: wd.workingHours
+                  }
+                }
+              };
+              break;
+            case "tue":
+              _state = {
+                ..._state,
+                workingDays: {
+                  ..._state.workingDays,
+                  tuesday: {
+                    checked: wd.workingHours.length > 0 ? true : false,
+                    workingHours: wd.workingHours
+                  }
+                }
+              };
+              break;
+            case "wed":
+              _state = {
+                ..._state,
+                workingDays: {
+                  ..._state.workingDays,
+                  wednesday: {
+                    checked: wd.workingHours.length > 0 ? true : false,
+                    workingHours: wd.workingHours
+                  }
+                }
+              };
+              break;
+            case "thu":
+              _state = {
+                ..._state,
+                workingDays: {
+                  ..._state.workingDays,
+                  thursday: {
+                    checked: wd.workingHours.length > 0 ? true : false,
+                    workingHours: wd.workingHours
+                  }
+                }
+              };
+              break;
+            case "fri":
+              _state = {
+                ..._state,
+                workingDays: {
+                  ..._state.workingDays,
+                  friday: {
+                    checked: wd.workingHours.length > 0 ? true : false,
+                    workingHours: wd.workingHours
+                  }
+                }
+              };
+              break;
+            case "sat":
+              _state = {
+                ..._state,
+                workingDays: {
+                  ..._state.workingDays,
+                  saturday: {
+                    checked: wd.workingDays.length > 0 ? true : false,
+                    workingHours: wd.workingHours
+                  }
+                }
+              };
+              break;
+
+            default:
+              break;
+          }
+        });
+        console.log(_state);
         this.setState(_state);
       });
     }
@@ -1106,7 +1222,7 @@ export class CompanyConfig extends Component {
                           error={this.state.errors.paymentTypes.msg}
                         />
                         <FormTitle text="Horário de Funcionamento" />
-                        <Table celled>
+                        <Table celled className="company-timetable">
                           <Table.Header>
                             <Table.Row>
                               <Table.HeaderCell>
@@ -1115,6 +1231,8 @@ export class CompanyConfig extends Component {
                                   checked={
                                     this.state.workingDays.sunday.checked
                                   }
+                                  onChange={this.handleWorkDay}
+                                  id="sunday"
                                 />
                               </Table.HeaderCell>
                               <Table.HeaderCell>
@@ -1123,6 +1241,8 @@ export class CompanyConfig extends Component {
                                   checked={
                                     this.state.workingDays.monday.checked
                                   }
+                                  onChange={this.handleWorkDay}
+                                  id="monday"
                                 />
                               </Table.HeaderCell>
                               <Table.HeaderCell>
@@ -1131,6 +1251,8 @@ export class CompanyConfig extends Component {
                                   checked={
                                     this.state.workingDays.tuesday.checked
                                   }
+                                  onChange={this.handleWorkDay}
+                                  id="tuesday"
                                 />
                               </Table.HeaderCell>
                               <Table.HeaderCell>
@@ -1139,6 +1261,8 @@ export class CompanyConfig extends Component {
                                   checked={
                                     this.state.workingDays.wednesday.checked
                                   }
+                                  onChange={this.handleWorkDay}
+                                  id="wednesday"
                                 />
                               </Table.HeaderCell>
                               <Table.HeaderCell>
@@ -1147,6 +1271,8 @@ export class CompanyConfig extends Component {
                                   checked={
                                     this.state.workingDays.thursday.checked
                                   }
+                                  onChange={this.handleWorkDay}
+                                  id="thursday"
                                 />
                               </Table.HeaderCell>
                               <Table.HeaderCell>
@@ -1155,6 +1281,8 @@ export class CompanyConfig extends Component {
                                   checked={
                                     this.state.workingDays.friday.checked
                                   }
+                                  onChange={this.handleWorkDay}
+                                  id="friday"
                                 />
                               </Table.HeaderCell>
                               <Table.HeaderCell>
@@ -1163,10 +1291,240 @@ export class CompanyConfig extends Component {
                                   checked={
                                     this.state.workingDays.saturday.checked
                                   }
+                                  onChange={this.handleWorkDay}
+                                  id="saturday"
                                 />
                               </Table.HeaderCell>
                             </Table.Row>
                           </Table.Header>
+                          <Table.Body>
+                            <Table.Row>
+                              <Table.Cell>
+                                {this.state.workingDays.sunday.checked &&
+                                  this.state.workingDays.sunday.workingHours.map(
+                                    h => (
+                                      <span
+                                        className="company-config-time"
+                                        key={h.start + "0"}
+                                      >
+                                        <Input
+                                          value={formatHour(h.start)}
+                                          className="company-config-time-start"
+                                          disabled={
+                                            !this.state.workingDays.sunday
+                                              .checked
+                                          }
+                                        />{" "}
+                                        às{" "}
+                                        <Input
+                                          value={formatHour(h.end)}
+                                          className="company-config-time-end"
+                                          disabled={
+                                            !this.state.workingDays.sunday
+                                              .checked
+                                          }
+                                        />
+                                      </span>
+                                    )
+                                  )}
+                                {!this.state.workingDays.sunday.checked && (
+                                  <span>Não há expediente</span>
+                                )}
+                              </Table.Cell>
+                              <Table.Cell>
+                                {this.state.workingDays.monday.checked &&
+                                  this.state.workingDays.monday.workingHours.map(
+                                    h => (
+                                      <span
+                                        className="company-config-time"
+                                        key={h.start + "1"}
+                                      >
+                                        <Input
+                                          value={formatHour(h.start)}
+                                          className="company-config-time-start"
+                                          disabled={
+                                            !this.state.workingDays.monday
+                                              .checked
+                                          }
+                                        />{" "}
+                                        às{" "}
+                                        <Input
+                                          value={formatHour(h.end)}
+                                          className="company-config-time-end"
+                                          disabled={
+                                            !this.state.workingDays.monday
+                                              .checked
+                                          }
+                                        />
+                                      </span>
+                                    )
+                                  )}
+                                {!this.state.workingDays.monday.checked && (
+                                  <span>Não há expediente</span>
+                                )}
+                              </Table.Cell>
+                              <Table.Cell>
+                                {this.state.workingDays.tuesday.checked &&
+                                  this.state.workingDays.tuesday.workingHours.map(
+                                    h => (
+                                      <span
+                                        className="company-config-time"
+                                        key={h.start + "2"}
+                                      >
+                                        <Input
+                                          value={formatHour(h.start)}
+                                          className="company-config-time-start"
+                                          disabled={
+                                            !this.state.workingDays.tuesday
+                                              .checked
+                                          }
+                                        />{" "}
+                                        às{" "}
+                                        <Input
+                                          value={formatHour(h.end)}
+                                          className="company-config-time-end"
+                                          disabled={
+                                            !this.state.workingDays.tuesday
+                                              .checked
+                                          }
+                                        />
+                                      </span>
+                                    )
+                                  )}
+                                {!this.state.workingDays.tuesday.checked && (
+                                  <span>Não há expediente</span>
+                                )}
+                              </Table.Cell>
+                              <Table.Cell>
+                                {this.state.workingDays.wednesday.checked &&
+                                  this.state.workingDays.wednesday.workingHours.map(
+                                    h => (
+                                      <span
+                                        className="company-config-time"
+                                        key={h.start + "3"}
+                                      >
+                                        <Input
+                                          value={formatHour(h.start)}
+                                          className="company-config-time-start"
+                                          disabled={
+                                            !this.state.workingDays.wednesday
+                                              .checked
+                                          }
+                                        />{" "}
+                                        às{" "}
+                                        <Input
+                                          value={formatHour(h.end)}
+                                          className="company-config-time-end"
+                                          disabled={
+                                            !this.state.workingDays.wednesday
+                                              .checked
+                                          }
+                                        />
+                                      </span>
+                                    )
+                                  )}
+                                {!this.state.workingDays.wednesday.checked && (
+                                  <span>Não há expediente</span>
+                                )}
+                              </Table.Cell>
+                              <Table.Cell>
+                                {this.state.workingDays.thursday.checked &&
+                                  this.state.workingDays.thursday.workingHours.map(
+                                    h => (
+                                      <span
+                                        className="company-config-time"
+                                        key={h.start + "4"}
+                                      >
+                                        <Input
+                                          value={formatHour(h.start)}
+                                          className="company-config-time-start"
+                                          disabled={
+                                            !this.state.workingDays.thursday
+                                              .checked
+                                          }
+                                        />{" "}
+                                        às{" "}
+                                        <Input
+                                          value={formatHour(h.end)}
+                                          className="company-config-time-end"
+                                          disabled={
+                                            !this.state.workingDays.thursday
+                                              .checked
+                                          }
+                                        />
+                                      </span>
+                                    )
+                                  )}
+                                {!this.state.workingDays.thursday.checked && (
+                                  <span>Não há expediente</span>
+                                )}
+                              </Table.Cell>
+                              <Table.Cell>
+                                {this.state.workingDays.friday.checked &&
+                                  this.state.workingDays.friday.workingHours.map(
+                                    h => (
+                                      <span
+                                        className="company-config-time"
+                                        key={h.start + "5"}
+                                      >
+                                        <Input
+                                          value={formatHour(h.start)}
+                                          className="company-config-time-start"
+                                          disabled={
+                                            !this.state.workingDays.friday
+                                              .checked
+                                          }
+                                        />{" "}
+                                        às{" "}
+                                        <Input
+                                          value={formatHour(h.end)}
+                                          className="company-config-time-end"
+                                          disabled={
+                                            !this.state.workingDays.friday
+                                              .checked
+                                          }
+                                        />
+                                      </span>
+                                    )
+                                  )}
+                                {!this.state.workingDays.friday.checked && (
+                                  <span>Não há expediente</span>
+                                )}
+                              </Table.Cell>
+                              <Table.Cell>
+                                {this.state.workingDays.saturday.checked &&
+                                  this.state.workingDays.saturday.workingHours.map(
+                                    h => (
+                                      <span
+                                        className="company-config-time"
+                                        key={h.start + "6"}
+                                      >
+                                        <Input
+                                          value={formatHour(h.start)}
+                                          className="company-config-time-start"
+                                          disabled={
+                                            !this.state.workingDays.saturday
+                                              .checked
+                                          }
+                                        />{" "}
+                                        às{" "}
+                                        <Input
+                                          value={formatHour(h.end)}
+                                          className="company-config-time-end"
+                                          disabled={
+                                            !this.state.workingDays.saturday
+                                              .checked
+                                          }
+                                        />
+                                      </span>
+                                    )
+                                  )}
+                                {!this.state.workingDays.saturday.checked && (
+                                  <span>Não há expediente</span>
+                                )}
+                              </Table.Cell>
+                            </Table.Row>
+                          </Table.Body>
                         </Table>
                         <Divider style={{ marginTop: "40px" }} />
                         <Button
