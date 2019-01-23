@@ -1,11 +1,8 @@
+/* eslint no-loop-func: 0 */
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { toast } from "react-toastify";
-import {
-  setCurrentPage,
-  setCompany,
-  setCompanyLogo
-} from "../dashboardActions";
+import Axios from "axios";
 import {
   Button,
   Form,
@@ -16,6 +13,11 @@ import {
   Table,
   Input
 } from "semantic-ui-react";
+import {
+  setCurrentPage,
+  setCompany,
+  setCompanyLogo
+} from "../dashboardActions";
 import "./CompanyConfig.css";
 import { states } from "../../config/BrasilAddress";
 import {
@@ -28,7 +30,6 @@ import {
 import FormTitle from "../Common/FormTitle";
 import FormSubTitle from "../Common/FormSubTitle";
 import Notification from "../Notification/Notification";
-import Axios from "axios";
 import config from "../../config";
 import ValidationError from "../Common/ValidationError";
 import validator from "validator";
@@ -55,8 +56,19 @@ const errorList = {
   website: { msg: "", error: false },
   phone: { msg: "", error: false },
   cellphone: { msg: "", error: false },
-  paymentTypes: { msg: "", error: false }
+  paymentTypes: { msg: "", error: false },
+  workingDays: []
 };
+
+/*
+const errorList = {
+  general:[],
+  address: [],
+  contact: [],
+  paymentTypes: { msg: "", error: false },
+  workingDays: []
+};
+TODO: usar essa estrutura para os erros */
 
 export class CompanyConfig extends Component {
   state = {
@@ -173,6 +185,7 @@ export class CompanyConfig extends Component {
   };
 
   handleWorkTime = e => {
+    e.preventDefault();
     let _day = e.currentTarget.id.split("-")[0];
     let _index = e.currentTarget.id.split("-")[1];
     let _startEnd = e.currentTarget.id.split("-")[2];
@@ -182,14 +195,14 @@ export class CompanyConfig extends Component {
     if (_startEnd === "start") {
       _item = {
         _id: this.state.workingDays[_day].workingHours[_index]._id,
-        start: _value,
+        start: formatHour(_value),
         end: this.state.workingDays[_day].workingHours[_index].end
       };
     } else {
       _item = {
         _id: this.state.workingDays[_day].workingHours[_index]._id,
         start: this.state.workingDays[_day].workingHours[_index].start,
-        end: _value
+        end: formatHour(_value)
       };
     }
 
@@ -208,6 +221,7 @@ export class CompanyConfig extends Component {
   };
 
   addWorkTime = e => {
+    e.preventDefault();
     let _day = e.currentTarget.dataset.day;
     this.setState({
       workingDays: {
@@ -224,6 +238,7 @@ export class CompanyConfig extends Component {
   };
 
   removeWorkTime = e => {
+    e.preventDefault();
     let _day = e.currentTarget.dataset.day;
     let _index = e.currentTarget.dataset.index;
 
@@ -464,7 +479,6 @@ export class CompanyConfig extends Component {
     /* ====================================================
      Contato
     ==================================================== */
-
     if (
       !validator.isEmpty(this.state.company.website) &&
       !validator.isURL(this.state.company.website)
@@ -522,6 +536,70 @@ export class CompanyConfig extends Component {
       _errors.paymentTypes.msg =
         "Selecione ao menos 1 (uma) forma de pagamento";
       _errors.paymentTypes.error = true;
+    }
+
+    /* ====================================================
+     Horário de funcionamento
+    ==================================================== */
+
+    const mapWeekDays = {
+      sunday: "domingo",
+      monday: "segunda-feira",
+      tuesday: "terça-feira",
+      wednesday: "quarta-feira",
+      thursday: "quinta-feira",
+      friday: "sexta",
+      saturday: "sábado"
+    };
+
+    countEnabled = 0;
+    for (let key in this.state.workingDays) {
+      if (this.state.workingDays[key].checked) {
+        countEnabled++;
+        this.state.workingDays[key].workingHours.forEach(wh => {
+          let _startHour = Number(wh.start.split(":")[0]);
+          let _startMinute = Number(wh.start.split(":")[1]);
+
+          let _endHour = Number(wh.end.split(":")[0]);
+          let _endMinute = Number(wh.end.split(":")[1]);
+
+          if (
+            _startHour < 0 ||
+            _startHour > 23 ||
+            _startMinute < 0 ||
+            _startMinute > 59
+          ) {
+            _errors.workingDays.push({
+              error: true,
+              msg: `Horário inicial de ${mapWeekDays[key]} é inválido. [${
+                wh.start
+              }]`
+            });
+            _errorsCount++;
+          }
+
+          if (
+            _endHour < 0 ||
+            _endHour > 23 ||
+            _endMinute < 0 ||
+            _endMinute > 59
+          ) {
+            _errors.workingDays.push({
+              error: true,
+              msg: `Horário final de ${mapWeekDays[key]} é inválido. [${
+                wh.end
+              }]`
+            });
+            _errorsCount++;
+          }
+        });
+      }
+    }
+    if (countEnabled === 0) {
+      _errors.workingDays.push({
+        error: true,
+        msg: "Por favor, configure ao menos 1 (um) dia de expediente"
+      });
     }
 
     /* Finally */
@@ -1762,6 +1840,14 @@ export class CompanyConfig extends Component {
                             </Table.Row>
                           </Table.Body>
                         </Table>
+                        {this.state.errors.workingDays.map((error, index) => (
+                          <ValidationError
+                            key={index}
+                            show={error.error}
+                            error={error.msg}
+                          />
+                        ))}
+
                         <Divider style={{ marginTop: "40px" }} />
                         <Button
                           icon
