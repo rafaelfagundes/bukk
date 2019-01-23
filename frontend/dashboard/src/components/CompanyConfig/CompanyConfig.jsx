@@ -42,33 +42,12 @@ import {
 } from "../validation";
 
 const errorList = {
-  companyName: { msg: "", error: false },
-  tradingName: { msg: "", error: false },
-  companyNickname: { msg: "", error: false },
-  cpfCnpj: { msg: "", error: false },
-  addressStreet: { msg: "", error: false },
-  addressNumber: { msg: "", error: false },
-  addressCEP: { msg: "", error: false },
-  addressNeighborhood: { msg: "", error: false },
-  addressCity: { msg: "", error: false },
-  addressState: { msg: "", error: false },
-  email: { msg: "", error: false },
-  website: { msg: "", error: false },
-  phone: { msg: "", error: false },
-  cellphone: { msg: "", error: false },
-  paymentTypes: { msg: "", error: false },
-  workingDays: []
-};
-
-/*
-const errorList = {
-  general:[],
+  general: [],
   address: [],
   contact: [],
   paymentTypes: { msg: "", error: false },
   workingDays: []
 };
-TODO: usar essa estrutura para os erros */
 
 export class CompanyConfig extends Component {
   state = {
@@ -401,38 +380,34 @@ export class CompanyConfig extends Component {
     ==================================================== */
     if (validator.isEmpty(this.state.company.tradingName)) {
       _errorsCount++;
-      _errors.tradingName.msg = "Por favor, preencha o Nome Fantasia";
-      _errors.tradingName.error = true;
+      _errors.general.push({ msg: "Por favor, preencha o Nome Fantasia" });
     }
     if (validator.isEmpty(this.state.company.companyNickname)) {
       _errorsCount++;
-      _errors.companyNickname.msg = "Por favor, preencha o Nome Curto";
-      _errors.companyNickname.error = true;
+      _errors.general.push({ msg: "Por favor, preencha o Nome Curto" });
     }
     if (validator.isEmpty(this.state.company.cpfCnpj)) {
       _errorsCount++;
-      _errors.cpfCnpj.msg =
-        this.state.company.businessType === "J"
-          ? "Por favor, preencha o CNPJ"
-          : "Por favor, preencha o CPF";
-      _errors.cpfCnpj.error = true;
+      _errors.general.push({
+        msg:
+          this.state.company.businessType === "J"
+            ? "Por favor, preencha o CNPJ"
+            : "Por favor, preencha o CPF"
+      });
     }
     if (this.state.company.businessType === "J") {
       if (!isCNPJ(this.state.company.cpfCnpj)) {
         _errorsCount++;
-        _errors.cpfCnpj.msg = "CNPJ inválido";
-        _errors.cpfCnpj.error = true;
+        _errors.general.push({ msg: "CNPJ inválido" });
       }
       if (validator.isEmpty(this.state.company.companyName)) {
         _errorsCount++;
-        _errors.companyName.msg = "Por favor, preencha a Razão Social";
-        _errors.companyName.error = true;
+        _errors.general.push({ msg: "Por favor, preencha a Razão Social" });
       }
     } else {
       if (!isCPF(this.state.company.cpfCnpj)) {
         _errorsCount++;
-        _errors.cpfCnpj.msg = "CPF inválido";
-        _errors.cpfCnpj.error = true;
+        _errors.general.push({ msg: "CPF inválido" });
       }
     }
 
@@ -441,39 +416,33 @@ export class CompanyConfig extends Component {
     ==================================================== */
     if (validator.isEmpty(this.state.company.address.street)) {
       _errorsCount++;
-      _errors.addressStreet.msg = "Por favor, preencha o Logradouro";
-      _errors.addressStreet.error = true;
+      _errors.address.push({ msg: "Por favor, preencha o Logradouro" });
     }
     if (validator.isEmpty(this.state.company.address.number)) {
       _errorsCount++;
-      _errors.addressNumber.msg =
-        "Por favor, preencha o Número do endereço da empresa";
-      _errors.addressNumber.error = true;
+      _errors.address.push({
+        msg: "Por favor, preencha o Número"
+      });
     }
     if (validator.isEmpty(this.state.company.address.neighborhood)) {
       _errorsCount++;
-      _errors.addressNeighborhood.msg = "Por favor, preencha o Bairro";
-      _errors.addressNeighborhood.error = true;
+      _errors.address.push({ msg: "Por favor, preencha o Bairro" });
     }
     if (validator.isEmpty(this.state.company.address.city)) {
       _errorsCount++;
-      _errors.addressCity.msg = "Por favor, preencha a Cidade";
-      _errors.addressCity.error = true;
+      _errors.address.push({ msg: "Por favor, preencha a Cidade" });
     }
     if (validator.isEmpty(this.state.company.address.postalCode)) {
       _errorsCount++;
-      _errors.addressCEP.msg = "Por favor, preencha a Cidade";
-      _errors.addressCEP.error = true;
+      _errors.address.push({ msg: "Por favor, preencha a Cidade" });
     }
     if (!isPostalCode(this.state.company.address.postalCode)) {
       _errorsCount++;
-      _errors.addressCEP.msg = "CEP inválido";
-      _errors.addressCEP.error = true;
+      _errors.address.push({ msg: "CEP inválido" });
     }
     if (this.state.company.address.state === "") {
       _errorsCount++;
-      _errors.addressState.msg = "Por favor, selecione o Estado";
-      _errors.addressState.error = true;
+      _errors.address.push({ msg: "Por favor, selecione o Estado" });
     }
 
     /* ====================================================
@@ -920,7 +889,6 @@ export class CompanyConfig extends Component {
                               value={this.state.company.companyName}
                               onChange={this.handleChange}
                               id="companyName"
-                              error={this.state.errors.companyName.error}
                             />
                           )}
                           <Form.Input
@@ -932,14 +900,12 @@ export class CompanyConfig extends Component {
                             value={this.state.company.tradingName}
                             onChange={this.handleChange}
                             id="tradingName"
-                            error={this.state.errors.companyName.error}
                           />
                           <Form.Input
                             label="Nome curto"
                             value={this.state.company.companyNickname}
                             onChange={this.handleChange}
                             id="companyNickname"
-                            error={this.state.errors.companyNickname.error}
                           />
                         </Form.Group>
                         <Form.Input
@@ -956,25 +922,15 @@ export class CompanyConfig extends Component {
                           onChange={this.handleChange}
                           id="cpfCnpj"
                           width={4}
-                          error={this.state.errors.cpfCnpj.error}
                         />
 
-                        <ValidationError
-                          show={this.state.errors.companyName.error}
-                          error={this.state.errors.companyName.msg}
-                        />
-                        <ValidationError
-                          show={this.state.errors.tradingName.error}
-                          error={this.state.errors.tradingName.msg}
-                        />
-                        <ValidationError
-                          show={this.state.errors.companyNickname.error}
-                          error={this.state.errors.companyNickname.msg}
-                        />
-                        <ValidationError
-                          show={this.state.errors.cpfCnpj.error}
-                          error={this.state.errors.cpfCnpj.msg}
-                        />
+                        {this.state.errors.general.map((error, index) => (
+                          <ValidationError
+                            key={index}
+                            show={true}
+                            error={error.msg}
+                          />
+                        ))}
 
                         <FormTitle text="Endereço" />
                         <Form.Group widths="equal">
@@ -986,7 +942,6 @@ export class CompanyConfig extends Component {
                             value={this.state.company.address.street || ""}
                             onChange={this.handleAddressValue}
                             id="street"
-                            error={this.state.errors.addressStreet.error}
                           />
                           <Form.Input
                             fluid
@@ -996,7 +951,6 @@ export class CompanyConfig extends Component {
                             onChange={this.handleAddressValue}
                             id="number"
                             value={this.state.company.address.number}
-                            error={this.state.errors.addressNumber.error}
                           />
                           <Form.Input
                             fluid
@@ -1008,7 +962,6 @@ export class CompanyConfig extends Component {
                             value={formatCEP(
                               this.state.company.address.postalCode
                             )}
-                            error={this.state.errors.addressCEP.error}
                           />
                         </Form.Group>
                         <Form.Group>
@@ -1020,7 +973,6 @@ export class CompanyConfig extends Component {
                             onChange={this.handleAddressValue}
                             id="neighborhood"
                             value={this.state.company.address.neighborhood}
-                            error={this.state.errors.addressNeighborhood.error}
                           />
                         </Form.Group>
                         <Form.Group>
@@ -1032,7 +984,6 @@ export class CompanyConfig extends Component {
                             onChange={this.handleAddressValue}
                             id="city"
                             value={this.state.company.address.city}
-                            error={this.state.errors.addressCity.error}
                           />
                           <Form.Select
                             fluid
@@ -1046,30 +997,13 @@ export class CompanyConfig extends Component {
                           />
                         </Form.Group>
 
-                        <ValidationError
-                          show={this.state.errors.addressStreet.error}
-                          error={this.state.errors.addressStreet.msg}
-                        />
-                        <ValidationError
-                          show={this.state.errors.addressNumber.error}
-                          error={this.state.errors.addressNumber.msg}
-                        />
-                        <ValidationError
-                          show={this.state.errors.addressCEP.error}
-                          error={this.state.errors.addressCEP.msg}
-                        />
-                        <ValidationError
-                          show={this.state.errors.addressNeighborhood.error}
-                          error={this.state.errors.addressNeighborhood.msg}
-                        />
-                        <ValidationError
-                          show={this.state.errors.addressCity.error}
-                          error={this.state.errors.addressCity.msg}
-                        />
-                        <ValidationError
-                          show={this.state.errors.addressState.error}
-                          error={this.state.errors.addressState.msg}
-                        />
+                        {this.state.errors.address.map((error, index) => (
+                          <ValidationError
+                            key={index}
+                            show={true}
+                            error={error.msg}
+                          />
+                        ))}
 
                         <FormTitle text="Contato" />
                         <Form.Group>
@@ -1077,7 +1011,6 @@ export class CompanyConfig extends Component {
                             label="Email"
                             value={this.state.company.email}
                             width={8}
-                            error={this.state.errors.email.error}
                             onChange={this.handleChange}
                             id="email"
                           />
@@ -1087,7 +1020,6 @@ export class CompanyConfig extends Component {
                             label="Site"
                             value={this.state.company.website}
                             width={8}
-                            error={this.state.errors.website.error}
                             onChange={this.handleChange}
                             id="website"
                           />
@@ -1102,29 +1034,19 @@ export class CompanyConfig extends Component {
                                   : "Telefone celular"
                               }
                               value={formatBrazilianPhoneNumber(phone.number)}
-                              error={this.state.errors.phone.error}
                               onChange={this.handlePhone}
                               id={phone.phoneType}
                             />
                           ))}
                         </FormGroup>
 
-                        <ValidationError
-                          show={this.state.errors.email.error}
-                          error={this.state.errors.email.msg}
-                        />
-                        <ValidationError
-                          show={this.state.errors.website.error}
-                          error={this.state.errors.website.msg}
-                        />
-                        <ValidationError
-                          show={this.state.errors.phone.error}
-                          error={this.state.errors.phone.msg}
-                        />
-                        <ValidationError
-                          show={this.state.errors.cellphone.error}
-                          error={this.state.errors.cellphone.msg}
-                        />
+                        {this.state.errors.contact.map((error, index) => (
+                          <ValidationError
+                            key={index}
+                            show={true}
+                            error={error.msg}
+                          />
+                        ))}
 
                         <FormTitle text="Formas de Pagamento" />
                         <FormSubTitle text="Cartões de Crédito" />
