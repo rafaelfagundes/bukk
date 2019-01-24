@@ -8,6 +8,21 @@
   height: 48px !important;
 }
 
+.notification-image-loading {
+  width: 48px !important;
+  height: 48px !important;
+  animation: spin 1800ms linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .notification-content {
   padding: 0 10px 0 10px;
   width: 230px;

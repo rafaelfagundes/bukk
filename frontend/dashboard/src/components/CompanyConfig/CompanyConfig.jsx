@@ -5,20 +5,25 @@ import { Button } from "semantic-ui-react";
 import { setCurrentPage, setCompany } from "../dashboardActions";
 import "./CompanyConfig.css";
 import General from "./General";
+import { Settings } from "./Settings";
 
 export class CompanyConfig extends Component {
   state = {
-    activeItem: "geral"
+    activeItem: "preferencias"
   };
 
   handleItemClick = (e, { name }) => this.setState({ activeItem: name });
 
   componentDidUpdate() {
-    if (this.props.company && !this.props.currentPage) {
-      this.props.setCurrentPage({
-        title: "Configurações de " + this.props.company.companyNickname,
-        icon: "building"
-      });
+    const _currentPage = {
+      title: "Configurações de " + this.props.company.companyNickname,
+      icon: "building"
+    };
+
+    if (
+      JSON.stringify(this.props.currentPage) !== JSON.stringify(_currentPage)
+    ) {
+      this.props.setCurrentPage(_currentPage);
     }
   }
 
@@ -61,6 +66,7 @@ export class CompanyConfig extends Component {
             </div>
             <div className="company-config-body">
               {this.state.activeItem === "geral" && <General />}
+              {this.state.activeItem === "preferencias" && <Settings />}
             </div>
           </div>
         )}

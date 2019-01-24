@@ -13,11 +13,7 @@ import {
   Table,
   Input
 } from "semantic-ui-react";
-import {
-  setCurrentPage,
-  setCompany,
-  setCompanyLogo
-} from "../dashboardActions";
+import { setCompany, setCompanyLogo } from "../dashboardActions";
 import "./CompanyConfig.css";
 import { states } from "../../config/BrasilAddress";
 import {
@@ -105,42 +101,79 @@ export class General extends Component {
             "https://res.cloudinary.com/bukkapp/image/upload/v1547692316/Bukk/Assets/Payment%20Icons/visa.png"
         }
       },
+      // other: {
+      //   boleto: false,
+      //   cash: false,
+      //   crypto: false,
+      //   debitCard: false,
+      //   wireTransfer: false
+      // }
       other: {
-        boleto: false,
-        cash: false,
-        crypto: false,
-        debitCard: false,
-        wireTransfer: false
+        boleto: {
+          enabled: false,
+          name: "Boleto",
+          id: "boleto",
+          icon:
+            "https://res.cloudinary.com/bukkapp/image/upload/v1547692315/Bukk/Assets/Payment%20Icons/boleto.png"
+        },
+        cash: {
+          enabled: false,
+          name: "Dinheiro",
+          id: "cash",
+          icon:
+            "https://res.cloudinary.com/bukkapp/image/upload/v1547692315/Bukk/Assets/Payment%20Icons/cash.png"
+        },
+        debitCard: {
+          enabled: false,
+          name: "Cartão de Débito",
+          id: "debitCard",
+          icon:
+            "https://res.cloudinary.com/bukkapp/image/upload/v1547692315/Bukk/Assets/Payment%20Icons/debitcard.png"
+        },
+        wireTransfer: {
+          enabled: false,
+          name: "Transferência",
+          id: "wireTransfer",
+          icon:
+            "https://res.cloudinary.com/bukkapp/image/upload/v1547692316/Bukk/Assets/Payment%20Icons/transfer.png"
+        }
       }
     },
     workingDays: {
       sunday: {
         checked: false,
-        workingHours: []
+        workingHours: [],
+        weekDayId: "sun"
       },
       monday: {
         checked: false,
-        workingHours: []
+        workingHours: [],
+        weekDayId: "mon"
       },
       tuesday: {
         checked: false,
-        workingHours: []
+        workingHours: [],
+        weekDayId: "tue"
       },
       wednesday: {
         checked: false,
-        workingHours: []
+        workingHours: [],
+        weekDayId: "wed"
       },
       thursday: {
         checked: false,
-        workingHours: []
+        workingHours: [],
+        weekDayId: "thu"
       },
       friday: {
         checked: false,
-        workingHours: []
+        workingHours: [],
+        weekDayId: "fri"
       },
       saturday: {
         checked: false,
-        workingHours: []
+        workingHours: [],
+        weekDayId: "sat"
       }
     },
     errors: JSON.parse(JSON.stringify(errorList))
@@ -173,13 +206,11 @@ export class General extends Component {
     let _item = {};
     if (_startEnd === "start") {
       _item = {
-        _id: this.state.workingDays[_day].workingHours[_index]._id,
         start: formatHour(_value),
         end: this.state.workingDays[_day].workingHours[_index].end
       };
     } else {
       _item = {
-        _id: this.state.workingDays[_day].workingHours[_index]._id,
         start: this.state.workingDays[_day].workingHours[_index].start,
         end: formatHour(_value)
       };
@@ -238,7 +269,7 @@ export class General extends Component {
     });
   };
 
-  handlePaymentTypeCc = e => {
+  handlePaymentType = (e, type) => {
     let _checked = undefined;
     let _id = undefined;
 
@@ -253,10 +284,10 @@ export class General extends Component {
     this.setState({
       paymentTypes: {
         ...this.state.paymentTypes,
-        cc: {
-          ...this.state.paymentTypes.cc,
+        [type]: {
+          ...this.state.paymentTypes[type],
           [_id]: {
-            ...this.state.paymentTypes.cc[_id],
+            ...this.state.paymentTypes[type][_id],
             enabled: _checked
           }
         }
@@ -264,27 +295,12 @@ export class General extends Component {
     });
   };
 
+  handlePaymentTypeCc = e => {
+    this.handlePaymentType(e, "cc");
+  };
+
   handlePaymentTypeOther = e => {
-    let _checked = undefined;
-    let _id = undefined;
-
-    if (e.currentTarget.id.indexOf("-img") >= 0) {
-      _checked = !e.currentTarget.checked;
-      _id = e.currentTarget.id.replace("-img", "");
-    } else {
-      _checked = e.currentTarget.checked;
-      _id = e.currentTarget.id;
-    }
-
-    this.setState({
-      paymentTypes: {
-        ...this.state.paymentTypes,
-        other: {
-          ...this.state.paymentTypes.other,
-          [_id]: _checked
-        }
-      }
-    });
+    this.handlePaymentType(e, "other");
   };
 
   handleChange = e => {
@@ -524,43 +540,54 @@ export class General extends Component {
     for (let key in this.state.workingDays) {
       if (this.state.workingDays[key].checked) {
         countEnabled++;
-        this.state.workingDays[key].workingHours.forEach(wh => {
-          let _startHour = Number(wh.start.split(":")[0]);
-          let _startMinute = Number(wh.start.split(":")[1]);
+        if (this.state.workingDays[key].workingHours.length === 0) {
+          _errors.workingDays.push({
+            error: true,
+            msg: `${mapWeekDays[key].charAt(0).toUpperCase() +
+              mapWeekDays[key].slice(
+                1
+              )} não possui nenhum horário. Adicione ao menos 1 (um), ou desmarque o dia.`
+          });
+          _errorsCount++;
+        } else {
+          this.state.workingDays[key].workingHours.forEach(wh => {
+            let _startHour = Number(wh.start.split(":")[0]);
+            let _startMinute = Number(wh.start.split(":")[1]);
 
-          let _endHour = Number(wh.end.split(":")[0]);
-          let _endMinute = Number(wh.end.split(":")[1]);
+            let _endHour = Number(wh.end.split(":")[0]);
+            let _endMinute = Number(wh.end.split(":")[1]);
 
-          if (
-            _startHour < 0 ||
-            _startHour > 23 ||
-            _startMinute < 0 ||
-            _startMinute > 59
-          ) {
-            _errors.workingDays.push({
-              error: true,
-              msg: `Horário inicial de ${mapWeekDays[key]} é inválido. [${
-                wh.start
-              }]`
-            });
-            _errorsCount++;
-          }
+            if (
+              _startHour < 0 ||
+              _startHour > 23 ||
+              _startMinute < 0 ||
+              _startMinute > 59
+            ) {
+              _errors.workingDays.push({
+                error: true,
+                msg: `Horário inicial de ${mapWeekDays[key]} é inválido. [${
+                  wh.start
+                }]`
+              });
+              _errorsCount++;
+            }
 
-          if (
-            _endHour < 0 ||
-            _endHour > 23 ||
-            _endMinute < 0 ||
-            _endMinute > 59
-          ) {
-            _errors.workingDays.push({
-              error: true,
-              msg: `Horário final de ${mapWeekDays[key]} é inválido. [${
-                wh.end
-              }]`
-            });
-            _errorsCount++;
-          }
-        });
+            if (
+              _endHour < 0 ||
+              _endHour > 23 ||
+              _endMinute < 0 ||
+              _endMinute > 59
+            ) {
+              _errors.workingDays.push({
+                error: true,
+                msg: `Horário final de ${mapWeekDays[key]} é inválido. [${
+                  wh.end
+                }]`
+              });
+              _errorsCount++;
+            }
+          });
+        }
       }
     }
     if (countEnabled === 0) {
@@ -584,41 +611,62 @@ export class General extends Component {
       return false;
     }
 
+    const token = localStorage.getItem("token");
+    let requestConfig = {
+      headers: {
+        Authorization: token
+      }
+    };
+
     const _company = JSON.parse(JSON.stringify(this.state.company));
 
-    delete _company["settings"];
-    delete _company["social"]; // TODO: analisar se vale a pena colocar as redes sociais aqui ou não
+    _company.paymentOptions = [];
+    for (let type in this.state.paymentTypes) {
+      for (let key in this.state.paymentTypes[type]) {
+        if (this.state.paymentTypes[type][key].enabled) {
+          const payment = this.state.paymentTypes[type][key];
+          _company.paymentOptions.push({
+            icon: payment.icon,
+            name: payment.name,
+            paymentId: payment.id,
+            paymentType: type
+          });
+        }
+      }
+    }
+    _company.workingDays = [];
+
+    for (let wd in this.state.workingDays) {
+      const item = this.state.workingDays[wd];
+      if (item.checked && item.workingHours.length > 0) {
+        _company.workingDays.push({
+          workingHours: item.workingHours,
+          weekDay: item.weekDayId
+        });
+      }
+    }
+
+    const _notification = toast(
+      <Notification
+        type="loading"
+        title="Salvando as informações"
+        text="Aguarde enquanto salvamos as informações da empresa"
+      />,
+      { autoClose: false }
+    );
 
     if (this.imageInput.value) {
-      toast(
-        <Notification
-          type="notification"
-          title="Enviando imagem"
-          text="Estamos salvando o seu novo logo"
-        />
-      );
       const data = new FormData(e.currentTarget);
 
-      const token = localStorage.getItem("token");
-      let requestConfig = {
-        headers: {
-          Authorization: token
-        }
-      };
       Axios.post(config.api + "/images/logo", data, requestConfig)
         .then(response => {
-          toast(
-            <Notification
-              type="success"
-              title="Imagem enviada com sucesso"
-              text="O seu novo logo está armazenado"
-            />
-          );
           this.props.setCompanyLogo(response.data.logoUrl);
-          this.setState({ company: this.props.company });
-          localStorage.setItem("company", JSON.stringify(this.props.company));
+          _company.logo = response.data.logoUrl;
+
+          this.callUpdate(_company, requestConfig);
         })
         .catch(err => {
+          toast.dismiss(_notification);
           toast(
             <Notification
               type="erro"
@@ -628,12 +676,37 @@ export class General extends Component {
           );
         });
       e.currentTarget.reset();
+    } else {
+      this.callUpdate(_company, requestConfig);
     }
   };
 
-  // componentDidMount() {
-
-  // }
+  callUpdate = (_company, requestConfig, _notification) => {
+    Axios.post(config.api + "/companies/update", _company, requestConfig)
+      .then(response => {
+        toast.dismiss(_notification);
+        toast(
+          <Notification
+            type="success"
+            title="Dados atualizados com sucesso"
+            text="Os dados da empresa foram atualizados"
+          />
+        );
+        this.props.setCompany(_company);
+        this.setState({ company: _company });
+        localStorage.setItem("company", JSON.stringify(_company));
+      })
+      .catch(err => {
+        toast.dismiss(_notification);
+        toast(
+          <Notification
+            type="erro"
+            title="Erro ao atualizar dados da empresa"
+            text={err.response.data.msg}
+          />
+        );
+      });
+  };
 
   componentDidMount() {
     if (this.state.company === undefined && this.props.company) {
@@ -644,32 +717,19 @@ export class General extends Component {
         };
 
         this.state.company.paymentOptions.forEach(pt => {
-          if (pt.paymentType === "cc") {
-            _state = {
-              ..._state,
-              paymentTypes: {
-                ..._state.paymentTypes,
-                cc: {
-                  ..._state.paymentTypes.cc,
-                  [pt.paymentId]: {
-                    ..._state.paymentTypes.cc[pt.paymentId],
-                    enabled: true
-                  }
+          _state = {
+            ..._state,
+            paymentTypes: {
+              ..._state.paymentTypes,
+              [pt.paymentType]: {
+                ..._state.paymentTypes[pt.paymentType],
+                [pt.paymentId]: {
+                  ..._state.paymentTypes[pt.paymentType][pt.paymentId],
+                  enabled: true
                 }
               }
-            };
-          } else {
-            _state = {
-              ..._state,
-              paymentTypes: {
-                ..._state.paymentTypes,
-                other: {
-                  ..._state.paymentTypes.other,
-                  [pt.paymentId]: true
-                }
-              }
-            };
-          }
+            }
+          };
         });
 
         this.state.company.workingDays.forEach(wd => {
@@ -681,7 +741,8 @@ export class General extends Component {
                   ..._state.workingDays,
                   sunday: {
                     checked: wd.workingHours.length > 0 ? true : false,
-                    workingHours: wd.workingHours
+                    workingHours: wd.workingHours,
+                    weekDayId: wd.weekDay
                   }
                 }
               };
@@ -693,7 +754,8 @@ export class General extends Component {
                   ..._state.workingDays,
                   monday: {
                     checked: wd.workingHours.length > 0 ? true : false,
-                    workingHours: wd.workingHours
+                    workingHours: wd.workingHours,
+                    weekDayId: wd.weekDay
                   }
                 }
               };
@@ -705,7 +767,8 @@ export class General extends Component {
                   ..._state.workingDays,
                   tuesday: {
                     checked: wd.workingHours.length > 0 ? true : false,
-                    workingHours: wd.workingHours
+                    workingHours: wd.workingHours,
+                    weekDayId: wd.weekDay
                   }
                 }
               };
@@ -717,7 +780,8 @@ export class General extends Component {
                   ..._state.workingDays,
                   wednesday: {
                     checked: wd.workingHours.length > 0 ? true : false,
-                    workingHours: wd.workingHours
+                    workingHours: wd.workingHours,
+                    weekDayId: wd.weekDay
                   }
                 }
               };
@@ -729,7 +793,8 @@ export class General extends Component {
                   ..._state.workingDays,
                   thursday: {
                     checked: wd.workingHours.length > 0 ? true : false,
-                    workingHours: wd.workingHours
+                    workingHours: wd.workingHours,
+                    weekDayId: wd.weekDay
                   }
                 }
               };
@@ -741,7 +806,8 @@ export class General extends Component {
                   ..._state.workingDays,
                   friday: {
                     checked: wd.workingHours.length > 0 ? true : false,
-                    workingHours: wd.workingHours
+                    workingHours: wd.workingHours,
+                    weekDayId: wd.weekDay
                   }
                 }
               };
@@ -753,7 +819,8 @@ export class General extends Component {
                   ..._state.workingDays,
                   saturday: {
                     checked: wd.workingDays.length > 0 ? true : false,
-                    workingHours: wd.workingHours
+                    workingHours: wd.workingHours,
+                    weekDayId: wd.weekDay
                   }
                 }
               };
@@ -1111,82 +1178,66 @@ export class General extends Component {
               <div className="company-payment-types">
                 <div className="company-payment-type">
                   <img
-                    src="https://res.cloudinary.com/bukkapp/image/upload/v1547692315/Bukk/Assets/Payment%20Icons/boleto.png"
-                    alt="Boleto"
+                    src={this.state.paymentTypes.other.boleto.icon}
+                    alt={this.state.paymentTypes.other.boleto.name}
                     onClick={this.handlePaymentTypeOther}
-                    id="boleto-img"
-                    checked={this.state.paymentTypes.other.boleto}
+                    id={this.state.paymentTypes.other.boleto.id + "-img"}
+                    checked={this.state.paymentTypes.other.boleto.enabled}
                   />
                   <Checkbox
-                    label="Boleto"
+                    label={this.state.paymentTypes.other.boleto.name}
                     className="company-payment-type-chkbox"
-                    checked={this.state.paymentTypes.other.boleto}
+                    checked={this.state.paymentTypes.other.boleto.enabled}
                     onChange={this.handlePaymentTypeOther}
-                    id="boleto"
+                    id={this.state.paymentTypes.other.boleto.id}
                   />
                 </div>
                 <div className="company-payment-type">
                   <img
-                    src="https://res.cloudinary.com/bukkapp/image/upload/v1547692315/Bukk/Assets/Payment%20Icons/debitcard.png"
-                    alt="Cartão de Débito"
+                    src={this.state.paymentTypes.other.debitCard.icon}
+                    alt={this.state.paymentTypes.other.debitCard.name}
                     onClick={this.handlePaymentTypeOther}
-                    id="debitCard-img"
-                    checked={this.state.paymentTypes.other.debitCard}
+                    id={this.state.paymentTypes.other.debitCard.id + "-img"}
+                    checked={this.state.paymentTypes.other.debitCard.enabled}
                   />
                   <Checkbox
-                    label="Cartão de Débito"
+                    label={this.state.paymentTypes.other.debitCard.name}
                     className="company-payment-type-chkbox"
-                    checked={this.state.paymentTypes.other.debitCard}
+                    checked={this.state.paymentTypes.other.debitCard.enabled}
                     onChange={this.handlePaymentTypeOther}
-                    id="debitCard"
+                    id={this.state.paymentTypes.other.debitCard.id}
                   />
                 </div>
                 <div className="company-payment-type">
                   <img
-                    src="https://res.cloudinary.com/bukkapp/image/upload/v1547692315/Bukk/Assets/Payment%20Icons/crypto.png"
-                    alt="Cryptomoeda"
+                    src={this.state.paymentTypes.other.cash.icon}
+                    alt={this.state.paymentTypes.other.cash.name}
                     onClick={this.handlePaymentTypeOther}
-                    id="crypto-img"
-                    checked={this.state.paymentTypes.other.crypto}
+                    id={this.state.paymentTypes.other.cash.id + "-img"}
+                    checked={this.state.paymentTypes.other.cash.enabled}
                   />
                   <Checkbox
-                    label="Cryptomoeda"
+                    label={this.state.paymentTypes.other.cash.name}
                     className="company-payment-type-chkbox"
-                    checked={this.state.paymentTypes.other.crypto}
+                    checked={this.state.paymentTypes.other.cash.enabled}
                     onChange={this.handlePaymentTypeOther}
-                    id="crypto"
+                    id={this.state.paymentTypes.other.cash.id}
                   />
                 </div>
                 <div className="company-payment-type">
                   <img
-                    src="https://res.cloudinary.com/bukkapp/image/upload/v1547692315/Bukk/Assets/Payment%20Icons/cash.png"
-                    alt="Dinheiro"
+                    src={this.state.paymentTypes.other.wireTransfer.icon}
+                    alt={this.state.paymentTypes.other.wireTransfer.name}
                     onClick={this.handlePaymentTypeOther}
-                    id="cash-img"
-                    checked={this.state.paymentTypes.other.cash}
+                    id={this.state.paymentTypes.other.wireTransfer.id + "-img"}
+                    checked={this.state.paymentTypes.other.wireTransfer.enabled}
                   />
                   <Checkbox
-                    label="Dinheiro"
+                    label={this.state.paymentTypes.other.wireTransfer.name}
                     className="company-payment-type-chkbox"
-                    checked={this.state.paymentTypes.other.cash}
+                    checked={this.state.paymentTypes.other.wireTransfer.enabled}
                     onChange={this.handlePaymentTypeOther}
-                    id="cash"
-                  />
-                </div>
-                <div className="company-payment-type">
-                  <img
-                    src="https://res.cloudinary.com/bukkapp/image/upload/v1547692316/Bukk/Assets/Payment%20Icons/transfer.png"
-                    alt="Transferência"
-                    onClick={this.handlePaymentTypeOther}
-                    id="wireTransfer-img"
-                    checked={this.state.paymentTypes.other.wireTransfer}
-                  />
-                  <Checkbox
-                    label="Transferência"
-                    className="company-payment-type-chkbox"
-                    checked={this.state.paymentTypes.other.wireTransfer}
-                    onChange={this.handlePaymentTypeOther}
-                    id="wireTransfer"
+                    id={this.state.paymentTypes.other.wireTransfer.id}
                   />
                 </div>
               </div>
@@ -1670,7 +1721,6 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    setCurrentPage: currentPage => dispatch(setCurrentPage(currentPage)),
     setCompany: company => dispatch(setCompany(company)),
     setCompanyLogo: logo => dispatch(setCompanyLogo(logo))
   };

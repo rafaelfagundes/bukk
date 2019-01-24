@@ -7,16 +7,6 @@ const Company = require("./Company");
 const User = require("../user/User");
 
 // Get all companies
-exports.getCompanies = async (req, res) => {
-  try {
-    const companies = await Company.find();
-    return companies;
-  } catch (err) {
-    throw boom.boomify(err);
-  }
-};
-
-// Get all companies
 exports.getCompany = async (req, res) => {
   try {
     const token = auth.verify(req.token);
@@ -389,27 +379,24 @@ exports.getSingleCompany = async (req, res) => {
   }
 };
 
-// Add a new company
-exports.addCompany = async (req, res) => {
-  try {
-    const company = new Company(req.body);
-    return company.save();
-  } catch (err) {
-    throw boom.boomify(err);
-  }
-};
-
 // Update an existing company
 exports.updateCompany = async (req, res) => {
   try {
     const id = req.params.id;
     const company = req.body;
-    const { ...updateData } = company;
-    const update = await Company.findByIdAndUpdate(id, updateData, {
-      new: true
-    });
-    return update;
+
+    const result = await Company.updateOne({ _id: company._id }, company);
+
+    console.log(result);
+
+    if (result.ok === 1) {
+      res.status(200).send({ msg: "OK" });
+    } else {
+      res
+        .status(500)
+        .send({ msg: "Não foi possível atualizar os dados da empresa" });
+    }
   } catch (err) {
-    throw boom.boomify(err);
+    res.status(500).send({ msg: err });
   }
 };

@@ -11,7 +11,7 @@ const Notification = props => {
         <img
           className="notification-image"
           src={BASE_URL + "/v1547582645/Bukk/Assets/Icons/success.png"}
-          alt="Error"
+          alt="Success"
         />
       )}
       {props.type === "notification" && (
@@ -25,7 +25,7 @@ const Notification = props => {
         <img
           className="notification-image"
           src={BASE_URL + "/v1547582658/Bukk/Assets/Icons/warning.png"}
-          alt="Error"
+          alt="Warning"
         />
       )}
       {props.type === "error" && (
@@ -39,7 +39,14 @@ const Notification = props => {
         <img
           className="notification-image"
           src={BASE_URL + "/v1547582608/Bukk/Assets/Icons/settings.png"}
-          alt="Error"
+          alt="System"
+        />
+      )}
+      {props.type === "loading" && (
+        <img
+          className="notification-image-loading"
+          src={BASE_URL + "/v1547582632/Bukk/Assets/Icons/settings-9.png"}
+          alt="Loading"
         />
       )}
       <div className="notification-content">
@@ -56,7 +63,14 @@ const Notification = props => {
 
 Notification.propTypes = {
   text: PropTypes.string,
-  type: PropTypes.oneOf(["success", "error", "warn", "system", "notification"])
+  type: PropTypes.oneOf([
+    "success",
+    "error",
+    "warn",
+    "system",
+    "notification",
+    "loading"
+  ])
 };
 
 export default Notification;

@@ -87,3 +87,44 @@
 .company-config-time-end {
   margin-bottom: 5px;
 }
+
+.company-settings-container {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+}
+
+.company-settings-group {
+  margin: 0;
+  padding: 0;
+  width: 50%;
+}
+
+.company-colors-settings {
+  display: flex;
+  flex-direction: row;
+}
+.company-colors-group {
+  width: 25%;
+}
+.company-colors-container {
+  display: flex;
+  flex-direction: row;
+  line-height: 36px;
+  margin-bottom: 10px;
+}
+
+.company-colors-label {
+  margin-right: 5px;
+  opacity: 0.8;
+  min-width: 50px;
+}
+
+.company-colors-color {
+  width: 75px;
+  height: 36px;
+  border: 1px solid #eee;
+  margin-right: 5px;
+  border-radius: 4px;
+}

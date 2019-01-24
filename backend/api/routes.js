@@ -25,6 +25,7 @@ Company
 router.get(BASE_URL + "/companies/:id", company.getSingleCompany);
 router.get(BASE_URL + "/companies/css/:id", company.getCompanyCss);
 router.post(BASE_URL + "/companies", verifyToken, company.getCompany);
+router.post(BASE_URL + "/companies/update", verifyToken, company.updateCompany);
 
 /*============================================================
 Service
