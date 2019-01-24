@@ -20,7 +20,17 @@ import FormSubTitle from "../Common/FormSubTitle";
 
 export class Settings extends Component {
   state = {
-    company: undefined
+    company: undefined,
+    colorPicker: {
+      primaryBack: false,
+      primaryText: false,
+      secondaryBack: false,
+      secondaryText: false,
+      headerBack: false,
+      headerText: false,
+      confirmationBack: false,
+      confirmationText: false
+    }
   };
 
   componentDidMount() {
@@ -82,6 +92,66 @@ export class Settings extends Component {
     });
   };
 
+  handleColorChange = (color, id) => {
+    this.setState({
+      company: {
+        ...this.state.company,
+        settings: {
+          ...this.state.company.settings,
+          colors: {
+            ...this.state.company.settings.colors,
+            [id]: color.hex
+          }
+        }
+      }
+    });
+  };
+
+  handleColorPrimaryBack = color => {
+    this.handleColorChange(color, "primaryBack");
+  };
+  handleColorPrimaryText = color => {
+    this.handleColorChange(color, "primaryText");
+  };
+  handleColorSecondaryBack = color => {
+    this.handleColorChange(color, "secondaryBack");
+  };
+  handleColorSecondaryText = color => {
+    this.handleColorChange(color, "secondaryText");
+  };
+  handleColorHeaderBack = color => {
+    this.handleColorChange(color, "headerBack");
+  };
+  handleColorHeaderText = color => {
+    this.handleColorChange(color, "headerText");
+  };
+  handleColorConfirmationBack = color => {
+    this.handleColorChange(color, "confirmationBack");
+  };
+  handleColorConfirmationText = color => {
+    this.handleColorChange(color, "confirmationText");
+  };
+
+  colorPickerToggle = e => {
+    const _id = e.currentTarget.id;
+    this.setState({
+      colorPicker: {
+        ...this.state.colorPicker,
+        [_id]: !this.state.colorPicker[_id]
+      }
+    });
+  };
+
+  colorPickerClose = e => {
+    const _id = e.currentTarget.dataset.id;
+    this.setState({
+      colorPicker: {
+        ...this.state.colorPicker,
+        [_id]: false
+      }
+    });
+  };
+
   render() {
     return (
       <div>
@@ -98,23 +168,84 @@ export class Settings extends Component {
                       <div
                         style={{
                           backgroundColor: this.state.company.settings.colors
-                            .primary
+                            .primaryBack
                         }}
                         className="company-colors-color"
                       />
-                      <Button icon="eye dropper" onClick={this.colorPicker} />
+
+                      <Button
+                        icon={
+                          this.state.colorPicker.primaryBack
+                            ? "delete"
+                            : "eye dropper"
+                        }
+                        onClick={this.colorPickerToggle}
+                        id="primaryBack"
+                        style={{
+                          backgroundColor: this.state.colorPicker.primaryBack
+                            ? "#db2828"
+                            : "",
+                          color: this.state.colorPicker.primaryBack
+                            ? "#FFF"
+                            : ""
+                        }}
+                      />
                     </div>
+                    {this.state.colorPicker.primaryBack && (
+                      <div className="popover">
+                        <div
+                          className="cover"
+                          onClick={this.colorPickerClose}
+                          data-id="primaryBack"
+                        />
+                        <SketchPicker
+                          className="color-picker"
+                          color={this.state.company.settings.colors.primaryBack}
+                          onChange={this.handleColorPrimaryBack}
+                        />
+                      </div>
+                    )}
                     <div className="company-colors-container">
-                      <span className="company-colors-label">Fonte:</span>
+                      <span className="company-colors-label">Texto:</span>
                       <div
                         style={{
                           backgroundColor: this.state.company.settings.colors
-                            .contrastColor
+                            .primaryText
                         }}
                         className="company-colors-color"
                       />
-                      <Button icon="eye dropper" onClick={this.colorPicker} />
+                      <Button
+                        icon={
+                          this.state.colorPicker.primaryText
+                            ? "delete"
+                            : "eye dropper"
+                        }
+                        onClick={this.colorPickerToggle}
+                        id="primaryText"
+                        style={{
+                          backgroundColor: this.state.colorPicker.primaryText
+                            ? "#db2828"
+                            : "",
+                          color: this.state.colorPicker.primaryText
+                            ? "#FFF"
+                            : ""
+                        }}
+                      />
                     </div>
+                    {this.state.colorPicker.primaryText && (
+                      <div className="popover">
+                        <div
+                          className="cover"
+                          onClick={this.colorPickerClose}
+                          data-id="primaryText"
+                        />
+                        <SketchPicker
+                          className="color-picker"
+                          color={this.state.company.settings.colors.primaryText}
+                          onChange={this.handleColorPrimaryText}
+                        />
+                      </div>
+                    )}
                   </div>
                   <div className="company-colors-group">
                     <FormSubTitle first text="Secundária" />
@@ -123,12 +254,87 @@ export class Settings extends Component {
                       <div
                         style={{
                           backgroundColor: this.state.company.settings.colors
-                            .secondary
+                            .secondaryBack
                         }}
                         className="company-colors-color"
                       />
-                      <Button icon="eye dropper" onClick={this.colorPicker} />
+                      <Button
+                        icon={
+                          this.state.colorPicker.secondaryBack
+                            ? "delete"
+                            : "eye dropper"
+                        }
+                        onClick={this.colorPickerToggle}
+                        id="secondaryBack"
+                        style={{
+                          backgroundColor: this.state.colorPicker.secondaryBack
+                            ? "#db2828"
+                            : "",
+                          color: this.state.colorPicker.secondaryBack
+                            ? "#FFF"
+                            : ""
+                        }}
+                      />
                     </div>
+                    {this.state.colorPicker.secondaryBack && (
+                      <div className="popover">
+                        <div
+                          className="cover"
+                          onClick={this.colorPickerClose}
+                          data-id="secondaryBack"
+                        />
+                        <SketchPicker
+                          className="color-picker"
+                          color={
+                            this.state.company.settings.colors.secondaryBack
+                          }
+                          onChange={this.handleColorSecondaryBack}
+                        />
+                      </div>
+                    )}
+                    <div className="company-colors-container">
+                      <span className="company-colors-label">Texto:</span>
+                      <div
+                        style={{
+                          backgroundColor: this.state.company.settings.colors
+                            .secondaryText
+                        }}
+                        className="company-colors-color"
+                      />
+                      <Button
+                        icon={
+                          this.state.colorPicker.secondaryText
+                            ? "delete"
+                            : "eye dropper"
+                        }
+                        onClick={this.colorPickerToggle}
+                        id="secondaryText"
+                        style={{
+                          backgroundColor: this.state.colorPicker.secondaryText
+                            ? "#db2828"
+                            : "",
+                          color: this.state.colorPicker.secondaryText
+                            ? "#FFF"
+                            : ""
+                        }}
+                      />
+                    </div>
+                    {this.state.colorPicker.secondaryText && (
+                      <div className="popover">
+                        <div
+                          className="cover"
+                          onClick={this.colorPickerClose}
+                          data-id="secondaryText"
+                        />
+                        <SketchPicker
+                          className="color-picker"
+                          color={
+                            this.state.company.settings.colors.secondaryText
+                          }
+                          onChange={this.handleColorSecondaryText}
+                        />
+                      </div>
+                    )}
                   </div>
                   <div className="company-colors-group">
                     <FormSubTitle first text="Cor do Cabeçalho" />
@@ -137,12 +343,79 @@ export class Settings extends Component {
                       <div
                         style={{
                           backgroundColor: this.state.company.settings.colors
-                            .header
+                            .headerBack
                         }}
                         className="company-colors-color"
                       />
-                      <Button icon="eye dropper" onClick={this.colorPicker} />
+                      <Button
+                        icon={
+                          this.state.colorPicker.headerBack
+                            ? "delete"
+                            : "eye dropper"
+                        }
+                        onClick={this.colorPickerToggle}
+                        id="headerBack"
+                        style={{
+                          backgroundColor: this.state.colorPicker.headerBack
+                            ? "#db2828"
+                            : "",
+                          color: this.state.colorPicker.headerBack ? "#FFF" : ""
+                        }}
+                      />
                     </div>
+                    {this.state.colorPicker.headerBack && (
+                      <div className="popover">
+                        <div
+                          className="cover"
+                          onClick={this.colorPickerClose}
+                          data-id="headerBack"
+                        />
+                        <SketchPicker
+                          className="color-picker"
+                          color={this.state.company.settings.colors.headerBack}
+                          onChange={this.handleColorHeaderBack}
+                        />
+                      </div>
+                    )}
+                    <div className="company-colors-container">
+                      <span className="company-colors-label">Texto:</span>
+                      <div
+                        style={{
+                          backgroundColor: this.state.company.settings.colors
+                            .headerText
+                        }}
+                        className="company-colors-color"
+                      />
+                      <Button
+                        icon={
+                          this.state.colorPicker.headerText
+                            ? "delete"
+                            : "eye dropper"
+                        }
+                        onClick={this.colorPickerToggle}
+                        id="headerText"
+                        style={{
+                          backgroundColor: this.state.colorPicker.headerText
+                            ? "#db2828"
+                            : "",
+                          color: this.state.colorPicker.headerText ? "#FFF" : ""
+                        }}
+                      />
+                    </div>
+                    {this.state.colorPicker.headerText && (
+                      <div className="popover">
+                        <div
+                          className="cover"
+                          onClick={this.colorPickerClose}
+                          data-id="headerText"
+                        />
+                        <SketchPicker
+                          className="color-picker"
+                          color={this.state.company.settings.colors.headerText}
+                          onChange={this.handleColorHeaderText}
+                        />
+                      </div>
+                    )}
                   </div>
                   <div className="company-colors-group">
                     <FormSubTitle first text="Botões de Confirmação" />
@@ -151,30 +424,93 @@ export class Settings extends Component {
                       <div
                         style={{
                           backgroundColor: this.state.company.settings.colors
-                            .confirmation
+                            .confirmationBack
                         }}
                         className="company-colors-color"
                       />
-                      <Button icon="eye dropper" onClick={this.colorPicker} />
+                      <Button
+                        icon={
+                          this.state.colorPicker.confirmationBack
+                            ? "delete"
+                            : "eye dropper"
+                        }
+                        onClick={this.colorPickerToggle}
+                        id="confirmationBack"
+                        style={{
+                          backgroundColor: this.state.colorPicker
+                            .confirmationBack
+                            ? "#db2828"
+                            : "",
+                          color: this.state.colorPicker.confirmationBack
+                            ? "#FFF"
+                            : ""
+                        }}
+                      />
                     </div>
+                    {this.state.colorPicker.confirmationBack && (
+                      <div className="popover">
+                        <div
+                          className="cover"
+                          onClick={this.colorPickerClose}
+                          data-id="confirmationBack"
+                        />
+                        <SketchPicker
+                          className="color-picker"
+                          color={
+                            this.state.company.settings.colors.confirmationBack
+                          }
+                          onChange={this.handleColorConfirmationBack}
+                        />
+                      </div>
+                    )}
+
                     <div className="company-colors-container">
-                      <span className="company-colors-label">Fonte:</span>
+                      <span className="company-colors-label">Texto:</span>
                       <div
                         style={{
                           backgroundColor: this.state.company.settings.colors
-                            .confirmationContrastColor
+                            .confirmationText
                         }}
                         className="company-colors-color"
                       />
-                      <Button icon="eye dropper" onClick={this.colorPicker} />
+                      <Button
+                        icon={
+                          this.state.colorPicker.confirmationText
+                            ? "delete"
+                            : "eye dropper"
+                        }
+                        onClick={this.colorPickerToggle}
+                        id="confirmationText"
+                        style={{
+                          backgroundColor: this.state.colorPicker
+                            .confirmationText
+                            ? "#db2828"
+                            : "",
+                          color: this.state.colorPicker.confirmationText
+                            ? "#FFF"
+                            : ""
+                        }}
+                      />
                     </div>
+                    {this.state.colorPicker.confirmationText && (
+                      <div className="popover">
+                        <div
+                          className="cover"
+                          onClick={this.colorPickerClose}
+                          data-id="confirmationText"
+                        />
+                        <SketchPicker
+                          className="color-picker"
+                          color={
+                            this.state.company.settings.colors.confirmationText
+                          }
+                          onChange={this.handleColorConfirmationText}
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
-                {/* <pre>
-                  colors:{" "}
-                  {JSON.stringify(this.state.company.settings.colors, null, 2)}
-                </pre> */}
-                <FormTitle text="Opções de Layout" />
+                <FormTitle text="Layout do Agendador" />
                 <div className="company-settings-container">
                   <div className="company-settings-group">
                     <FormSubTitle
@@ -347,7 +683,9 @@ export class Settings extends Component {
             </div>
           </>
         )}
-        {!this.state.company && <span>no company</span>}
+        {!this.state.company && (
+          <span>Erro ao carregar configurações da empresa</span>
+        )}
       </div>
     );
   }

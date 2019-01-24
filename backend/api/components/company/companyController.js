@@ -46,72 +46,72 @@ exports.getCompanyCss = async (req, res) => {
       display: block
     }
     h1,h2,h3 {
-      color: ${company.settings.colors.primary} !important
+      color: ${company.settings.colors.primaryBack} !important
     }
     .booker-header{ background-color: ${
-      company.settings.colors.header
+      company.settings.colors.headerBack
     } !important}
     .breadcrumbs-page-number{
-      border-color: ${company.settings.colors.primary} !important;
-      color: ${company.settings.colors.primary} !important
+      border-color: ${company.settings.colors.primaryBack} !important;
+      color: ${company.settings.colors.primaryBack} !important
     }
     .breadcrumbs-page-number__active{
-      background-color: ${company.settings.colors.primary} !important;
-      color: ${company.settings.colors.contrastColor} !important
+      background-color: ${company.settings.colors.primaryBack} !important;
+      color: ${company.settings.colors.primaryText} !important
     }
     .breadcrumbs-page-numbers::before{
-      background-color: ${company.settings.colors.primary} !important;
+      background-color: ${company.settings.colors.primaryBack} !important;
     }
     .specialist-img__selected {
-      border: 5px solid ${company.settings.colors.primary} !important;
+      border: 5px solid ${company.settings.colors.primaryBack} !important;
     }
     .selected-pill{
-      background-color: ${company.settings.colors.primary} !important;
-      color: ${company.settings.colors.contrastColor} !important
+      background-color: ${company.settings.colors.primaryBack} !important;
+      color: ${company.settings.colors.primaryText} !important
     }
     .react-datepicker__day--selected{
-      background-color: ${company.settings.colors.primary} !important;
-      color: ${company.settings.colors.contrastColor} !important
+      background-color: ${company.settings.colors.primaryBack} !important;
+      color: ${company.settings.colors.primaryText} !important
     }
     .ui.primary.button{
-      background-color: ${company.settings.colors.primary} !important;
-      color: ${company.settings.colors.contrastColor} !important
+      background-color: ${company.settings.colors.primaryBack} !important;
+      color: ${company.settings.colors.primaryText} !important
     }
     .service-price-container {
-      background-color: ${company.settings.colors.primary} !important;
-      color: ${company.settings.colors.contrastColor} !important
+      background-color: ${company.settings.colors.primaryBack} !important;
+      color: ${company.settings.colors.primaryText} !important
     }
     .service-remove-btn{
-      color: ${company.settings.colors.primary} !important;
+      color: ${company.settings.colors.primaryBack} !important;
     }
     .ticket-company-details-web a {
-      color: ${company.settings.colors.primary} !important;
+      color: ${company.settings.colors.primaryBack} !important;
     }
     .help-tooltip {
-      color: ${company.settings.colors.primary} !important;
+      color: ${company.settings.colors.primaryBack} !important;
     }
     .service-remove{
-      color: ${company.settings.colors.primary} !important;
+      color: ${company.settings.colors.primaryBack} !important;
     }
     .service-remove-btn{
-      color: ${company.settings.colors.primary} !important;
+      color: ${company.settings.colors.primaryBack} !important;
     }
     .confirmation{
-      background-color: ${company.settings.colors.confirmation} !important;
-      color: ${company.settings.colors.confirmationContrastColor} !important
+      background-color: ${company.settings.colors.confirmationBack} !important;
+      color: ${company.settings.colors.confirmationText} !important
     }
     .PaymentDetails {
-      background: hsl(${company.settings.colors.secondary}, 82%) !important;
-      color: ${company.settings.colors.contrastColor} !important;
+      background: ${company.settings.colors.secondaryBack} !important;
+      color: ${company.settings.colors.secondaryText} !important;
     }
     
     .payment-details-price {
-      background: hsl(${company.settings.colors.secondary}, 52%) !important;
-      color: ${company.settings.colors.contrastColor} !important;
+      background: ${company.settings.colors.secondaryBack} !important;
+      color: ${company.settings.colors.secondaryText} !important;
     }
     .payment-details-price-total {
-      background: hsl(${company.settings.colors.secondary}, 65%) !important;
-      color: ${company.settings.colors.contrastColor} !important;
+      background: ${company.settings.colors.secondaryBack} !important;
+      color: ${company.settings.colors.secondaryText} !important;
     }
     `;
 
@@ -186,7 +186,7 @@ exports.getCompanyCss = async (req, res) => {
     if (company.settings.options.showCompanyNickname) {
       customCss += `
       .booker-header-name {
-        color: ${company.settings.colors.contrastColor} !important
+        color: ${company.settings.colors.primaryText} !important
       }`;
     }
 
@@ -235,71 +235,71 @@ exports.getCompanyMobileCss = async (req, res) => {
       display: block
     }
     h1,h2,h3 {
-      color: ${company.settings.colors.primary} !important
+      color: ${company.settings.colors.primaryBack} !important
     }
     .booker-header{ background-color: ${
-      company.settings.colors.header
+      company.settings.colors.headerBack
     } !important}
     .breadcrumbs-page-number{
-      border-color: ${company.settings.colors.primary} !important;
-      color: ${company.settings.colors.primary} !important
+      border-color: ${company.settings.colors.primaryBack} !important;
+      color: ${company.settings.colors.primaryBack} !important
     }
     .breadcrumbs-page-number__active{
-      background-color: ${company.settings.colors.primary} !important;
-      color: ${company.settings.colors.contrastColor} !important
+      background-color: ${company.settings.colors.primaryBack} !important;
+      color: ${company.settings.colors.primaryText} !important
     }
     .breadcrumbs-page-numbers::before{
-      background-color: ${company.settings.colors.primary} !important;
+      background-color: ${company.settings.colors.primaryBack} !important;
     }
     .specialist-img__selected {
-      border: 5px solid ${company.settings.colors.primary} !important;
+      border: 5px solid ${company.settings.colors.primaryBack} !important;
     }
     .selected-pill{
-      background-color: ${company.settings.colors.primary} !important;
-      color: ${company.settings.colors.contrastColor} !important
+      background-color: ${company.settings.colors.primaryBack} !important;
+      color: ${company.settings.colors.primaryText} !important
     }
     .react-datepicker__day--selected{
-      background-color: ${company.settings.colors.primary} !important;
-      color: ${company.settings.colors.contrastColor} !important
+      background-color: ${company.settings.colors.primaryBack} !important;
+      color: ${company.settings.colors.primaryText} !important
     }
     .ui.primary.button{
-      background-color: ${company.settings.colors.primary} !important;
-      color: ${company.settings.colors.contrastColor} !important
+      background-color: ${company.settings.colors.primaryBack} !important;
+      color: ${company.settings.colors.primaryText} !important
     }
     .service-price-container {
-      color: ${company.settings.colors.primary} !important
+      color: ${company.settings.colors.primaryBack} !important
     }
     .service-remove-btn{
-      color: ${company.settings.colors.primary} !important;
+      color: ${company.settings.colors.primaryBack} !important;
     }
     .ticket-company-details-web a {
-      color: ${company.settings.colors.primary} !important;
+      color: ${company.settings.colors.primaryBack} !important;
     }
     .help-tooltip {
-      color: ${company.settings.colors.primary} !important;
+      color: ${company.settings.colors.primaryBack} !important;
     }
     .service-remove{
-      color: ${company.settings.colors.primary} !important;
+      color: ${company.settings.colors.primaryBack} !important;
     }
     .service-remove-btn{
-      color: ${company.settings.colors.primary} !important;
+      color: ${company.settings.colors.primaryBack} !important;
     }
     .confirmation{
-      background-color: ${company.settings.colors.confirmation} !important;
-      color: ${company.settings.colors.confirmationContrastColor} !important
+      background-color: ${company.settings.colors.confirmationBack} !important;
+      color: ${company.settings.colors.confirmationText} !important
     }
     .PaymentDetails {
-      background: hsl(${company.settings.colors.secondary}, 82%) !important;
-      color: ${company.settings.colors.contrastColor} !important;
+      background: ${company.settings.colors.secondaryBack} !important;
+      color: ${company.settings.colors.primaryText} !important;
     }
     
     .payment-details-price {
-      background: hsl(${company.settings.colors.secondary}, 52%) !important;
-      color: ${company.settings.colors.contrastColor} !important;
+      background: ${company.settings.colors.secondaryBack} !important;
+      color: ${company.settings.colors.primaryText} !important;
     }
     .payment-details-price-total {
-      background: hsl(${company.settings.colors.secondary}, 65%) !important;
-      color: ${company.settings.colors.contrastColor} !important;
+      background: ${company.settings.colors.secondaryBack} !important;
+      color: ${company.settings.colors.primaryText} !important;
     }
     `;
 

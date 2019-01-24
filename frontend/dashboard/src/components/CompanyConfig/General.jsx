@@ -838,7 +838,7 @@ export class General extends Component {
   componentDidUpdate() {
     // Load logo on Canvas
     if (this.state.company !== undefined && this.canvasLogo) {
-      this.canvasLogo.style.backgroundColor = this.state.company.settings.colors.primary;
+      this.canvasLogo.style.backgroundColor = this.state.company.settings.colors.primaryBack;
 
       const context = this.canvasLogo.getContext("2d");
       const image = new Image();

@@ -84,16 +84,14 @@ const CompanySchema = new Schema({
   ],
   settings: {
     colors: {
-      primary: { type: String, required: true, default: "#800080" },
-      secondary: { type: String, required: true, default: "46, 86%" },
-      header: { type: String, required: true, default: "#800080" },
-      confirmation: { type: String, required: true, default: "#21ba45" },
-      contrastColor: { type: String, required: true, default: "#FFFFFF" },
-      confirmationContrastColor: {
-        type: String,
-        required: true,
-        default: "#FFFFFF"
-      }
+      primaryBack: { type: String, required: true, default: "#800080" },
+      primaryText: { type: String, required: true, default: "#FFFFFF" },
+      secondaryBack: { type: String, required: true, default: "#CCFF66" },
+      secondaryText: { type: String, required: true, default: "#222222" },
+      headerBack: { type: String, required: true, default: "#800080" },
+      headerText: { type: String, required: true, default: "#FFFFFF" },
+      confirmationBack: { type: String, required: true, default: "#21BA45" },
+      confirmationText: { type: String, required: true, default: "#FFFFFF" }
     },
     options: {
       disableMarginTopBooker: { type: Boolean, required: true, default: false },

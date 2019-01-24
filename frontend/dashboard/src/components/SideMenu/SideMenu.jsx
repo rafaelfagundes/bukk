@@ -15,7 +15,7 @@ class SideMenu extends Component {
         className="SideMenu"
         style={{
           backgroundColor: this.props.company
-            ? this.props.company.settings.colors.primary
+            ? this.props.company.settings.colors.primaryBack
             : "#888"
         }}
         id="side-menu"

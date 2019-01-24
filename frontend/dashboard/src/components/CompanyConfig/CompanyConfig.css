@@ -128,3 +128,23 @@
   margin-right: 5px;
   border-radius: 4px;
 }
+
+.color-picker {
+  position: absolute;
+  z-index: 9999;
+}
+
+.popover {
+  position: absolute;
+  z-index: 9998;
+}
+.cover {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  top: 0;
+  right: 0;
+  left: 200px;
+  bottom: 0;
+  position: fixed;
+}
