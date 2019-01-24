@@ -5,7 +5,7 @@ import { Button } from "semantic-ui-react";
 import { setCurrentPage, setCompany } from "../dashboardActions";
 import "./CompanyConfig.css";
 import General from "./General";
-import { Settings } from "./Settings";
+import Settings from "./Settings";
 
 export class CompanyConfig extends Component {
   state = {

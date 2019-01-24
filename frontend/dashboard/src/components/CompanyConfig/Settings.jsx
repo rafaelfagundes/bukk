@@ -1,11 +1,9 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { SketchPicker } from "react-color";
-import {
-  setCurrentPage,
-  setCompany,
-  setCompanyLogo
-} from "../dashboardActions";
+import Axios from "axios";
+import { toast } from "react-toastify";
+import { setCompany } from "../dashboardActions";
 import FormTitle from "../Common/FormTitle";
 import {
   Checkbox,
@@ -17,8 +15,10 @@ import {
   Icon
 } from "semantic-ui-react";
 import FormSubTitle from "../Common/FormSubTitle";
+import config from "../../config";
+import Notification from "../Notification/Notification";
 
-export class Settings extends Component {
+class Settings extends Component {
   state = {
     company: undefined,
     colorPicker: {
@@ -55,7 +55,27 @@ export class Settings extends Component {
     });
   };
 
+  handleRule = e => {
+    let _rules = this.state.company.settings.appointment.rules;
+    const _index = e.currentTarget.id.replace("index-", "");
+    _rules[_index] = e.currentTarget.value;
+
+    this.setState({
+      company: {
+        ...this.state.company,
+        settings: {
+          ...this.state.company.settings,
+          appointment: {
+            ...this.state.company.settings.appointment,
+            rules: _rules
+          }
+        }
+      }
+    });
+  };
+
   addRule = e => {
+    e.preventDefault();
     this.setState({
       company: {
         ...this.state.company,
@@ -133,6 +153,7 @@ export class Settings extends Component {
   };
 
   colorPickerToggle = e => {
+    e.preventDefault();
     const _id = e.currentTarget.id;
     this.setState({
       colorPicker: {
@@ -152,13 +173,78 @@ export class Settings extends Component {
     });
   };
 
+  validate = e => {
+    let _rules = [];
+
+    this.state.company.settings.appointment.rules.forEach(rule => {
+      if (rule !== "") {
+        _rules.push(rule);
+      }
+    });
+
+    this.setState({
+      company: {
+        ...this.state.company,
+        settings: {
+          ...this.state.company.settings,
+          appointment: {
+            ...this.state.company.settings.appointment,
+            rules: _rules
+          }
+        }
+      }
+    });
+    return true;
+  };
+
+  saveSettings = e => {
+    e.preventDefault();
+    if (!this.validate()) {
+      return false;
+    }
+
+    const token = localStorage.getItem("token");
+    let requestConfig = {
+      headers: {
+        Authorization: token
+      }
+    };
+
+    Axios.post(
+      config.api + "/companies/update",
+      this.state.company,
+      requestConfig
+    )
+      .then(response => {
+        toast(
+          <Notification
+            type="success"
+            title="Dados atualizados com sucesso"
+            text="Os dados da empresa foram atualizados"
+          />
+        );
+        this.props.setCompany(this.state.company);
+        localStorage.setItem("company", JSON.stringify(this.state.company));
+      })
+      .catch(err => {
+        console.log(err);
+        toast(
+          <Notification
+            type="erro"
+            title="Erro ao atualizar dados da empresa"
+            text={err.response.data.msg}
+          />
+        );
+      });
+  };
+
   render() {
     return (
       <div>
         {this.state.company !== undefined && (
           <>
             <div className="Settings">
-              <Form>
+              <Form onSubmit={this.saveSettings}>
                 <FormTitle text="Cores" first />
                 <div className="company-colors-settings">
                   <div className="company-colors-group">
@@ -668,7 +754,9 @@ export class Settings extends Component {
                             id={"rule-" + index}
                           />
                         }
+                        id={"index-" + index}
                         placeholder="Nova regra"
+                        onChange={this.handleRule}
                       />
                     </FormField>
                   )
@@ -699,9 +787,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    setCurrentPage: currentPage => dispatch(setCurrentPage(currentPage)),
-    setCompany: company => dispatch(setCompany(company)),
-    setCompanyLogo: logo => dispatch(setCompanyLogo(logo))
+    setCompany: company => dispatch(setCompany(company))
   };
 };
 

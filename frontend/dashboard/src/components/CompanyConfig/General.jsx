@@ -45,7 +45,7 @@ const errorList = {
   workingDays: []
 };
 
-export class General extends Component {
+class General extends Component {
   state = {
     activeItem: "geral",
     company: undefined,
@@ -101,13 +101,6 @@ export class General extends Component {
             "https://res.cloudinary.com/bukkapp/image/upload/v1547692316/Bukk/Assets/Payment%20Icons/visa.png"
         }
       },
-      // other: {
-      //   boleto: false,
-      //   cash: false,
-      //   crypto: false,
-      //   debitCard: false,
-      //   wireTransfer: false
-      // }
       other: {
         boleto: {
           enabled: false,
