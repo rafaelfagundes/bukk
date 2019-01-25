@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import { toast } from "react-toastify";
 import { connect } from "react-redux";
+import Spinner from "react-spinkit";
 import {
   Image,
   Card,
@@ -45,6 +46,7 @@ class Profile extends Component {
     page: "general",
     user: undefined,
     employee: undefined,
+    loading: false,
     errors: {
       firstName: { msg: "", error: false },
       lastName: { msg: "", error: false },
@@ -191,6 +193,7 @@ class Profile extends Component {
   };
 
   changePassword = () => {
+    this.setState({ loading: true });
     let errorsCount = 0;
     if (validator.isEmpty(this.state.password.confirmation)) {
       errorsCount++;
@@ -289,10 +292,11 @@ class Profile extends Component {
               text="A senha foi atualizada com sucesso."
             />
           );
-          this.setState({ page: "general" });
+          this.setState({ loading: false, page: "general" });
         })
         .catch(error => {
           this.setState({
+            loading: false,
             password: {
               ...this.state.password,
               error: {
@@ -1071,26 +1075,60 @@ class Profile extends Component {
                 </Button>
               )}
               {this.state.page === "editProfile" && (
-                <Button
-                  icon
-                  labelPosition="left"
-                  color="green"
-                  onClick={this.saveGeneral}
-                >
-                  <Icon name="cloud" />
-                  Salvar
-                </Button>
+                <>
+                  <Button
+                    icon
+                    labelPosition="left"
+                    color="green"
+                    onClick={this.saveGeneral}
+                  >
+                    <Icon name="cloud" />
+                    Salvar
+                  </Button>
+                  {this.state.loading && (
+                    <Spinner
+                      style={{
+                        top: "6px",
+                        left: "5px",
+                        display: "inline-block"
+                      }}
+                      name="circle"
+                      color={
+                        this.props.company
+                          ? this.props.company.settings.colors.primaryBack
+                          : ""
+                      }
+                    />
+                  )}
+                </>
               )}
               {this.state.page === "changePassword" && (
-                <Button
-                  icon
-                  labelPosition="left"
-                  color="green"
-                  onClick={this.changePassword}
-                >
-                  <Icon name="key" />
-                  Alterar Senha
-                </Button>
+                <>
+                  <Button
+                    icon
+                    labelPosition="left"
+                    color="green"
+                    onClick={this.changePassword}
+                  >
+                    <Icon name="key" />
+                    Alterar Senha
+                  </Button>
+                  {this.state.loading && (
+                    <Spinner
+                      style={{
+                        top: "6px",
+                        left: "5px",
+                        display: "inline-block"
+                      }}
+                      name="circle"
+                      color={
+                        this.props.company
+                          ? this.props.company.settings.colors.primaryBack
+                          : ""
+                      }
+                    />
+                  )}
+                </>
               )}
               {this.state.page !== "general" && (
                 <Button
@@ -1124,7 +1162,8 @@ const mapStateToProps = state => {
   return {
     user: state.dashboard.user,
     employee: state.dashboard.employee,
-    currentPage: state.dashboard.currentPage
+    currentPage: state.dashboard.currentPage,
+    company: state.dashboard.company
   };
 };
 

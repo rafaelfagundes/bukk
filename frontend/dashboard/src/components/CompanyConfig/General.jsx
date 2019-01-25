@@ -2,6 +2,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { toast } from "react-toastify";
+import Spinner from "react-spinkit";
 import Axios from "axios";
 import {
   Button,
@@ -48,6 +49,7 @@ const errorList = {
 class General extends Component {
   state = {
     activeItem: "geral",
+    loading: false,
     company: undefined,
     paymentTypes: {
       cc: {
@@ -600,6 +602,7 @@ class General extends Component {
   };
 
   saveCompanyInfo = e => {
+    this.setState({ loading: true });
     if (!this.validateCompany()) {
       return false;
     }
@@ -639,15 +642,6 @@ class General extends Component {
       }
     }
 
-    const _notification = toast(
-      <Notification
-        type="loading"
-        title="Salvando as informações"
-        text="Aguarde enquanto salvamos as informações da empresa"
-      />,
-      { autoClose: false }
-    );
-
     if (this.imageInput.value) {
       const data = new FormData(e.currentTarget);
 
@@ -659,7 +653,7 @@ class General extends Component {
           this.callUpdate(_company, requestConfig);
         })
         .catch(err => {
-          toast.dismiss(_notification);
+          this.setState({ loading: false });
           toast(
             <Notification
               type="erro"
@@ -677,7 +671,6 @@ class General extends Component {
   callUpdate = (_company, requestConfig, _notification) => {
     Axios.post(config.api + "/companies/update", _company, requestConfig)
       .then(response => {
-        toast.dismiss(_notification);
         toast(
           <Notification
             type="success"
@@ -686,11 +679,11 @@ class General extends Component {
           />
         );
         this.props.setCompany(_company);
-        this.setState({ company: _company });
+        this.setState({ loading: false, company: _company });
         localStorage.setItem("company", JSON.stringify(_company));
       })
       .catch(err => {
-        toast.dismiss(_notification);
+        this.setState({ loading: false });
         toast(
           <Notification
             type="erro"
@@ -1697,6 +1690,13 @@ class General extends Component {
                 <Icon name="cloud" />
                 Salvar
               </Button>
+              {this.state.loading && (
+                <Spinner
+                  style={{ top: "6px", left: "5px", display: "inline-block" }}
+                  name="circle"
+                  color={this.props.company.settings.colors.primaryBack}
+                />
+              )}
             </Form>
           </div>
         )}

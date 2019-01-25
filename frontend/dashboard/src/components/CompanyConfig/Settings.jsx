@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { SketchPicker } from "react-color";
+import Spinner from "react-spinkit";
 import Axios from "axios";
 import { toast } from "react-toastify";
 import { setCompany } from "../dashboardActions";
@@ -21,6 +22,7 @@ import Notification from "../Notification/Notification";
 class Settings extends Component {
   state = {
     company: undefined,
+    loading: false,
     colorPicker: {
       primaryBack: false,
       primaryText: false,
@@ -198,6 +200,7 @@ class Settings extends Component {
   };
 
   saveSettings = e => {
+    this.setState({ loading: true });
     e.preventDefault();
     if (!this.validate()) {
       return false;
@@ -225,9 +228,10 @@ class Settings extends Component {
         );
         this.props.setCompany(this.state.company);
         localStorage.setItem("company", JSON.stringify(this.state.company));
+        this.setState({ loading: false });
       })
       .catch(err => {
-        console.log(err);
+        this.setState({ loading: false });
         toast(
           <Notification
             type="erro"
@@ -767,6 +771,13 @@ class Settings extends Component {
                   <Icon name="cloud" />
                   Salvar
                 </Button>
+                {this.state.loading && (
+                  <Spinner
+                    style={{ top: "6px", left: "5px", display: "inline-block" }}
+                    name="circle"
+                    color={this.props.company.settings.colors.primaryBack}
+                  />
+                )}
               </Form>
             </div>
           </>

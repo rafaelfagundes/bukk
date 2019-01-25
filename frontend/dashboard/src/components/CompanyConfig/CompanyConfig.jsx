@@ -9,7 +9,7 @@ import Settings from "./Settings";
 
 export class CompanyConfig extends Component {
   state = {
-    activeItem: "preferencias"
+    activeItem: "geral"
   };
 
   handleItemClick = (e, { name }) => this.setState({ activeItem: name });
