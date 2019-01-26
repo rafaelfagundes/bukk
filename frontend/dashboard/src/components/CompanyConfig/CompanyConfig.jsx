@@ -6,10 +6,12 @@ import { setCurrentPage, setCompany } from "../dashboardActions";
 import "./CompanyConfig.css";
 import General from "./General";
 import Settings from "./Settings";
+import Services from "./Services";
+import Staff from "./Staff";
 
 export class CompanyConfig extends Component {
   state = {
-    activeItem: "geral"
+    activeItem: "servicos"
   };
 
   handleItemClick = (e, { name }) => this.setState({ activeItem: name });
@@ -66,6 +68,8 @@ export class CompanyConfig extends Component {
             </div>
             <div className="company-config-body">
               {this.state.activeItem === "geral" && <General />}
+              {this.state.activeItem === "servicos" && <Services />}
+              {this.state.activeItem === "funcionarios" && <Staff />}
               {this.state.activeItem === "preferencias" && <Settings />}
             </div>
           </div>

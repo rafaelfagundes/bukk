@@ -3,13 +3,33 @@ const validator = require("validator");
 const locale = "pt-BR";
 
 exports.isAlpha = value => {
-  let v = value.replace(/\s/g, "");
-  return validator.isAlpha(v, locale);
+  try {
+    let v = String(value).replace(/\s/g, "");
+    return validator.isAlpha(v, locale);
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
 };
 
 exports.isAlphaNumeric = value => {
-  let v = value.replace(/\s/g, "");
-  return validator.isAlphanumeric(v, locale);
+  try {
+    let v = String(value).replace(/\s/g, "");
+    return validator.isAlphanumeric(v, locale);
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
+};
+
+exports.isNumeric = value => {
+  try {
+    let v = String(value);
+    return validator.isNumeric(v, locale);
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
 };
 
 exports.isMobilePhone = value => {

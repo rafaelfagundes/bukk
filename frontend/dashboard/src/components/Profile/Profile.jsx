@@ -430,7 +430,7 @@ class Profile extends Component {
       .catch(err => {
         toast(
           <Notification
-            type="erro"
+            type="error"
             title="Erro ao atualizar imagem"
             text={err.response.data.msg}
           />

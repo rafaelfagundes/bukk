@@ -656,7 +656,7 @@ class General extends Component {
           this.setState({ loading: false });
           toast(
             <Notification
-              type="erro"
+              type="error"
               title="Erro ao atualizar imagem"
               text={err.response.data.msg}
             />
@@ -686,7 +686,7 @@ class General extends Component {
         this.setState({ loading: false });
         toast(
           <Notification
-            type="erro"
+            type="error"
             title="Erro ao atualizar dados da empresa"
             text={err.response.data.msg}
           />

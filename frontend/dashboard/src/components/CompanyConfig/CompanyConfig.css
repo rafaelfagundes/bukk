@@ -148,3 +148,28 @@
   bottom: 0;
   position: fixed;
 }
+
+.company-config-service-cell {
+  display: flex;
+  flex-direction: row;
+}
+
+.company-config-service-label {
+  line-height: 38px;
+  padding: 0 5px;
+}
+
+.company-config-service-desc {
+  width: 100% !important;
+}
+
+.company-config-service-duration input {
+  width: 56px !important;
+}
+
+.company-config-service-value input {
+  width: 80px !important;
+}
+.services-error {
+  margin: 15px 0 0px 0;
+}

@@ -35,6 +35,18 @@ router.get(
   service.getServicesByCompany
 );
 
+router.post(
+  BASE_URL + "/services/company/",
+  verifyToken,
+  service.companyServices
+);
+
+router.post(
+  BASE_URL + "/services/company/update",
+  verifyToken,
+  service.updateCompanyServices
+);
+
 /*============================================================
 Specialist (Employee)
 ============================================================*/

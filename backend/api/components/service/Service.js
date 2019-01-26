@@ -7,7 +7,7 @@ const ServiceSchema = new Schema({
   value: { type: Number, required: true },
   duration: { type: Number, required: true }, // Minutes
   products: [{ desc: String, value: Number, units: Number }],
-  display: { type: Boolean, required: true },
+  display: { type: Boolean, required: true, default: true },
   company: { type: Schema.Types.ObjectId, ref: "Company" },
   createdAt: { type: Date, default: Date.now }
 });

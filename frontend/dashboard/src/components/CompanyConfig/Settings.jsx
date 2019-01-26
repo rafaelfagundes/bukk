@@ -234,7 +234,7 @@ class Settings extends Component {
         this.setState({ loading: false });
         toast(
           <Notification
-            type="erro"
+            type="error"
             title="Erro ao atualizar dados da empresa"
             text={err.response.data.msg}
           />
@@ -765,7 +765,10 @@ class Settings extends Component {
                     </FormField>
                   )
                 )}
-                <Button onClick={this.addRule}>Adicionar nova regra</Button>
+                <Button icon labelPosition="left" onClick={this.addRule}>
+                  <Icon name="plus" />
+                  Adicionar regra
+                </Button>
                 <Divider style={{ marginTop: "40px" }} />
                 <Button icon labelPosition="left" color="green" type="submit">
                   <Icon name="cloud" />
@@ -791,7 +794,6 @@ class Settings extends Component {
 }
 const mapStateToProps = state => {
   return {
-    currentPage: state.dashboard.currentPage,
     company: state.dashboard.company
   };
 };

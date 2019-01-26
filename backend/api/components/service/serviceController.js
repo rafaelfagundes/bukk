@@ -1,5 +1,6 @@
 // External Dependancies
 const boom = require("boom");
+const auth = require("../../auth");
 
 // Get Data Models
 const Service = require("./Service");
@@ -29,6 +30,26 @@ exports.getServicesByCompany = async (req, res) => {
   }
 };
 
+// Get all services by company [POST]
+exports.companyServices = async (req, res) => {
+  try {
+    const token = auth.verify(req.token);
+    if (!token) {
+      res.status(403).json({
+        msg: "Token inválido."
+      });
+    } else {
+      const services = await Service.find(
+        { company: req.body._id },
+        "id desc value duration display"
+      );
+      res.send(services);
+    }
+  } catch (err) {
+    throw boom.boomify(err);
+  }
+};
+
 // Get single service by ID
 exports.getSingleService = async (req, res) => {
   try {
@@ -50,16 +71,38 @@ exports.addService = async (req, res) => {
   }
 };
 
-// Update an existing service
-exports.updateService = async (req, res) => {
+// Update an existing service [POST]
+exports.updateCompanyServices = async (req, res) => {
   try {
-    const id = req.params.id;
-    const service = req.body;
-    const { ...updateData } = service;
-    const update = await Service.findByIdAndUpdate(id, updateData, {
-      new: true
-    });
-    return update;
+    const token = auth.verify(req.token);
+    if (!token) {
+      res.status(403).json({
+        msg: "Token inválido."
+      });
+    } else {
+      const _companyId = req.body.companyId;
+      const _services = req.body.services;
+
+      for (let s in _services) {
+        if (_services[s]._id === undefined) {
+          _services[s].company = _companyId;
+          await Service.create(_services[s]);
+        } else {
+          _services[s].company = _companyId;
+          await Service.update(
+            { _id: _services[s]._id, company: _companyId },
+            _services[s]
+          );
+        }
+      }
+
+      const _servicesResult = await Service.find(
+        { company: _companyId },
+        "id desc value duration display"
+      );
+
+      res.send({ msg: "OK", services: _servicesResult });
+    }
   } catch (err) {
     throw boom.boomify(err);
   }
