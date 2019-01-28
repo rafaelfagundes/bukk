@@ -227,7 +227,7 @@ export class Services extends Component {
         <Table celled padded>
           <Table.Header>
             <Table.Row>
-              <Table.HeaderCell>Habilitar</Table.HeaderCell>
+              <Table.HeaderCell>Mostrar</Table.HeaderCell>
               <Table.HeaderCell>Descrição</Table.HeaderCell>
               <Table.HeaderCell>Duração</Table.HeaderCell>
               <Table.HeaderCell>Valor</Table.HeaderCell>

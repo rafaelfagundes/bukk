@@ -142,7 +142,7 @@ exports.getEmployees = async (req, res) => {
   }
 };
 
-// Get all employees by company
+// Get all employees by company [GET]
 exports.getEmployeesByCompany = async (req, res) => {
   try {
     const companyId = req.params.companyId;
@@ -176,6 +176,65 @@ exports.getEmployeesByCompany = async (req, res) => {
           "employee.services": 1,
           "employee.title": 1,
           "employee.avatar": 1
+        }
+      }
+    ]);
+    res.send(employees);
+  } catch (err) {
+    throw boom.boomify(err);
+  }
+};
+
+// Get all employees by company [POST]
+exports.allEmployeesByCompany = async (req, res) => {
+  const token = auth.verify(req.token);
+  if (!token) {
+    res.status(403).json({
+      msg: "Token inválido."
+    });
+  }
+
+  try {
+    const companyId = req.body.companyId;
+    const employees = await User.aggregate([
+      {
+        $match: {
+          company: new mongoose.Types.ObjectId(companyId),
+          role: "employee"
+        }
+      },
+      {
+        $lookup: {
+          from: "employees",
+          localField: "_id",
+          foreignField: "user",
+          as: "employee"
+        }
+      },
+      {
+        $unwind: {
+          path: "$employee"
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          firstName: 1,
+          lastName: 1,
+          avatar: 1,
+          gender: 1,
+          birthday: 1,
+          email: 1,
+          phone: 1,
+          address: 1,
+          "employee._id": 1,
+          "employee.services": 1,
+          "employee.title": 1,
+          "employee.avatar": 1,
+          "employee.salesCommission": 1,
+          "employee.workingDays": 1,
+          "employee.salary": 1,
+          "employee.enabled": 1
         }
       }
     ]);

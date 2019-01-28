@@ -61,3 +61,9 @@ exports.formatHour = h => {
     return h;
   }
 };
+
+exports.formatCurrency = c => {
+  return parseFloat(String(c))
+    .toFixed(2)
+    .replace(".", ",");
+};

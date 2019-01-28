@@ -8,6 +8,7 @@ export default class Logout extends Component {
     localStorage.removeItem("employee");
     localStorage.removeItem("company");
     localStorage.removeItem("services");
+    localStorage.removeItem("staff");
   }
 
   render() {

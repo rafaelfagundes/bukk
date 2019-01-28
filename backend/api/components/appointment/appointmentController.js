@@ -51,27 +51,6 @@ const checkEmptyTimeInSchedule = async services => {
   return _resultsCounter === 0 ? true : false;
 };
 
-// Get all appointments
-exports.getAppointments = async (req, res) => {
-  try {
-    const appointments = await Appointment.find();
-    return appointments;
-  } catch (err) {
-    throw boom.boomify(err);
-  }
-};
-
-// Get single appointment by ID
-exports.getSingleAppointment = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const appointment = await Appointment.findById(id);
-    return appointment;
-  } catch (err) {
-    throw boom.boomify(err);
-  }
-};
-
 // Add a new appointment
 exports.addAppointment = async (req, res) => {
   const okToContinue = await checkEmptyTimeInSchedule(req.body.services);
@@ -112,8 +91,6 @@ exports.addAppointment = async (req, res) => {
       const resultAppointment = await Appointment.create(_appointments);
 
       if (resultAppointment) {
-        // TODO: Send email
-
         const template = await templates.newAppointment(_confirmationId);
         const mail = new Mail(
           "Agendamento concluído com sucesso",
@@ -146,32 +123,6 @@ exports.addAppointment = async (req, res) => {
       msg:
         "A data e horário escolhidos não estão mais disponíveis. Tente novamente em outro horário."
     });
-  }
-};
-
-// Update an existing appointment
-exports.updateAppointment = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const appointment = req.body;
-    const { ...updateData } = appointment;
-    const update = await Appointment.findByIdAndUpdate(id, updateData, {
-      new: true
-    });
-    return update;
-  } catch (err) {
-    throw boom.boomify(err);
-  }
-};
-
-// Delete an appointment
-exports.deleteAppointment = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const appointment = await Appointment.findByIdAndRemove(id);
-    return appointment;
-  } catch (err) {
-    throw boom.boomify(err);
   }
 };
 

@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 // Employee Schema & Model
 const EmployeeSchema = new Schema({
   user: { type: Schema.Types.ObjectId, ref: "User" },
+  enabled: { type: Boolean, required: true, default: true },
   workingDays: [
     {
       weekDay: {
