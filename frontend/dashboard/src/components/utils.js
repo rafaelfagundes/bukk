@@ -1,4 +1,5 @@
 exports.formatBrazilianPhoneNumber = phone => {
+  phone = phone.replace(/[^\d]+/g, "");
   if (phone.length === 11) {
     let _number = `(${phone[0]}${phone[1]}) ${phone[2]}${phone[3]}${phone[4]}${
       phone[5]

@@ -218,7 +218,7 @@ exports.allEmployeesByCompany = async (req, res) => {
       },
       {
         $project: {
-          _id: 0,
+          _id: 1,
           firstName: 1,
           lastName: 1,
           avatar: 1,
@@ -264,16 +264,6 @@ exports.getEmployeeByUserId = async (req, res) => {
     }
   } catch (err) {
     res.send(boom.boomify(err));
-  }
-};
-// Get single employee by ID
-exports.getSingleEmployee = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const employee = await Employee.findById(id);
-    return employee;
-  } catch (err) {
-    throw boom.boomify(err);
   }
 };
 
@@ -340,13 +330,45 @@ exports.updateEmployee = async (req, res) => {
   }
 };
 
-// Delete a employee
-exports.deleteEmployee = async (req, res) => {
+// Update User-Employee
+exports.updateUserEmployee = async (req, res) => {
+  const token = auth.verify(req.token);
+  if (!token) {
+    res.status(403).json({
+      msg: "Invalid token"
+    });
+  }
+
+  if (token.role !== "owner") {
+    res.status(403).json({
+      msg: "Permissão negada"
+    });
+  }
+
   try {
-    const id = req.params.id;
-    const employee = await Employee.findByIdAndRemove(id);
-    return employee;
-  } catch (err) {
-    throw boom.boomify(err);
+    const user = await User.updateOne(
+      { _id: req.body.user._id },
+      req.body.user
+    );
+    const employee = await Employee.updateOne(
+      { _id: req.body.employee._id },
+      req.body.employee
+    );
+
+    console.log(user);
+    console.log(employee);
+
+    if (employee && user) {
+      res.status(200).send({ msg: "OK" });
+    } else {
+      console.log(employee, user);
+      res.status(500).json({
+        msg: "Error: can not update employee"
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      msg: "Error: can not update employee: " + error
+    });
   }
 };
