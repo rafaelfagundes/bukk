@@ -85,6 +85,12 @@ router.patch(
   specialist.updateUserEmployee
 );
 
+router.patch(
+  BASE_URL + "/specialists/availabilty",
+  verifyToken,
+  specialist.updateEmployeeAvailability
+);
+
 /*============================================================
 Appointment
 ============================================================*/

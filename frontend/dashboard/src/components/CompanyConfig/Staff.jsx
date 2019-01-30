@@ -34,7 +34,7 @@ const errorsTemplate = {
 
 export class Staff extends Component {
   state = {
-    editClicked: true,
+    editClicked: false,
     removeClicked: false,
     loading: false,
     currentEmployeeIndex: 0,
@@ -85,7 +85,56 @@ export class Staff extends Component {
     });
   };
 
-  handleRemoveEmployee = e => {
+  callEmployeeAvailability = (index, value) => {
+    this.setState({ loading: true });
+
+    const token = localStorage.getItem("token");
+    let requestConfig = {
+      headers: {
+        Authorization: token
+      }
+    };
+
+    const _employees = [...this.state.employees];
+    _employees[index].employee.enabled = value;
+
+    Axios.patch(
+      config.api + "/specialists/availabilty",
+      { _id: _employees[index].employee._id, enabled: value },
+      requestConfig
+    )
+      .then(response => {
+        this.setState({
+          employees: _employees,
+          editClicked: false,
+          removeClicked: false,
+          loading: false
+        });
+        localStorage.setItem("staff", JSON.stringify(_employees));
+        return true;
+      })
+      .catch(error => {
+        this.setState({ loading: false });
+        return false;
+      });
+  };
+
+  handleEmployeeAvailabilityCkb = e => {
+    const _index = e.currentTarget.id.replace("display-", "");
+    const _value = e.currentTarget.checked;
+    this.callEmployeeAvailability(_index, _value);
+  };
+
+  handleEmployeeAvailabilityBtn = e => {
+    const _employees = [...this.state.employees];
+    const _index = this.state.currentEmployeeIndex;
+    const _value = !_employees[_index].employee.enabled;
+    this.callEmployeeAvailability(_index, _value);
+  };
+  // -
+  // -
+  // -
+  handleRemoveEmployeeCkb = e => {
     const _index = Number(e.currentTarget.id.replace("remove-", ""));
 
     this.setState({
@@ -347,7 +396,7 @@ export class Staff extends Component {
             <Table celled padded>
               <Table.Header>
                 <Table.Row>
-                  <Table.HeaderCell>Ativo</Table.HeaderCell>
+                  <Table.HeaderCell>Ativo?</Table.HeaderCell>
                   <Table.HeaderCell>Nome</Table.HeaderCell>
                   <Table.HeaderCell>Função</Table.HeaderCell>
                   <Table.HeaderCell>Email</Table.HeaderCell>
@@ -362,8 +411,9 @@ export class Staff extends Component {
                       <Checkbox
                         toggle
                         checked={employee.employee.enabled}
-                        onChange={this.handleEmployeeAvailability}
+                        onChange={this.handleEmployeeAvailabilityCkb}
                         id={"display-" + index}
+                        disabled={this.state.loading}
                       />
                     </Table.Cell>
                     <Table.Cell>
@@ -387,7 +437,7 @@ export class Staff extends Component {
                       </Button>
                       <Button
                         icon
-                        onClick={this.handleRemoveEmployee}
+                        onClick={this.handleRemoveEmployeeCkb}
                         id={"remove-" + index}
                         color="red"
                       >
@@ -398,6 +448,10 @@ export class Staff extends Component {
                 ))}
               </Table.Body>
             </Table>
+            <Button color="green" icon labelPosition="left">
+              <Icon name="plus" />
+              Adicionar Funcionário
+            </Button>
           </>
         )}
         {/* ===========================================================
@@ -406,16 +460,19 @@ export class Staff extends Component {
         {this.state.removeClicked && (
           <>
             <FormTitle text="Controle de Funcionário" first />
-            {_employee.employee.enabled && (
-              <>
-                <Button color="blue" icon="power" content="Desativar" />
-                <Information
-                  show
-                  text="Você pode desativar temporariamente um funcionário. Não se preocupe, nenhum dado será apagado."
-                />
-                <br />
-              </>
-            )}
+            <>
+              <Button
+                color="blue"
+                icon="power"
+                content={_employee.employee.enabled ? "Desativar" : "Ativar"}
+                onClick={this.handleEmployeeAvailabilityBtn}
+              />
+              <Information
+                show
+                text="Você pode desativar temporariamente um funcionário. Não se preocupe, nenhum dado será apagado."
+              />
+              <br />
+            </>
 
             <Button color="red" icon="delete" content="Remover" negative />
             <Information

@@ -355,9 +355,6 @@ exports.updateUserEmployee = async (req, res) => {
       req.body.employee
     );
 
-    console.log(user);
-    console.log(employee);
-
     if (employee && user) {
       res.status(200).send({ msg: "OK" });
     } else {
@@ -370,5 +367,33 @@ exports.updateUserEmployee = async (req, res) => {
     res.status(500).json({
       msg: "Error: can not update employee: " + error
     });
+  }
+};
+
+// Employee Enabled/Disabled
+
+exports.updateEmployeeAvailability = async (req, res) => {
+  const token = auth.verify(req.token);
+  if (!token) {
+    res.status(403).json({
+      msg: "Invalid token"
+    });
+  }
+
+  if (token.role !== "owner") {
+    res.status(403).json({
+      msg: "Permissão negada"
+    });
+  }
+
+  try {
+    const employee = await Employee.updateOne({ _id: req.body._id }, req.body);
+    if (employee.ok) {
+      res.status(200).send({ msg: "OK" });
+    } else {
+      res.status(500).send({ msg: "Impossível atualizar estado do usuário" });
+    }
+  } catch (error) {
+    throw boom.boomify(error);
   }
 };
