@@ -371,7 +371,6 @@ exports.updateUserEmployee = async (req, res) => {
 };
 
 // Employee Enabled/Disabled
-
 exports.updateEmployeeAvailability = async (req, res) => {
   const token = auth.verify(req.token);
   if (!token) {
@@ -395,5 +394,37 @@ exports.updateEmployeeAvailability = async (req, res) => {
     }
   } catch (error) {
     throw boom.boomify(error);
+  }
+};
+
+// Remove Employee
+exports.removeEmployee = async (req, res) => {
+  const token = auth.verify(req.token);
+  if (!token) {
+    res.status(403).json({
+      msg: "Invalid token"
+    });
+  }
+
+  if (token.role !== "owner") {
+    res.status(403).json({
+      msg: "Permissão negada"
+    });
+  }
+
+  const employee = await Employee.deleteOne({ _id: req.body.employeeId });
+  console.log("employee", employee);
+  if (employee.ok) {
+    const user = await User.deleteOne({ _id: req.body.userId });
+    console.log("user", user);
+    if (user.ok) {
+      res.status(200).send({ msg: "OK" });
+    } else {
+      res
+        .status(500)
+        .send({ msg: "Erro ao remover usuário. Este é um erro crítico!" });
+    }
+  } else {
+    res.status(500).send({ msg: "Erro ao remover funcionário." });
   }
 };

@@ -91,6 +91,12 @@ router.patch(
   specialist.updateEmployeeAvailability
 );
 
+router.post(
+  BASE_URL + "/specialists/delete",
+  verifyToken,
+  specialist.removeEmployee
+);
+
 /*============================================================
 Appointment
 ============================================================*/

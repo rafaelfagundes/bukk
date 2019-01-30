@@ -16,7 +16,8 @@ import {
   Image,
   Checkbox,
   Divider,
-  Form
+  Form,
+  Confirm
 } from "semantic-ui-react";
 import { formatBrazilianPhoneNumber, formatCEP } from "../utils";
 import { states } from "../../config/BrasilAddress";
@@ -38,6 +39,7 @@ export class Staff extends Component {
     removeClicked: false,
     loading: false,
     currentEmployeeIndex: 0,
+    confirmRemoveToggle: false,
     employees: [],
     errors: errorsTemplate
   };
@@ -111,11 +113,23 @@ export class Staff extends Component {
           loading: false
         });
         localStorage.setItem("staff", JSON.stringify(_employees));
-        return true;
+        toast(
+          <Notification
+            type="success"
+            title={value ? "Funcionário ativado" : "Funcionário desativado"}
+            text="Alterações na visibilidade do funcionário concluídas com sucesso"
+          />
+        );
       })
       .catch(error => {
         this.setState({ loading: false });
-        return false;
+        toast(
+          <Notification
+            type="error"
+            title="Erro ao ativar ou desativar funcionário"
+            text="Alterações na visibilidade do funcionário falharam"
+          />
+        );
       });
   };
 
@@ -134,7 +148,64 @@ export class Staff extends Component {
   // -
   // -
   // -
-  handleRemoveEmployeeCkb = e => {
+
+  confirmRemove = e => {
+    this.setState({
+      confirmRemoveToggle: !this.state.confirmRemoveToggle
+    });
+  };
+
+  handleEmployeeRemove = e => {
+    console.log("Removing employee");
+    this.setState({ loading: true, confirmRemoveToggle: false });
+    const token = localStorage.getItem("token");
+    let requestConfig = {
+      headers: {
+        Authorization: token
+      }
+    };
+    const _employeeId = this.state.employees[this.state.currentEmployeeIndex]
+      .employee._id;
+    const _userId = this.state.employees[this.state.currentEmployeeIndex]._id;
+    let _employees = [...this.state.employees];
+    _employees.splice([this.state.currentEmployeeIndex], 1);
+
+    Axios.post(
+      config.api + "/specialists/delete",
+      { employeeId: _employeeId, userId: _userId },
+      requestConfig
+    )
+      .then(response => {
+        this.setState({
+          employees: _employees,
+          editClicked: false,
+          removeClicked: false,
+          loading: false
+        });
+        localStorage.setItem("staff", JSON.stringify(_employees));
+        toast(
+          <Notification
+            type="success"
+            title="Funcionário removido"
+            text="Funcionário removido com sucesso"
+          />
+        );
+      })
+      .catch(error => {
+        this.setState({ loading: false });
+        toast(
+          <Notification
+            type="error"
+            title="Erro ao remover funcionário"
+            text="Não foi possível remover o funcionário"
+          />
+        );
+      });
+  };
+  // -
+  // -
+  // -
+  handleEmployeeActions = e => {
     const _index = Number(e.currentTarget.id.replace("remove-", ""));
 
     this.setState({
@@ -437,7 +508,7 @@ export class Staff extends Component {
                       </Button>
                       <Button
                         icon
-                        onClick={this.handleRemoveEmployeeCkb}
+                        onClick={this.handleEmployeeActions}
                         id={"remove-" + index}
                         color="red"
                       >
@@ -466,6 +537,7 @@ export class Staff extends Component {
                 icon="power"
                 content={_employee.employee.enabled ? "Desativar" : "Ativar"}
                 onClick={this.handleEmployeeAvailabilityBtn}
+                disabled={this.state.loading}
               />
               <Information
                 show
@@ -473,8 +545,23 @@ export class Staff extends Component {
               />
               <br />
             </>
-
-            <Button color="red" icon="delete" content="Remover" negative />
+            <Button
+              color="red"
+              icon="delete"
+              content="Remover"
+              negative
+              onClick={this.confirmRemove}
+              disabled={this.state.loading}
+            />
+            <Confirm
+              open={this.state.confirmRemoveToggle}
+              onCancel={this.confirmRemove}
+              onConfirm={this.handleEmployeeRemove}
+              header="Tem certeza que deseja remover o funcionário?"
+              content="Essa ação é irreversível. Opte por desativar caso queira somente não exibir o funcionário nas telas de agendamento."
+              cancelButton="Cancelar"
+              confirmButton="Sim, desejo remover o funcionário"
+            />
             <Information
               show
               text="Removendo o funcionário, todas as informações serão apagadas."
