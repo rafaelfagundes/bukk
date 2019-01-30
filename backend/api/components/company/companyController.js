@@ -18,14 +18,18 @@ exports.getCompany = async (req, res) => {
 
     const user = await User.findById(token.id);
 
-    if (user.role !== "owner") {
-      res.status(403).send({ msg: "Usuário não autorizado." });
+    let company;
+    if (user.role === "owner") {
+      company = await Company.findById(
+        user.company,
+        "id address settings companyName tradingName companyNickname cpfCnpj businessType logo website email social workingDays phone paymentOptions"
+      );
+    } else {
+      company = await Company.findById(
+        user.company,
+        "settings.colors companyNickname logo"
+      );
     }
-
-    const company = await Company.findById(
-      user.company,
-      "id address settings companyName tradingName companyNickname cpfCnpj businessType logo website email social workingDays phone paymentOptions"
-    );
     res.status(200).send({ msg: "OK", company });
   } catch (err) {
     throw boom.boomify(err);

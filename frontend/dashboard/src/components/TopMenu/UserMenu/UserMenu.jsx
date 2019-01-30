@@ -74,12 +74,14 @@ export class UserMenu extends Component {
                     <Icon name="user" />
                     <a href="/dashboard/perfil">Meu perfil</a>
                   </li>
-                  <li>
-                    <Icon name="setting" />
-                    <a href="/dashboard/configuracoes-empresa">
-                      Configurações da empresa
-                    </a>
-                  </li>
+                  {this.props.user.role === "owner" && (
+                    <li>
+                      <Icon name="setting" />
+                      <a href="/dashboard/configuracoes-empresa">
+                        Configurações da empresa
+                      </a>
+                    </li>
+                  )}
                   <li>
                     <Icon name="help" />
                     <a href="/dashboard/help">Ajuda</a>
