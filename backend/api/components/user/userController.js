@@ -107,19 +107,32 @@ exports.updateUserPassword = async (req, res) => {
     console.log(update);
 
     res.status(200).send({ msg: "OK" });
-  } catch (error) {}
+  } catch (error) {
+    res.status(500).send({ msg: error });
+  }
 };
 
-exports.testAuth = async (req, res) => {
-  const token = auth.verify(req.token);
-  if (token) {
-    res.json({
-      msg: "OK",
-      token
-    });
-  } else {
-    res.status(403).json({
-      msg: "Token inválido."
-    });
+exports.addUserByAdmin = async (req, res) => {
+  try {
+    const token = auth.verify(req.token);
+    if (!token) {
+      res.status(403).json({
+        msg: "Token inválido."
+      });
+    }
+
+    const _user = new User();
+    console.log(req.body);
+
+    _user.firstName = req.body.firstName;
+    _user.lastName = req.body.lastName;
+    _user.email = req.body.email;
+    _user.password = "123456"; // TODO: gerar dinamicamente
+
+    console.log(_user);
+    const result = await _user.save();
+    res.status(200).send({ msg: "OK" });
+  } catch (error) {
+    res.status(500).send({ msg: error });
   }
 };

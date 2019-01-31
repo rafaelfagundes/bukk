@@ -20,7 +20,7 @@ export default class Login extends Component {
     const password = document.getElementById("Password").value;
     let error = false;
 
-    if (validator.isEmpty(email)) {
+    if (validator.isEmpty("" + email)) {
       this.setState({
         email: { error: true, msg: "Por favor preencha seu email." }
       });
@@ -40,7 +40,7 @@ export default class Login extends Component {
       }
     }
 
-    if (validator.isEmpty(password)) {
+    if (validator.isEmpty("" + password)) {
       this.setState({
         password: { error: true, msg: "Por favor preencha sua senha." }
       });

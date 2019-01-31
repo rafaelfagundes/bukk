@@ -107,7 +107,7 @@ User
 ============================================================*/
 router.post(BASE_URL + "/users/", verifyToken, user.getUser);
 router.post(BASE_URL + "/users/login", user.login);
-router.post(BASE_URL + "/users/testAuth", verifyToken, user.testAuth);
+router.post(BASE_URL + "/users/adduser", verifyToken, user.addUserByAdmin);
 router.patch(BASE_URL + "/users/update", verifyToken, user.updateUser);
 router.post(
   BASE_URL + "/users/changePassword",

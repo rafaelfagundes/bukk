@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 // Employee Schema & Model
 const EmployeeSchema = new Schema({
   user: { type: Schema.Types.ObjectId, ref: "User" },
-  enabled: { type: Boolean, required: true, default: true },
+  enabled: { type: Boolean, required: true, default: false },
   workingDays: [
     {
       weekDay: {
@@ -14,10 +14,10 @@ const EmployeeSchema = new Schema({
       workingHours: [{ start: String, end: String }]
     }
   ],
-  title: { type: String, required: true },
-  salesCommission: { type: Number, default: 100 },
-  worksSince: { type: Date },
-  salary: { type: Number },
+  title: { type: String, required: true, default: "" },
+  salesCommission: { type: Number, default: 10 },
+  worksSince: { type: Date, default: Date.now },
+  salary: { type: Number, default: 1 },
   services: [{ type: mongoose.Schema.Types.ObjectId, ref: "Service" }],
   createdAt: { type: Date, default: Date.now }
 });

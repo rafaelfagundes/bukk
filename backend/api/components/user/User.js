@@ -10,59 +10,47 @@ const UserSchema = new Schema({
     required: [true, "O primeiro nome é obrigatório"]
   },
   lastName: { type: String, required: [true, "O sobrenome é obrigatório"] },
-  username: {
-    type: String,
-    required: [true, "O nome de usuário é obrigatório"]
-  },
   avatar: {
     type: String,
     required: true,
     default:
       "https://res.cloudinary.com/bukkapp/image/upload/v1547558890/Bukk/Assets/User/Avatars/user.png"
   },
-  gender: { type: String, enum: ["M", "F", "O"] },
+  gender: { type: String, required: true, enum: ["M", "F", "O"], default: "O" },
   birthday: { type: Date },
   email: { type: String, required: [true, "O email é obrigatório"] },
   phone: {
-    type: String,
-    required: true
+    type: String
   },
   password: { type: String, required: [true, "A senha é obrigatória"] },
   createdAt: { type: Date, default: Date.now },
   role: {
     type: String,
     enum: ["owner", "manager", "supervisor", "employee"],
-    default: "owner",
+    default: "employee",
     required: true
   },
   address: {
     street: {
-      type: String,
-      required: true
+      type: String
     },
     number: {
-      type: String,
-      required: true
+      type: String
     },
     neighborhood: {
-      type: String,
-      required: true
+      type: String
     },
     city: {
-      type: String,
-      required: true
+      type: String
     },
     state: {
-      type: String,
-      required: true
+      type: String
     },
     country: {
-      type: String,
-      required: true
+      type: String
     },
     postalCode: {
-      type: String,
-      required: true
+      type: String
     },
     geolocation: {
       lat: { type: String },

@@ -30,18 +30,25 @@ const errorsTemplate = {
   basic: [],
   contact: [],
   address: [],
-  employee: []
+  employee: [],
+  newEmployee: []
 };
 
 export class Staff extends Component {
   state = {
     editClicked: false,
     removeClicked: false,
+    addClicked: true,
     loading: false,
     currentEmployeeIndex: 0,
     confirmRemoveToggle: false,
     employees: [],
-    errors: errorsTemplate
+    errors: errorsTemplate,
+    newEmployee: {
+      firstName: "",
+      lastName: "",
+      email: ""
+    }
   };
 
   componentDidMount() {
@@ -145,9 +152,12 @@ export class Staff extends Component {
     const _value = !_employees[_index].employee.enabled;
     this.callEmployeeAvailability(_index, _value);
   };
-  // -
-  // -
-  // -
+
+  handleEmployeeAdd = e => {
+    this.setState({
+      addClicked: true
+    });
+  };
 
   confirmRemove = e => {
     this.setState({
@@ -216,7 +226,11 @@ export class Staff extends Component {
   };
 
   handleCancelEdit = () => {
-    this.setState({ editClicked: false, removeClicked: false });
+    this.setState({
+      editClicked: false,
+      removeClicked: false,
+      addClicked: false
+    });
   };
 
   formatCurrency = value => {
@@ -262,6 +276,18 @@ export class Staff extends Component {
     this.setState({ employees: _employees });
   };
 
+  handleNewEmployeeChange = e => {
+    const id = e.currentTarget.id;
+    const value = e.currentTarget.value;
+
+    this.setState({
+      newEmployee: {
+        ...this.state.newEmployee,
+        [id]: value
+      }
+    });
+  };
+
   handleUserBirthday = e => {
     try {
       if (e.currentTarget.value.indexOf("_") < 0) {
@@ -281,10 +307,10 @@ export class Staff extends Component {
 
     const _employee = this.state.employees[this.state.currentEmployeeIndex];
 
-    if (validator.isEmpty(_employee.firstName)) {
+    if (validator.isEmpty("" + _employee.firstName)) {
       _errors.basic.push({ error: true, msg: "Por favor, preencha o nome." });
     }
-    if (validator.isEmpty(_employee.lastName)) {
+    if (validator.isEmpty("" + _employee.lastName)) {
       _errors.basic.push({
         error: true,
         msg: "Por favor, preencha o sobrenome."
@@ -296,47 +322,47 @@ export class Staff extends Component {
         msg: "Por favor, preencha o aniversário."
       });
     }
-    if (validator.isEmpty(_employee.email)) {
+    if (validator.isEmpty("" + _employee.email)) {
       _errors.contact.push({
         error: true,
         msg: "Por favor, preencha o email."
       });
     }
-    if (validator.isEmpty(_employee.phone)) {
+    if (validator.isEmpty("" + _employee.phone)) {
       _errors.contact.push({
         error: true,
         msg: "Por favor, preencha o telefone."
       });
     }
-    if (validator.isEmpty(_employee.address.street)) {
+    if (validator.isEmpty("" + _employee.address.street)) {
       _errors.address.push({
         error: true,
         msg: "Por favor, preencha o logradouro."
       });
     }
-    if (validator.isEmpty(_employee.address.number)) {
+    if (validator.isEmpty("" + _employee.address.number)) {
       _errors.address.push({
         error: true,
         msg: "Por favor, preencha o número."
       });
     }
-    if (validator.isEmpty(_employee.address.neighborhood)) {
+    if (validator.isEmpty("" + _employee.address.neighborhood)) {
       _errors.address.push({
         error: true,
         msg: "Por favor, preencha o bairro."
       });
     }
-    if (validator.isEmpty(_employee.address.city)) {
+    if (validator.isEmpty("" + _employee.address.city)) {
       _errors.address.push({
         error: true,
         msg: "Por favor, preencha a cidade."
       });
     }
-    if (validator.isEmpty(_employee.address.postalCode)) {
+    if (validator.isEmpty("" + _employee.address.postalCode)) {
       _errors.address.push({ error: true, msg: "Por favor, preencha o CEP." });
     }
 
-    if (validator.isEmpty(_employee.employee.title)) {
+    if (validator.isEmpty("" + _employee.employee.title)) {
       _errors.employee.push({
         error: true,
         msg: "Por favor, preencha a função."
@@ -348,7 +374,7 @@ export class Staff extends Component {
         msg: "Por favor, preencha o salário."
       });
     }
-    if (validator.isEmpty(_employee.employee.salesCommission)) {
+    if (validator.isEmpty("" + _employee.employee.salesCommission)) {
       _errors.employee.push({
         error: true,
         msg: "Por favor, preencha a comissão."
@@ -356,7 +382,7 @@ export class Staff extends Component {
     }
 
     if (
-      !validator.isEmpty(_employee.firstName) &&
+      !validator.isEmpty("" + _employee.firstName) &&
       !isAlpha(_employee.firstName)
     ) {
       _errors.basic.push({
@@ -364,7 +390,10 @@ export class Staff extends Component {
         msg: "Por favor preencha o nome somente com letras."
       });
     }
-    if (validator.isEmpty(_employee.lastName) && !isAlpha(_employee.lastName)) {
+    if (
+      validator.isEmpty("" + _employee.lastName) &&
+      !isAlpha(_employee.lastName)
+    ) {
       _errors.basic.push({
         error: true,
         msg: "Por favor preencha o sobrenome somente com letras."
@@ -405,6 +434,102 @@ export class Staff extends Component {
     } else {
       return true;
     }
+  };
+
+  addEmployee = () => {
+    this.setState({ loading: true });
+    let _errors = JSON.parse(JSON.stringify(errorsTemplate));
+
+    if (validator.isEmpty(this.state.newEmployee.firstName + "")) {
+      _errors.newEmployee.push({
+        error: true,
+        msg: "Por favor, preencha o nome."
+      });
+    }
+    if (validator.isEmpty(this.state.newEmployee.lastName + "")) {
+      _errors.newEmployee.push({
+        error: true,
+        msg: "Por favor, preencha o sobrenome."
+      });
+    }
+    if (validator.isEmpty(this.state.newEmployee.email + "")) {
+      _errors.newEmployee.push({
+        error: true,
+        msg: "Por favor, preencha o email."
+      });
+    }
+
+    if (
+      !validator.isEmpty(this.state.newEmployee.firstName + "") &&
+      !isAlpha(this.state.newEmployee.firstName)
+    ) {
+      _errors.newEmployee.push({
+        error: true,
+        msg: "O nome é inválido."
+      });
+    }
+
+    if (
+      !validator.isEmpty(this.state.newEmployee.lastName + "") &&
+      !isAlpha(this.state.newEmployee.lastName)
+    ) {
+      _errors.newEmployee.push({
+        error: true,
+        msg: "O sobrenome é inválido."
+      });
+    }
+
+    if (
+      !validator.isEmpty(this.state.newEmployee.firstName + "") &&
+      !validator.isEmail(this.state.newEmployee.email)
+    ) {
+      _errors.newEmployee.push({
+        error: true,
+        msg: "O email é inválido."
+      });
+    }
+
+    let countErrors = 0;
+    for (let key in _errors) {
+      countErrors += _errors[key].length;
+    }
+
+    if (countErrors) {
+      this.setState({ errors: _errors, loading: false });
+      return false;
+    }
+    const token = localStorage.getItem("token");
+    let requestConfig = {
+      headers: {
+        Authorization: token
+      }
+    };
+
+    Axios.post(
+      config.api + "/users/adduser",
+      this.state.newEmployee,
+      requestConfig
+    )
+      .then(response => {
+        toast(
+          <Notification
+            type="success"
+            title="Funcionário adicionado com sucesso"
+            text="As informações para o término do cadastro foram enviados para o novo funcionário"
+          />
+        );
+        this.setState({ loading: false, addClicked: false });
+      })
+      .catch(error => {
+        toast(
+          <Notification
+            type="error"
+            title="Erro ao adicionar novo funcionário"
+            text="Tente novamente mais tarde. Ou entre em contato com o suporte."
+          />
+        );
+        this.setState({ loading: false });
+      });
   };
 
   saveEmployee = () => {
@@ -461,70 +586,165 @@ export class Staff extends Component {
 
     return (
       <div>
-        {!this.state.editClicked && !this.state.removeClicked && (
-          <>
-            <FormTitle text="Funcionários" first />
-            <Table celled padded>
-              <Table.Header>
-                <Table.Row>
-                  <Table.HeaderCell>Ativo?</Table.HeaderCell>
-                  <Table.HeaderCell>Nome</Table.HeaderCell>
-                  <Table.HeaderCell>Função</Table.HeaderCell>
-                  <Table.HeaderCell>Email</Table.HeaderCell>
-                  <Table.HeaderCell>Telefone</Table.HeaderCell>
-                  <Table.HeaderCell>Ações</Table.HeaderCell>
-                </Table.Row>
-              </Table.Header>
-              <Table.Body>
-                {this.state.employees.map((employee, index) => (
-                  <Table.Row key={index}>
-                    <Table.Cell>
-                      <Checkbox
-                        toggle
-                        checked={employee.employee.enabled}
-                        onChange={this.handleEmployeeAvailabilityCkb}
-                        id={"display-" + index}
-                        disabled={this.state.loading}
-                      />
-                    </Table.Cell>
-                    <Table.Cell>
-                      <Image src={employee.avatar} avatar />
-                      <span>
-                        {employee.firstName + " " + employee.lastName}
-                      </span>
-                    </Table.Cell>
-                    <Table.Cell>{employee.employee.title}</Table.Cell>
-                    <Table.Cell>{employee.email}</Table.Cell>
-                    <Table.Cell>
-                      {formatBrazilianPhoneNumber(employee.phone)}
-                    </Table.Cell>
-                    <Table.Cell>
-                      <Button
-                        icon
-                        onClick={this.handleEditEmployee}
-                        id={"edit-" + index}
-                      >
-                        <Icon name="edit" />
-                      </Button>
-                      <Button
-                        icon
-                        onClick={this.handleEmployeeActions}
-                        id={"remove-" + index}
-                        color="red"
-                      >
-                        <Icon name="delete" />
-                      </Button>
-                    </Table.Cell>
+        {!this.state.editClicked &&
+          !this.state.removeClicked &&
+          !this.state.addClicked && (
+            <>
+              <FormTitle text="Funcionários" first />
+              <Table celled padded>
+                <Table.Header>
+                  <Table.Row>
+                    <Table.HeaderCell>Ativo?</Table.HeaderCell>
+                    <Table.HeaderCell>Nome</Table.HeaderCell>
+                    <Table.HeaderCell>Função</Table.HeaderCell>
+                    <Table.HeaderCell>Email</Table.HeaderCell>
+                    <Table.HeaderCell>Telefone</Table.HeaderCell>
+                    <Table.HeaderCell>Ações</Table.HeaderCell>
                   </Table.Row>
-                ))}
-              </Table.Body>
-            </Table>
-            <Button color="green" icon labelPosition="left">
+                </Table.Header>
+                <Table.Body>
+                  {this.state.employees.map((employee, index) => (
+                    <Table.Row key={index}>
+                      <Table.Cell>
+                        <Checkbox
+                          toggle
+                          checked={employee.employee.enabled}
+                          onChange={this.handleEmployeeAvailabilityCkb}
+                          id={"display-" + index}
+                          disabled={this.state.loading}
+                        />
+                      </Table.Cell>
+                      <Table.Cell>
+                        <Image src={employee.avatar} avatar />
+                        <span>
+                          {employee.firstName + " " + employee.lastName}
+                        </span>
+                      </Table.Cell>
+                      <Table.Cell>{employee.employee.title}</Table.Cell>
+                      <Table.Cell>{employee.email}</Table.Cell>
+                      <Table.Cell>
+                        {formatBrazilianPhoneNumber(employee.phone)}
+                      </Table.Cell>
+                      <Table.Cell>
+                        <Button
+                          icon
+                          onClick={this.handleEditEmployee}
+                          id={"edit-" + index}
+                        >
+                          <Icon name="edit" />
+                        </Button>
+                        <Button
+                          icon
+                          onClick={this.handleEmployeeActions}
+                          id={"remove-" + index}
+                          color="red"
+                        >
+                          <Icon name="delete" />
+                        </Button>
+                      </Table.Cell>
+                    </Table.Row>
+                  ))}
+                </Table.Body>
+              </Table>
+              <Button
+                color="green"
+                icon
+                labelPosition="left"
+                onClick={this.handleEmployeeAdd}
+              >
+                <Icon name="plus" />
+                Adicionar Funcionário
+              </Button>
+            </>
+          )}
+        {/* ===========================================================
+          Add new employee
+        =========================================================== */}
+        {this.state.addClicked && (
+          <>
+            <FormTitle text="Adicionar Funcionário" first />
+            <Form>
+              <Form.Group>
+                <Form.Input
+                  label="Nome"
+                  width="6"
+                  required
+                  fluid
+                  placeholder="Nome"
+                  value={this.state.newEmployee.firstName}
+                  onChange={this.handleNewEmployeeChange}
+                  id="firstName"
+                />
+                <Form.Input
+                  label="Sobrenome"
+                  width="6"
+                  required
+                  fluid
+                  placeholder="Sobrenome"
+                  value={this.state.newEmployee.lastName}
+                  onChange={this.handleNewEmployeeChange}
+                  id="lastName"
+                />
+              </Form.Group>
+              <Form.Group>
+                <Form.Input
+                  label="Email"
+                  width="6"
+                  required
+                  fluid
+                  placeholder="Email"
+                  value={this.state.newEmployee.email}
+                  onChange={this.handleNewEmployeeChange}
+                  id="email"
+                />
+              </Form.Group>
+            </Form>
+            {this.state.errors.newEmployee.map((error, index) => (
+              <ValidationError
+                key={index}
+                show={error.error}
+                error={error.msg}
+              />
+            ))}
+            <div className="add-new-employee-info">
+              <h3 className="add-new-employee-info-title">Observações:</h3>
+              <p className="add-new-employee-info-text">
+                O novo funcionário receberá por email as instruções de como
+                completar o cadastro.
+              </p>
+              <p className="add-new-employee-info-text">
+                Será gerada uma senha aleatória que deverá ser alterada no
+                primeiro acesso.
+              </p>
+              <p className="add-new-employee-info-text">
+                O novo funcionário ficará desabilitado até completar todas as
+                informações obrigatórias.
+              </p>
+            </div>
+            <Divider style={{ marginTop: "40px" }} />
+            <Button
+              icon
+              labelPosition="left"
+              color="green"
+              onClick={this.addEmployee}
+              disabled={this.state.loading}
+            >
               <Icon name="plus" />
-              Adicionar Funcionário
+              Adicionar
+            </Button>
+            {this.state.loading && (
+              <Spinner
+                style={{ top: "6px", left: "5px", display: "inline-block" }}
+                name="circle"
+                color={this.props.company.settings.colors.primaryBack}
+              />
+            )}
+            <Button floated="right" onClick={this.handleCancelEdit}>
+              Cancelar
             </Button>
           </>
         )}
+
         {/* ===========================================================
           Remove or disable employee
         =========================================================== */}

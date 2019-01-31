@@ -423,7 +423,7 @@ class Profile extends Component {
           <Notification
             type="success"
             title="Imagem atualizada com sucesso"
-            text="A imagem encontra-se salva no servidor."
+            text="A imagem está salva no servidor."
           />
         );
       })
