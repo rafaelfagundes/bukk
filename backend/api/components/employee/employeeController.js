@@ -260,7 +260,11 @@ exports.getEmployeeByUserId = async (req, res) => {
     if (employee) {
       res.send(employee);
     } else {
-      res.status(403).send({ msg: "Something went wrong" });
+      res
+        .status(404)
+        .send({
+          msg: "O usuário precisa preencher o restante dos seus dados."
+        });
     }
   } catch (err) {
     res.send(boom.boomify(err));

@@ -38,7 +38,7 @@ export class Staff extends Component {
   state = {
     editClicked: false,
     removeClicked: false,
-    addClicked: true,
+    addClicked: false,
     loading: false,
     currentEmployeeIndex: 0,
     confirmRemoveToggle: false,
@@ -84,6 +84,34 @@ export class Staff extends Component {
     }
   }
 
+  updateEmployees = () => {
+    const _company = JSON.parse(localStorage.getItem("company"));
+    const token = localStorage.getItem("token");
+    let requestConfig = {
+      headers: {
+        Authorization: token
+      }
+    };
+    Axios.post(
+      config.api + "/specialists/company",
+      { companyId: _company._id },
+      requestConfig
+    )
+      .then(response => {
+        this.setState({ employees: response.data });
+        localStorage.setItem("staff", JSON.stringify(response.data));
+      })
+      .catch(err => {
+        toast(
+          <Notification
+            type="error"
+            title="Erro ao carregar os serviços da empresa"
+            text={err.response.data.msg}
+          />
+        );
+      });
+  };
+
   handleEditEmployee = e => {
     const _index = Number(e.currentTarget.id.replace("edit-", ""));
 
@@ -92,6 +120,15 @@ export class Staff extends Component {
       editClicked: true,
       removeClicked: false
     });
+  };
+
+  handleRemoveAvatar = () => {
+    let _employees = JSON.parse(JSON.stringify(this.state.employees));
+
+    _employees[this.state.currentEmployeeIndex].avatar =
+      "https://res.cloudinary.com/bukkapp/image/upload/v1547558890/Bukk/Assets/User/Avatars/user.png";
+
+    this.setState({ employees: _employees });
   };
 
   callEmployeeAvailability = (index, value) => {
@@ -518,14 +555,18 @@ export class Staff extends Component {
             text="As informações para o término do cadastro foram enviados para o novo funcionário"
           />
         );
-        this.setState({ loading: false, addClicked: false });
+        this.setState({
+          loading: false,
+          addClicked: false
+        });
+        this.updateEmployees();
       })
       .catch(error => {
         toast(
           <Notification
             type="error"
             title="Erro ao adicionar novo funcionário"
-            text="Tente novamente mais tarde. Ou entre em contato com o suporte."
+            text="Tente novamente mais tarde. Ou entre em contato com o suporte"
           />
         );
         this.setState({ loading: false });
@@ -569,6 +610,7 @@ export class Staff extends Component {
             text="As informações do funcionário foram atualizadas com sucesso"
           />
         );
+        this.setState({ editClicked: false });
       })
       .catch(err => {
         toast(
@@ -623,7 +665,9 @@ export class Staff extends Component {
                       <Table.Cell>{employee.employee.title}</Table.Cell>
                       <Table.Cell>{employee.email}</Table.Cell>
                       <Table.Cell>
-                        {formatBrazilianPhoneNumber(employee.phone)}
+                        {employee.phone
+                          ? formatBrazilianPhoneNumber(employee.phone)
+                          : "-"}
                       </Table.Cell>
                       <Table.Cell>
                         <Button
@@ -739,7 +783,13 @@ export class Staff extends Component {
                 color={this.props.company.settings.colors.primaryBack}
               />
             )}
-            <Button floated="right" onClick={this.handleCancelEdit}>
+            <Button
+              floated="right"
+              icon
+              labelPosition="left"
+              onClick={this.handleCancelEdit}
+            >
+              <Icon name="delete" />
               Cancelar
             </Button>
           </>
@@ -794,7 +844,13 @@ export class Staff extends Component {
                 color={this.props.company.settings.colors.primaryBack}
               />
             )}
-            <Button floated="right" onClick={this.handleCancelEdit}>
+            <Button
+              floated="right"
+              onClick={this.handleCancelEdit}
+              icon
+              labelPosition="left"
+            >
+              <Icon name="delete" />
               Cancelar
             </Button>
           </>
@@ -809,6 +865,21 @@ export class Staff extends Component {
                 first
                 text={_employee.firstName + " " + _employee.lastName}
               />
+              <FormSubTitle text="Foto do Funcionário" />
+              <Image
+                src={_employee.avatar}
+                size="small"
+                rounded
+                className="company-config-edit-avatar"
+              />
+              <Button
+                icon
+                labelPosition="left"
+                onClick={this.handleRemoveAvatar}
+              >
+                <Icon name="delete" />
+                Remover Foto
+              </Button>
               <FormSubTitle text="Informações Básicas" />
               <Form.Group>
                 <Form.Input
@@ -838,7 +909,8 @@ export class Staff extends Component {
                   label="Sexo"
                   options={[
                     { key: "F", text: "Feminino", value: "F" },
-                    { key: "M", text: "Masculino", value: "M" }
+                    { key: "M", text: "Masculino", value: "M" },
+                    { key: "O", text: "Outro", value: "O" }
                   ]}
                   placeholder="Sexo"
                   value={_employee.gender}
@@ -893,7 +965,11 @@ export class Staff extends Component {
                   required
                 />
                 <Form.Input
-                  value={formatBrazilianPhoneNumber(_employee.phone)}
+                  value={
+                    _employee.phone
+                      ? formatBrazilianPhoneNumber(_employee.phone)
+                      : ""
+                  }
                   fluid
                   label="Telefone"
                   placeholder="Telefone"
@@ -913,7 +989,7 @@ export class Staff extends Component {
               <FormSubTitle text="Endereço" />
               <Form.Group>
                 <Form.Input
-                  value={_employee.address.street}
+                  value={_employee.address ? _employee.address.street : ""}
                   fluid
                   label="Logradouro"
                   placeholder="Logradouro"
@@ -923,7 +999,7 @@ export class Staff extends Component {
                   required
                 />
                 <Form.Input
-                  value={_employee.address.number}
+                  value={_employee.address ? _employee.address.number : ""}
                   fluid
                   label="Número"
                   placeholder="Número"
@@ -935,7 +1011,9 @@ export class Staff extends Component {
               </Form.Group>
               <Form.Group>
                 <Form.Input
-                  value={_employee.address.neighborhood}
+                  value={
+                    _employee.address ? _employee.address.neighborhood : ""
+                  }
                   fluid
                   label="Bairro"
                   placeholder="Bairro"
@@ -947,7 +1025,7 @@ export class Staff extends Component {
               </Form.Group>
               <Form.Group>
                 <Form.Input
-                  value={_employee.address.city}
+                  value={_employee.address ? _employee.address.city : ""}
                   fluid
                   label="Cidade"
                   placeholder="Cidade"
@@ -961,7 +1039,7 @@ export class Staff extends Component {
                   label="Estado"
                   options={states}
                   placeholder="Estado"
-                  value={_employee.address.state}
+                  value={_employee.address ? _employee.address.state : ""}
                   width={4}
                   id="address-state"
                   onChange={this.handleChange}
@@ -970,7 +1048,11 @@ export class Staff extends Component {
               </Form.Group>
               <Form.Group>
                 <Form.Input
-                  value={formatCEP(_employee.address.postalCode)}
+                  value={
+                    _employee.address
+                      ? formatCEP(_employee.address.postalCode)
+                      : ""
+                  }
                   fluid
                   label="CEP"
                   placeholder="CEP"
@@ -1049,7 +1131,13 @@ export class Staff extends Component {
                 color={this.props.company.settings.colors.primaryBack}
               />
             )}
-            <Button floated="right" onClick={this.handleCancelEdit}>
+            <Button
+              floated="right"
+              onClick={this.handleCancelEdit}
+              icon
+              labelPosition="left"
+            >
+              <Icon name="delete" />
               Cancelar
             </Button>
           </>

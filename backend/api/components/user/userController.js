@@ -4,6 +4,7 @@ const auth = require("../../auth");
 
 // Get Data Models
 const User = require("./User");
+const Employee = require("../employee/Employee");
 
 // Get User Data
 exports.getUser = async (req, res) => {
@@ -21,7 +22,7 @@ exports.getUser = async (req, res) => {
     res.status(200).send(user);
   } catch (error) {
     res.status(403).json({
-      msg: "Something went wrong"
+      msg: error
     });
   }
 };
@@ -30,25 +31,31 @@ exports.getUser = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email });
-    const result = await user.comparePassword(req.body.password);
-
-    if (result) {
-      const _user = {
-        id: user._id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        role: user.role
-      };
-
-      res.status(200);
-      res.send({
-        msg: "OK",
-        token: auth.sign(_user)
-      });
-    } else {
+    if (!user) {
       res.status(403);
       res.send({ msg: "Usuário e senha não coincidem" });
+    } else {
+      const result = await user.comparePassword(req.body.password);
+
+      if (result) {
+        const _user = {
+          id: user._id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          role: user.role,
+          company: user.company
+        };
+
+        res.status(200);
+        res.send({
+          msg: "OK",
+          token: auth.sign(_user)
+        });
+      } else {
+        res.status(403);
+        res.send({ msg: "Usuário e senha não coincidem" });
+      }
     }
   } catch (err) {
     throw boom.boomify(err);
@@ -121,17 +128,32 @@ exports.addUserByAdmin = async (req, res) => {
       });
     }
 
+    console.log(token);
+
     const _user = new User();
-    console.log(req.body);
+    // console.log(req.body);
 
     _user.firstName = req.body.firstName;
     _user.lastName = req.body.lastName;
     _user.email = req.body.email;
+    _user.company = token.company;
     _user.password = "123456"; // TODO: gerar dinamicamente
 
-    console.log(_user);
-    const result = await _user.save();
-    res.status(200).send({ msg: "OK" });
+    // console.log(_user);
+    const resultUser = await _user.save();
+    if (resultUser) {
+      console.log("resultUser", resultUser);
+      const _employee = new Employee();
+      _employee.user = resultUser._id;
+      const resultEmployee = await _employee.save();
+      console.log(resultEmployee);
+      if (resultEmployee) {
+        res.status(200).send({ msg: "OK" });
+      }
+    } else {
+      _user.remove();
+      res.status(500).send({ msg: "Impossível criar usuário" });
+    }
   } catch (error) {
     res.status(500).send({ msg: error });
   }

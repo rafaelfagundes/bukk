@@ -14,7 +14,7 @@ const EmployeeSchema = new Schema({
       workingHours: [{ start: String, end: String }]
     }
   ],
-  title: { type: String, required: true, default: "" },
+  title: { type: String, required: true, default: "Especialista" },
   salesCommission: { type: Number, default: 10 },
   worksSince: { type: Date, default: Date.now },
   salary: { type: Number, default: 1 },

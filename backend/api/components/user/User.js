@@ -32,25 +32,32 @@ const UserSchema = new Schema({
   },
   address: {
     street: {
-      type: String
+      type: String,
+      default: ""
     },
     number: {
-      type: String
+      type: String,
+      default: ""
     },
     neighborhood: {
-      type: String
+      type: String,
+      default: ""
     },
     city: {
-      type: String
+      type: String,
+      default: ""
     },
     state: {
-      type: String
+      type: String,
+      default: ""
     },
     country: {
-      type: String
+      type: String,
+      default: ""
     },
     postalCode: {
-      type: String
+      type: String,
+      default: ""
     },
     geolocation: {
       lat: { type: String },
