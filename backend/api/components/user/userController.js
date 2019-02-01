@@ -33,28 +33,41 @@ exports.login = async (req, res) => {
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
       res.status(403);
-      res.send({ msg: "Usuário e senha não coincidem" });
+      res.send({ msg: "Usuário e senha não coincidem." });
     } else {
-      const result = await user.comparePassword(req.body.password);
+      let _continue = true;
+      if (user.role === "employee") {
+        const employee = await Employee.findOne({ user: user._id });
+        if (!employee.enabled) {
+          _continue = false;
+          res.status(403).send({
+            msg:
+              "Usuário desabilitado. Consulte o administrador de sua empresa."
+          });
+        }
+      }
+      if (_continue) {
+        const result = await user.comparePassword(req.body.password);
 
-      if (result) {
-        const _user = {
-          id: user._id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          role: user.role,
-          company: user.company
-        };
+        if (result) {
+          const _user = {
+            id: user._id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            role: user.role,
+            company: user.company
+          };
 
-        res.status(200);
-        res.send({
-          msg: "OK",
-          token: auth.sign(_user)
-        });
-      } else {
-        res.status(403);
-        res.send({ msg: "Usuário e senha não coincidem" });
+          res.status(200);
+          res.send({
+            msg: "OK",
+            token: auth.sign(_user)
+          });
+        } else {
+          res.status(403);
+          res.send({ msg: "Usuário e senha não coincidem." });
+        }
       }
     }
   } catch (err) {

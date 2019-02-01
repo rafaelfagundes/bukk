@@ -86,7 +86,7 @@ router.patch(
 );
 
 router.patch(
-  BASE_URL + "/specialists/availabilty",
+  BASE_URL + "/specialists/availability",
   verifyToken,
   specialist.updateEmployeeAvailability
 );

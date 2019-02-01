@@ -84,7 +84,7 @@ export class Staff extends Component {
     }
   }
 
-  updateEmployees = () => {
+  updateEmployees = addUser => {
     const _company = JSON.parse(localStorage.getItem("company"));
     const token = localStorage.getItem("token");
     let requestConfig = {
@@ -98,7 +98,11 @@ export class Staff extends Component {
       requestConfig
     )
       .then(response => {
-        this.setState({ employees: response.data });
+        this.setState({
+          employees: response.data,
+          editClicked: addUser ? true : false,
+          currentEmployeeIndex: addUser ? this.state.employees.length : 0
+        });
         localStorage.setItem("staff", JSON.stringify(response.data));
       })
       .catch(err => {
@@ -132,6 +136,17 @@ export class Staff extends Component {
   };
 
   callEmployeeAvailability = (index, value) => {
+    if (!this.validateEmployee()) {
+      toast(
+        <Notification
+          type="error"
+          title="Não foi possível habilitar o usuário"
+          text="Usuário está com cadastro incompleto"
+        />
+      );
+
+      return false;
+    }
     this.setState({ loading: true });
 
     const token = localStorage.getItem("token");
@@ -145,7 +160,7 @@ export class Staff extends Component {
     _employees[index].employee.enabled = value;
 
     Axios.patch(
-      config.api + "/specialists/availabilty",
+      config.api + "/specialists/availability",
       { _id: _employees[index].employee._id, enabled: value },
       requestConfig
     )
@@ -180,14 +195,18 @@ export class Staff extends Component {
   handleEmployeeAvailabilityCkb = e => {
     const _index = e.currentTarget.id.replace("display-", "");
     const _value = e.currentTarget.checked;
-    this.callEmployeeAvailability(_index, _value);
+    this.setState({ currentEmployeeIndex: _index }, () => {
+      this.callEmployeeAvailability(_index, _value);
+    });
   };
 
   handleEmployeeAvailabilityBtn = e => {
     const _employees = [...this.state.employees];
     const _index = this.state.currentEmployeeIndex;
     const _value = !_employees[_index].employee.enabled;
-    this.callEmployeeAvailability(_index, _value);
+    this.setState({ currentEmployeeIndex: _index }, () => {
+      this.callEmployeeAvailability(_index, _value);
+    });
   };
 
   handleEmployeeAdd = e => {
@@ -268,6 +287,7 @@ export class Staff extends Component {
       removeClicked: false,
       addClicked: false
     });
+    this.updateEmployees(false);
   };
 
   formatCurrency = value => {
@@ -353,11 +373,13 @@ export class Staff extends Component {
         msg: "Por favor, preencha o sobrenome."
       });
     }
-    if (_employee.birthday.toString() === "Invalid Date") {
-      _errors.basic.push({
-        error: true,
-        msg: "Por favor, preencha o aniversário."
-      });
+    if (_employee.birthday) {
+      if (_employee.birthday.toString() === "Invalid Date") {
+        _errors.basic.push({
+          error: true,
+          msg: "Por favor, preencha o aniversário."
+        });
+      }
     }
     if (validator.isEmpty("" + _employee.email)) {
       _errors.contact.push({
@@ -559,7 +581,7 @@ export class Staff extends Component {
           loading: false,
           addClicked: false
         });
-        this.updateEmployees();
+        this.updateEmployees(true);
       })
       .catch(error => {
         toast(
@@ -690,6 +712,7 @@ export class Staff extends Component {
                   ))}
                 </Table.Body>
               </Table>
+
               <Button
                 color="green"
                 icon
@@ -754,15 +777,19 @@ export class Staff extends Component {
               <h3 className="add-new-employee-info-title">Observações:</h3>
               <p className="add-new-employee-info-text">
                 O novo funcionário receberá por email as instruções de como
-                completar o cadastro.
+                acessar o sistema.
               </p>
               <p className="add-new-employee-info-text">
-                Será gerada uma senha aleatória que deverá ser alterada no
-                primeiro acesso.
+                Ao acessar o sistema pela primeira vez, o funcionário deverá
+                alterar a senha gerada automaticamente.
               </p>
               <p className="add-new-employee-info-text">
-                O novo funcionário ficará desabilitado até completar todas as
-                informações obrigatórias.
+                O novo funcionário só poderá ser habilitado após preenchido
+                todos os campos obrigatórios.
+              </p>
+              <p className="add-new-employee-info-text">
+                Após clicar em adicionar, você será redirecionado para a tela de
+                conclusão de cadastro.
               </p>
             </div>
             <Divider style={{ marginTop: "40px" }} />

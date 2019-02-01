@@ -17,10 +17,11 @@ const UserSchema = new Schema({
       "https://res.cloudinary.com/bukkapp/image/upload/v1547558890/Bukk/Assets/User/Avatars/user.png"
   },
   gender: { type: String, required: true, enum: ["M", "F", "O"], default: "O" },
-  birthday: { type: Date },
+  birthday: { type: Date, default: Date.now },
   email: { type: String, required: [true, "O email é obrigatório"] },
   phone: {
-    type: String
+    type: String,
+    default: ""
   },
   password: { type: String, required: [true, "A senha é obrigatória"] },
   createdAt: { type: Date, default: Date.now },
