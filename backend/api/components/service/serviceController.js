@@ -39,10 +39,18 @@ exports.companyServices = async (req, res) => {
         msg: "Token inválido."
       });
     } else {
-      const services = await Service.find(
-        { company: req.body._id },
-        "id desc value duration display"
-      );
+      let services = undefined;
+      if (token.role === "owner") {
+        services = await Service.find(
+          { company: token.company },
+          "id desc value duration display"
+        );
+      } else {
+        services = await Service.find(
+          { company: token.company },
+          "id desc value duration"
+        );
+      }
       res.send(services);
     }
   } catch (err) {

@@ -129,10 +129,6 @@ exports.addAppointment = async (req, res) => {
 // Delete an appointment
 exports.deleteAppointmentViaUrl = async (req, res) => {
   try {
-    reply.code(200);
-    reply.header("Content-Type", "text/html");
-    reply.type("text/html");
-
     const _id = req.params.id;
     const _email = req.params.email;
 
@@ -170,7 +166,8 @@ exports.deleteAppointmentViaUrl = async (req, res) => {
     });
 
     const result = await Appointment.deleteMany({ _id: { $in: ids } });
-    return `<!DOCTYPE html>
+    res.set("Content-Type", "text/html");
+    res.status(200).send(`<!DOCTYPE html>
     <html lang="en">
       <head>
         <meta charset="UTF-8" />
@@ -217,8 +214,12 @@ exports.deleteAppointmentViaUrl = async (req, res) => {
         </div>
       </body>
     </html>
-    `;
+    `);
   } catch (err) {
-    throw boom.boomify(err);
+    res
+      .status(500)
+      .send(
+        "Não foi possível cancelar agendamento. Entre em contato com a empresa."
+      );
   }
 };

@@ -112,8 +112,6 @@ function filterIncompatibleRange(times, duration, timeFrame = 30) {
   }
   const _timeSlots = duration / timeFrame;
 
-  // console.log(isAllFound([1, 2, 3], [1, 3, 4, 5]));
-
   const _filteredTimes = [];
 
   times.forEach(t => {
@@ -260,11 +258,9 @@ exports.getEmployeeByUserId = async (req, res) => {
     if (employee) {
       res.send(employee);
     } else {
-      res
-        .status(404)
-        .send({
-          msg: "O usuário precisa preencher o restante dos seus dados."
-        });
+      res.status(404).send({
+        msg: "O usuário precisa preencher o restante dos seus dados."
+      });
     }
   } catch (err) {
     res.send(boom.boomify(err));
@@ -322,7 +318,6 @@ exports.updateEmployee = async (req, res) => {
     if (employee) {
       res.status(200).send(employee);
     } else {
-      console.log(employee);
       res.status(404).json({
         msg: "Error: can not update employee"
       });
@@ -362,7 +357,6 @@ exports.updateUserEmployee = async (req, res) => {
     if (employee && user) {
       res.status(200).send({ msg: "OK" });
     } else {
-      console.log(employee, user);
       res.status(500).json({
         msg: "Error: can not update employee"
       });
@@ -417,10 +411,8 @@ exports.removeEmployee = async (req, res) => {
   }
 
   const employee = await Employee.deleteOne({ _id: req.body.employeeId });
-  console.log("employee", employee);
   if (employee.ok) {
     const user = await User.deleteOne({ _id: req.body.userId });
-    console.log("user", user);
     if (user.ok) {
       res.status(200).send({ msg: "OK" });
     } else {

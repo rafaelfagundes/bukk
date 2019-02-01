@@ -36,7 +36,7 @@ router.get(
 );
 
 router.post(
-  BASE_URL + "/services/company/",
+  BASE_URL + "/services/company",
   verifyToken,
   service.companyServices
 );
@@ -101,6 +101,10 @@ router.post(
 Appointment
 ============================================================*/
 router.post(BASE_URL + "/appointments", appointment.addAppointment);
+router.get(
+  BASE_URL + "/appointments/cancel/:id/:email",
+  appointment.deleteAppointmentViaUrl
+);
 
 /*============================================================
 User
@@ -114,5 +118,4 @@ router.post(
   verifyToken,
   user.updateUserPassword
 );
-
 module.exports = router;

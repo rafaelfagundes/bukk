@@ -267,9 +267,9 @@ class DateTimePage extends Component {
   };
 
   handleSpecialist = (e, value) => {
-    if (this.state.specialists.length === 1) {
-      return false;
-    }
+    // if (this.state.specialists.length === 1) {
+    //   return false;
+    // }
     const _date = moment().format("YYYY-MM-DD");
     const _month = moment().format("YYYY-MM");
     const _specialistId = String(value);
@@ -364,7 +364,6 @@ class DateTimePage extends Component {
 
     if (_specialistsList.length === 1) {
       _specialistsList[0].selected = true;
-      this.handleSpecialist(null, _specialistsList[0].id);
       this.setState(
         {
           serviceId: value,
@@ -373,6 +372,7 @@ class DateTimePage extends Component {
           showHugeDropdown: false
         },
         () => {
+          this.handleSpecialist(null, _specialistsList[0].employee._id);
           window.scrollTo({
             top: getElementYPosition("specialist-title") - 100,
             behavior: "smooth"
