@@ -11,7 +11,7 @@ import Staff from "./Staff";
 
 export class CompanyConfig extends Component {
   state = {
-    activeItem: "funcionarios"
+    activeItem: "geral"
   };
 
   handleItemClick = (e, { name }) => this.setState({ activeItem: name });

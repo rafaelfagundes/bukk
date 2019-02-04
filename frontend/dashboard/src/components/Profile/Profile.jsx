@@ -5,10 +5,11 @@ import { setCurrentPage } from "../dashboardActions";
 import "./Profile.css";
 import Services from "./Services";
 import General from "./General";
+import TimeTable from "./TimeTable";
 
 class Profile extends Component {
   state = {
-    activeItem: "servicos",
+    activeItem: "geral",
     page: "general",
     loading: false
   };
@@ -89,9 +90,7 @@ class Profile extends Component {
 
           {this.state.activeItem === "geral" && <General />}
           {this.state.activeItem === "servicos" && <Services />}
-          {this.state.activeItem === "horarios" && (
-            <div className="profile-schedule" />
-          )}
+          {this.state.activeItem === "horarios" && <TimeTable />}
           {this.state.activeItem === "preferencias" && (
             <div className="profile-config" />
           )}

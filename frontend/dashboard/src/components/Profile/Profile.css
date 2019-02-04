@@ -124,3 +124,31 @@
 .profile-change-password {
   width: 100%;
 }
+
+.profile-timetable * {
+  box-sizing: border-box;
+}
+
+.profile-timetable td {
+  text-align: center !important;
+  width: 14%;
+}
+
+.profile-timetable input {
+  text-align: center !important;
+  width: 120px !important;
+}
+
+.profile-timetable button {
+  /* min-width: 110px !important; */
+  width: 100%;
+}
+.profile-config-time-end {
+  margin-bottom: 5px;
+}
+.profile-config-time {
+  display: block;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(34, 36, 38, 0.1);
+}

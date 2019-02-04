@@ -32,8 +32,6 @@ class Services extends Component {
   };
 
   componentDidMount() {
-    const _employee = JSON.parse(localStorage.getItem("employee"));
-
     const token = localStorage.getItem("token");
     let requestConfig = {
       headers: {
@@ -41,6 +39,7 @@ class Services extends Component {
       }
     };
 
+    const _employee = JSON.parse(localStorage.getItem("employee"));
     Axios.post(config.api + "/services/company", {}, requestConfig)
       .then(response => {
         this.setState({ services: response.data, employee: _employee }, () => {

@@ -520,7 +520,6 @@ class General extends Component {
     /* ====================================================
      Horário de funcionamento
     ==================================================== */
-
     const mapWeekDays = {
       sunday: "domingo",
       monday: "segunda-feira",

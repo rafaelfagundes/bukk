@@ -42,7 +42,6 @@ const genderOptions = [
 
 class Profile extends Component {
   state = {
-    activeItem: "geral",
     page: "general",
     user: undefined,
     employee: undefined,
