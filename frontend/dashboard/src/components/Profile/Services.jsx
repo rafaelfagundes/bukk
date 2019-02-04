@@ -40,6 +40,11 @@ class Services extends Component {
     };
 
     const _employee = JSON.parse(localStorage.getItem("employee"));
+
+    /* Why do make a request everytime?
+     - An admin could add a new service and the employee will not receive
+       the update until logout/login
+    */
     Axios.post(config.api + "/services/company", {}, requestConfig)
       .then(response => {
         this.setState({ services: response.data, employee: _employee }, () => {
@@ -47,7 +52,6 @@ class Services extends Component {
         });
       })
       .catch(error => {
-        console.error("Não foi possível carregar serviços");
         toast(
           <Notification
             type="error"
@@ -78,6 +82,7 @@ class Services extends Component {
     });
   };
   handleEmployeeServices = () => {
+    this.setState({ loading: true });
     const token = localStorage.getItem("token");
     let requestConfig = {
       headers: {
@@ -98,6 +103,7 @@ class Services extends Component {
             text="Os serviços já estão disponíveis para agendamento"
           />
         );
+        this.setState({ loading: false });
       })
       .catch(error => {
         toast(
@@ -107,9 +113,8 @@ class Services extends Component {
             text="Os serviços não puderam ser atualizados. Tente novamente."
           />
         );
+        this.setState({ loading: false });
       });
-
-    console.log("submeter");
   };
   render() {
     return (

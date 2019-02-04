@@ -173,11 +173,20 @@ exports.getEmployeesByCompany = async (req, res) => {
           "employee._id": 1,
           "employee.services": 1,
           "employee.title": 1,
-          "employee.avatar": 1
+          "employee.avatar": 1,
+          "employee.enabled": 1
         }
       }
     ]);
-    res.send(employees);
+
+    let _employeesResult = [];
+    employees.forEach(e => {
+      if (e.employee.enabled) {
+        _employeesResult.push(e);
+      }
+    });
+
+    res.send(_employeesResult);
   } catch (err) {
     throw boom.boomify(err);
   }

@@ -161,6 +161,7 @@ export class TimeTable extends Component {
   };
 
   handleEmployeeTimeTable = () => {
+    this.setState({ loading: true });
     let _employee = JSON.parse(localStorage.getItem("employee"));
     _employee.workingDays = [];
 
@@ -185,20 +186,22 @@ export class TimeTable extends Component {
         toast(
           <Notification
             type="success"
-            title="Serviços atualizados"
-            text="Os serviços já estão disponíveis para agendamento"
+            title="Horários atualizados"
+            text="Os horários já estão disponíveis para agendamento"
           />
         );
         localStorage.setItem("employee", JSON.stringify(_employee));
+        this.setState({ loading: false });
       })
       .catch(error => {
         toast(
           <Notification
             type="error"
-            title="Erro ao atualizar serviços"
-            text="Os serviços não puderam ser atualizados. Tente novamente."
+            title="Erro ao atualizar horários"
+            text="Os horários não puderam ser atualizados. Tente novamente."
           />
         );
+        this.setState({ loading: false });
       });
   };
 
