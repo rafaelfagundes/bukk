@@ -8,7 +8,8 @@ import {
   Table,
   Image,
   Message,
-  Popup
+  Popup,
+  Confirm
 } from "semantic-ui-react";
 import Specialist from "../Specialist/Specialist";
 import Pill from "../TimePills/Pill";
@@ -39,6 +40,7 @@ import {
   setServices,
   setSpecialists
 } from "../bookerActions";
+moment.locale("pt-br", calendarLocale);
 
 const mapStateToProps = state => {
   return {
@@ -65,28 +67,34 @@ const mapDispatchToProps = dispatch => {
 };
 
 class DateTimePage extends Component {
-  constructor(props) {
-    super(props);
-    moment.locale("pt-br", calendarLocale);
+  state = {
+    appointmentDate: moment(),
+    appointmentTime: "",
+    serviceId: "",
+    services: [],
+    showHugeDropdown: true,
+    specialistId: "",
+    specialistIndex: -1,
+    specialistSchedule: [],
+    specialists: [],
+    servicesTable: [],
+    timeTable: [],
+    excludeDates: [],
+    saveClicked: false,
+    errors: { companyNotFound: false },
+    greetings: "",
+    removeConfimationOpen: false,
+    removeId: ""
+  };
 
-    this.state = {
-      appointmentDate: moment(),
-      appointmentTime: "",
-      serviceId: "",
-      services: [],
-      showHugeDropdown: true,
-      specialistId: "",
-      specialistIndex: -1,
-      specialistSchedule: [],
-      specialists: [],
-      servicesTable: [],
-      timeTable: [],
-      excludeDates: [],
-      saveClicked: false,
-      errors: { companyNotFound: false },
-      greetings: ""
-    };
-  }
+  toggleConfimation = e => {
+    console.log("toggle");
+    e.preventDefault();
+    this.setState({
+      removeConfimationOpen: !this.state.removeConfimationOpen,
+      removeId: e.currentTarget.id
+    });
+  };
 
   resetPage = () => {
     this.setState({
@@ -126,15 +134,15 @@ class DateTimePage extends Component {
     this.props.setDateTimeOk(true);
   };
 
-  handleDeleteService = (e, { value }) => {
+  handleDeleteService = () => {
     let _servicesTable = this.state.servicesTable;
-
+    let _value = this.state.removeId;
     _.remove(_servicesTable, function(o) {
-      return o.serviceKey === value;
+      return o.serviceKey === _value;
     });
 
     _.remove(this.props.appointment.services, function(o) {
-      return o.serviceKey === value;
+      return o.serviceKey === _value;
     });
 
     this.props.setAppointment(this.props.appointment);
@@ -142,9 +150,16 @@ class DateTimePage extends Component {
       _servicesTable.length === 0 ? 0 : _servicesTable.length - 1
     );
     this.resetPage();
-    this.setState({ servicesTable: _servicesTable, saveClicked: true }, () => {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
+    this.setState(
+      {
+        servicesTable: _servicesTable,
+        saveClicked: true,
+        removeConfimationOpen: false
+      },
+      () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    );
     if (_servicesTable.length === 0) {
       this.props.setDateTimeOk(false);
     }
@@ -590,9 +605,9 @@ class DateTimePage extends Component {
                         compact
                         icon
                         color="red"
-                        onClick={this.handleDeleteService}
-                        value={row.serviceKey}
+                        onClick={this.toggleConfimation}
                         className="remove-service-btn"
+                        id={row.serviceKey}
                       >
                         <Icon name="delete" />
                       </Button>
@@ -601,6 +616,15 @@ class DateTimePage extends Component {
                 ))}
               </Table.Body>
             </Table>
+            <Confirm
+              open={this.state.removeConfimationOpen}
+              onCancel={this.toggleConfimation}
+              onConfirm={this.handleDeleteService}
+              cancelButton="Cancelar"
+              confirmButton="Remover serviço"
+              header="Tem certeza?"
+              content="Tem certeza que deseja remover o serviço?"
+            />
             <Button
               className="confirmation"
               labelPosition="left"
