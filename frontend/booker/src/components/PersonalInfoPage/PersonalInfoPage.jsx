@@ -25,7 +25,7 @@ class PersonalInfoPage extends Component {
     client: {
       firstName: "",
       lastName: "",
-      gender: "",
+      gender: "F",
       email: "",
       phone: "",
       whatsapp: false,
@@ -132,6 +132,7 @@ class PersonalInfoPage extends Component {
   };
 
   handleChange = (e, { value }) => {
+    // WhatsApp toggle
     if (e.currentTarget.id === "whatsapp") {
       let item = {
         ...this.state.client,
@@ -145,6 +146,7 @@ class PersonalInfoPage extends Component {
           this.validate();
         }
       );
+      // Gender
     } else if (!e.currentTarget.id) {
       let item = {
         ...this.state.client,
@@ -158,19 +160,15 @@ class PersonalInfoPage extends Component {
           this.validate();
         }
       );
+      // Other fields
     } else {
       let item = {
         ...this.state.client,
         [e.currentTarget.id]: e.currentTarget.value
       };
-      this.setState(
-        {
-          client: item
-        },
-        () => {
-          this.validate();
-        }
-      );
+      this.setState({
+        client: item
+      });
     }
   };
 
@@ -203,6 +201,7 @@ class PersonalInfoPage extends Component {
                 value={this.state.client.firstName}
                 onChange={this.handleChange}
                 id="firstName"
+                onBlur={this.validate}
               />
               {this.state.errors.firstName !== "" && (
                 <Label size="large" pointing>
@@ -218,6 +217,7 @@ class PersonalInfoPage extends Component {
                 value={this.state.client.lastName}
                 onChange={this.handleChange}
                 id="lastName"
+                onBlur={this.validate}
               />
               {this.state.errors.lastName !== "" && (
                 <Label size="large" pointing>
@@ -271,6 +271,7 @@ class PersonalInfoPage extends Component {
                 onChange={this.handleChange}
                 id="email"
                 type="email"
+                onBlur={this.validate}
               />
               {this.state.errors.email !== "" && (
                 <Label size="large" pointing>
@@ -290,6 +291,7 @@ class PersonalInfoPage extends Component {
                 onChange={this.handleChange}
                 id="phone"
                 type="tel"
+                onBlur={this.validate}
               />
               {this.state.errors.phone !== "" && (
                 <Label size="large" pointing>
@@ -312,6 +314,7 @@ class PersonalInfoPage extends Component {
                 id="whatsapp"
                 checked={this.state.client.whatsapp}
                 toggle
+                onBlur={this.validate}
               />
             </Form.Field>
           </Form.Group>
