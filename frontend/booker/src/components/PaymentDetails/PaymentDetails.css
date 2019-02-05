@@ -9,17 +9,19 @@
 
 .payment-details-type {
   line-height: 60px;
-  padding: 0 20px 0 20px;
+  padding: 0px 0 0 0;
   width: 442px;
   display: flex;
   flex-direction: row;
 }
 
 .payment-details-type p {
-  line-height: 60px;
-  font-size: 16px;
+  font-size: 12px;
   font-weight: 400;
   color: #444444;
+  padding: 13px 0 0 20px;
+  max-width: 80px;
+  font-weight: bold;
 }
 .payment-details-types {
   color: #444;
@@ -27,7 +29,14 @@
 }
 
 .payment-details-types img {
-  width: 32px;
+  width: 36px;
+  height: 36px;
+  border-radius: 4px;
+  box-sizing: border-box;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+}
+.payment-details-types img:last-child {
+  margin-right: 0 !important ;
 }
 
 .payment-details-price {
@@ -47,11 +56,10 @@
 }
 
 .payment-details-price-total {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
   text-align: center;
-  width: 68px;
 }
 
 .payment-details-price-currency {

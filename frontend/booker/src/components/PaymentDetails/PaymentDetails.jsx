@@ -6,7 +6,7 @@ class PaymentDetails extends Component {
     return (
       <div className="PaymentDetails">
         <div className="payment-details-type">
-          <p>Pagamento no local</p>
+          {this.props.types.length < 9 && <p>Formas de Pagamento</p>}
           <div className="payment-details-types">
             {this.props.types.map(item => (
               <img
@@ -14,6 +14,9 @@ class PaymentDetails extends Component {
                 key={item.paymentId}
                 alt={item.name}
                 title={item.name}
+                style={{
+                  marginRight: this.props.types.length < 11 ? "6px" : "3px"
+                }}
               />
             ))}
           </div>
