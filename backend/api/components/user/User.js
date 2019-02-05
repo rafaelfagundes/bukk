@@ -18,7 +18,11 @@ const UserSchema = new Schema({
   },
   gender: { type: String, required: true, enum: ["M", "F", "O"], default: "O" },
   birthday: { type: Date, default: Date.now },
-  email: { type: String, required: [true, "O email é obrigatório"] },
+  email: {
+    type: String,
+    required: [true, "O email é obrigatório"],
+    unique: true
+  },
   phone: {
     type: String,
     default: ""

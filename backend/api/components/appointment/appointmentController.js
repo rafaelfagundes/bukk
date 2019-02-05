@@ -97,7 +97,7 @@ exports.addAppointment = async (req, res) => {
           template.text,
           template.html,
           _client.email,
-          "no-reply@bukk.com.br"
+          "Bukk Agendador <no-reply@bukk.com.br>"
         );
         mail.send();
 

@@ -182,7 +182,9 @@ exports.getEmployeesByCompany = async (req, res) => {
     let _employeesResult = [];
     employees.forEach(e => {
       if (e.employee.enabled) {
-        _employeesResult.push(e);
+        if (e.employee.services.length > 0) {
+          _employeesResult.push(e);
+        }
       }
     });
 

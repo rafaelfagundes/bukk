@@ -496,8 +496,8 @@ export class Staff extends Component {
   };
 
   addEmployee = () => {
-    this.setState({ loading: true });
     let _errors = JSON.parse(JSON.stringify(errorsTemplate));
+    this.setState({ loading: true, errors: _errors });
 
     if (validator.isEmpty(this.state.newEmployee.firstName + "")) {
       _errors.newEmployee.push({
@@ -584,13 +584,31 @@ export class Staff extends Component {
         this.updateEmployees(true);
       })
       .catch(error => {
-        toast(
-          <Notification
-            type="error"
-            title="Erro ao adicionar novo funcionário"
-            text="Tente novamente mais tarde. Ou entre em contato com o suporte"
-          />
-        );
+        if (error.response.data.msg) {
+          toast(
+            <Notification
+              type="error"
+              title="Erro ao adicionar novo funcionário"
+              text={error.response.data.msg}
+            />
+          );
+
+          const _errors = JSON.parse(JSON.stringify(this.state.errors));
+          _errors.newEmployee.push({
+            msg: "Já existe um usuário com este email.",
+            error: true
+          });
+
+          this.setState({ errors: _errors });
+        } else {
+          toast(
+            <Notification
+              type="error"
+              title="Erro ao adicionar novo funcionário"
+              text="Não foi possível adicionar o funcionário. Contate o suporte."
+            />
+          );
+        }
         this.setState({ loading: false });
       });
   };

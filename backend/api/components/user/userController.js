@@ -1,10 +1,14 @@
-// External Dependancies
 const boom = require("boom");
 const auth = require("../../auth");
-
-// Get Data Models
+const shortid = require("shortid");
+shortid.characters(
+  "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$@"
+);
 const User = require("./User");
 const Employee = require("../employee/Employee");
+
+const Mail = require("../mail/Mail");
+const templates = require("../mail/templates/emailTemplates");
 
 // Get User Data
 exports.getUser = async (req, res) => {
@@ -150,7 +154,8 @@ exports.addUserByAdmin = async (req, res) => {
     _user.lastName = req.body.lastName;
     _user.email = req.body.email;
     _user.company = token.company;
-    _user.password = "123456"; // TODO: gerar dinamicamente
+    _password = shortid.generate();
+    _user.password = _password;
 
     // console.log(_user);
     const resultUser = await _user.save();
@@ -161,6 +166,20 @@ exports.addUserByAdmin = async (req, res) => {
       const resultEmployee = await _employee.save();
       console.log(resultEmployee);
       if (resultEmployee) {
+        const template = await templates.newEmployee(
+          token.company,
+          _user.firstName,
+          _user.email,
+          _password
+        );
+        const mail = new Mail(
+          `Seu novo cadastro no Bukk`,
+          template.text,
+          template.html,
+          _user.email,
+          "Bukk Agendador <no-reply@bukk.com.br>"
+        );
+        mail.send();
         res.status(200).send({ msg: "OK" });
       }
     } else {
@@ -168,6 +187,14 @@ exports.addUserByAdmin = async (req, res) => {
       res.status(500).send({ msg: "Impossível criar usuário" });
     }
   } catch (error) {
-    res.status(500).send({ msg: error });
+    console.log(error.code);
+    if (error.code === 11000) {
+      res.status(500).send({
+        msg: "Já existe um usuário com este email.",
+        code: "ALREADY_EXISTS"
+      });
+    } else {
+      res.status(500).send({ msg: error });
+    }
   }
 };

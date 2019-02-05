@@ -17,5 +17,13 @@ module.exports = {
     cloud_name: "bukkapp",
     api_key: "151549671844987",
     api_secret: "9cc33eiwoXI6vc5hRLkWMkEqpsE"
+  },
+  app: {
+    logo: "",
+    site: "https://www.bukk.com.br",
+    siteSimplified: "www.bukk.com.br",
+    emailNoReply: "no-reply@bukk.com.br",
+    name: "Bukk Agendador",
+    nameSimplified: "Bukk"
   }
 };

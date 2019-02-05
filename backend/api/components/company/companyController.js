@@ -119,8 +119,8 @@ exports.getCompanyCss = async (req, res) => {
     }
     `;
 
-    if (company.settings.options.disableMarginTopBooker) {
-      customCss += `.Booker{margin: 0px auto 55px auto !important;}`;
+    if (!company.settings.options.disableMarginTopBooker) {
+      customCss += `body{padding-top: 10px} `;
     }
     if (company.settings.options.disableHeader) {
       customCss += `
