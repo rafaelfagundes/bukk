@@ -101,6 +101,11 @@ router.post(
 Appointment
 ============================================================*/
 router.post(BASE_URL + "/appointments", appointment.addAppointment);
+router.post(
+  BASE_URL + "/appointments/list",
+  verifyToken,
+  appointment.getAllAppointments
+);
 router.get(
   BASE_URL + "/appointments/cancel/:id/:email",
   appointment.deleteAppointmentViaUrl

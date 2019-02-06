@@ -1,0 +1,12 @@
+.appointments-menu {
+  display: flex;
+  flex-direction: row;
+}
+
+.appointments-menu div {
+  width: 50%;
+}
+
+.appointments-menu div:first-child {
+  margin-right: 20px;
+}

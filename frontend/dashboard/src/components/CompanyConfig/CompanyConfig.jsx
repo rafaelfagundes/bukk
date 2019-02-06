@@ -16,16 +16,28 @@ export class CompanyConfig extends Component {
 
   handleItemClick = (e, { name }) => this.setState({ activeItem: name });
 
-  componentDidUpdate() {
-    const _currentPage = {
-      title: "Configurações de " + this.props.company.companyNickname,
-      icon: "building"
-    };
-
-    if (
-      JSON.stringify(this.props.currentPage) !== JSON.stringify(_currentPage)
-    ) {
+  componentDidMount() {
+    if (this.props.company) {
+      const _currentPage = {
+        title: "Configurações de " + this.props.company.companyNickname,
+        icon: "building"
+      };
       this.props.setCurrentPage(_currentPage);
+    } else {
+      const _company = JSON.parse(localStorage.getItem("company"));
+      if (_company) {
+        const _currentPage = {
+          title: "Configurações de " + _company.companyNickname,
+          icon: "building"
+        };
+        this.props.setCurrentPage(_currentPage);
+      } else {
+        const _currentPage = {
+          title: "Configurações da Empresa",
+          icon: "building"
+        };
+        this.props.setCurrentPage(_currentPage);
+      }
     }
   }
 
@@ -78,7 +90,6 @@ export class CompanyConfig extends Component {
     );
   }
 }
-
 const mapStateToProps = state => {
   return {
     currentPage: state.dashboard.currentPage,

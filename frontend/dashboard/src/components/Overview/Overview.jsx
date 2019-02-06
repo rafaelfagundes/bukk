@@ -10,17 +10,27 @@ class Overview extends Component {
   static propTypes = {};
 
   componentDidMount() {
-    // this.props.setCurrentPage({
-    //   title: this.props.company ? this.props.company.companyNickname : "",
-    //   icon: "home"
-    // });
-  }
-  componentDidUpdate() {
-    if (this.props.company && !this.props.currentPage) {
-      this.props.setCurrentPage({
-        title: this.props.company ? this.props.company.companyNickname : "",
+    if (this.props.company) {
+      const _currentPage = {
+        title: this.props.company.companyNickname,
         icon: "home"
-      });
+      };
+      this.props.setCurrentPage(_currentPage);
+    } else {
+      const _company = JSON.parse(localStorage.getItem("company"));
+      if (_company) {
+        const _currentPage = {
+          title: _company.companyNickname,
+          icon: "home"
+        };
+        this.props.setCurrentPage(_currentPage);
+      } else {
+        const _currentPage = {
+          title: "Início",
+          icon: "home"
+        };
+        this.props.setCurrentPage(_currentPage);
+      }
     }
   }
 

@@ -391,8 +391,6 @@ exports.updateCompany = async (req, res) => {
 
     const result = await Company.updateOne({ _id: company._id }, company);
 
-    console.log(result);
-
     if (result.ok === 1) {
       res.status(200).send({ msg: "OK" });
     } else {

@@ -1,12 +1,16 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Menu, Icon } from "semantic-ui-react";
+import { Link } from "react-router-dom";
 import "./SideMenu.css";
 
 class SideMenu extends Component {
-  state = { activeItem: "Geral" };
+  state = { activeItem: "dashboard" };
 
-  handleItemClick = (e, { name }) => this.setState({ activeItem: name });
+  handleItemClick = e => {
+    this.setState({ activeItem: e.currentTarget.id });
+    // console.log(e.currentTarget.id);
+  };
 
   render() {
     const { activeItem } = this.state;
@@ -28,50 +32,24 @@ class SideMenu extends Component {
             alt="Logo"
           />
         </div>
-        <Menu.Item
-          href="/dashboard/"
-          name="Geral"
-          active={activeItem === "Geral"}
+        <Link
+          id="dashboard"
+          to="/dashboard"
+          className={activeItem === "dashboard" ? "active item" : "item"}
           onClick={this.handleItemClick}
         >
           <Icon name="dashboard" />
-          Geral
-        </Menu.Item>
-        <Menu.Item
-          href="/dashboard/relatorios"
-          name="Relatórios"
-          active={activeItem === "Relatórios"}
+          Dashboard
+        </Link>
+        <Link
+          to="/dashboard/agendamentos"
+          className={activeItem === "agendamentos" ? "active item" : "item"}
           onClick={this.handleItemClick}
+          id="agendamentos"
         >
-          <Icon name="chart line" />
-          Relatórios
-        </Menu.Item>
-        <Menu.Item
-          name="Financeiro"
-          active={activeItem === "Financeiro"}
-          onClick={this.handleItemClick}
-        >
-          <Icon name="dollar" />
-          Financeiro
-        </Menu.Item>
-
-        <Menu.Item
-          href="/dashboard/clientes"
-          name="Clientes"
-          active={activeItem === "Clientes"}
-          onClick={this.handleItemClick}
-        >
-          <Icon name="users" />
-          Clientes
-        </Menu.Item>
-        <Menu.Item
-          name="messages"
-          active={activeItem === "messages"}
-          onClick={this.handleItemClick}
-        >
-          Messages
-          <Icon name="chat" />
-        </Menu.Item>
+          <Icon name="calendar outline" />
+          Agendamentos
+        </Link>
       </Menu>
     );
   }

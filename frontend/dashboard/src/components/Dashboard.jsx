@@ -20,6 +20,7 @@ import { isAuthenticated } from "../auth";
 import Axios from "axios";
 
 import config from "../config";
+import Appointments from "./Appointments/Appointments";
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route
@@ -117,37 +118,43 @@ class Dashboard extends Component {
         <Container fluid>
           <Grid>
             <Grid.Row>
-              <SideMenu />
+              <BrowserRouter>
+                <>
+                  <SideMenu />
 
-              <div id="content">
-                <TopMenu className="top-menu" />
+                  <div id="content">
+                    <TopMenu className="top-menu" />
 
-                <div id="pages">
-                  <div className="pages-inner">
-                    <BrowserRouter>
-                      <Switch>
-                        <PrivateRoute
-                          path="/dashboard/"
-                          exact
-                          component={Overview}
-                        />
-                        <PrivateRoute
-                          path="/dashboard/relatorios"
-                          component={Reports}
-                        />
-                        <PrivateRoute
-                          path="/dashboard/perfil"
-                          component={Profile}
-                        />
-                        <PrivateRoute
-                          path="/dashboard/configuracoes-empresa"
-                          component={CompanyConfig}
-                        />
-                      </Switch>
-                    </BrowserRouter>
+                    <div id="pages">
+                      <div className="pages-inner">
+                        <Switch>
+                          <PrivateRoute
+                            path="/dashboard"
+                            exact
+                            component={Overview}
+                          />
+                          <PrivateRoute
+                            path="/dashboard/relatorios"
+                            component={Reports}
+                          />
+                          <PrivateRoute
+                            path="/dashboard/agendamentos"
+                            component={Appointments}
+                          />
+                          <PrivateRoute
+                            path="/dashboard/perfil"
+                            component={Profile}
+                          />
+                          <PrivateRoute
+                            path="/dashboard/configuracoes-empresa"
+                            component={CompanyConfig}
+                          />
+                        </Switch>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
+                </>
+              </BrowserRouter>
             </Grid.Row>
           </Grid>
         </Container>

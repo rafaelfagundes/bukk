@@ -1,7 +1,7 @@
-// External Dependancies
 const boom = require("boom");
 const mongoose = require("mongoose");
 const moment = require("moment");
+const auth = require("../../auth");
 const shortid = require("shortid");
 shortid.characters(
   "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$@"
@@ -123,6 +123,82 @@ exports.addAppointment = async (req, res) => {
       msg:
         "A data e horário escolhidos não estão mais disponíveis. Tente novamente em outro horário."
     });
+  }
+};
+
+exports.getAllAppointments = async (req, res) => {
+  const token = auth.verify(req.token);
+  if (!token) {
+    res.status(403).json({
+      msg: "Token inválido."
+    });
+  }
+  try {
+    if (token.role === "owner") {
+      const appointments = await Appointment.aggregate([
+        {
+          $match: {
+            company: mongoose.Types.ObjectId(token.company)
+          }
+        },
+        {
+          $lookup: {
+            from: "employees",
+            localField: "employee",
+            foreignField: "_id",
+            as: "employee"
+          }
+        },
+        {
+          $unwind: {
+            path: "$employee"
+          }
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "employee.user",
+            foreignField: "_id",
+            as: "user"
+          }
+        },
+        {
+          $unwind: {
+            path: "$user"
+          }
+        },
+        {
+          $lookup: {
+            from: "costumers",
+            localField: "costumer",
+            foreignField: "_id",
+            as: "costumer"
+          }
+        },
+        {
+          $unwind: {
+            path: "$costumer"
+          }
+        },
+        {
+          $lookup: {
+            from: "services",
+            localField: "service",
+            foreignField: "_id",
+            as: "service"
+          }
+        },
+        {
+          $unwind: {
+            path: "$service"
+          }
+        }
+      ]);
+      console.log(appointments);
+      res.status(200).send({ msg: "OK", appointments });
+    }
+  } catch (error) {
+    res.status(500).send({ msg: "Erro ao listar agendamentos" });
   }
 };
 

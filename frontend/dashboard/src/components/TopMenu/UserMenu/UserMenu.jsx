@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
+import { Link } from "react-router-dom";
 import { Icon } from "semantic-ui-react";
 import { connect } from "react-redux";
 
@@ -44,6 +45,9 @@ export class UserMenu extends Component {
       });
     }
   };
+  handleClickOnLink = () => {
+    this.setState({ visible: false });
+  };
   render() {
     return (
       <>
@@ -72,14 +76,22 @@ export class UserMenu extends Component {
                 <ul>
                   <li>
                     <Icon name="user" />
-                    <a href="/dashboard/perfil">Meu perfil</a>
+                    <Link
+                      onClick={this.handleClickOnLink}
+                      to="/dashboard/perfil"
+                    >
+                      Meu perfil
+                    </Link>
                   </li>
                   {this.props.user.role === "owner" && (
                     <li>
                       <Icon name="setting" />
-                      <a href="/dashboard/configuracoes-empresa">
+                      <Link
+                        onClick={this.handleClickOnLink}
+                        to="/dashboard/configuracoes-empresa"
+                      >
                         Configurações da empresa
-                      </a>
+                      </Link>
                     </li>
                   )}
                   <li>

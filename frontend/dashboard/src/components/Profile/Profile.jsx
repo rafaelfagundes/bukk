@@ -16,12 +16,8 @@ class Profile extends Component {
 
   handleItemClick = (e, { name }) => this.setState({ activeItem: name });
 
-  componentDidUpdate() {
-    if (this.state.user === undefined) {
-      this.setState({ user: this.props.user, employee: this.props.employee });
-    }
-
-    if (this.props.user && !this.props.currentPage) {
+  componentDidMount() {
+    if (this.props.user) {
       this.props.setCurrentPage({
         title: "Perfil de " + this.props.user.firstName,
         icon: "user circle"
