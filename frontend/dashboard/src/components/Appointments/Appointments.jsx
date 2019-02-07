@@ -8,6 +8,89 @@ import { Table, Button, Icon } from "semantic-ui-react";
 import moment from "moment";
 import "./Appointments.css";
 import _ from "lodash";
+
+const TableHeader = () => (
+  <Table.Header>
+    <Table.Row>
+      <Table.HeaderCell>Status</Table.HeaderCell>
+      <Table.HeaderCell>Serviço</Table.HeaderCell>
+      <Table.HeaderCell>Especialista</Table.HeaderCell>
+      <Table.HeaderCell>Cliente</Table.HeaderCell>
+      <Table.HeaderCell>Data/Horário</Table.HeaderCell>
+      <Table.HeaderCell>Ações</Table.HeaderCell>
+    </Table.Row>
+  </Table.Header>
+);
+
+const TableBody = ({ data }) => {
+  let _fullDate = true;
+  if (
+    moment().isSameOrAfter(moment(data[0].start), "day") &&
+    moment().isSameOrBefore(moment(data[0].start), "hour")
+  ) {
+    _fullDate = false;
+  }
+  if (
+    moment()
+      .add(1, "day")
+      .isSameOrAfter(moment(data[0].start), "day") &&
+    moment()
+      .add(1, "day")
+      .isSameOrBefore(moment(data[0].start), "hour")
+  ) {
+    _fullDate = false;
+  }
+  console.log(data);
+
+  return (
+    <Table.Body>
+      {data.map((app, index) => (
+        <Table.Row key={index}>
+          <Table.Cell width={1} textAlign="center">
+            {app.status === "created" && (
+              <Icon name="hourglass half" title="Aguardando confirmação" />
+            )}
+          </Table.Cell>
+          <Table.Cell width={6}>{app.service.desc}</Table.Cell>
+          <Table.Cell collapsing>
+            {app.user.firstName + " " + app.user.lastName}
+          </Table.Cell>
+          <Table.Cell collapsing>
+            {app.costumer.firstName + " " + app.costumer.lastName}
+          </Table.Cell>
+          <Table.Cell collapsing>
+            {_fullDate && (
+              <>
+                {moment(app.start).format("dddd, DD/MM/YYYY[ de ]HH:mm") +
+                  " às " +
+                  moment(app.end).format("HH:mm")}
+              </>
+            )}
+            {!_fullDate && (
+              <>
+                {moment(app.start).format("HH:mm") +
+                  " às " +
+                  moment(app.end).format("HH:mm")}
+              </>
+            )}
+          </Table.Cell>
+          <Table.Cell collapsing>
+            <Button icon color="green" compact title="Confirmar agendamento">
+              <Icon name="check" />
+            </Button>
+            <Button icon color="blue" compact title="Ver ou editar agendamento">
+              <Icon name="edit outline" />
+            </Button>
+            <Button icon color="red" compact title="Cancelar agendamento">
+              <Icon name="delete" />
+            </Button>
+          </Table.Cell>
+        </Table.Row>
+      ))}
+    </Table.Body>
+  );
+};
+
 export class Appointments extends Component {
   state = {
     tab: "next",
@@ -27,14 +110,10 @@ export class Appointments extends Component {
 
     appointments.forEach(app => {
       const _date = moment(app.start);
-
-      if (
-        _date.isSame(_todayDate, "day") &&
-        _date.isSameOrAfter(_todayDate, "hour")
-      ) {
-        _today.push(app);
-      } else if (_date.isBefore(_todayDate, "day")) {
+      if (_date.isBefore(_todayDate, "hour")) {
         _before.push(app);
+      } else if (_date.isSame(_todayDate, "day")) {
+        _today.push(app);
       } else if (_date.isSame(_tomorrowDate, "day")) {
         _tomorrow.push(app);
       } else {
@@ -136,132 +215,41 @@ export class Appointments extends Component {
               <FormTitle text="Anteriores" first />
             </div>
             <Table celled>
-              <Table.Header>
-                <Table.Row>
-                  <Table.HeaderCell>Serviço</Table.HeaderCell>
-                  <Table.HeaderCell>Especialista</Table.HeaderCell>
-                  <Table.HeaderCell>Cliente</Table.HeaderCell>
-                  <Table.HeaderCell>Data</Table.HeaderCell>
-                  <Table.HeaderCell>Ações</Table.HeaderCell>
-                </Table.Row>
-              </Table.Header>
-
-              <Table.Body>
-                {this.state.before.map((app, index) => (
-                  <Table.Row key={index}>
-                    <Table.Cell>{app.service.desc}</Table.Cell>
-                    <Table.Cell>
-                      {app.user.firstName + " " + app.user.lastName}
-                    </Table.Cell>
-                    <Table.Cell>
-                      {app.costumer.firstName + " " + app.costumer.lastName}
-                    </Table.Cell>
-                    <Table.Cell>
-                      {moment(app.start).format("DD/MM/YYYY[ de ]HH:mm") +
-                        " às " +
-                        moment(app.end).format("HH:mm")}
-                    </Table.Cell>
-                    <Table.Cell width="1">
-                      <Button icon color="blue">
-                        <Icon name="search" />
-                      </Button>
-                    </Table.Cell>
-                  </Table.Row>
-                ))}
-              </Table.Body>
+              <TableHeader />
+              <TableBody data={this.state.before} />
             </Table>
           </>
         )}
         {this.state.today.length > 0 && this.state.tab === "next" && (
           <>
             <div>
-              <FormTitle text="Hoje" first />
+              <FormTitle
+                text={"Hoje - " + moment().format("DD/MM/YYYY")}
+                first
+              />
             </div>
             <Table celled compact>
-              <Table.Header>
-                <Table.Row>
-                  <Table.HeaderCell>Status</Table.HeaderCell>
-                  <Table.HeaderCell>Serviço</Table.HeaderCell>
-                  <Table.HeaderCell>Especialista</Table.HeaderCell>
-                  <Table.HeaderCell>Cliente</Table.HeaderCell>
-                  <Table.HeaderCell>Horário</Table.HeaderCell>
-                  <Table.HeaderCell>Ações</Table.HeaderCell>
-                </Table.Row>
-              </Table.Header>
-
-              <Table.Body>
-                {this.state.today.map((app, index) => (
-                  <Table.Row key={index}>
-                    <Table.Cell width={1} textAlign="center">
-                      {app.status === "created" && (
-                        <Icon name="hourglass half" />
-                      )}
-                    </Table.Cell>
-                    <Table.Cell width={6}>{app.service.desc}</Table.Cell>
-                    <Table.Cell collapsing>
-                      {app.user.firstName + " " + app.user.lastName}
-                    </Table.Cell>
-                    <Table.Cell collapsing>
-                      {app.costumer.firstName + " " + app.costumer.lastName}
-                    </Table.Cell>
-                    <Table.Cell collapsing>
-                      {moment(app.start).format("HH:mm") +
-                        " às " +
-                        moment(app.end).format("HH:mm")}
-                    </Table.Cell>
-                    <Table.Cell collapsing>
-                      <Button icon color="green" compact>
-                        <Icon name="check" />
-                      </Button>
-                      <Button icon color="blue" compact>
-                        <Icon name="edit outline" />
-                      </Button>
-                      <Button icon color="red" compact>
-                        <Icon name="delete" />
-                      </Button>
-                    </Table.Cell>
-                  </Table.Row>
-                ))}
-              </Table.Body>
+              <TableHeader />
+              <TableBody data={this.state.today} />
             </Table>
           </>
         )}
         {this.state.tomorrow.length > 0 && this.state.tab === "next" && (
           <>
             <div>
-              <FormTitle text="Amanhã" first={this.state.today.length === 0} />
+              <FormTitle
+                text={
+                  "Amanhã - " +
+                  moment()
+                    .add(1, "day")
+                    .format("DD/MM/YYYY")
+                }
+                first={this.state.today.length === 0}
+              />
             </div>
             <Table celled>
-              <Table.Header>
-                <Table.Row>
-                  <Table.HeaderCell>Serviço</Table.HeaderCell>
-                  <Table.HeaderCell>Especialista</Table.HeaderCell>
-                  <Table.HeaderCell>Cliente</Table.HeaderCell>
-                  <Table.HeaderCell>Data</Table.HeaderCell>
-                  <Table.HeaderCell>Ações</Table.HeaderCell>
-                </Table.Row>
-              </Table.Header>
-
-              <Table.Body>
-                {this.state.tomorrow.map((app, index) => (
-                  <Table.Row key={index}>
-                    <Table.Cell>{app.service.desc}</Table.Cell>
-                    <Table.Cell>
-                      {app.user.firstName + " " + app.user.lastName}
-                    </Table.Cell>
-                    <Table.Cell>
-                      {app.costumer.firstName + " " + app.costumer.lastName}
-                    </Table.Cell>
-                    <Table.Cell>
-                      {"De " +
-                        moment(app.start).format("HH:mm") +
-                        " às " +
-                        moment(app.end).format("HH:mm")}
-                    </Table.Cell>
-                    <Table.Cell>Cell</Table.Cell>
-                  </Table.Row>
-                ))}
-              </Table.Body>
+              <TableHeader />
+              <TableBody data={this.state.tomorrow} />
             </Table>
           </>
         )}
@@ -277,35 +265,8 @@ export class Appointments extends Component {
               />
             </div>
             <Table celled>
-              <Table.Header>
-                <Table.Row>
-                  <Table.HeaderCell>Serviço</Table.HeaderCell>
-                  <Table.HeaderCell>Especialista</Table.HeaderCell>
-                  <Table.HeaderCell>Cliente</Table.HeaderCell>
-                  <Table.HeaderCell>Data</Table.HeaderCell>
-                  <Table.HeaderCell>Ações</Table.HeaderCell>
-                </Table.Row>
-              </Table.Header>
-
-              <Table.Body>
-                {this.state.next.map((app, index) => (
-                  <Table.Row key={index}>
-                    <Table.Cell>{app.service.desc}</Table.Cell>
-                    <Table.Cell>
-                      {app.user.firstName + " " + app.user.lastName}
-                    </Table.Cell>
-                    <Table.Cell>
-                      {app.costumer.firstName + " " + app.costumer.lastName}
-                    </Table.Cell>
-                    <Table.Cell>
-                      {moment(app.start).format("DD/MM/YYYY[ de ]HH:mm") +
-                        " às " +
-                        moment(app.end).format("HH:mm")}
-                    </Table.Cell>
-                    <Table.Cell>Cell</Table.Cell>
-                  </Table.Row>
-                ))}
-              </Table.Body>
+              <TableHeader />
+              <TableBody data={this.state.next} />
             </Table>
           </>
         )}

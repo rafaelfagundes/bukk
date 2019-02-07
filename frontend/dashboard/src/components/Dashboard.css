@@ -11,10 +11,13 @@
   margin-left: 214px;
 }
 
+.pages-inner {
+  padding: 0 0 50px 0;
+}
+
 @media (min-width: 1441px) {
   .pages-inner {
     max-width: 1220px;
     box-sizing: border-box;
-    /* margin: 0 auto; */
   }
 }
