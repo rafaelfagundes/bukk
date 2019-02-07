@@ -7,6 +7,7 @@ import config from "../../config";
 import { Table, Button, Icon } from "semantic-ui-react";
 import moment from "moment";
 import "./Appointments.css";
+import _ from "lodash";
 export class Appointments extends Component {
   state = {
     tab: "next",
@@ -26,10 +27,11 @@ export class Appointments extends Component {
 
     appointments.forEach(app => {
       const _date = moment(app.start);
-      // console.log(_todayDate, _date);
-      console.log(_date.isSame(_todayDate, "day"));
 
-      if (_date.isSame(_todayDate, "day")) {
+      if (
+        _date.isSame(_todayDate, "day") &&
+        _date.isSameOrAfter(_todayDate, "hour")
+      ) {
         _today.push(app);
       } else if (_date.isBefore(_todayDate, "day")) {
         _before.push(app);
@@ -39,6 +41,9 @@ export class Appointments extends Component {
         _next.push(app);
       }
     });
+
+    // Sorts previous appointments descending
+    _.reverse(_before);
 
     this.setState({
       before: _before,
@@ -156,7 +161,11 @@ export class Appointments extends Component {
                         " às " +
                         moment(app.end).format("HH:mm")}
                     </Table.Cell>
-                    <Table.Cell>Cell</Table.Cell>
+                    <Table.Cell width="1">
+                      <Button icon color="blue">
+                        <Icon name="search" />
+                      </Button>
+                    </Table.Cell>
                   </Table.Row>
                 ))}
               </Table.Body>
@@ -168,13 +177,14 @@ export class Appointments extends Component {
             <div>
               <FormTitle text="Hoje" first />
             </div>
-            <Table celled>
+            <Table celled compact>
               <Table.Header>
                 <Table.Row>
+                  <Table.HeaderCell>Status</Table.HeaderCell>
                   <Table.HeaderCell>Serviço</Table.HeaderCell>
                   <Table.HeaderCell>Especialista</Table.HeaderCell>
                   <Table.HeaderCell>Cliente</Table.HeaderCell>
-                  <Table.HeaderCell>Data</Table.HeaderCell>
+                  <Table.HeaderCell>Horário</Table.HeaderCell>
                   <Table.HeaderCell>Ações</Table.HeaderCell>
                 </Table.Row>
               </Table.Header>
@@ -182,27 +192,31 @@ export class Appointments extends Component {
               <Table.Body>
                 {this.state.today.map((app, index) => (
                   <Table.Row key={index}>
-                    <Table.Cell>{app.service.desc}</Table.Cell>
-                    <Table.Cell>
+                    <Table.Cell width={1} textAlign="center">
+                      {app.status === "created" && (
+                        <Icon name="hourglass half" />
+                      )}
+                    </Table.Cell>
+                    <Table.Cell width={6}>{app.service.desc}</Table.Cell>
+                    <Table.Cell collapsing>
                       {app.user.firstName + " " + app.user.lastName}
                     </Table.Cell>
-                    <Table.Cell>
+                    <Table.Cell collapsing>
                       {app.costumer.firstName + " " + app.costumer.lastName}
                     </Table.Cell>
-                    <Table.Cell>
-                      {"De " +
-                        moment(app.start).format("HH:mm") +
+                    <Table.Cell collapsing>
+                      {moment(app.start).format("HH:mm") +
                         " às " +
                         moment(app.end).format("HH:mm")}
                     </Table.Cell>
-                    <Table.Cell width="3">
-                      <Button icon color="green">
+                    <Table.Cell collapsing>
+                      <Button icon color="green" compact>
                         <Icon name="check" />
                       </Button>
-                      <Button icon color="blue">
+                      <Button icon color="blue" compact>
                         <Icon name="edit outline" />
                       </Button>
-                      <Button icon color="red">
+                      <Button icon color="red" compact>
                         <Icon name="delete" />
                       </Button>
                     </Table.Cell>
@@ -215,7 +229,7 @@ export class Appointments extends Component {
         {this.state.tomorrow.length > 0 && this.state.tab === "next" && (
           <>
             <div>
-              <FormTitle text="Amanhã" />
+              <FormTitle text="Amanhã" first={this.state.today.length === 0} />
             </div>
             <Table celled>
               <Table.Header>
@@ -254,7 +268,13 @@ export class Appointments extends Component {
         {this.state.next.length > 0 && this.state.tab === "next" && (
           <>
             <div>
-              <FormTitle text="Próximos dias" />
+              <FormTitle
+                text="Próximos dias"
+                first={
+                  this.state.tomorrow.length === 0 &&
+                  this.state.today.length === 0
+                }
+              />
             </div>
             <Table celled>
               <Table.Header>

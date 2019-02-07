@@ -192,9 +192,13 @@ exports.getAllAppointments = async (req, res) => {
           $unwind: {
             path: "$service"
           }
+        },
+        {
+          $sort: {
+            start: 1
+          }
         }
       ]);
-      console.log(appointments);
       res.status(200).send({ msg: "OK", appointments });
     }
   } catch (error) {
