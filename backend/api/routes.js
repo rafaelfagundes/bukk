@@ -106,6 +106,11 @@ router.post(
   verifyToken,
   appointment.getAllAppointments
 );
+router.post(
+  BASE_URL + "/appointments/get",
+  verifyToken,
+  appointment.getOneAppointment
+);
 router.get(
   BASE_URL + "/appointments/cancel/:id/:email",
   appointment.deleteAppointmentViaUrl

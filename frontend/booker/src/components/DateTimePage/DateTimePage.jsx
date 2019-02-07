@@ -161,6 +161,7 @@ class DateTimePage extends Component {
       }
     );
     if (_servicesTable.length === 0) {
+      this.setState({ showHugeDropdown: true });
       this.props.setDateTimeOk(false);
     }
   };
@@ -552,7 +553,7 @@ class DateTimePage extends Component {
             header="Identificador da empresa inválido"
             list={[
               "Entre em contato com o suporte;",
-              "Ou contate o responsável pela tecnologia em sua empresa."
+              "Ou contate o responsável pela tecnologia de sua empresa."
             ]}
           />
         )}

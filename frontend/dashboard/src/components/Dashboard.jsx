@@ -21,6 +21,7 @@ import Axios from "axios";
 
 import config from "../config";
 import Appointments from "./Appointments/Appointments";
+import Appointment from "./Appointments/Appointment";
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route
@@ -139,7 +140,12 @@ class Dashboard extends Component {
                           />
                           <PrivateRoute
                             path="/dashboard/agendamentos"
+                            exact
                             component={Appointments}
+                          />
+                          <PrivateRoute
+                            path="/dashboard/agendamentos/:id"
+                            component={Appointment}
                           />
                           <PrivateRoute
                             path="/dashboard/perfil"

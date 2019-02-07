@@ -132,7 +132,7 @@ class Booker extends Component {
       })
       .catch(error => {
         this.props.setPage("5");
-        this.setState({ error: error.response.data.message });
+        this.setState({ error: error.response.data.msg });
       });
     this.scrollToTop();
   };
@@ -218,15 +218,17 @@ class Booker extends Component {
                   <div className="booker-footer">
                     {this.props.page === "1" && (
                       <React.Fragment>
-                        <Button
-                          primary
-                          onClick={this.handlePagination}
-                          floated="right"
-                          value="2"
-                          disabled={!this.props.dateAndTimeOk}
-                        >
-                          Continuar
-                        </Button>
+                        {this.props.dateAndTimeOk && (
+                          <Button
+                            primary
+                            onClick={this.handlePagination}
+                            floated="right"
+                            value="2"
+                            disabled={!this.props.dateAndTimeOk}
+                          >
+                            Continuar
+                          </Button>
+                        )}
                         <Breadcrumbs
                           pages={this.state.numPages}
                           currentPage={this.props.page}

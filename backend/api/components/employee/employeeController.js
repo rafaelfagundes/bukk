@@ -281,10 +281,9 @@ exports.getEmployeeByUserId = async (req, res) => {
 // Get an employee's schedule
 exports.getSchedule = async (req, res) => {
   try {
-    console.clear();
     const id = req.params.companyId;
     const date = req.params.date;
-    const serviceDuration = req.params.duration;
+    const serviceDuration = req.params.serviceDuration;
 
     const employee = await Employee.findOne({ _id: id });
     const appointments = await Appointment.find({ employee: id });
@@ -292,7 +291,6 @@ exports.getSchedule = async (req, res) => {
 
     // Scheduled times
     filterAlreadyUsedTimes(appointments, _monthSchedule.times);
-
     // Impossible to book due previous booking
     _monthSchedule.times = filterIncompatibleRange(
       _monthSchedule.times,

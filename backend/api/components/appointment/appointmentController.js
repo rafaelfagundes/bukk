@@ -54,11 +54,19 @@ const checkEmptyTimeInSchedule = async services => {
 // Add a new appointment
 exports.addAppointment = async (req, res) => {
   const okToContinue = await checkEmptyTimeInSchedule(req.body.services);
+  console.log("okToContinue", okToContinue);
   if (okToContinue) {
     try {
       const _confirmationId = shortid.generate();
       const _client = req.body.client; // Costumer
       const _services = req.body.services;
+
+      console.log(
+        "confirmationId/client/services",
+        _confirmationId,
+        _client,
+        _services
+      );
 
       const costumer = new Costumer({
         firstName: _client.firstName,
@@ -70,6 +78,7 @@ exports.addAppointment = async (req, res) => {
       });
 
       const resultCostumer = await costumer.save();
+      console.log("costumer", costumer);
 
       let _appointments = [];
       _services.forEach(_service => {
@@ -89,6 +98,7 @@ exports.addAppointment = async (req, res) => {
       });
 
       const resultAppointment = await Appointment.create(_appointments);
+      console.log("resultAppointment", resultAppointment);
 
       if (resultAppointment) {
         const template = await templates.newAppointment(_confirmationId);
@@ -118,7 +128,7 @@ exports.addAppointment = async (req, res) => {
       throw boom.boomify(err);
     }
   } else {
-    res.send({
+    res.status(500).send({
       status: "error",
       msg:
         "A data e horário escolhidos não estão mais disponíveis. Tente novamente em outro horário."
@@ -139,6 +149,86 @@ exports.getAllAppointments = async (req, res) => {
         {
           $match: {
             company: mongoose.Types.ObjectId(token.company)
+          }
+        },
+        {
+          $lookup: {
+            from: "employees",
+            localField: "employee",
+            foreignField: "_id",
+            as: "employee"
+          }
+        },
+        {
+          $unwind: {
+            path: "$employee"
+          }
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "employee.user",
+            foreignField: "_id",
+            as: "user"
+          }
+        },
+        {
+          $unwind: {
+            path: "$user"
+          }
+        },
+        {
+          $lookup: {
+            from: "costumers",
+            localField: "costumer",
+            foreignField: "_id",
+            as: "costumer"
+          }
+        },
+        {
+          $unwind: {
+            path: "$costumer"
+          }
+        },
+        {
+          $lookup: {
+            from: "services",
+            localField: "service",
+            foreignField: "_id",
+            as: "service"
+          }
+        },
+        {
+          $unwind: {
+            path: "$service"
+          }
+        },
+        {
+          $sort: {
+            start: 1
+          }
+        }
+      ]);
+      res.status(200).send({ msg: "OK", appointments });
+    }
+  } catch (error) {
+    res.status(500).send({ msg: "Erro ao listar agendamentos" });
+  }
+};
+exports.getOneAppointment = async (req, res) => {
+  const token = auth.verify(req.token);
+  if (!token) {
+    res.status(403).json({
+      msg: "Token inválido."
+    });
+  }
+  try {
+    if (token.role === "owner") {
+      const appointments = await Appointment.aggregate([
+        {
+          $match: {
+            company: mongoose.Types.ObjectId(token.company),
+            confirmationId: req.body.confirmationId
           }
         },
         {

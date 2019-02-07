@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { setCurrentPage } from "../dashboardActions";
 import FormTitle from "../Common/FormTitle";
@@ -40,7 +41,6 @@ const TableBody = ({ data }) => {
   ) {
     _fullDate = false;
   }
-  console.log(data);
 
   return (
     <Table.Body>
@@ -61,7 +61,7 @@ const TableBody = ({ data }) => {
           <Table.Cell collapsing>
             {_fullDate && (
               <>
-                {moment(app.start).format("dddd, DD/MM/YYYY[ de ]HH:mm") +
+                {moment(app.start).format("dddd, DD/MM/YY[ - ]HH:mm") +
                   " às " +
                   moment(app.end).format("HH:mm")}
               </>
@@ -78,9 +78,16 @@ const TableBody = ({ data }) => {
             <Button icon color="green" compact title="Confirmar agendamento">
               <Icon name="check" />
             </Button>
-            <Button icon color="blue" compact title="Ver ou editar agendamento">
-              <Icon name="edit outline" />
-            </Button>
+            <Link to={"/dashboard/agendamentos/" + app.confirmationId}>
+              <Button
+                icon
+                color="blue"
+                compact
+                title="Ver ou editar agendamento"
+              >
+                <Icon name="edit outline" />
+              </Button>
+            </Link>
             <Button icon color="red" compact title="Cancelar agendamento">
               <Icon name="delete" />
             </Button>
