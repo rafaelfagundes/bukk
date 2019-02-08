@@ -1,6 +1,11 @@
 import assign from "lodash/assign";
 
-const initialState = {};
+const initialState = {
+  currentPage: {
+    icon: "home",
+    title: "Início"
+  }
+};
 
 const dashboardReducer = (state = initialState, action) => {
   switch (action.type) {

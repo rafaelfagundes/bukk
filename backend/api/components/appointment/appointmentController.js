@@ -73,7 +73,7 @@ exports.addAppointment = async (req, res) => {
         lastName: _client.lastName,
         email: _client.email,
         gender: _client.gender,
-        phone: [{ number: _client.phone, whatsapp: _client.whatsapp }],
+        phone: [{ number: _client.phone, whatsApp: _client.whatsapp }],
         company: req.body.companyId
       });
 

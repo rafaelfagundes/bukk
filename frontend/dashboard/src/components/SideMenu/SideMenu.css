@@ -10,10 +10,13 @@
   border-radius: 0px !important;
   box-sizing: border-box !important;
 }
+.SideMenu a {
+  line-height: 22px !important;
+}
 
 .ui.vertical.menu .item > i.icon {
   float: left;
-  margin: 0 0.7em 0 0;
+  margin: 0 0.5em 0 0;
   opacity: 0.8;
 }
 

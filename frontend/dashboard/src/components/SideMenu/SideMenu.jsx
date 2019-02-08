@@ -9,8 +9,30 @@ class SideMenu extends Component {
 
   handleItemClick = e => {
     this.setState({ activeItem: e.currentTarget.id });
-    // console.log(e.currentTarget.id);
   };
+
+  componentDidMount() {
+    const _path = window.location.pathname;
+    function is(path, value) {
+      return path.indexOf(value) >= 0;
+    }
+
+    if (is(_path, "dashboard")) {
+      this.setState({ activeItem: "dashboard" });
+    }
+    if (is(_path, "agendamentos")) {
+      this.setState({ activeItem: "agendamentos" });
+    }
+    if (is(_path, "perfil")) {
+      this.setState({ activeItem: "perfil" });
+    }
+    if (is(_path, "clientes")) {
+      this.setState({ activeItem: "clientes" });
+    }
+    if (is(_path, "financeiro")) {
+      this.setState({ activeItem: "financeiro" });
+    }
+  }
 
   render() {
     const { activeItem } = this.state;
@@ -39,7 +61,7 @@ class SideMenu extends Component {
           onClick={this.handleItemClick}
         >
           <Icon name="dashboard" />
-          Dashboard
+          Início
         </Link>
         <Link
           to="/dashboard/agendamentos"
@@ -47,8 +69,35 @@ class SideMenu extends Component {
           onClick={this.handleItemClick}
           id="agendamentos"
         >
-          <Icon name="calendar outline" />
+          <Icon name="calendar alternate outline" />
           Agendamentos
+        </Link>
+        <Link
+          to="/dashboard/clientes"
+          className={activeItem === "clientes" ? "active item" : "item"}
+          onClick={this.handleItemClick}
+          id="clientes"
+        >
+          <Icon name="users" />
+          Clientes
+        </Link>
+        <Link
+          to="/dashboard/financeiro"
+          className={activeItem === "financeiro" ? "active item" : "item"}
+          onClick={this.handleItemClick}
+          id="financeiro"
+        >
+          <Icon name="dollar" />
+          Financeiro
+        </Link>
+        <Link
+          to="/dashboard/perfil"
+          className={activeItem === "perfil" ? "active item" : "item"}
+          onClick={this.handleItemClick}
+          id="perfil"
+        >
+          <Icon name="settings" />
+          Preferências
         </Link>
       </Menu>
     );
@@ -57,7 +106,8 @@ class SideMenu extends Component {
 
 const mapStateToProps = state => {
   return {
-    company: state.dashboard.company
+    company: state.dashboard.company,
+    currentPage: state.dashboard.currentPage
   };
 };
 

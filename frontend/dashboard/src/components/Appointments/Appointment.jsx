@@ -223,87 +223,93 @@ export class Appointment extends Component {
               />
 
               <FormTitle text="Informações do Agendamento" />
-              <FormSubTitle text="Cliente" />
-              <p>
-                <span style={{ opacity: ".8" }}>Nome: </span>
-                {appointment.costumer.firstName +
-                  " " +
-                  appointment.costumer.lastName}
-              </p>
-              <p>
-                <span style={{ opacity: ".8" }}>Sexo: </span>
-                {appointment.costumer.gender === "F" ? "Feminino" : ""}
-                {appointment.costumer.gender === "M" ? "Masculino" : ""}
-                {appointment.costumer.gender === "O" ? "Outro" : ""}
-              </p>
-              <p>
-                <span style={{ opacity: ".8" }}>Email: </span>
-                {appointment.costumer.email}
-              </p>
-              <p>
-                <span style={{ opacity: ".8" }}>Telefone: </span>
-                {formatBrazilianPhoneNumber(
-                  appointment.costumer.phone[0].number
-                )}
-                <span
-                  style={{
-                    marginLeft: "10px",
-                    fontWeight: 700,
-                    color: "#19b719"
-                  }}
-                >
-                  {appointment.costumer.phone[0].whatsApp ? (
-                    <>
-                      WhatsApp
-                      <Icon name="whatsapp" size="large" />
-                    </>
-                  ) : (
-                    ""
+              <div style={{ display: "flex", flexDirection: "row" }}>
+                <div style={{ width: "50%" }}>
+                  <FormSubTitle text="Cliente" first />
+                  <p>
+                    <span style={{ opacity: ".8" }}>Nome: </span>
+                    {appointment.costumer.firstName +
+                      " " +
+                      appointment.costumer.lastName}
+                  </p>
+                  <p>
+                    <span style={{ opacity: ".8" }}>Sexo: </span>
+                    {appointment.costumer.gender === "F" ? "Feminino" : ""}
+                    {appointment.costumer.gender === "M" ? "Masculino" : ""}
+                    {appointment.costumer.gender === "O" ? "Outro" : ""}
+                  </p>
+                  <p>
+                    <span style={{ opacity: ".8" }}>Email: </span>
+                    {appointment.costumer.email}
+                  </p>
+                  <p>
+                    <span style={{ opacity: ".8" }}>Telefone: </span>
+                    {formatBrazilianPhoneNumber(
+                      appointment.costumer.phone[0].number
+                    )}
+                    <span
+                      style={{
+                        marginLeft: "10px",
+                        fontWeight: 700,
+                        color: "#19b719"
+                      }}
+                    >
+                      {appointment.costumer.phone[0].whatsApp ? (
+                        <>
+                          WhatsApp
+                          <Icon name="whatsapp" size="large" />
+                        </>
+                      ) : (
+                        ""
+                      )}
+                    </span>
+                  </p>
+                  {appointment.notes !== "" && (
+                    <p className="appointment-notes">
+                      <span style={{ opacity: ".8" }}>
+                        Observações do cliente:{" "}
+                      </span>
+                      {appointment.notes}
+                    </p>
                   )}
-                </span>
-              </p>
-              {appointment.notes !== "" && (
-                <p>
-                  <span style={{ opacity: ".8" }}>
-                    Observações do cliente:
-                    <br />
-                  </span>
-                  {appointment.notes}
-                </p>
-              )}
-              <FormSubTitle text="Serviço" />
-              <p>
-                <span style={{ opacity: ".8" }}>Descrição: </span>
-                {appointment.service.desc}
-              </p>
-              <p>
-                <span style={{ opacity: ".8" }}>Duração: </span>
-                {appointment.service.duration} minutos
-              </p>
-              <p>
-                <span style={{ opacity: ".8" }}>Valor: </span>
-                R$ {formatCurrency(appointment.service.value)}
-              </p>
-              <FormSubTitle text="Data e Hora" />
-              <p>
-                <span style={{ opacity: ".8" }}>Data: </span>
-                {moment(appointment.start).format("dddd, DD/MM/YYYY")}
-              </p>
-              <p>
-                <span style={{ opacity: ".8" }}>Horário: </span>
-                {moment(appointment.start).format("HH:mm")} às{" "}
-                {moment(appointment.end).format("HH:mm")}
-              </p>
-              <FormSubTitle text="Especialista" />
-              <p>
-                <span style={{ opacity: ".8" }}>Nome: </span>
-                {appointment.user.firstName + " " + appointment.user.lastName}
-              </p>
-              <p>
-                <span style={{ opacity: ".8" }}>Especialidade: </span>
-                {appointment.employee.title}
-              </p>
-              <FormTitle text="Ações" />
+                  <FormSubTitle text="Serviço" />
+                  <p>
+                    <span style={{ opacity: ".8" }}>Descrição: </span>
+                    {appointment.service.desc}
+                  </p>
+                  <p>
+                    <span style={{ opacity: ".8" }}>Duração: </span>
+                    {appointment.service.duration} minutos
+                  </p>
+                  <p>
+                    <span style={{ opacity: ".8" }}>Valor: </span>
+                    R$ {formatCurrency(appointment.service.value)}
+                  </p>
+                </div>
+                <div style={{ width: "50%", paddingLeft: "50px" }}>
+                  <FormSubTitle text="Data e Hora" first />
+                  <p>
+                    <span style={{ opacity: ".8" }}>Data: </span>
+                    {moment(appointment.start).format("dddd, DD/MM/YYYY")}
+                  </p>
+                  <p>
+                    <span style={{ opacity: ".8" }}>Horário: </span>
+                    {moment(appointment.start).format("HH:mm")} às{" "}
+                    {moment(appointment.end).format("HH:mm")}
+                  </p>
+                  <FormSubTitle text="Especialista" />
+                  <p>
+                    <span style={{ opacity: ".8" }}>Nome: </span>
+                    {appointment.user.firstName +
+                      " " +
+                      appointment.user.lastName}
+                  </p>
+                  <p>
+                    <span style={{ opacity: ".8" }}>Especialidade: </span>
+                    {appointment.employee.title}
+                  </p>
+                </div>
+              </div>
             </>
           )}
         </div>

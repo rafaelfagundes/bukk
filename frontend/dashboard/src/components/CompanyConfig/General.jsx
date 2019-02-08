@@ -1044,7 +1044,7 @@ class General extends Component {
               ))}
 
               <FormTitle text="Formas de Pagamento" />
-              <FormSubTitle text="Cartões de Crédito" />
+              <FormSubTitle text="Cartões de Crédito" first />
               <div className="company-payment-types">
                 <div className="company-payment-type">
                   <img

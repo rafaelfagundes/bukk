@@ -10,3 +10,9 @@
 .appointments-menu div:first-child {
   margin-right: 20px;
 }
+
+.appointment-notes {
+  /* background-color: red; */
+  line-height: 20px;
+  max-width: 500px;
+}
