@@ -38,6 +38,14 @@
 
 .top-menu-title i {
   color: #5b005b;
+  margin-right: 5px;
+}
+
+.top-menu-subtitle {
+  color: #666;
+  padding-left: 10px;
+  font-size: 1rem;
+  margin-left: 10px;
 }
 
 .top-menu-notification-number {

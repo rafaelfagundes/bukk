@@ -222,13 +222,14 @@ exports.getOneAppointment = async (req, res) => {
       msg: "Token inválido."
     });
   }
+  console.log(req.body);
   try {
     if (token.role === "owner") {
       const appointments = await Appointment.aggregate([
         {
           $match: {
             company: mongoose.Types.ObjectId(token.company),
-            confirmationId: req.body.confirmationId
+            _id: mongoose.Types.ObjectId(req.body.id)
           }
         },
         {
@@ -287,12 +288,32 @@ exports.getOneAppointment = async (req, res) => {
           $sort: {
             start: 1
           }
+        },
+        {
+          $project: {
+            "user.firstName": 1,
+            "user.lastName": 1,
+            "employee.title": 1,
+            "service.desc": 1,
+            "service.value": 1,
+            "service.duration": 1,
+            "costumer.firstName": 1,
+            "costumer.lastName": 1,
+            "costumer.gender": 1,
+            "costumer.email": 1,
+            "costumer.phone": 1,
+            start: 1,
+            end: 1,
+            notes: 1,
+            status: 1
+          }
         }
       ]);
-      res.status(200).send({ msg: "OK", appointments });
+      res.status(200).send({ msg: "OK", appointment: appointments[0] });
     }
   } catch (error) {
-    res.status(500).send({ msg: "Erro ao listar agendamentos" });
+    console.log(error);
+    res.status(500).send({ msg: "Erro ao recuperar agendamento" });
   }
 };
 

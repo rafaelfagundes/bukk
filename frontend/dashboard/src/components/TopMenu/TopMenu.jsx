@@ -68,6 +68,11 @@ class TopMenu extends Component {
           {this.props.currentPage === undefined
             ? ""
             : this.props.currentPage.title}
+          <span className="top-menu-subtitle">
+            {this.props.currentPage === undefined
+              ? ""
+              : this.props.currentPage.subtitle}
+          </span>
         </div>
 
         <Menu.Menu position="right">

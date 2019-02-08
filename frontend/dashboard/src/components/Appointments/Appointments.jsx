@@ -9,6 +9,7 @@ import { Table, Button, Icon } from "semantic-ui-react";
 import moment from "moment";
 import "./Appointments.css";
 import _ from "lodash";
+import Loading from "../Loading/Loading";
 
 const TableHeader = () => (
   <Table.Header>
@@ -78,7 +79,7 @@ const TableBody = ({ data }) => {
             <Button icon color="green" compact title="Confirmar agendamento">
               <Icon name="check" />
             </Button>
-            <Link to={"/dashboard/agendamentos/" + app.confirmationId}>
+            <Link to={"/dashboard/agendamentos/" + app._id}>
               <Button
                 icon
                 color="blue"
@@ -100,6 +101,7 @@ const TableBody = ({ data }) => {
 
 export class Appointments extends Component {
   state = {
+    loading: false,
     tab: "next",
     before: [],
     today: [],
@@ -140,6 +142,7 @@ export class Appointments extends Component {
   };
 
   componentDidMount() {
+    this.setState({ loading: true });
     this.props.setCurrentPage({
       title: "Agendamentos",
       icon: "calendar outline"
@@ -155,8 +158,11 @@ export class Appointments extends Component {
     Axios.post(config.api + "/appointments/list", {}, requestConfig)
       .then(response => {
         this.sortAppointments(response.data.appointments);
+        this.setState({ loading: false });
       })
-      .catch();
+      .catch(error => {
+        this.setState({ loading: false });
+      });
   }
 
   handleTab = tab => {
@@ -216,6 +222,7 @@ export class Appointments extends Component {
             </Button>
           </Button.Group>
         </div>
+        {this.state.loading && <Loading />}
         {this.state.before.length > 0 && this.state.tab === "before" && (
           <>
             <div>

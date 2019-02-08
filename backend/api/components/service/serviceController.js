@@ -19,7 +19,6 @@ exports.getServices = async (req, res) => {
 exports.getServicesByCompany = async (req, res) => {
   try {
     const companyId = req.params.companyId;
-    console.log("companyId", companyId);
     const services = await Service.find(
       { company: companyId },
       "id desc value duration company"
