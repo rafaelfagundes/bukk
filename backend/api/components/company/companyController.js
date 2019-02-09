@@ -27,7 +27,7 @@ exports.getCompany = async (req, res) => {
     } else {
       company = await Company.findById(
         user.company,
-        "settings.colors companyNickname logo"
+        "id settings.colors companyNickname logo workingDays"
       );
     }
     res.status(200).send({ msg: "OK", company });

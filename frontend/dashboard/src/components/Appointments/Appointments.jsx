@@ -10,6 +10,7 @@ import moment from "moment";
 import "./Appointments.css";
 import _ from "lodash";
 import Loading from "../Loading/Loading";
+import Calendar from "./Calendar";
 
 const TableHeader = () => (
   <Table.Header>
@@ -100,13 +101,66 @@ const TableBody = ({ data }) => {
 };
 
 export class Appointments extends Component {
-  state = {
-    loading: false,
-    tab: "next",
-    before: [],
-    today: [],
-    tomorrow: [],
-    next: []
+  constructor(props) {
+    super(props);
+    let _company = JSON.parse(localStorage.getItem("company"));
+    const { min, max } = this.setMinMaxTime(_company.workingDays);
+    this.state = {
+      loading: false,
+      tab: "calendar",
+      before: [],
+      today: [],
+      tomorrow: [],
+      next: [],
+      minTime: min.toDate(),
+      maxTime: max.toDate(),
+      events: []
+    };
+  }
+
+  setMinMaxTime = workingDays => {
+    let _min = undefined;
+    let _max = undefined;
+    workingDays.forEach((wd, index) => {
+      wd.workingHours.forEach((wh, index) => {
+        let _itemMin = moment()
+          .hour(wh.start.split(":")[0])
+          .minute(wh.start.split(":")[1]);
+
+        let _itemMax = moment()
+          .hour(wh.end.split(":")[0])
+          .minute(wh.end.split(":")[1]);
+
+        if (_min === undefined) {
+          _min = _itemMin;
+        }
+        if (_max === undefined) {
+          _max = _itemMax;
+        }
+        if (_itemMin.isBefore(_min)) {
+          _min = _itemMin;
+        }
+        if (_itemMax.isAfter(_max)) {
+          _max = _itemMax;
+        }
+      });
+    });
+    return { min: _min, max: _max };
+  };
+
+  setEvents = appointments => {
+    let _events = [];
+
+    appointments.forEach(app => {
+      _events.push({
+        title: app.service.desc,
+        start: new Date(app.start),
+        end: new Date(app.end),
+        allDay: false
+      });
+    });
+
+    this.setState({ events: _events });
   };
 
   sortAppointments = appointments => {
@@ -142,7 +196,9 @@ export class Appointments extends Component {
   };
 
   componentDidMount() {
-    this.setState({ loading: true });
+    this.setState({
+      loading: true
+    });
     this.props.setCurrentPage({
       title: "Agendamentos",
       icon: "calendar outline"
@@ -158,6 +214,7 @@ export class Appointments extends Component {
     Axios.post(config.api + "/appointments/list", {}, requestConfig)
       .then(response => {
         this.sortAppointments(response.data.appointments);
+        this.setEvents(response.data.appointments);
         this.setState({ loading: false });
       })
       .catch(error => {
@@ -166,14 +223,14 @@ export class Appointments extends Component {
   }
 
   handleTab = tab => {
-    this.setState({ tab: tab });
+    this.setState({ tab });
   };
 
   render() {
     return (
       <>
         <div className="appointments-menu">
-          <Button.Group style={{ marginBottom: "40px" }} basic>
+          <Button.Group style={{ marginBottom: "40px", width: "25%" }} basic>
             <Button
               icon
               labelPosition="left"
@@ -183,21 +240,10 @@ export class Appointments extends Component {
               }}
             >
               <Icon name="calendar alternate outline" />
-              Calendário Mensal
-            </Button>
-            <Button
-              icon
-              labelPosition="right"
-              active={this.state.tab === "weekCalendar"}
-              onClick={e => {
-                this.handleTab("weekCalendar");
-              }}
-            >
-              <Icon name="calendar outline" />
-              Calendário Semanal
+              Calendário
             </Button>
           </Button.Group>{" "}
-          <Button.Group style={{ marginBottom: "40px" }} basic>
+          <Button.Group style={{ marginBottom: "40px", width: "75%" }} basic>
             <Button
               icon
               labelPosition="left"
@@ -282,6 +328,17 @@ export class Appointments extends Component {
               <TableHeader />
               <TableBody data={this.state.next} />
             </Table>
+          </>
+        )}
+        {this.state.tab === "calendar" && (
+          <>
+            {this.state.events.length > 0 && (
+              <Calendar
+                minTime={this.state.minTime}
+                maxTime={this.state.maxTime}
+                events={this.state.events}
+              />
+            )}
           </>
         )}
         {/* <pre>{JSON.stringify(this.state.today, null, 2)}</pre> */}
