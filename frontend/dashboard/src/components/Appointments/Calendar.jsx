@@ -12,7 +12,8 @@ const DragAndDropCalendar = withDragAndDrop(BigCalendar);
 
 export class Calendar extends Component {
   state = {
-    events: []
+    events: [],
+    appointmentId: undefined
   };
 
   componentDidMount() {
@@ -60,6 +61,7 @@ export class Calendar extends Component {
   };
 
   newEvent = event => {
+    console.log("slot clicked");
     // let idList = this.state.events.map(a => a.id)
     // let newId = Math.max(...idList) + 1
     // let hour = {
@@ -74,9 +76,15 @@ export class Calendar extends Component {
     // })
   };
 
+  selectEvent = e => {
+    this.props.history.push(`/dashboard/agendamentos/${e.appointmentId}`);
+  };
+
   render() {
     return (
-      <div style={{ height: "calc(100vh - 255px)" }}>
+      <div
+        style={{ height: "calc(100vh - 255px)", width: "calc(100vw - 280px)" }}
+      >
         <DragAndDropCalendar
           selectable
           localizer={localizer}
@@ -85,10 +93,13 @@ export class Calendar extends Component {
           resizable
           onEventResize={this.resizeEvent}
           onSelectSlot={this.newEvent}
+          onSelectEvent={this.selectEvent}
+          popup={true}
           defaultView={BigCalendar.Views.WEEK}
           defaultDate={new Date()}
           min={this.props.minTime}
           max={this.props.maxTime}
+          views={{ month: true, week: true, day: true }}
           messages={{
             day: "Dia",
             month: "Mês",

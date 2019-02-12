@@ -849,6 +849,7 @@ class General extends Component {
             <Form
               ref={formCompany => (this.formCompany = formCompany)}
               onSubmit={this.saveCompanyInfo}
+              className="max-width-fhd"
             >
               <FormTitle text="Logotipo" first />
               <div className="company-config-logo">
@@ -1232,7 +1233,7 @@ class General extends Component {
                 error={this.state.errors.paymentTypes.msg}
               />
               <FormTitle text="Horário de Funcionamento" />
-              <Table celled className="company-timetable">
+              <Table celled className="company-timetable max-width-fhd">
                 <Table.Header>
                   <Table.Row>
                     <Table.HeaderCell>

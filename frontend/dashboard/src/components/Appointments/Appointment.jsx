@@ -8,7 +8,7 @@ import Loading from "../Loading/Loading";
 import FormTitle from "../Common/FormTitle";
 import FormSubTitle from "../Common/FormSubTitle";
 import { formatBrazilianPhoneNumber, formatCurrency } from "../utils";
-import { Icon, Button } from "semantic-ui-react";
+import { Icon, Button, Divider } from "semantic-ui-react";
 
 const Status = ({ status }) => (
   <>
@@ -64,7 +64,7 @@ const ConfirmButton = ({ id, value, onClick }) => (
     compact
   >
     <Icon name="calendar check outline" />
-    Confirmar
+    Confirmar Agendamento
   </Button>
 );
 
@@ -79,7 +79,7 @@ const CancelButton = ({ id, value, onClick }) => (
     compact
   >
     <Icon name="calendar times outline" />
-    Cancelar
+    Cancelar Agendamento
   </Button>
 );
 
@@ -94,7 +94,7 @@ const CompleteButton = ({ id, value, onClick }) => (
     compact
   >
     <Icon name="check" />
-    Concluído
+    Concluir Agendamento
   </Button>
 );
 
@@ -124,7 +124,7 @@ const PayButton = ({ id, value, onClick }) => (
     compact
   >
     <Icon name="dollar" />
-    Pago
+    Cliente Pagou
   </Button>
 );
 
@@ -313,6 +313,12 @@ export class Appointment extends Component {
             </>
           )}
         </div>
+
+        <Divider style={{ marginTop: "40px" }} />
+        <Button icon labelPosition="left" onClick={this.props.history.goBack}>
+          <Icon name="left arrow" />
+          Voltar
+        </Button>
         {/* <pre>{JSON.stringify(this.state.appointment, null, 2)}</pre> */}
       </>
     );

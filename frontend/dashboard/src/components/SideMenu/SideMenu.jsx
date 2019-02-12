@@ -23,6 +23,9 @@ class SideMenu extends Component {
     if (is(_path, "agendamentos")) {
       this.setState({ activeItem: "agendamentos" });
     }
+    if (is(_path, "relatorios")) {
+      this.setState({ activeItem: "relatorios" });
+    }
     if (is(_path, "perfil")) {
       this.setState({ activeItem: "perfil" });
     }
@@ -80,6 +83,15 @@ class SideMenu extends Component {
         >
           <Icon name="users" />
           Clientes
+        </Link>
+        <Link
+          to="/dashboard/relatorios"
+          className={activeItem === "relatorios" ? "active item" : "item"}
+          onClick={this.handleItemClick}
+          id="relatorios"
+        >
+          <Icon name="chart line" />
+          Relatórios
         </Link>
         <Link
           to="/dashboard/financeiro"

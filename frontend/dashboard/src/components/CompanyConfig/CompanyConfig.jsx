@@ -1,7 +1,7 @@
 /* eslint no-loop-func: 0 */
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Button } from "semantic-ui-react";
+import { Menu } from "semantic-ui-react";
 import { setCurrentPage, setCompany } from "../dashboardActions";
 import "./CompanyConfig.css";
 import General from "./General";
@@ -42,41 +42,42 @@ export class CompanyConfig extends Component {
   }
 
   render() {
+    const { activeItem } = this.state;
     return (
       <>
         {this.props.company !== undefined && (
           <div className="CompanyConfig">
             <div className="div company-config-menu">
-              <Button.Group className="profile-menu" widths="4" basic>
-                <Button
+              <Menu borderless className="pages-menu">
+                <Menu.Item
                   name="geral"
-                  active={this.state.activeItem === "geral"}
+                  active={activeItem === "geral"}
                   onClick={this.handleItemClick}
-                >
-                  Informações da Empresa
-                </Button>
-                <Button
+                  icon="building outline"
+                  content="Empresa"
+                />
+                <Menu.Item
                   name="servicos"
-                  active={this.state.activeItem === "servicos"}
+                  active={activeItem === "servicos"}
                   onClick={this.handleItemClick}
-                >
-                  Serviços
-                </Button>
-                <Button
+                  content="Serviços"
+                  icon="wrench"
+                />
+                <Menu.Item
                   name="funcionarios"
-                  active={this.state.activeItem === "funcionarios"}
+                  active={activeItem === "funcionarios"}
                   onClick={this.handleItemClick}
-                >
-                  Funcionários
-                </Button>
-                <Button
+                  content="Funcionários"
+                  icon="users"
+                />
+                <Menu.Item
                   name="preferencias"
-                  active={this.state.activeItem === "preferencias"}
+                  active={activeItem === "preferencias"}
                   onClick={this.handleItemClick}
-                >
-                  Preferências
-                </Button>
-              </Button.Group>
+                  content="Preferências"
+                  icon="settings"
+                />
+              </Menu>
             </div>
             <div className="company-config-body">
               {this.state.activeItem === "geral" && <General />}

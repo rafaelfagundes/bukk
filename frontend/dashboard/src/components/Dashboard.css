@@ -15,9 +15,13 @@
   padding: 0 0 40px 0;
 }
 
+.pages-menu {
+  margin-bottom: 40px !important;
+}
+
 @media (min-width: 1441px) {
-  .pages-inner {
-    max-width: 1220px;
-    box-sizing: border-box;
+  /* limit some compenents width on full hd resolutions*/
+  .max-width-fhd {
+    max-width: calc(50vw + 200px) !important;
   }
 }

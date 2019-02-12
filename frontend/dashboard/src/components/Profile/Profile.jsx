@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Button } from "semantic-ui-react";
+import { Menu } from "semantic-ui-react";
 import { setCurrentPage } from "../dashboardActions";
 import "./Profile.css";
 import Services from "./Services";
@@ -26,61 +26,46 @@ class Profile extends Component {
   }
 
   render() {
+    const { activeItem } = this.state;
     return (
       <>
         <div className="profile-container">
           {this.props.user !== undefined && (
             <>
-              {this.props.user.role === "employee" && (
-                <Button.Group className="profile-menu" widths="4" basic>
-                  <Button
-                    name="geral"
-                    active={this.state.activeItem === "geral"}
-                    onClick={this.handleItemClick}
-                  >
-                    Geral
-                  </Button>
-                  <Button
-                    name="servicos"
-                    active={this.state.activeItem === "servicos"}
-                    onClick={this.handleItemClick}
-                  >
-                    Serviços
-                  </Button>
-                  <Button
-                    name="horarios"
-                    active={this.state.activeItem === "horarios"}
-                    onClick={this.handleItemClick}
-                  >
-                    Horários
-                  </Button>
-                  <Button
-                    name="preferencias"
-                    active={this.state.activeItem === "preferencias"}
-                    onClick={this.handleItemClick}
-                  >
-                    Preferências
-                  </Button>
-                </Button.Group>
-              )}
-              {this.props.user.role === "owner" && (
-                <Button.Group className="profile-menu" widths="4" basic>
-                  <Button
-                    name="geral"
-                    active={this.state.activeItem === "geral"}
-                    onClick={this.handleItemClick}
-                  >
-                    Geral
-                  </Button>
-                  <Button
-                    name="preferencias"
-                    active={this.state.activeItem === "preferencias"}
-                    onClick={this.handleItemClick}
-                  >
-                    Preferências
-                  </Button>
-                </Button.Group>
-              )}
+              <Menu borderless className="pages-menu">
+                <Menu.Item
+                  name="geral"
+                  active={activeItem === "geral"}
+                  onClick={this.handleItemClick}
+                  icon="user outline"
+                  content="Dados Pessoais"
+                />
+                {this.props.user.role === "employee" && (
+                  <>
+                    <Menu.Item
+                      name="servicos"
+                      active={activeItem === "servicos"}
+                      onClick={this.handleItemClick}
+                      content="Serviços"
+                      icon="wrench"
+                    />
+                    <Menu.Item
+                      name="horarios"
+                      active={activeItem === "horarios"}
+                      onClick={this.handleItemClick}
+                      content="Horários"
+                      icon="clock outline"
+                    />
+                  </>
+                )}
+                <Menu.Item
+                  name="preferencias"
+                  active={activeItem === "preferencias"}
+                  onClick={this.handleItemClick}
+                  content="Preferências"
+                  icon="settings"
+                />
+              </Menu>
             </>
           )}
 

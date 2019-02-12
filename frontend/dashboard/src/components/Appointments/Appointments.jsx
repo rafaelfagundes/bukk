@@ -5,12 +5,21 @@ import { setCurrentPage } from "../dashboardActions";
 import FormTitle from "../Common/FormTitle";
 import Axios from "axios";
 import config from "../../config";
-import { Table, Button, Icon } from "semantic-ui-react";
+import { Table, Button, Icon, Segment, Header, Menu } from "semantic-ui-react";
 import moment from "moment";
 import "./Appointments.css";
 import _ from "lodash";
 import Loading from "../Loading/Loading";
 import Calendar from "./Calendar";
+
+const NoAppointments = props => (
+  <Segment placeholder>
+    <Header icon>
+      <Icon name="calendar times outline" />
+      {props.text}
+    </Header>
+  </Segment>
+);
 
 const TableHeader = () => (
   <Table.Header>
@@ -25,7 +34,7 @@ const TableHeader = () => (
   </Table.Header>
 );
 
-const TableBody = ({ data }) => {
+const TableBody = ({ data, past }) => {
   let _fullDate = true;
   if (
     moment().isSameOrAfter(moment(data[0].start), "day") &&
@@ -77,22 +86,45 @@ const TableBody = ({ data }) => {
             )}
           </Table.Cell>
           <Table.Cell collapsing>
-            <Button icon color="green" compact title="Confirmar agendamento">
-              <Icon name="check" />
-            </Button>
-            <Link to={"/dashboard/agendamentos/" + app._id}>
-              <Button
-                icon
-                color="blue"
-                compact
-                title="Ver ou editar agendamento"
-              >
-                <Icon name="edit outline" />
-              </Button>
-            </Link>
-            <Button icon color="red" compact title="Cancelar agendamento">
-              <Icon name="delete" />
-            </Button>
+            {!past && (
+              <>
+                <Button
+                  icon
+                  color="green"
+                  compact
+                  title="Confirmar agendamento"
+                >
+                  <Icon name="check" />
+                </Button>
+
+                <Link to={"/dashboard/agendamentos/" + app._id}>
+                  <Button
+                    icon
+                    color="blue"
+                    compact
+                    title="Ver ou editar agendamento"
+                  >
+                    <Icon name="edit outline" />
+                  </Button>
+                </Link>
+
+                <Button icon color="red" compact title="Cancelar agendamento">
+                  <Icon name="delete" />
+                </Button>
+              </>
+            )}
+            {past && (
+              <Link to={"/dashboard/agendamentos/" + app._id}>
+                <Button
+                  icon
+                  color="blue"
+                  compact
+                  title="Visualizar agendamento"
+                >
+                  <Icon name="search" />
+                </Button>
+              </Link>
+            )}
           </Table.Cell>
         </Table.Row>
       ))}
@@ -107,14 +139,14 @@ export class Appointments extends Component {
     const { min, max } = this.setMinMaxTime(_company.workingDays);
     this.state = {
       loading: false,
-      tab: "calendar",
       before: [],
       today: [],
       tomorrow: [],
       next: [],
       minTime: min.toDate(),
       maxTime: max.toDate(),
-      events: []
+      events: [],
+      activeItem: "calendar"
     };
   }
 
@@ -153,10 +185,11 @@ export class Appointments extends Component {
 
     appointments.forEach(app => {
       _events.push({
-        title: app.service.desc,
+        title: `${app.costumer.firstName} - ${app.service.desc}`,
         start: new Date(app.start),
         end: new Date(app.end),
-        allDay: false
+        allDay: false,
+        appointmentId: app._id
       });
     });
 
@@ -201,7 +234,7 @@ export class Appointments extends Component {
     });
     this.props.setCurrentPage({
       title: "Agendamentos",
-      icon: "calendar outline"
+      icon: "calendar alternate outline"
     });
 
     const token = localStorage.getItem("token");
@@ -222,65 +255,62 @@ export class Appointments extends Component {
       });
   }
 
-  handleTab = tab => {
-    this.setState({ tab });
-  };
+  handleItemClick = (e, { name }) => this.setState({ activeItem: name });
 
   render() {
+    const { activeItem } = this.state;
     return (
       <>
-        <div className="appointments-menu">
-          <Button.Group style={{ marginBottom: "40px", width: "25%" }} basic>
-            <Button
-              icon
-              labelPosition="left"
-              active={this.state.tab === "calendar"}
-              onClick={e => {
-                this.handleTab("calendar");
-              }}
-            >
-              <Icon name="calendar alternate outline" />
-              Calendário
-            </Button>
-          </Button.Group>{" "}
-          <Button.Group style={{ marginBottom: "40px", width: "75%" }} basic>
-            <Button
-              icon
-              labelPosition="left"
-              active={this.state.tab === "next"}
-              onClick={e => {
-                this.handleTab("next");
-              }}
-            >
-              <Icon name="clock outline" />
-              Próximos agendamentos
-            </Button>
-            <Button
-              icon
-              labelPosition="right"
-              active={this.state.tab === "before"}
-              onClick={e => {
-                this.handleTab("before");
-              }}
-            >
-              <Icon name="history" />
-              Agendamentos anteriores
-            </Button>
-          </Button.Group>
+        <div>
+          <Menu borderless className="pages-menu">
+            <Menu.Item
+              name="calendar"
+              active={activeItem === "calendar"}
+              onClick={this.handleItemClick}
+              icon="calendar alternate outline"
+              content="Calendário"
+            />
+            <Menu.Item
+              name="next"
+              active={activeItem === "next"}
+              onClick={this.handleItemClick}
+              content="Próximos Agendamentos"
+              icon="forward"
+            />
+            <Menu.Menu position="right">
+              <Menu.Item
+                name="before"
+                active={activeItem === "before"}
+                onClick={this.handleItemClick}
+                content="Agendamentos Anteriores"
+                icon="history"
+              />
+            </Menu.Menu>
+          </Menu>
         </div>
         {this.state.loading && <Loading />}
-        {this.state.before.length > 0 && this.state.tab === "before" && (
+        {this.state.before.length > 0 && this.state.activeItem === "before" && (
           <>
             <div>
               <FormTitle text="Anteriores" first />
             </div>
             <Table celled>
               <TableHeader />
-              <TableBody data={this.state.before} />
+              <TableBody data={this.state.before} past={true} />
             </Table>
           </>
         )}
-        {this.state.today.length > 0 && this.state.tab === "next" && (
+        {this.state.before.length === 0 &&
+          this.state.activeItem === "before" && (
+            <NoAppointments text="Não há agendamentos prévios" />
+          )}
+        {this.state.today.length === 0 &&
+          this.state.tomorrow.length === 0 &&
+          this.state.next.length === 0 &&
+          this.state.activeItem === "next" && (
+            <NoAppointments text="Não há agendamentos futuros" />
+          )}
+        {this.state.today.length > 0 && this.state.activeItem === "next" && (
           <>
             <div>
               <FormTitle
@@ -294,7 +324,7 @@ export class Appointments extends Component {
             </Table>
           </>
         )}
-        {this.state.tomorrow.length > 0 && this.state.tab === "next" && (
+        {this.state.tomorrow.length > 0 && this.state.activeItem === "next" && (
           <>
             <div>
               <FormTitle
@@ -313,7 +343,7 @@ export class Appointments extends Component {
             </Table>
           </>
         )}
-        {this.state.next.length > 0 && this.state.tab === "next" && (
+        {this.state.next.length > 0 && this.state.activeItem === "next" && (
           <>
             <div>
               <FormTitle
@@ -330,13 +360,14 @@ export class Appointments extends Component {
             </Table>
           </>
         )}
-        {this.state.tab === "calendar" && (
+        {this.state.activeItem === "calendar" && (
           <>
             {this.state.events.length > 0 && (
               <Calendar
                 minTime={this.state.minTime}
                 maxTime={this.state.maxTime}
                 events={this.state.events}
+                {...this.props}
               />
             )}
           </>
