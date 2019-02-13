@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { toast } from "react-toastify";
 import { setCurrentPage } from "../dashboardActions";
 import Axios from "axios";
 import config from "../../config";
@@ -9,6 +10,7 @@ import FormTitle from "../Common/FormTitle";
 import FormSubTitle from "../Common/FormSubTitle";
 import { formatBrazilianPhoneNumber, formatCurrency } from "../utils";
 import { Icon, Button, Divider } from "semantic-ui-react";
+import Notification from "../Notification/Notification";
 
 const Status = ({ status }) => (
   <>
@@ -160,9 +162,46 @@ export class Appointment extends Component {
     appointment: undefined
   };
 
+  updateAppointment = appointment => {
+    const token = localStorage.getItem("token");
+    let requestConfig = {
+      headers: {
+        Authorization: token
+      }
+    };
+
+    Axios.patch(config.api + "/appointments/update", appointment, requestConfig)
+      .then(response => {
+        this.setState({
+          ...this.state,
+          appointment: { ...this.state.appointment, status: appointment.status }
+        });
+        toast(
+          <Notification
+            type="success"
+            title="Agendamento atualizado"
+            text="O agendamento foi atualizado com sucesso"
+          />
+        );
+      })
+      .catch(error => {
+        toast(
+          <Notification
+            type="error"
+            title="Erro ao atualizar agendamento"
+            text="Erro ao tentar atualizar os agendamento"
+          />
+        );
+      });
+  };
+
   handleStatus = e => {
-    console.log(e.currentTarget.value);
-    console.log(e.currentTarget.id);
+    let _appointment = {
+      _id: e.currentTarget.value,
+      status: e.currentTarget.id
+    };
+
+    this.updateAppointment(_appointment);
   };
 
   componentDidMount() {
@@ -193,14 +232,12 @@ export class Appointment extends Component {
           )} às ${moment(end).format("HH:mm")}`,
           icon: "user"
         });
-        console.log(response.data);
         this.setState({
           loading: false,
           appointment: response.data.appointment
         });
       })
       .catch(error => {
-        console.log(error.response.data);
         this.setState({ loading: false });
       });
   }

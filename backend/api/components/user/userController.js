@@ -35,13 +35,14 @@ exports.getUser = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email });
+    let employee = undefined;
     if (!user) {
       res.status(403);
       res.send({ msg: "Usuário e senha não coincidem." });
     } else {
       let _continue = true;
       if (user.role === "employee") {
-        const employee = await Employee.findOne({ user: user._id });
+        employee = await Employee.findOne({ user: user._id });
         if (!employee.enabled) {
           _continue = false;
           res.status(403).send({
@@ -62,6 +63,10 @@ exports.login = async (req, res) => {
             role: user.role,
             company: user.company
           };
+
+          if (_user.role === "employee") {
+            _user["employee"] = employee._id;
+          }
 
           res.status(200);
           res.send({
@@ -128,7 +133,6 @@ exports.updateUserPassword = async (req, res) => {
       { _id: token.id },
       { password: req.body.new }
     );
-    console.log(update);
 
     res.status(200).send({ msg: "OK" });
   } catch (error) {
@@ -145,10 +149,7 @@ exports.addUserByAdmin = async (req, res) => {
       });
     }
 
-    console.log(token);
-
     const _user = new User();
-    // console.log(req.body);
 
     _user.firstName = req.body.firstName;
     _user.lastName = req.body.lastName;
@@ -157,14 +158,11 @@ exports.addUserByAdmin = async (req, res) => {
     _password = shortid.generate();
     _user.password = _password;
 
-    // console.log(_user);
     const resultUser = await _user.save();
     if (resultUser) {
-      console.log("resultUser", resultUser);
       const _employee = new Employee();
       _employee.user = resultUser._id;
       const resultEmployee = await _employee.save();
-      console.log(resultEmployee);
       if (resultEmployee) {
         const template = await templates.newEmployee(
           token.company,
@@ -187,7 +185,6 @@ exports.addUserByAdmin = async (req, res) => {
       res.status(500).send({ msg: "Impossível criar usuário" });
     }
   } catch (error) {
-    console.log(error.code);
     if (error.code === 11000) {
       res.status(500).send({
         msg: "Já existe um usuário com este email.",

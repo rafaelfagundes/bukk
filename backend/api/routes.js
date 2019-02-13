@@ -115,6 +115,11 @@ router.get(
   BASE_URL + "/appointments/cancel/:id/:email",
   appointment.deleteAppointmentViaUrl
 );
+router.patch(
+  BASE_URL + "/appointments/update",
+  verifyToken,
+  appointment.update
+);
 
 /*============================================================
 User

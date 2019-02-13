@@ -12,7 +12,6 @@
 }
 
 .appointment-notes {
-  /* background-color: red; */
   line-height: 20px;
   max-width: 500px;
 }
@@ -37,7 +36,34 @@ button.rbc-active {
 .rbc-toolbar-label {
   font-size: 1rem;
 }
-
 .rbc-event-content {
   font-size: 0.85rem;
+}
+
+.rbc-allday-cell {
+  display: none;
+}
+
+.rbc-time-content {
+  border-top: none !important;
+}
+
+.appointments-row-canceled {
+  background-color: rgba(255, 0, 0, 0.08);
+}
+
+.appointments-row-confirmed {
+  background-color: rgba(0, 128, 0, 0.08);
+}
+
+.appointments-row-done {
+  background-color: rgba(0, 0, 255, 0.08);
+}
+
+.appointments-row-payed {
+  background-color: rgba(0, 128, 128, 0.08);
+}
+
+.appointments-row-missed {
+  background-color: rgba(255, 166, 0, 0.08);
 }

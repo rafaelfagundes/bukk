@@ -144,7 +144,12 @@ class Dashboard extends Component {
                             component={Appointments}
                           />
                           <PrivateRoute
-                            path="/dashboard/agendamentos/:id"
+                            path="/dashboard/agendamentos/:option"
+                            exact
+                            component={Appointments}
+                          />
+                          <PrivateRoute
+                            path="/dashboard/agendamento/:id"
                             component={Appointment}
                           />
                           <PrivateRoute

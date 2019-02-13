@@ -3,8 +3,8 @@ import { connect } from "react-redux";
 import BigCalendar from "react-big-calendar";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import moment from "moment";
+import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import "../../../node_modules/react-big-calendar/lib/css/react-big-calendar.css";
-import "react-big-calendar/lib/addons/dragAndDrop/styles.less";
 
 const localizer = BigCalendar.momentLocalizer(moment);
 
@@ -31,6 +31,8 @@ export class Calendar extends Component {
     } else if (event.allDay && !droppedOnAllDaySlot) {
       allDay = false;
     }
+    console.log(start);
+    console.log(end);
 
     const updatedEvent = { ...event, start, end, allDay };
 
@@ -61,7 +63,7 @@ export class Calendar extends Component {
   };
 
   newEvent = event => {
-    console.log("slot clicked");
+    console.log(event);
     // let idList = this.state.events.map(a => a.id)
     // let newId = Math.max(...idList) + 1
     // let hour = {
@@ -77,7 +79,7 @@ export class Calendar extends Component {
   };
 
   selectEvent = e => {
-    this.props.history.push(`/dashboard/agendamentos/${e.appointmentId}`);
+    this.props.history.push(`/dashboard/agendamento/${e.appointmentId}`);
   };
 
   render() {
@@ -94,7 +96,6 @@ export class Calendar extends Component {
           onEventResize={this.resizeEvent}
           onSelectSlot={this.newEvent}
           onSelectEvent={this.selectEvent}
-          popup={true}
           defaultView={BigCalendar.Views.WEEK}
           defaultDate={new Date()}
           min={this.props.minTime}
@@ -113,6 +114,18 @@ export class Calendar extends Component {
             event: "Agendamento"
           }}
         />
+        {/* <DragAndDropCalendar
+          selectable
+          localizer={localizer}
+          events={this.state.events}
+          onEventDrop={this.moveEvent}
+          resizable
+          onEventResize={this.resizeEvent}
+          onSelectSlot={this.newEvent}
+          onSelectEvent={this.selectEvent}
+          defaultView={BigCalendar.Views.MONTH}
+          defaultDate={new Date()}
+        /> */}
       </div>
     );
   }

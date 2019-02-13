@@ -143,78 +143,82 @@ exports.getAllAppointments = async (req, res) => {
       msg: "Token inválido."
     });
   }
+
   try {
-    if (token.role === "owner") {
-      const appointments = await Appointment.aggregate([
-        {
-          $match: {
-            company: mongoose.Types.ObjectId(token.company)
-          }
-        },
-        {
-          $lookup: {
-            from: "employees",
-            localField: "employee",
-            foreignField: "_id",
-            as: "employee"
-          }
-        },
-        {
-          $unwind: {
-            path: "$employee"
-          }
-        },
-        {
-          $lookup: {
-            from: "users",
-            localField: "employee.user",
-            foreignField: "_id",
-            as: "user"
-          }
-        },
-        {
-          $unwind: {
-            path: "$user"
-          }
-        },
-        {
-          $lookup: {
-            from: "costumers",
-            localField: "costumer",
-            foreignField: "_id",
-            as: "costumer"
-          }
-        },
-        {
-          $unwind: {
-            path: "$costumer"
-          }
-        },
-        {
-          $lookup: {
-            from: "services",
-            localField: "service",
-            foreignField: "_id",
-            as: "service"
-          }
-        },
-        {
-          $unwind: {
-            path: "$service"
-          }
-        },
-        {
-          $sort: {
-            start: 1
-          }
-        }
-      ]);
-      res.status(200).send({ msg: "OK", appointments });
+    let _match = {
+      company: mongoose.Types.ObjectId(token.company)
+    };
+    if (token.role === "employee") {
+      _match["employee"] = mongoose.Types.ObjectId(token.employee);
     }
+    const appointments = await Appointment.aggregate([
+      {
+        $match: _match
+      },
+      {
+        $lookup: {
+          from: "employees",
+          localField: "employee",
+          foreignField: "_id",
+          as: "employee"
+        }
+      },
+      {
+        $unwind: {
+          path: "$employee"
+        }
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "employee.user",
+          foreignField: "_id",
+          as: "user"
+        }
+      },
+      {
+        $unwind: {
+          path: "$user"
+        }
+      },
+      {
+        $lookup: {
+          from: "costumers",
+          localField: "costumer",
+          foreignField: "_id",
+          as: "costumer"
+        }
+      },
+      {
+        $unwind: {
+          path: "$costumer"
+        }
+      },
+      {
+        $lookup: {
+          from: "services",
+          localField: "service",
+          foreignField: "_id",
+          as: "service"
+        }
+      },
+      {
+        $unwind: {
+          path: "$service"
+        }
+      },
+      {
+        $sort: {
+          start: 1
+        }
+      }
+    ]);
+    res.status(200).send({ msg: "OK", appointments });
   } catch (error) {
     res.status(500).send({ msg: "Erro ao listar agendamentos" });
   }
 };
+
 exports.getOneAppointment = async (req, res) => {
   const token = auth.verify(req.token);
   if (!token) {
@@ -224,96 +228,127 @@ exports.getOneAppointment = async (req, res) => {
   }
   console.log(req.body);
   try {
-    if (token.role === "owner") {
-      const appointments = await Appointment.aggregate([
-        {
-          $match: {
-            company: mongoose.Types.ObjectId(token.company),
-            _id: mongoose.Types.ObjectId(req.body.id)
-          }
-        },
-        {
-          $lookup: {
-            from: "employees",
-            localField: "employee",
-            foreignField: "_id",
-            as: "employee"
-          }
-        },
-        {
-          $unwind: {
-            path: "$employee"
-          }
-        },
-        {
-          $lookup: {
-            from: "users",
-            localField: "employee.user",
-            foreignField: "_id",
-            as: "user"
-          }
-        },
-        {
-          $unwind: {
-            path: "$user"
-          }
-        },
-        {
-          $lookup: {
-            from: "costumers",
-            localField: "costumer",
-            foreignField: "_id",
-            as: "costumer"
-          }
-        },
-        {
-          $unwind: {
-            path: "$costumer"
-          }
-        },
-        {
-          $lookup: {
-            from: "services",
-            localField: "service",
-            foreignField: "_id",
-            as: "service"
-          }
-        },
-        {
-          $unwind: {
-            path: "$service"
-          }
-        },
-        {
-          $sort: {
-            start: 1
-          }
-        },
-        {
-          $project: {
-            "user.firstName": 1,
-            "user.lastName": 1,
-            "employee.title": 1,
-            "service.desc": 1,
-            "service.value": 1,
-            "service.duration": 1,
-            "costumer.firstName": 1,
-            "costumer.lastName": 1,
-            "costumer.gender": 1,
-            "costumer.email": 1,
-            "costumer.phone": 1,
-            start: 1,
-            end: 1,
-            notes: 1,
-            status: 1
-          }
-        }
-      ]);
-      res.status(200).send({ msg: "OK", appointment: appointments[0] });
+    let _match = {
+      company: mongoose.Types.ObjectId(token.company),
+      _id: mongoose.Types.ObjectId(req.body.id)
+    };
+    if (token.role === "employee") {
+      _match["employee"] = mongoose.Types.ObjectId(token.employee);
     }
+
+    const appointments = await Appointment.aggregate([
+      {
+        $match: _match
+      },
+      {
+        $lookup: {
+          from: "employees",
+          localField: "employee",
+          foreignField: "_id",
+          as: "employee"
+        }
+      },
+      {
+        $unwind: {
+          path: "$employee"
+        }
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "employee.user",
+          foreignField: "_id",
+          as: "user"
+        }
+      },
+      {
+        $unwind: {
+          path: "$user"
+        }
+      },
+      {
+        $lookup: {
+          from: "costumers",
+          localField: "costumer",
+          foreignField: "_id",
+          as: "costumer"
+        }
+      },
+      {
+        $unwind: {
+          path: "$costumer"
+        }
+      },
+      {
+        $lookup: {
+          from: "services",
+          localField: "service",
+          foreignField: "_id",
+          as: "service"
+        }
+      },
+      {
+        $unwind: {
+          path: "$service"
+        }
+      },
+      {
+        $sort: {
+          start: 1
+        }
+      },
+      {
+        $project: {
+          "user.firstName": 1,
+          "user.lastName": 1,
+          "employee.title": 1,
+          "service.desc": 1,
+          "service.value": 1,
+          "service.duration": 1,
+          "costumer.firstName": 1,
+          "costumer.lastName": 1,
+          "costumer.gender": 1,
+          "costumer.email": 1,
+          "costumer.phone": 1,
+          start: 1,
+          end: 1,
+          notes: 1,
+          status: 1
+        }
+      }
+    ]);
+    res.status(200).send({ msg: "OK", appointment: appointments[0] });
   } catch (error) {
     console.log(error);
     res.status(500).send({ msg: "Erro ao recuperar agendamento" });
+  }
+};
+
+// Update one appointment
+exports.update = async (req, res) => {
+  try {
+    const token = auth.verify(req.token);
+    if (!token) {
+      res.status(403).json({
+        msg: "Token inválido."
+      });
+    }
+
+    let _match = { _id: req.body._id };
+
+    if (token.role === "employee") {
+      _match["employee"] = token.employee;
+    }
+
+    const update = await Appointment.updateOne(_match, req.body);
+
+    if (update.ok) {
+      res.status(200).send({ msg: "OK" });
+    } else {
+      res.status(500).send({ msg: "Erro ao atualizar agendamento" });
+    }
+  } catch (error) {
+    console.log(error);
   }
 };
 
