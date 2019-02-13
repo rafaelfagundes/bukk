@@ -13,6 +13,7 @@
 
 .pages-inner {
   padding: 0 0 40px 0;
+  width: calc(100vw - 290px);
 }
 
 .pages-menu {

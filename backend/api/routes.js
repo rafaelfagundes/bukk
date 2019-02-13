@@ -116,9 +116,14 @@ router.get(
   appointment.deleteAppointmentViaUrl
 );
 router.patch(
+  BASE_URL + "/appointment/update",
+  verifyToken,
+  appointment.updateOne
+);
+router.patch(
   BASE_URL + "/appointments/update",
   verifyToken,
-  appointment.update
+  appointment.updateMany
 );
 
 /*============================================================

@@ -38,19 +38,13 @@ const TableHeader = () => (
 
 const TableBody = ({ data, past, confirmAppointment, cancelAppointment }) => {
   let _fullDate = true;
-  if (
-    moment().isSameOrAfter(moment(data[0].start), "day") &&
-    moment().isSameOrBefore(moment(data[0].start), "hour")
-  ) {
+  if (moment().isSame(moment(data[0].start), "day")) {
     _fullDate = false;
   }
   if (
     moment()
       .add(1, "day")
-      .isSameOrAfter(moment(data[0].start), "day") &&
-    moment()
-      .add(1, "day")
-      .isSameOrBefore(moment(data[0].start), "hour")
+      .isSame(moment(data[0].start), "day")
   ) {
     _fullDate = false;
   }
@@ -264,7 +258,7 @@ export class Appointments extends Component {
       }
     };
 
-    Axios.patch(config.api + "/appointments/update", appointment, requestConfig)
+    Axios.patch(config.api + "/appointment/update", appointment, requestConfig)
       .then(response => {
         this.sortAppointments(getAppointments());
         toast(
@@ -399,6 +393,15 @@ export class Appointments extends Component {
     } else {
       _activeItem = "calendar";
     }
+    this.setState({ activeItem: _activeItem });
+    this.mountOrCalendarUpdate();
+  }
+
+  handleItemClick = (e, { name }) => {
+    this.setState({ activeItem: name });
+  };
+
+  mountOrCalendarUpdate = () => {
     this.setState({
       loading: true
     });
@@ -406,27 +409,21 @@ export class Appointments extends Component {
       title: "Agendamentos",
       icon: "calendar alternate outline"
     });
-
     const token = localStorage.getItem("token");
     let requestConfig = {
       headers: {
         Authorization: token
       }
     };
-
     Axios.post(config.api + "/appointments/list", {}, requestConfig)
       .then(response => {
         this.sortAppointments(response.data.appointments);
         this.setEvents(response.data.appointments);
-        this.setState({ loading: false, activeItem: _activeItem });
+        this.setState({ loading: false });
       })
       .catch(error => {
         this.setState({ loading: false });
       });
-  }
-
-  handleItemClick = (e, { name }) => {
-    this.setState({ activeItem: name });
   };
 
   render() {
@@ -559,12 +556,15 @@ export class Appointments extends Component {
         {this.state.activeItem === "calendar" && (
           <>
             {this.state.events.length > 0 && (
-              <Calendar
-                minTime={this.state.minTime}
-                maxTime={this.state.maxTime}
-                events={this.state.events}
-                {...this.props}
-              />
+              <>
+                <Calendar
+                  minTime={this.state.minTime}
+                  maxTime={this.state.maxTime}
+                  events={this.state.events}
+                  updateHandler={this.mountOrCalendarUpdate}
+                  {...this.props}
+                />
+              </>
             )}
           </>
         )}

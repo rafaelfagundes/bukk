@@ -1,9 +1,10 @@
 #Specialists {
   width: 100%;
+  display: flex;
+  flex-direction: row;
 }
 
 .Specialist {
-  position: relative;
   text-align: center;
   width: 25%;
   box-sizing: border-box;

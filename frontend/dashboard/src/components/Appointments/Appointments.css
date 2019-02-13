@@ -67,3 +67,7 @@ button.rbc-active {
 .appointments-row-missed {
   background-color: rgba(255, 166, 0, 0.08);
 }
+
+.rbc-addons-dnd-resize-ns-anchor {
+  display: none;
+}

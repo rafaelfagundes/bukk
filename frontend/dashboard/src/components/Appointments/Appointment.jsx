@@ -170,7 +170,7 @@ export class Appointment extends Component {
       }
     };
 
-    Axios.patch(config.api + "/appointments/update", appointment, requestConfig)
+    Axios.patch(config.api + "/appointment/update", appointment, requestConfig)
       .then(response => {
         this.setState({
           ...this.state,

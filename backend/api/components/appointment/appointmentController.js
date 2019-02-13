@@ -325,7 +325,7 @@ exports.getOneAppointment = async (req, res) => {
 };
 
 // Update one appointment
-exports.update = async (req, res) => {
+exports.updateOne = async (req, res) => {
   try {
     const token = auth.verify(req.token);
     if (!token) {
@@ -334,7 +334,7 @@ exports.update = async (req, res) => {
       });
     }
 
-    let _match = { _id: req.body._id };
+    let _match = { _id: req.body._id, company: token.company };
 
     if (token.role === "employee") {
       _match["employee"] = token.employee;
@@ -342,6 +342,51 @@ exports.update = async (req, res) => {
 
     const update = await Appointment.updateOne(_match, req.body);
 
+    if (update.ok) {
+      res.status(200).send({ msg: "OK" });
+    } else {
+      res.status(500).send({ msg: "Erro ao atualizar agendamento" });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// Update many appointments
+exports.updateMany = async (req, res) => {
+  try {
+    const token = auth.verify(req.token);
+    if (!token) {
+      res.status(403).json({
+        msg: "Token inválido."
+      });
+    }
+
+    let _match = { company: token.company };
+
+    if (token.role === "employee") {
+      _match["employee"] = token.employee;
+    }
+
+    console.log(req.body);
+    console.log(_match);
+
+    let _ops = [];
+
+    req.body.forEach(appointment => {
+      let op = {
+        updateOne: {
+          filter: { _id: appointment._id },
+          update: { start: appointment.start, end: appointment.end }
+        }
+      };
+      _ops.push(op);
+    });
+
+    // console.dir(JSON.stringify(_ops));
+
+    const update = await Appointment.bulkWrite(_ops);
+    console.log(update);
     if (update.ok) {
       res.status(200).send({ msg: "OK" });
     } else {
