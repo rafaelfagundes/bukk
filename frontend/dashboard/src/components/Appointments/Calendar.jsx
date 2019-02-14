@@ -167,13 +167,13 @@ export class Calendar extends Component {
   };
 
   selectEvent = e => {
-    this.props.history.push(`/dashboard/agendamento/${e.appointmentId}`);
+    this.props.history.push(`/dashboard/agendamento/id/${e.appointmentId}`);
   };
 
   render() {
     return (
       <div
-        style={{ height: "calc(100vh - 265px)", width: "calc(100vw - 280px)" }}
+        style={{ height: "calc(100vh - 265px)", width: "calc(100vw - 290px)" }}
       >
         <DragAndDropCalendar
           selectable

@@ -194,6 +194,80 @@ exports.getEmployeesByCompany = async (req, res) => {
   }
 };
 
+// Get all employees by service
+exports.allEmployeesByService = async (req, res) => {
+  const token = auth.verify(req.token);
+  if (!token) {
+    res.status(403).json({
+      msg: "Token inválido."
+    });
+  }
+  try {
+    const { serviceId } = req.body;
+    const specialists = await User.aggregate([
+      {
+        $match: {
+          role: "employee",
+          company: new mongoose.Types.ObjectId(token.company)
+        }
+      },
+      {
+        $lookup: {
+          from: "employees",
+          localField: "_id",
+          foreignField: "user",
+          as: "employee"
+        }
+      },
+      {
+        $unwind: {
+          path: "$employee"
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          firstName: 1,
+          lastName: 1,
+          avatar: 1,
+          "employee.enabled": 1,
+          "employee.services": 1,
+          "employee.workingDays": 1
+        }
+      }
+    ]);
+
+    const _specialists = [];
+
+    specialists.forEach(s => {
+      if (
+        s.employee.enabled &&
+        s.employee.services.length > 0 &&
+        s.employee.workingDays.length > 0
+      ) {
+        let _found = false;
+        s.employee.services.forEach(service => {
+          if (String(service) === serviceId) {
+            _found = true;
+          }
+        });
+
+        if (_found) {
+          _specialists.push(s);
+        }
+      }
+    });
+
+    if (_specialists.length > 0) {
+      res.status(200).send(_specialists);
+    } else {
+      res.status(404).send({ msg: "Nenhum especialista encontrado" });
+    }
+  } catch (error) {
+    res.status(500).send({ msg: error });
+  }
+};
+
 // Get all employees by company [POST]
 exports.allEmployeesByCompany = async (req, res) => {
   const token = auth.verify(req.token);

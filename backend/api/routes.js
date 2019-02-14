@@ -62,6 +62,12 @@ router.post(
 );
 
 router.post(
+  BASE_URL + "/specialists/service",
+  verifyToken,
+  specialist.allEmployeesByService
+);
+
+router.post(
   BASE_URL + "/specialists/user",
   verifyToken,
   specialist.getEmployeeByUserId

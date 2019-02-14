@@ -13,6 +13,7 @@ import _ from "lodash";
 import Loading from "../Loading/Loading";
 import Calendar from "./Calendar";
 import Notification from "../Notification/Notification";
+import { NewAppointment } from "./NewAppointment";
 
 const NoAppointments = props => (
   <Segment placeholder>
@@ -140,7 +141,7 @@ const TableBody = ({ data, past, confirmAppointment, cancelAppointment }) => {
                     >
                       <Icon name="check" />
                     </Button>
-                    <Link to={"/dashboard/agendamento/" + app._id}>
+                    <Link to={"/dashboard/agendamento/id/" + app._id}>
                       <Button
                         icon
                         color="blue"
@@ -164,7 +165,7 @@ const TableBody = ({ data, past, confirmAppointment, cancelAppointment }) => {
 
                 {app.status === "confirmed" && (
                   <>
-                    <Link to={"/dashboard/agendamento/" + app._id}>
+                    <Link to={"/dashboard/agendamento/id/" + app._id}>
                       <Button
                         icon
                         color="blue"
@@ -189,7 +190,7 @@ const TableBody = ({ data, past, confirmAppointment, cancelAppointment }) => {
                   app.status === "done" ||
                   app.status === "payed" ||
                   app.status === "missed") && (
-                  <Link to={"/dashboard/agendamento/" + app._id}>
+                  <Link to={"/dashboard/agendamento/id/" + app._id}>
                     <Button icon color="blue" compact title="Ver">
                       <Icon name="search" />
                     </Button>
@@ -198,7 +199,7 @@ const TableBody = ({ data, past, confirmAppointment, cancelAppointment }) => {
               </>
             )}
             {past && (
-              <Link to={"/dashboard/agendamento/" + app._id}>
+              <Link to={"/dashboard/agendamento/id/" + app._id}>
                 <Button
                   icon
                   color="blue"
@@ -390,6 +391,8 @@ export class Appointments extends Component {
       _activeItem = "next";
     } else if (this.props.match.params.option === "terminados") {
       _activeItem = "before";
+    } else if (this.props.match.params.option === "novo") {
+      _activeItem = "new";
     } else {
       _activeItem = "calendar";
     }
@@ -440,6 +443,16 @@ export class Appointments extends Component {
                 onClick={this.handleItemClick}
                 icon="calendar alternate outline"
                 content="Calendário"
+              />
+            </Link>
+            <Link to="/dashboard/agendamentos/novo">
+              <Menu.Item
+                as="span"
+                name="new"
+                active={activeItem === "new"}
+                onClick={this.handleItemClick}
+                content="Novo Agendamento"
+                icon="plus"
               />
             </Link>
             <Link to="/dashboard/agendamentos/ativos">
@@ -566,6 +579,11 @@ export class Appointments extends Component {
                 />
               </>
             )}
+          </>
+        )}
+        {this.state.activeItem === "new" && (
+          <>
+            <NewAppointment />
           </>
         )}
         {/* <pre>{JSON.stringify(this.state.today, null, 2)}</pre> */}
