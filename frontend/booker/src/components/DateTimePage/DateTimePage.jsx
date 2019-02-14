@@ -16,7 +16,7 @@ import Pill from "../TimePills/Pill";
 import Spacer from "../Spacer/Spacer";
 import DatePicker from "react-datepicker";
 import moment from "moment";
-import "./DatePicker.css";
+import "../../../node_modules/react-datepicker/dist/react-datepicker.css";
 import "../TimePills/TimePills.css";
 import "./DateTimePage.css";
 import axios from "axios";

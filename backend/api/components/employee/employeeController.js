@@ -352,7 +352,7 @@ exports.getEmployeeByUserId = async (req, res) => {
   }
 };
 
-// Get an employee's schedule
+// Get employee's schedule [GET]
 exports.getSchedule = async (req, res) => {
   try {
     const id = req.params.companyId;
@@ -376,6 +376,40 @@ exports.getSchedule = async (req, res) => {
   } catch (err) {
     throw boom.boomify(err);
   }
+};
+
+// Get employee's schedule [POST]
+exports.getSchedulePost = async (req, res) => {
+  try {
+    const token = auth.verify(req.token);
+    if (!token) {
+      res.status(403).json({
+        msg: "Invalid token"
+      });
+    }
+    const { userId, date, duration } = req.body;
+    console.log(userId, duration, date);
+
+    let employee = undefined;
+    if (token.employee) {
+      employee = await Employee.findOne({ _id: token.employee });
+    } else {
+      employee = await Employee.findOne({ user: userId });
+    }
+
+    const appointments = await Appointment.find({ employee: employee._id });
+    let _monthSchedule = generateMonthSchedule(date, employee.workingDays);
+
+    // Scheduled times
+    filterAlreadyUsedTimes(appointments, _monthSchedule.times);
+    // Impossible to book due previous booking
+    _monthSchedule.times = filterIncompatibleRange(
+      _monthSchedule.times,
+      duration,
+      30
+    );
+    res.send(_monthSchedule);
+  } catch (error) {}
 };
 
 // Add a new employee

@@ -79,6 +79,12 @@ router.get(
   specialist.getSchedule
 );
 
+router.post(
+  BASE_URL + "/specialists/schedule/",
+  verifyToken,
+  specialist.getSchedulePost
+);
+
 router.patch(
   BASE_URL + "/specialists/update",
   verifyToken,
