@@ -194,7 +194,7 @@ exports.getEmployeesByCompany = async (req, res) => {
   }
 };
 
-// Get all employees by service
+// Get all employees by service [POST]
 exports.allEmployeesByService = async (req, res) => {
   const token = auth.verify(req.token);
   if (!token) {
@@ -232,7 +232,8 @@ exports.allEmployeesByService = async (req, res) => {
           avatar: 1,
           "employee.enabled": 1,
           "employee.services": 1,
-          "employee.workingDays": 1
+          "employee.workingDays": 1,
+          "employee.title": 1
         }
       }
     ]);

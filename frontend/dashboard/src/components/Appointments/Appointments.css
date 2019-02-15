@@ -71,3 +71,7 @@ button.rbc-active {
 .rbc-addons-dnd-resize-ns-anchor {
   display: none;
 }
+
+.react-datepicker {
+  font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+}

@@ -488,7 +488,7 @@ export class Appointments extends Component {
                 first
               />
             </div>
-            <Table celled>
+            <Table celled compact>
               <TableHeader />
               <TableBody data={this.state.before} past={true} />
             </Table>
@@ -535,7 +535,7 @@ export class Appointments extends Component {
                 first={this.state.today.length === 0}
               />
             </div>
-            <Table celled>
+            <Table celled compact>
               <TableHeader />
               <TableBody
                 data={this.state.tomorrow}
@@ -556,7 +556,7 @@ export class Appointments extends Component {
                 }
               />
             </div>
-            <Table celled>
+            <Table celled compact>
               <TableHeader />
               <TableBody
                 data={this.state.next}

@@ -6,6 +6,7 @@ const service = require("./components/service/serviceController");
 const specialist = require("./components/employee/employeeController");
 const appointment = require("./components/appointment/appointmentController");
 const user = require("./components/user/userController");
+const costumer = require("./components/costumer/costumerController");
 
 const BASE_URL = "/api";
 
@@ -151,3 +152,12 @@ router.post(
   user.updateUserPassword
 );
 module.exports = router;
+
+/*============================================================
+Costumer
+============================================================*/
+router.post(
+  BASE_URL + "/costumers/list",
+  verifyToken,
+  costumer.getAllCostumers
+);
