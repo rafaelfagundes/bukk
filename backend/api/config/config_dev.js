@@ -1,5 +1,5 @@
 module.exports = {
-  mongoURI: "mongodb://localhost:27017/bukk",
+  mongoURI: "mongodb://mongo:27017/bukk",
   baseURI: "http://localhost:4000",
   jwt: {
     expiresIn: "30d",

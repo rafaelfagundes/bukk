@@ -1,12 +1,26 @@
 version: "2.1"
 
 services:
-  bukk:
-    image: bukk
-    build: .
+  bukk-dev:
+    container_name: bukk-dev
+    restart: always
+    image: bukk-dev
+    build:
+      context: .
+      dockerfile: Dockerfile-Dev
     environment:
       NODE_ENV: development
     ports:
       - 4000:4000
-    ## set your startup file here
-    command: nodemon index.js
+    links:
+      - mongo
+    volumes:
+      - ./:/usr/src/app
+  mongo:
+    container_name: mongo
+    image: mongo
+    volumes:
+      - ./data/db:/data/db
+      - ./dump:/usr/src/dump
+    ports:
+      - 27017:27017

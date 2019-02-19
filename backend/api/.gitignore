@@ -3,11 +3,12 @@
 # Testing
 coverage/
 
-# Data
-data/
-
 # Production
 build/
+
+# Database Data
+data/
+dump/
 
 # Misc
 .DS_Store

@@ -75,3 +75,7 @@ button.rbc-active {
 .react-datepicker {
   font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif !important;
 }
+
+span.rbc-btn-group button {
+  outline: none !important;
+}

@@ -6,16 +6,17 @@ services:
     restart: always
     image: bukk
     build: .
-    # environment:
-    #   NODE_ENV: production
+    environment:
+      NODE_ENV: production
     ports:
       - 4000:4000
     links:
       - mongo
+    command: npm start
   mongo:
     container_name: mongo
     image: mongo
     volumes:
-      - ./data/db:/data/db
+      - /data/db:/data/db
     ports:
       - 27017:27017
