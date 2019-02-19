@@ -3,6 +3,9 @@
 # Testing
 coverage/
 
+# Data
+data/
+
 # Production
 build/
 

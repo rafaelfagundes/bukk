@@ -1,0 +1,12 @@
+version: "2.1"
+
+services:
+  bukk:
+    image: bukk
+    build: .
+    environment:
+      NODE_ENV: development
+    ports:
+      - 4000:4000
+    ## set your startup file here
+    command: nodemon index.js
