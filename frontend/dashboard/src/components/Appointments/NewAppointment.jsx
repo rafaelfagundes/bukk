@@ -18,6 +18,7 @@ import styled from "styled-components";
 import { formatCurrency } from "../utils";
 import moment from "moment";
 import config from "../../config";
+import { formatBrazilianPhoneNumber } from "../utils";
 
 import ptBR from "date-fns/locale/pt";
 
@@ -71,7 +72,8 @@ const ServiceColumn = styled.div`
 
 const ClientColumn = styled.div`
   width: 60%;
-  margin-left: 40px;
+  padding-left: 40px;
+  border-left: 1px solid #eee;
 `;
 
 const TimesUnavailable = styled.div`
@@ -81,11 +83,11 @@ const TimesUnavailable = styled.div`
 `;
 
 const ClientSearchColumn = styled.div`
-  width: 75%;
+  width: 65%;
 `;
 
 const ClientAddButtonColumn = styled.div`
-  width: 21%;
+  width: 30%;
 `;
 
 const OrColumn = styled.div`
@@ -98,6 +100,7 @@ const OrColumn = styled.div`
 
 const AddClientButton = styled(Button)`
   height: 38px;
+  margin: 0;
 `;
 
 const ClientFormSpacer = styled.div`
@@ -112,6 +115,16 @@ const StyledCheckbox = styled(Checkbox)`
 const StyledDivider = styled(Divider)`
   margin-top: 40px;
 `;
+
+const StyledFormTitle = styled.div`
+  font-size: 1.1rem;
+  padding: 20px 0px 5px;
+  margin: 40px 0px 10px;
+  font-weight: 600;
+  color: rgb(85, 85, 85);
+  border-top: 1px solid #eee;
+`;
+
 /* ============================================================================ */
 
 /* ===============================================================================
@@ -130,8 +143,6 @@ const _clientTemplate = {
 export class NewAppointment extends Component {
   constructor(props) {
     super(props);
-
-    console.log(JSON.parse(localStorage.getItem("employee")));
 
     const _company = JSON.parse(localStorage.getItem("company"))._id;
     const _user = JSON.parse(localStorage.getItem("user"))._id;
@@ -206,13 +217,36 @@ export class NewAppointment extends Component {
     };
 
     this.setState({ selectedClient: _client, client: _clientState });
-    this.setAppointment({ client: _client._id });
+    this.setAppointment({ costumer: _client._id });
 
     this.toggleClientForm(true);
   };
 
+  handleClientInput = (e, key, type, object = undefined) => {
+    const _client = JSON.parse(JSON.stringify(this.state.client));
+    let _value = undefined;
+
+    if (type === "text") {
+      _value = e.currentTarget.value;
+    }
+    if (type === "checkbox") {
+      _value = object.checked;
+    }
+    if (type === "radio") {
+      _value = object.value;
+    }
+    _client[key] = _value;
+    this.setState({ client: _client });
+  };
+
+  handleNotesInput = e => {
+    this.setState({ notes: e.currentTarget.value });
+    this.setAppointment({ notes: e.currentTarget.value });
+  };
+
   handleNewClient = e => {
     e.preventDefault();
+    this.setState({ client: _clientTemplate });
     this.toggleClientForm(true);
   };
 
@@ -340,7 +374,6 @@ export class NewAppointment extends Component {
   };
 
   handleSpecialist = (e, { value }) => {
-    console.log(e, value);
     this.setState({ selectedSpecialist: value, calendar: undefined });
 
     const employee = this.getEmployee(value);
@@ -458,7 +491,6 @@ export class NewAppointment extends Component {
 
     Axios.post(config.api + "/costumers/list", {}, requestConfig)
       .then(response => {
-        console.log(response.data);
         this.setState({ clients: response.data }, () => {
           this.setClientsDropdown(response.data);
         });
@@ -557,29 +589,12 @@ export class NewAppointment extends Component {
                   </Columns>
                 </>
               )}
-              <FormSubTitle text="Outras Informações" />
-              <Form.Group widths="equal">
-                <Form.TextArea
-                  label="Anotações"
-                  rows={5}
-                  value={this.state.notes}
-                />
-              </Form.Group>
             </ServiceColumn>
             <ClientColumn>
               <FormSubTitle text="Cliente" first />
               <Columns>
-                <ClientAddButtonColumn>
-                  <AddClientButton
-                    content="Novo"
-                    icon="add"
-                    labelPosition="left"
-                    onClick={this.handleNewClient}
-                  />
-                </ClientAddButtonColumn>
                 {this.state.clientsDropdown.length > 0 && (
                   <>
-                    <OrColumn>ou</OrColumn>
                     <ClientSearchColumn>
                       <Form.Dropdown
                         placeholder="Selecione um cliente..."
@@ -590,8 +605,18 @@ export class NewAppointment extends Component {
                         onChange={this.handleClient}
                       />
                     </ClientSearchColumn>
+                    <OrColumn>ou</OrColumn>
                   </>
                 )}
+                <ClientAddButtonColumn>
+                  <AddClientButton
+                    content="Novo Cliente"
+                    color="teal"
+                    onClick={this.handleNewClient}
+                    fluid
+                    icon="plus"
+                  />
+                </ClientAddButtonColumn>
               </Columns>
               <ClientFormSpacer />
               {this.state.clientSelectedOrNew && (
@@ -603,6 +628,9 @@ export class NewAppointment extends Component {
                       placeholder="Nome"
                       required
                       value={this.state.client.firstName}
+                      onChange={event => {
+                        this.handleClientInput(event, "firstName", "text");
+                      }}
                     />
                     <Form.Input
                       fluid
@@ -610,6 +638,9 @@ export class NewAppointment extends Component {
                       placeholder="Sobrenome"
                       required
                       value={this.state.client.lastName}
+                      onChange={event => {
+                        this.handleClientInput(event, "lastName", "text");
+                      }}
                     />
                   </Form.Group>
                   <Form.Group>
@@ -623,7 +654,14 @@ export class NewAppointment extends Component {
                         name="gender"
                         value="F"
                         checked={this.state.client.gender === "F"}
-                        onChange={this.handleClientGender}
+                        onChange={(event, object) => {
+                          this.handleClientInput(
+                            event,
+                            "gender",
+                            "radio",
+                            object
+                          );
+                        }}
                       />
                     </Form.Field>
                     <Form.Field>
@@ -632,7 +670,14 @@ export class NewAppointment extends Component {
                         name="gender"
                         value="M"
                         checked={this.state.client.gender === "M"}
-                        onChange={this.handleClientGender}
+                        onChange={(event, object) => {
+                          this.handleClientInput(
+                            event,
+                            "gender",
+                            "radio",
+                            object
+                          );
+                        }}
                       />
                     </Form.Field>
                     <Form.Field>
@@ -641,7 +686,14 @@ export class NewAppointment extends Component {
                         name="gender"
                         value="O"
                         checked={this.state.client.gender === "O"}
-                        onChange={this.handleClientGender}
+                        onChange={(event, object) => {
+                          this.handleClientInput(
+                            event,
+                            "gender",
+                            "radio",
+                            object
+                          );
+                        }}
                       />
                     </Form.Field>
                   </Form.Group>
@@ -652,6 +704,9 @@ export class NewAppointment extends Component {
                       placeholder="Email"
                       required
                       value={this.state.client.email}
+                      onChange={event => {
+                        this.handleClientInput(event, "email", "text");
+                      }}
                     />
                   </Form.Group>
                   <Form.Group widths="2">
@@ -660,16 +715,39 @@ export class NewAppointment extends Component {
                       label="Telefone"
                       placeholder="Telefone"
                       required
-                      value={this.state.client.phone}
+                      value={formatBrazilianPhoneNumber(
+                        this.state.client.phone
+                      )}
+                      onChange={event => {
+                        this.handleClientInput(event, "phone", "text");
+                      }}
                     />
                     <StyledCheckbox
                       toggle
                       label="WhatsApp?"
                       checked={this.state.client.whatsApp}
+                      onChange={(event, object) => {
+                        this.handleClientInput(
+                          event,
+                          "whatsApp",
+                          "checkbox",
+                          object
+                        );
+                      }}
                     />
                   </Form.Group>
                 </>
               )}
+              <StyledFormTitle text="Outras Informações">
+                Anotações Sobre o Agendamento
+              </StyledFormTitle>
+              <Form.Group widths="equal">
+                <Form.TextArea
+                  rows={5}
+                  value={this.state.notes}
+                  onChange={this.handleNotesInput}
+                />
+              </Form.Group>
             </ClientColumn>
           </Columns>
           <StyledDivider />

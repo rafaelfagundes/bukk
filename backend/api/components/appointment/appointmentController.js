@@ -51,6 +51,11 @@ const checkEmptyTimeInSchedule = async services => {
   return _resultsCounter === 0 ? true : false;
 };
 
+// Add a new appointment via dashboard
+exports.addAppointmentViaDashboard = async (req, res) => {
+  // const okToContinue = await checkEmptyTimeInSchedule(req.body.services);
+};
+
 // Add a new appointment
 exports.addAppointment = async (req, res) => {
   const okToContinue = await checkEmptyTimeInSchedule(req.body.services);
@@ -109,7 +114,7 @@ exports.addAppointment = async (req, res) => {
           _client.email,
           "Bukk Agendador <no-reply@bukk.com.br>"
         );
-        mail.send();
+        mail.send(); // TODO: transformar em evento
 
         res.send({
           confirmationId: _confirmationId,
