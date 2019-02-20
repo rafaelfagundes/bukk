@@ -422,8 +422,7 @@ export class NewAppointment extends Component {
   handleSpecialist = (e, { value }) => {
     this.setState({ selectedSpecialist: value, calendar: undefined });
 
-    const employee = this.getEmployee(value);
-
+    const { employee } = this.getEmployee(value);
     const token = localStorage.getItem("token");
     let requestConfig = {
       headers: {
@@ -550,7 +549,7 @@ export class NewAppointment extends Component {
       }
 
       if (validation.isEmpty(client.lastName)) {
-        _errors.push("O nome é obrigatório");
+        _errors.push("O sobrenome é obrigatório");
       } else {
         if (!validation.isAlpha(client.lastName)) {
           _errors.push("O sobrenome é inválido");
@@ -608,8 +607,6 @@ export class NewAppointment extends Component {
     if (!this.validate()) {
       return false;
     } else {
-      console.log("vamos la");
-
       const _appointment = JSON.parse(JSON.stringify(this.state.appointment));
 
       const _data = {
@@ -618,7 +615,20 @@ export class NewAppointment extends Component {
         client: this.state.client
       };
 
-      console.log(_data);
+      const token = localStorage.getItem("token");
+      let requestConfig = {
+        headers: {
+          Authorization: token
+        }
+      };
+
+      Axios.post(config.api + "/appointment", _data, requestConfig)
+        .then(response => {
+          console.log(response.data);
+        })
+        .catch(error => {
+          console.log(error.response.data);
+        });
     }
   };
 
@@ -969,8 +979,7 @@ export class NewAppointment extends Component {
             Cancelar
           </Button>
         </Form>
-        {/* <pre>{JSON.stringify(this.state.appointment, null, 2)}</pre>
-        <pre>{JSON.stringify(this.state.errors, null, 2)}</pre> */}
+        {/* <pre>{JSON.stringify(this.state.appointment, null, 2)}</pre> */}
       </div>
     );
   }

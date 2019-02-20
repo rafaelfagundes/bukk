@@ -423,6 +423,7 @@ export class Appointments extends Component {
         this.sortAppointments(response.data.appointments);
         this.setEvents(response.data.appointments);
         this.setState({ loading: false });
+        console.log(response.data.appointments);
       })
       .catch(error => {
         this.setState({ loading: false });

@@ -53,9 +53,65 @@ const checkEmptyTimeInSchedule = async services => {
 // Add a new appointment via dashboard
 exports.addAppointmentViaDashboard = async (req, res) => {
   console.log("@addAppointmentViaDashboard");
-  console.log("req.body", req.body);
+  // console.log("req.body", req.body);
 
-  // const okToContinue = await checkEmptyTimeInSchedule(req.body.services);
+  const { appointment, isNewClient, client } = req.body;
+
+  const _service = [
+    {
+      specialistId: appointment.employee,
+      start: appointment.start,
+      end: appointment.end
+    }
+  ];
+
+  // console.log(_service);
+
+  const okToContinue = await checkEmptyTimeInSchedule(_service);
+  if (okToContinue) {
+    try {
+      const _confirmationId = shortid.generate();
+      appointment.confirmationId = _confirmationId;
+      const _costumer = {
+        firstName: client.firstName,
+        lastName: client.lastName,
+        email: client.email,
+        phone: [{ number: client.phone, whatsApp: client.whatsApp }],
+        gender: client.gender
+      };
+
+      if (isNewClient) {
+        console.log("Novo cliente/Create");
+      } else {
+        console.log("Cliente véio/Update");
+        console.log(_costumer);
+
+        const costumer = await Costumer.updateOne(
+          { _id: appointment.costumer },
+          _costumer
+        );
+
+        if (costumer.ok) {
+          console.log("costumer ok");
+          const resultAppointment = await Appointment.create(appointment);
+          console.log(resultAppointment);
+
+          if (resultAppointment) {
+            res.status(200).send({ msg: "OK" });
+          } else {
+            res.status(500).send({ msg: "Erro ao criar agendamento" });
+          }
+        }
+      }
+    } catch (error) {
+      res.status(500).send({ msg: `Erro ao criar agendamento: ${error}` });
+    }
+  } else {
+    res.status(500).send({
+      msg:
+        "A data e horário escolhidos não estão mais disponíveis. Tente novamente em outro horário."
+    });
+  }
 };
 
 // Add a new appointment

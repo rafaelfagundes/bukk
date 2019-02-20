@@ -230,6 +230,7 @@ exports.allEmployeesByService = async (req, res) => {
           firstName: 1,
           lastName: 1,
           avatar: 1,
+          "employee._id": 1,
           "employee.enabled": 1,
           "employee.services": 1,
           "employee.workingDays": 1,
