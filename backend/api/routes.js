@@ -115,6 +115,11 @@ Appointment
 ============================================================*/
 router.post(BASE_URL + "/appointments", appointment.addAppointment);
 router.post(
+  BASE_URL + "/appointment",
+  verifyToken,
+  appointment.addAppointmentViaDashboard
+);
+router.post(
   BASE_URL + "/appointments/list",
   verifyToken,
   appointment.getAllAppointments

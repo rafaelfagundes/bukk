@@ -15,7 +15,6 @@ const Mail = require("../mail/Mail");
 const templates = require("../mail/templates/emailTemplates");
 
 // Aux functions
-
 const checkEmptyTimeInSchedule = async services => {
   const jobs = [];
 
@@ -53,6 +52,9 @@ const checkEmptyTimeInSchedule = async services => {
 
 // Add a new appointment via dashboard
 exports.addAppointmentViaDashboard = async (req, res) => {
+  console.log("@addAppointmentViaDashboard");
+  console.log("req.body", req.body);
+
   // const okToContinue = await checkEmptyTimeInSchedule(req.body.services);
 };
 

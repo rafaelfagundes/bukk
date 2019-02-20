@@ -11,7 +11,9 @@ import {
   Button,
   Checkbox,
   Divider,
-  Radio
+  Radio,
+  Segment,
+  Header
 } from "semantic-ui-react";
 import _ from "lodash";
 import styled from "styled-components";
@@ -19,8 +21,10 @@ import { formatCurrency } from "../utils";
 import moment from "moment";
 import config from "../../config";
 import { formatBrazilianPhoneNumber } from "../utils";
+import validation from "../validation";
 
 import ptBR from "date-fns/locale/pt";
+import ValidationError from "../Common/ValidationError";
 
 ptBR.options.weekStartsOn = 0;
 registerLocale("pt-BR", ptBR);
@@ -82,20 +86,8 @@ const TimesUnavailable = styled.div`
   opacity: 0.8;
 `;
 
-const ClientSearchColumn = styled.div`
-  width: 65%;
-`;
-
 const ClientAddButtonColumn = styled.div`
   width: 30%;
-`;
-
-const OrColumn = styled.div`
-  width: 5%;
-  text-align: center;
-  line-height: 38px;
-  font-weight: 700;
-  opacity: 0.8;
 `;
 
 const AddClientButton = styled(Button)`
@@ -113,7 +105,7 @@ const StyledCheckbox = styled(Checkbox)`
 `;
 
 const StyledDivider = styled(Divider)`
-  margin-top: 40px;
+  margin-top: 40px !important;
 `;
 
 const StyledFormTitle = styled.div`
@@ -123,6 +115,21 @@ const StyledFormTitle = styled.div`
   font-weight: 600;
   color: rgb(85, 85, 85);
   border-top: 1px solid #eee;
+`;
+
+const StyledSegment = styled(Segment)`
+  min-height: 0px !important;
+
+  > .header {
+    padding-top: 18px;
+  }
+`;
+
+const StyledSegmentClient = styled(Segment)`
+  height: 404px;
+  > .header {
+    padding-top: 18px;
+  }
 `;
 
 /* ============================================================================ */
@@ -182,9 +189,35 @@ export class NewAppointment extends Component {
       clientsDropdown: [],
       selectedClient: undefined,
       client: _clientTemplate,
-      notes: ""
+      notes: "",
+      isNewClient: false,
+      errors: {
+        appointment: [],
+        client: []
+      }
     };
   }
+
+  resetAppointment = () => {
+    const _company = JSON.parse(localStorage.getItem("company"))._id;
+    let _employee = undefined;
+    if (localStorage.getItem("employee")) {
+      _employee = JSON.parse(localStorage.getItem("employee"))._id;
+    }
+
+    const _appointment = {
+      consumer: undefined,
+      employee: _employee,
+      company: _company,
+      service: undefined,
+      start: new Date(),
+      end: undefined,
+      status: "created",
+      notes: undefined
+    };
+
+    this.setState({ appointment: _appointment });
+  };
 
   getEmployee = id => {
     return _.find(this.state.specialists, function(o) {
@@ -216,7 +249,11 @@ export class NewAppointment extends Component {
       gender: _client.gender
     };
 
-    this.setState({ selectedClient: _client, client: _clientState });
+    this.setState({
+      selectedClient: _client,
+      client: _clientState,
+      isNewClient: false
+    });
     this.setAppointment({ costumer: _client._id });
 
     this.toggleClientForm(true);
@@ -246,8 +283,16 @@ export class NewAppointment extends Component {
 
   handleNewClient = e => {
     e.preventDefault();
-    this.setState({ client: _clientTemplate });
+    this.setState({
+      client: _clientTemplate,
+      isNewClient: true,
+      selectedClient: undefined
+    });
     this.toggleClientForm(true);
+  };
+
+  handleSearchClient = e => {
+    this.setState({ clientSelectedOrNew: false });
   };
 
   setServicesDropdown = services => {
@@ -326,6 +371,7 @@ export class NewAppointment extends Component {
   };
 
   handleService = (e, { value }) => {
+    this.resetAppointment();
     this.setState({
       selectedService: undefined
     });
@@ -419,7 +465,7 @@ export class NewAppointment extends Component {
   handleDate = e => {
     this.setState({ selectedDate: e }, () => {
       this.setTimesDropdown();
-      this.setAppointment({ start: e });
+      this.setAppointment({ start: e, end: undefined });
     });
   };
 
@@ -469,6 +515,111 @@ export class NewAppointment extends Component {
       .catch(error => {
         console.log(error.response.data);
       });
+  };
+
+  validate = () => {
+    const validateAppointment = () => {
+      const { appointment } = this.state;
+
+      const _errors = [];
+
+      if (!appointment.service) {
+        _errors.push("Selecione o serviço");
+      }
+      if (!appointment.employee) {
+        _errors.push("Selecione o especialista");
+      }
+      if (!appointment.end) {
+        _errors.push("Selecione um horário");
+      }
+
+      return _errors;
+    };
+
+    const validateClient = () => {
+      const { client } = this.state;
+
+      const _errors = [];
+
+      if (validation.isEmpty(client.firstName)) {
+        _errors.push("O nome é obrigatório");
+      } else {
+        if (!validation.isAlpha(client.firstName)) {
+          _errors.push("O nome é inválido");
+        }
+      }
+
+      if (validation.isEmpty(client.lastName)) {
+        _errors.push("O nome é obrigatório");
+      } else {
+        if (!validation.isAlpha(client.lastName)) {
+          _errors.push("O sobrenome é inválido");
+        }
+      }
+
+      if (validation.isEmpty(client.email)) {
+        _errors.push("O email é obrigatório");
+      } else {
+        if (!validation.isEmail(client.email)) {
+          _errors.push("O email é inválido");
+        }
+      }
+
+      if (validation.isEmpty(client.email)) {
+        _errors.push("O telefone é obrigatório");
+      } else {
+        if (
+          !validation.isPhoneWithDDD(client.phone) &&
+          !validation.isMobilePhoneWithDDD(client.phone)
+        ) {
+          _errors.push("O telefone é inválido");
+        }
+      }
+
+      return _errors;
+    };
+
+    const _client = validateClient();
+    const _app = validateAppointment();
+
+    if (_client.length || _app.length) {
+      this.setState({
+        errors: {
+          client: _client,
+          appointment: _app
+        }
+      });
+      return false;
+    } else {
+      this.setState({
+        errors: {
+          client: [],
+          appointment: []
+        }
+      });
+    }
+
+    return true;
+  };
+
+  createAppointment = e => {
+    e.preventDefault();
+
+    if (!this.validate()) {
+      return false;
+    } else {
+      console.log("vamos la");
+
+      const _appointment = JSON.parse(JSON.stringify(this.state.appointment));
+
+      const _data = {
+        appointment: _appointment,
+        isNewClient: this.state.isNewClient,
+        client: this.state.client
+      };
+
+      console.log(_data);
+    }
   };
 
   componentDidMount() {
@@ -547,6 +698,18 @@ export class NewAppointment extends Component {
                     </StyledFormGroup>
                   </>
                 )}
+              {!this.state.isSpecialist &&
+                this.state.selectedService === undefined && (
+                  <>
+                    <FormSubTitle text="Especialista" />
+                    <StyledSegment placeholder>
+                      <Header icon>
+                        <Icon name="wrench" />
+                        Selecione o serviço
+                      </Header>
+                    </StyledSegment>
+                  </>
+                )}
               {this.state.calendar !== undefined && (
                 <>
                   <Columns>
@@ -589,38 +752,77 @@ export class NewAppointment extends Component {
                   </Columns>
                 </>
               )}
+              {this.state.calendar === undefined && (
+                <>
+                  <FormSubTitle text="Data e Hora" />
+                  <StyledSegment placeholder>
+                    <Header icon>
+                      <Icon name="calendar alternate outline" />
+                      Selecione o especialista
+                    </Header>
+                  </StyledSegment>
+                </>
+              )}
+
+              {this.state.errors.appointment.map((error, index) => (
+                <ValidationError key={index} show error={error} />
+              ))}
             </ServiceColumn>
             <ClientColumn>
               <FormSubTitle text="Cliente" first />
-              <Columns>
-                {this.state.clientsDropdown.length > 0 && (
-                  <>
-                    <ClientSearchColumn>
-                      <Form.Dropdown
-                        placeholder="Selecione um cliente..."
-                        fluid
-                        search
-                        selection
-                        options={this.state.clientsDropdown}
-                        onChange={this.handleClient}
-                      />
-                    </ClientSearchColumn>
-                    <OrColumn>ou</OrColumn>
-                  </>
-                )}
-                <ClientAddButtonColumn>
-                  <AddClientButton
-                    content="Novo Cliente"
-                    color="teal"
-                    onClick={this.handleNewClient}
-                    fluid
-                    icon="plus"
-                  />
-                </ClientAddButtonColumn>
-              </Columns>
-              <ClientFormSpacer />
+
+              {this.state.clientsDropdown.length > 0 && (
+                <>
+                  {!this.state.clientSelectedOrNew && (
+                    <Form.Dropdown
+                      placeholder="Selecione um cliente..."
+                      fluid
+                      search
+                      selection
+                      options={this.state.clientsDropdown}
+                      onChange={this.handleClient}
+                    />
+                  )}
+                </>
+              )}
+              <ClientAddButtonColumn />
+              {this.state.clientSelectedOrNew && (
+                <Button
+                  content="Novo Cliente"
+                  color="blue"
+                  onClick={this.handleNewClient}
+                  compact
+                  icon="plus"
+                />
+              )}
+              {this.state.clientSelectedOrNew && (
+                <Button
+                  content="Pesquisar"
+                  color="green"
+                  onClick={this.handleSearchClient}
+                  compact
+                  icon="search"
+                />
+              )}
+
+              {!this.state.clientSelectedOrNew && (
+                <>
+                  <StyledSegmentClient placeholder>
+                    <Header icon>
+                      <Icon name="user plus" />
+                      Se preferir, adicione um novo cliente
+                    </Header>
+                    <AddClientButton
+                      content="Novo Cliente"
+                      color="blue"
+                      onClick={this.handleNewClient}
+                    />
+                  </StyledSegmentClient>
+                </>
+              )}
               {this.state.clientSelectedOrNew && (
                 <>
+                  <ClientFormSpacer />
                   <Form.Group widths="equal">
                     <Form.Input
                       fluid
@@ -738,20 +940,27 @@ export class NewAppointment extends Component {
                   </Form.Group>
                 </>
               )}
-              <StyledFormTitle text="Outras Informações">
-                Anotações Sobre o Agendamento
-              </StyledFormTitle>
-              <Form.Group widths="equal">
-                <Form.TextArea
-                  rows={5}
-                  value={this.state.notes}
-                  onChange={this.handleNotesInput}
-                />
-              </Form.Group>
+
+              {this.state.errors.client.map((error, index) => (
+                <ValidationError key={index} show error={error} />
+              ))}
             </ClientColumn>
           </Columns>
+          <StyledFormTitle>Anotações Sobre o Agendamento</StyledFormTitle>
+          <Form.Group widths="equal">
+            <Form.TextArea
+              rows={5}
+              value={this.state.notes}
+              onChange={this.handleNotesInput}
+            />
+          </Form.Group>
           <StyledDivider />
-          <Button color="green" icon labelPosition="left">
+          <Button
+            color="green"
+            icon
+            labelPosition="left"
+            onClick={this.createAppointment}
+          >
             <Icon name="cloud" />
             Criar Agendamento
           </Button>
@@ -760,7 +969,8 @@ export class NewAppointment extends Component {
             Cancelar
           </Button>
         </Form>
-        <pre>{JSON.stringify(this.state.appointment, null, 2)}</pre>
+        {/* <pre>{JSON.stringify(this.state.appointment, null, 2)}</pre>
+        <pre>{JSON.stringify(this.state.errors, null, 2)}</pre> */}
       </div>
     );
   }

@@ -26,3 +26,8 @@
     max-width: calc(50vw + 200px) !important;
   }
 }
+
+.ui.default.dropdown:not(.button) > .text,
+.ui.dropdown:not(.button) > .default.text {
+  color: rgba(45, 45, 45, 0.87) !important;
+}

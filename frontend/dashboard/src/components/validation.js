@@ -2,6 +2,9 @@ const validator = require("validator");
 
 const locale = "pt-BR";
 
+exports.isEmail = validator.isEmail;
+exports.isEmpty = validator.isEmpty;
+
 exports.isAlpha = value => {
   try {
     let v = String(value).replace(/\s/g, "");
