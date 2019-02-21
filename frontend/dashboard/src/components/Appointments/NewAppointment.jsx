@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { toast } from "react-toastify";
+import Spinner from "react-spinkit";
 import DatePicker, { registerLocale } from "react-datepicker";
 import "../../../node_modules/react-datepicker/dist/react-datepicker.css";
 import FormTitle from "../Common/FormTitle";
@@ -25,6 +27,7 @@ import validation from "../validation";
 
 import ptBR from "date-fns/locale/pt";
 import ValidationError from "../Common/ValidationError";
+import Notification from "../Notification/Notification";
 
 ptBR.options.weekStartsOn = 0;
 registerLocale("pt-BR", ptBR);
@@ -163,6 +166,8 @@ export class NewAppointment extends Component {
     }
 
     this.state = {
+      loading: false,
+      created: false,
       appointment: {
         consumer: undefined,
         employee: _employee,
@@ -331,7 +336,7 @@ export class NewAppointment extends Component {
       _clients.push({
         key: c._id,
         value: c._id,
-        text: `${c.firstName} ${c.lastName}`
+        text: `${c.firstName} ${c.lastName} / ${c.email}`
       });
     });
 
@@ -433,7 +438,7 @@ export class NewAppointment extends Component {
     Axios.post(
       config.api + "/specialists/schedule",
       {
-        userId: value,
+        employeeId: employee._id,
         date: moment(this.state.selectedDate).format("YYYY-MM"),
         duration: this.state.selectedService.duration
       },
@@ -607,6 +612,7 @@ export class NewAppointment extends Component {
     if (!this.validate()) {
       return false;
     } else {
+      this.setState({ loading: true });
       const _appointment = JSON.parse(JSON.stringify(this.state.appointment));
 
       const _data = {
@@ -622,12 +628,31 @@ export class NewAppointment extends Component {
         }
       };
 
+      _data.client.phone = _data.client.phone.replace(/\D/g, "");
+      console.log("phone", _data.client.phone);
+
       Axios.post(config.api + "/appointment", _data, requestConfig)
         .then(response => {
-          console.log(response.data);
+          toast(
+            <Notification
+              type="success"
+              title="Agendamento criado com sucesso"
+              text="O agendamento foi salvo no calendário"
+            />
+          );
+          this.setState({ loading: false });
+          this.props.setActiveItem("calendar");
+          this.props.history.push("/dashboard/agendamentos/calendario");
         })
         .catch(error => {
-          console.log(error.response.data);
+          this.setState({ loading: false });
+          toast(
+            <Notification
+              type="error"
+              title="Erro ao criar agendamento"
+              text={error.response.data.msg}
+            />
+          );
         });
     }
   };
@@ -784,7 +809,7 @@ export class NewAppointment extends Component {
               {this.state.clientsDropdown.length > 0 && (
                 <>
                   {!this.state.clientSelectedOrNew && (
-                    <Form.Dropdown
+                    <StyledDropDown
                       placeholder="Selecione um cliente..."
                       fluid
                       search
@@ -820,7 +845,7 @@ export class NewAppointment extends Component {
                   <StyledSegmentClient placeholder>
                     <Header icon>
                       <Icon name="user plus" />
-                      Se preferir, adicione um novo cliente
+                      Caso não esteja listado, adicione um novo cliente
                     </Header>
                     <AddClientButton
                       content="Novo Cliente"
@@ -974,6 +999,13 @@ export class NewAppointment extends Component {
             <Icon name="cloud" />
             Criar Agendamento
           </Button>
+          {this.state.loading && (
+            <Spinner
+              style={{ top: "6px", left: "5px", display: "inline-block" }}
+              name="circle"
+              color={this.props.company.settings.colors.primaryBack}
+            />
+          )}
           <Button floated="right" icon labelPosition="left">
             <Icon name="delete" />
             Cancelar
@@ -985,7 +1017,11 @@ export class NewAppointment extends Component {
   }
 }
 
-const mapStateToProps = state => ({});
+const mapStateToProps = state => {
+  return {
+    company: state.dashboard.company
+  };
+};
 
 const mapDispatchToProps = {};
 

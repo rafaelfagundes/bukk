@@ -13,7 +13,7 @@ import _ from "lodash";
 import Loading from "../Loading/Loading";
 import Calendar from "./Calendar";
 import Notification from "../Notification/Notification";
-import { NewAppointment } from "./NewAppointment";
+import NewAppointment from "./NewAppointment";
 
 const NoAppointments = props => (
   <Segment placeholder>
@@ -230,10 +230,16 @@ export class Appointments extends Component {
       next: [],
       minTime: min.toDate(),
       maxTime: max.toDate(),
-      events: [],
+      events: undefined,
       activeItem: undefined
     };
   }
+
+  setActiveItem = item => {
+    this.setState({ activeItem: item }, () => {
+      this.mountOrCalendarUpdate();
+    });
+  };
 
   updateAppointment = appointment => {
     const getAppointments = () => {
@@ -341,7 +347,8 @@ export class Appointments extends Component {
           start: new Date(app.start),
           end: new Date(app.end),
           allDay: false,
-          appointmentId: app._id
+          appointmentId: app._id,
+          disabled: moment(app.start).isBefore(moment(), "hour")
         });
       }
     });
@@ -406,7 +413,8 @@ export class Appointments extends Component {
 
   mountOrCalendarUpdate = () => {
     this.setState({
-      loading: true
+      loading: true,
+      events: undefined
     });
     this.props.setCurrentPage({
       title: "Agendamentos",
@@ -423,7 +431,6 @@ export class Appointments extends Component {
         this.sortAppointments(response.data.appointments);
         this.setEvents(response.data.appointments);
         this.setState({ loading: false });
-        console.log(response.data.appointments);
       })
       .catch(error => {
         this.setState({ loading: false });
@@ -569,7 +576,7 @@ export class Appointments extends Component {
         )}
         {this.state.activeItem === "calendar" && (
           <>
-            {this.state.events.length > 0 && (
+            {this.state.events !== undefined && (
               <>
                 <Calendar
                   minTime={this.state.minTime}
@@ -584,7 +591,10 @@ export class Appointments extends Component {
         )}
         {this.state.activeItem === "new" && (
           <>
-            <NewAppointment />
+            <NewAppointment
+              {...this.props}
+              setActiveItem={this.setActiveItem}
+            />
           </>
         )}
         {/* <pre>{JSON.stringify(this.state.today, null, 2)}</pre> */}

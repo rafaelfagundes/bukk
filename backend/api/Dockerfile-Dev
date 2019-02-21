@@ -2,4 +2,6 @@ FROM node:latest
 WORKDIR /usr/src/app
 RUN npm -g install nodemon
 EXPOSE 4000
+RUN unlink /etc/localtime
+RUN ln -s /usr/share/zoneinfo/Brazil/East /etc/localtime
 CMD ["nodemon","./index.js"]

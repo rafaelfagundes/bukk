@@ -16,12 +16,14 @@ const templates = require("../mail/templates/emailTemplates");
 
 // Aux functions
 const checkEmptyTimeInSchedule = async services => {
+  console.log("@checkEmptyTimeInSchedule");
   const jobs = [];
 
   services.forEach(service => {
     jobs.push(
       Appointment.find({
         employee: mongoose.Types.ObjectId(service.specialistId),
+        status: { $in: ["created", "confirmed"] },
         $or: [
           {
             $and: [
@@ -52,9 +54,6 @@ const checkEmptyTimeInSchedule = async services => {
 
 // Add a new appointment via dashboard
 exports.addAppointmentViaDashboard = async (req, res) => {
-  console.log("@addAppointmentViaDashboard");
-  // console.log("req.body", req.body);
-
   const { appointment, isNewClient, client } = req.body;
 
   const _service = [
@@ -81,23 +80,29 @@ exports.addAppointmentViaDashboard = async (req, res) => {
       };
 
       if (isNewClient) {
-        console.log("Novo cliente/Create");
-      } else {
-        console.log("Cliente véio/Update");
-        console.log(_costumer);
+        const costumer = await Costumer.create(_costumer);
+        appointment.costumer = costumer._id;
 
+        if (costumer) {
+          const resultAppointment = await Appointment.create(appointment);
+
+          if (resultAppointment) {
+            res.status(200).send({ msg: "OK" });
+          } else {
+            res.status(500).send({ msg: "Erro ao criar agendamento" });
+          }
+        }
+      } else {
         const costumer = await Costumer.updateOne(
           { _id: appointment.costumer },
           _costumer
         );
 
         if (costumer.ok) {
-          console.log("costumer ok");
           const resultAppointment = await Appointment.create(appointment);
-          console.log(resultAppointment);
 
           if (resultAppointment) {
-            res.status(200).send({ msg: "OK" });
+            res.status(200).send({ msg: "OK", appointment: resultAppointment });
           } else {
             res.status(500).send({ msg: "Erro ao criar agendamento" });
           }
@@ -117,19 +122,11 @@ exports.addAppointmentViaDashboard = async (req, res) => {
 // Add a new appointment
 exports.addAppointment = async (req, res) => {
   const okToContinue = await checkEmptyTimeInSchedule(req.body.services);
-  console.log("okToContinue", okToContinue);
   if (okToContinue) {
     try {
       const _confirmationId = shortid.generate();
       const _client = req.body.client; // Costumer
       const _services = req.body.services;
-
-      console.log(
-        "confirmationId/client/services",
-        _confirmationId,
-        _client,
-        _services
-      );
 
       const costumer = new Costumer({
         firstName: _client.firstName,
@@ -141,7 +138,6 @@ exports.addAppointment = async (req, res) => {
       });
 
       const resultCostumer = await costumer.save();
-      console.log("costumer", costumer);
 
       let _appointments = [];
       _services.forEach(_service => {
@@ -289,7 +285,6 @@ exports.getOneAppointment = async (req, res) => {
       msg: "Token inválido."
     });
   }
-  console.log(req.body);
   try {
     let _match = {
       company: mongoose.Types.ObjectId(token.company),

@@ -42,9 +42,8 @@ export class Calendar extends Component {
       let _event = moment(e.start);
       let _today = moment();
 
-      if (_event.isBefore(_today, "hour minute")) {
+      if (_event.isBefore(_today, "hour minute") && !e.disabled) {
         _errors.push(`"${e.title}" foi alterado para uma data no passado`);
-        console.log(`"${e.title}" foi alterado para uma data no passado`);
       } else {
         _appointments.push({
           _id: e.appointmentId,
@@ -73,8 +72,6 @@ export class Calendar extends Component {
         requestConfig
       )
         .then(response => {
-          console.log(response.data);
-          this.props.updateHandler();
           toast(
             <Notification
               type="success"
@@ -83,6 +80,7 @@ export class Calendar extends Component {
             />
           );
           this.setState({ loading: false, modified: false });
+          this.props.updateHandler();
         })
         .catch(error => {
           this.setState({ loading: false });
@@ -107,6 +105,10 @@ export class Calendar extends Component {
   };
 
   moveEvent = ({ event, start, end, isAllDay: droppedOnAllDaySlot }) => {
+    if (event.disabled) {
+      return false;
+    }
+
     const { events } = this.state;
 
     const idx = events.indexOf(event);
@@ -117,8 +119,6 @@ export class Calendar extends Component {
     } else if (event.allDay && !droppedOnAllDaySlot) {
       allDay = false;
     }
-    console.log(start);
-    console.log(end);
 
     const updatedEvent = { ...event, start, end, allDay };
 
@@ -131,7 +131,7 @@ export class Calendar extends Component {
       modified: true
     });
 
-    console.log(`${event.title} was dropped onto ${updatedEvent.start}`);
+    // console.log(`${event.title} was dropped onto ${updatedEvent.start}`);
   };
 
   resizeEvent = ({ event, start, end }) => {
@@ -177,6 +177,7 @@ export class Calendar extends Component {
       >
         <DragAndDropCalendar
           selectable
+          step={15}
           localizer={localizer}
           events={this.state.events}
           onEventDrop={this.moveEvent}

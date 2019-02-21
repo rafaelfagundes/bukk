@@ -90,12 +90,15 @@ function generateMonthSchedule(date, workingDays, timeFrame = 30) {
 
 function filterAlreadyUsedTimes(appointments, times) {
   appointments.forEach(app => {
-    _.remove(times, function(time) {
-      const s = moment(app.start);
-      const e = moment(app.end);
-      const t = moment(time);
-      return t.isSameOrAfter(s) && t.isBefore(e);
-    });
+    if (app.status === "created" || app.status === "confirmed") {
+      _.remove(times, function(time) {
+        const s = moment(app.start);
+        const e = moment(app.end);
+        const t = moment(time);
+
+        return t.isSameOrAfter(s, "minute") && t.isBefore(e, "minute");
+      });
+    }
   });
 }
 
@@ -389,14 +392,13 @@ exports.getSchedulePost = async (req, res) => {
         msg: "Invalid token"
       });
     }
-    const { userId, date, duration } = req.body;
-    console.log(userId, duration, date);
+    const { employeeId, date, duration } = req.body;
 
     let employee = undefined;
     if (token.employee) {
       employee = await Employee.findOne({ _id: token.employee });
     } else {
-      employee = await Employee.findOne({ user: userId });
+      employee = await Employee.findOne({ _id: employeeId });
     }
 
     const appointments = await Appointment.find({ employee: employee._id });
@@ -404,6 +406,7 @@ exports.getSchedulePost = async (req, res) => {
 
     // Scheduled times
     filterAlreadyUsedTimes(appointments, _monthSchedule.times);
+
     // Impossible to book due previous booking
     _monthSchedule.times = filterIncompatibleRange(
       _monthSchedule.times,
@@ -411,7 +414,9 @@ exports.getSchedulePost = async (req, res) => {
       30
     );
     res.send(_monthSchedule);
-  } catch (error) {}
+  } catch (error) {
+    res.status(500).send({ msg: error });
+  }
 };
 
 // Add a new employee
