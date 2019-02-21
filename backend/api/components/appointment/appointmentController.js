@@ -54,6 +54,12 @@ const checkEmptyTimeInSchedule = async services => {
 
 // Add a new appointment via dashboard
 exports.addAppointmentViaDashboard = async (req, res) => {
+  const token = auth.verify(req.token);
+  if (!token) {
+    res.status(403).json({
+      msg: "Token inválido."
+    });
+  }
   const { appointment, isNewClient, client } = req.body;
 
   const _service = [
@@ -63,8 +69,6 @@ exports.addAppointmentViaDashboard = async (req, res) => {
       end: appointment.end
     }
   ];
-
-  // console.log(_service);
 
   const okToContinue = await checkEmptyTimeInSchedule(_service);
   if (okToContinue) {
@@ -76,7 +80,8 @@ exports.addAppointmentViaDashboard = async (req, res) => {
         lastName: client.lastName,
         email: client.email,
         phone: [{ number: client.phone, whatsApp: client.whatsApp }],
-        gender: client.gender
+        gender: client.gender,
+        company: token.company
       };
 
       if (isNewClient) {
@@ -128,7 +133,7 @@ exports.addAppointment = async (req, res) => {
       const _client = req.body.client; // Costumer
       const _services = req.body.services;
 
-      const costumer = new Costumer({
+      const costumerObj = new Costumer({
         firstName: _client.firstName,
         lastName: _client.lastName,
         email: _client.email,
@@ -137,7 +142,21 @@ exports.addAppointment = async (req, res) => {
         company: req.body.companyId
       });
 
-      const resultCostumer = await costumer.save();
+      const [costumer] = await Costumer.find({ email: _client.email });
+
+      let resultCostumer = undefined;
+
+      if (costumer) {
+        resultUpdateCostumer = await Costumer.updateOne(
+          { id: costumer._id },
+          costumerObj
+        );
+        if (resultUpdateCostumer) {
+          resultCostumer = costumer;
+        }
+      } else {
+        resultCostumer = await costumerObj.save();
+      }
 
       let _appointments = [];
       _services.forEach(_service => {
@@ -157,7 +176,6 @@ exports.addAppointment = async (req, res) => {
       });
 
       const resultAppointment = await Appointment.create(_appointments);
-      console.log("resultAppointment", resultAppointment);
 
       if (resultAppointment) {
         const template = await templates.newAppointment(_confirmationId);

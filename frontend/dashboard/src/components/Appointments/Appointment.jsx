@@ -130,7 +130,7 @@ const PayButton = ({ id, value, onClick }) => (
   </Button>
 );
 
-const StatusButtons = ({ id, value, onClick }) => {
+const StatusButtons = ({ id, value, onClick, inThePast }) => {
   return (
     <>
       {id === "created" && (
@@ -141,12 +141,16 @@ const StatusButtons = ({ id, value, onClick }) => {
       )}
       {id === "confirmed" && (
         <>
-          <CompleteButton id={id} value={value} onClick={onClick} />
-          <MissButton id={id} value={value} onClick={onClick} />
+          {inThePast && (
+            <>
+              <CompleteButton id={id} value={value} onClick={onClick} />
+              <MissButton id={id} value={value} onClick={onClick} />
+            </>
+          )}
           <CancelButton id={id} value={value} onClick={onClick} />
         </>
       )}
-      {id === "done" && (
+      {id === "done" && inThePast && (
         <>
           <PayButton id={id} value={value} onClick={onClick} />
         </>
@@ -159,7 +163,8 @@ export class Appointment extends Component {
   state = {
     loading: false,
     appointmentId: "",
-    appointment: undefined
+    appointment: undefined,
+    inThePast: false
   };
 
   updateAppointment = appointment => {
@@ -225,6 +230,9 @@ export class Appointment extends Component {
       .then(response => {
         const { firstName, lastName } = response.data.appointment.costumer;
         const { start, end } = response.data.appointment;
+
+        const _inThePast = moment(start).isBefore(moment(), "minute");
+
         this.props.setCurrentPage({
           title: `${firstName} ${lastName}`,
           subtitle: `${moment(start).format(
@@ -234,7 +242,8 @@ export class Appointment extends Component {
         });
         this.setState({
           loading: false,
-          appointment: response.data.appointment
+          appointment: response.data.appointment,
+          inThePast: _inThePast
         });
       })
       .catch(error => {
@@ -257,6 +266,7 @@ export class Appointment extends Component {
                 id={appointment.status}
                 value={this.state.appointmentId}
                 onClick={this.handleStatus}
+                inThePast={this.state.inThePast}
               />
 
               <FormTitle text="Informações do Agendamento" />
@@ -301,7 +311,7 @@ export class Appointment extends Component {
                       )}
                     </span>
                   </p>
-                  {appointment.notes !== "" && (
+                  {appointment.notes && (
                     <p className="appointment-notes">
                       <span style={{ opacity: ".8" }}>
                         Observações do cliente:{" "}

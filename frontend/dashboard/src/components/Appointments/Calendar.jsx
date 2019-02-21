@@ -177,7 +177,6 @@ export class Calendar extends Component {
       >
         <DragAndDropCalendar
           selectable
-          step={15}
           localizer={localizer}
           events={this.state.events}
           onEventDrop={this.moveEvent}
