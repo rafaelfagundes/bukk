@@ -9,7 +9,7 @@ import Loading from "../Loading/Loading";
 import FormTitle from "../Common/FormTitle";
 import FormSubTitle from "../Common/FormSubTitle";
 import { formatBrazilianPhoneNumber, formatCurrency } from "../utils";
-import { Icon, Button, Divider } from "semantic-ui-react";
+import { Icon, Button, Divider, Confirm } from "semantic-ui-react";
 import Notification from "../Notification/Notification";
 
 const Status = ({ status }) => (
@@ -55,7 +55,7 @@ const Status = ({ status }) => (
   </>
 );
 
-const ConfirmButton = ({ id, value, onClick }) => (
+const ConfirmButton = ({ value, onClick }) => (
   <Button
     color="green"
     onClick={onClick}
@@ -70,7 +70,7 @@ const ConfirmButton = ({ id, value, onClick }) => (
   </Button>
 );
 
-const CancelButton = ({ id, value, onClick }) => (
+const CancelButton = ({ value, onClick }) => (
   <Button
     color="red"
     onClick={onClick}
@@ -85,7 +85,7 @@ const CancelButton = ({ id, value, onClick }) => (
   </Button>
 );
 
-const CompleteButton = ({ id, value, onClick }) => (
+const CompleteButton = ({ value, onClick }) => (
   <Button
     color="blue"
     onClick={onClick}
@@ -100,7 +100,7 @@ const CompleteButton = ({ id, value, onClick }) => (
   </Button>
 );
 
-const MissButton = ({ id, value, onClick }) => (
+const MissButton = ({ value, onClick }) => (
   <Button
     color="orange"
     onClick={onClick}
@@ -115,7 +115,7 @@ const MissButton = ({ id, value, onClick }) => (
   </Button>
 );
 
-const PayButton = ({ id, value, onClick }) => (
+const PayButton = ({ value, onClick }) => (
   <Button
     color="teal"
     onClick={onClick}
@@ -130,29 +130,95 @@ const PayButton = ({ id, value, onClick }) => (
   </Button>
 );
 
-const StatusButtons = ({ id, value, onClick, inThePast }) => {
+const StatusButtons = ({
+  status,
+  appointmentId,
+  setStatus,
+  inThePast,
+  setConfirmationModal
+}) => {
   return (
     <>
-      {id === "created" && (
+      {status === "created" && (
         <>
-          <ConfirmButton id={id} value={value} onClick={onClick} />
-          <CancelButton id={id} value={value} onClick={onClick} />
+          <ConfirmButton
+            onClick={() =>
+              setConfirmationModal(
+                setStatus,
+                appointmentId,
+                "confirmed",
+                "Tem certeza?",
+                "Tem certeza que deseja mudar o status para confirmado?"
+              )
+            }
+          />
+          <CancelButton
+            onClick={() =>
+              setConfirmationModal(
+                setStatus,
+                appointmentId,
+                "canceled",
+                "Tem certeza?",
+                "Tem certeza que deseja mudar o status para cancelado?"
+              )
+            }
+          />
         </>
       )}
-      {id === "confirmed" && (
+      {status === "confirmed" && (
         <>
           {inThePast && (
             <>
-              <CompleteButton id={id} value={value} onClick={onClick} />
-              <MissButton id={id} value={value} onClick={onClick} />
+              <CompleteButton
+                onClick={() =>
+                  setConfirmationModal(
+                    setStatus,
+                    appointmentId,
+                    "done",
+                    "Tem certeza?",
+                    "Tem certeza que deseja mudar o status para concluído?"
+                  )
+                }
+              />
+              <MissButton
+                onClick={() =>
+                  setConfirmationModal(
+                    setStatus,
+                    appointmentId,
+                    "missed",
+                    "Tem certeza?",
+                    "Tem certeza que deseja informar que o cliente faltou?"
+                  )
+                }
+              />
             </>
           )}
-          <CancelButton id={id} value={value} onClick={onClick} />
+          <CancelButton
+            onClick={(status, value) =>
+              setConfirmationModal(
+                setStatus,
+                appointmentId,
+                "canceled",
+                "Tem certeza?",
+                "Tem certeza que deseja mudar o status para cancelado?"
+              )
+            }
+          />
         </>
       )}
-      {id === "done" && inThePast && (
+      {status === "done" && inThePast && (
         <>
-          <PayButton id={id} value={value} onClick={onClick} />
+          <PayButton
+            onClick={(status, value) =>
+              setConfirmationModal(
+                setStatus,
+                appointmentId,
+                "payed",
+                "Tem certeza?",
+                "Tem certeza que deseja informar que o cliente pagou?"
+              )
+            }
+          />
         </>
       )}
     </>
@@ -163,8 +229,54 @@ export class Appointment extends Component {
   state = {
     loading: false,
     appointmentId: "",
+    appointmentStatus: undefined,
     appointment: undefined,
-    inThePast: false
+    inThePast: false,
+    confirmationModal: {
+      open: false,
+      onCancel: undefined,
+      onConfirm: undefined,
+      header: "Tem certeza?",
+      content: "Tem certeza que deseja fazer isso?",
+      cancelButton: "Cancelar",
+      confirmButton: "Confirmar"
+    }
+  };
+
+  cancelConfirmationModal = () => {
+    this.setState({
+      confirmationModal: {
+        ...this.state.confirmationModal,
+        open: false
+      }
+    });
+  };
+
+  setConfirmationModal = (
+    action,
+    id,
+    status,
+    header,
+    content,
+    cancelButton = "Cancelar",
+    confirmButton = "Confirmar"
+  ) => {
+    const _confirmationModal = {
+      ...this.state.confirmationModal,
+      open: true,
+      onConfirm: action,
+      header,
+      content,
+      cancelButton,
+      confirmButton,
+      onCancel: this.cancelConfirmationModal
+    };
+
+    this.setState({
+      appointmentId: id,
+      appointmentStatus: status,
+      confirmationModal: _confirmationModal
+    });
   };
 
   updateAppointment = appointment => {
@@ -200,13 +312,13 @@ export class Appointment extends Component {
       });
   };
 
-  handleStatus = e => {
+  setStatus = () => {
     let _appointment = {
-      _id: e.currentTarget.value,
-      status: e.currentTarget.id
+      _id: this.state.appointmentId,
+      status: this.state.appointmentStatus
     };
-
     this.updateAppointment(_appointment);
+    this.cancelConfirmationModal();
   };
 
   componentDidMount() {
@@ -243,6 +355,8 @@ export class Appointment extends Component {
         this.setState({
           loading: false,
           appointment: response.data.appointment,
+          appointmentId: response.data.appointment._id,
+          appointmentStatus: response.data.appointment.status,
           inThePast: _inThePast
         });
       })
@@ -252,9 +366,18 @@ export class Appointment extends Component {
   }
 
   render() {
-    const { appointment } = this.state;
+    const { appointment, confirmationModal } = this.state;
     return (
       <>
+        <Confirm
+          open={confirmationModal.open}
+          onCancel={confirmationModal.onCancel}
+          onConfirm={confirmationModal.onConfirm}
+          header={confirmationModal.header}
+          content={confirmationModal.content}
+          cancelButton={confirmationModal.cancelButton}
+          confirmButton={confirmationModal.confirmButton}
+        />
         <div>
           {this.state.loading && <Loading />}
           {this.state.appointment !== undefined && (
@@ -263,9 +386,10 @@ export class Appointment extends Component {
 
               <Status status={appointment.status} />
               <StatusButtons
-                id={appointment.status}
-                value={this.state.appointmentId}
-                onClick={this.handleStatus}
+                status={appointment.status}
+                appointmentId={this.state.appointmentId}
+                setConfirmationModal={this.setConfirmationModal}
+                setStatus={this.setStatus}
                 inThePast={this.state.inThePast}
               />
 

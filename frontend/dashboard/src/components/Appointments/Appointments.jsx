@@ -6,7 +6,15 @@ import { setCurrentPage } from "../dashboardActions";
 import FormTitle from "../Common/FormTitle";
 import Axios from "axios";
 import config from "../../config";
-import { Table, Button, Icon, Segment, Header, Menu } from "semantic-ui-react";
+import {
+  Table,
+  Button,
+  Icon,
+  Segment,
+  Header,
+  Menu,
+  Confirm
+} from "semantic-ui-react";
 import moment from "moment";
 import "./Appointments.css";
 import _ from "lodash";
@@ -37,7 +45,13 @@ const TableHeader = () => (
   </Table.Header>
 );
 
-const TableBody = ({ data, past, confirmAppointment, cancelAppointment }) => {
+const TableBody = ({
+  data,
+  past,
+  confirmAppointment,
+  cancelAppointment,
+  setConfirmationModal
+}) => {
   let _fullDate = true;
   if (moment().isSame(moment(data[0].start), "day")) {
     _fullDate = false;
@@ -137,7 +151,14 @@ const TableBody = ({ data, past, confirmAppointment, cancelAppointment }) => {
                       color="green"
                       compact
                       title="Confirmar agendamento"
-                      onClick={() => confirmAppointment(app._id)}
+                      onClick={() =>
+                        setConfirmationModal(
+                          confirmAppointment,
+                          app._id,
+                          "Tem certeza que deseja confirmar o agendamento?",
+                          "O cliente será alertado da cofirmação logo em seguida."
+                        )
+                      }
                     >
                       <Icon name="check" />
                     </Button>
@@ -156,7 +177,16 @@ const TableBody = ({ data, past, confirmAppointment, cancelAppointment }) => {
                       color="red"
                       compact
                       title="Cancelar agendamento"
-                      onClick={() => cancelAppointment(app._id)}
+                      onClick={() =>
+                        setConfirmationModal(
+                          cancelAppointment,
+                          app._id,
+                          "Tem certeza que deseja cancelar o agendamento?",
+                          "O cliente será alertado do cancelamento e o horário voltará a estar disponível.",
+                          "Não Cancelar",
+                          "Cancelar Agendamento"
+                        )
+                      }
                     >
                       <Icon name="delete" />
                     </Button>
@@ -180,7 +210,16 @@ const TableBody = ({ data, past, confirmAppointment, cancelAppointment }) => {
                       color="red"
                       compact
                       title="Cancelar agendamento"
-                      onClick={() => cancelAppointment(app._id)}
+                      onClick={() =>
+                        setConfirmationModal(
+                          cancelAppointment,
+                          app._id,
+                          "Tem certeza que deseja cancelar o agendamento?",
+                          "O cliente será alertado do cancelamento e o horário voltará a estar disponível.",
+                          "Não Cancelar",
+                          "Cancelar Agendamento"
+                        )
+                      }
                     >
                       <Icon name="delete" />
                     </Button>
@@ -231,9 +270,49 @@ export class Appointments extends Component {
       minTime: min.toDate(),
       maxTime: max.toDate(),
       events: undefined,
-      activeItem: undefined
+      activeItem: undefined,
+      selectedId: undefined,
+      confirmationModal: {
+        open: false,
+        onCancel: this.cancelConfirmationModal,
+        onConfirm: undefined,
+        header: "Tem certeza?",
+        content: "Tem certeza que deseja fazer isso?",
+        cancelButton: "Cancelar",
+        confirmButton: "Confirmar"
+      }
     };
   }
+
+  cancelConfirmationModal = () => {
+    this.setState({
+      confirmationModal: {
+        ...this.state.confirmationModal,
+        open: false
+      }
+    });
+  };
+
+  setConfirmationModal = (
+    action,
+    id,
+    header,
+    content,
+    cancelButton = "Cancelar",
+    confirmButton = "Confirmar"
+  ) => {
+    const _confirmationModal = {
+      ...this.state.confirmationModal,
+      open: true,
+      onConfirm: action,
+      header,
+      content,
+      cancelButton,
+      confirmButton
+    };
+
+    this.setState({ selectedId: id, confirmationModal: _confirmationModal });
+  };
 
   setActiveItem = item => {
     this.setState({ activeItem: item }, () => {
@@ -287,22 +366,24 @@ export class Appointments extends Component {
       });
   };
 
-  confirmAppointment = id => {
+  confirmAppointment = () => {
     const _appointment = {
-      _id: id,
+      _id: this.state.selectedId,
       status: "confirmed"
     };
 
     this.updateAppointment(_appointment);
+    this.cancelConfirmationModal();
   };
 
-  cancelAppointment = id => {
+  cancelAppointment = () => {
     const _appointment = {
-      _id: id,
+      _id: this.state.selectedId,
       status: "canceled"
     };
 
     this.updateAppointment(_appointment);
+    this.cancelConfirmationModal();
   };
 
   setMinMaxTime = workingDays => {
@@ -438,9 +519,18 @@ export class Appointments extends Component {
   };
 
   render() {
-    const { activeItem } = this.state;
+    const { activeItem, confirmationModal } = this.state;
     return (
       <>
+        <Confirm
+          open={confirmationModal.open}
+          onCancel={confirmationModal.onCancel}
+          onConfirm={confirmationModal.onConfirm}
+          header={confirmationModal.header}
+          content={confirmationModal.content}
+          cancelButton={confirmationModal.cancelButton}
+          confirmButton={confirmationModal.confirmButton}
+        />
         <div>
           <Menu borderless className="pages-menu">
             <Link to="/dashboard/agendamentos/calendario">
@@ -498,7 +588,11 @@ export class Appointments extends Component {
             </div>
             <Table celled compact>
               <TableHeader />
-              <TableBody data={this.state.before} past={true} />
+              <TableBody
+                data={this.state.before}
+                past={true}
+                setConfirmationModal={this.setConfirmationModal}
+              />
             </Table>
           </>
         )}
@@ -526,6 +620,7 @@ export class Appointments extends Component {
                 data={this.state.today}
                 confirmAppointment={this.confirmAppointment}
                 cancelAppointment={this.cancelAppointment}
+                setConfirmationModal={this.setConfirmationModal}
               />
             </Table>
           </>
@@ -549,6 +644,7 @@ export class Appointments extends Component {
                 data={this.state.tomorrow}
                 confirmAppointment={this.confirmAppointment}
                 cancelAppointment={this.cancelAppointment}
+                setConfirmationModal={this.setConfirmationModal}
               />
             </Table>
           </>
@@ -570,6 +666,7 @@ export class Appointments extends Component {
                 data={this.state.next}
                 confirmAppointment={this.confirmAppointment}
                 cancelAppointment={this.cancelAppointment}
+                setConfirmationModal={this.setConfirmationModal}
               />
             </Table>
           </>

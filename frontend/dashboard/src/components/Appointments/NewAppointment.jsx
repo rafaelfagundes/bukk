@@ -138,7 +138,7 @@ const StyledSegmentClient = styled(Segment)`
 /* ============================================================================ */
 
 /* ===============================================================================
-TEMPLATES
+  TEMPLATES
 =============================================================================== */
 const _clientTemplate = {
   firstName: "",
@@ -148,8 +148,8 @@ const _clientTemplate = {
   phone: "",
   whatsApp: false
 };
-
 /* ============================================================================ */
+
 export class NewAppointment extends Component {
   constructor(props) {
     super(props);
@@ -792,8 +792,18 @@ export class NewAppointment extends Component {
                   <FormSubTitle text="Data e Hora" />
                   <StyledSegment placeholder>
                     <Header icon>
-                      <Icon name="calendar alternate outline" />
-                      Selecione o especialista
+                      {!this.state.isSpecialist && (
+                        <>
+                          <Icon name="calendar alternate outline" />
+                          Selecione o especialista
+                        </>
+                      )}
+                      {this.state.isSpecialist && (
+                        <>
+                          <Icon name="wrench" />
+                          Selecione o serviço
+                        </>
+                      )}
                     </Header>
                   </StyledSegment>
                 </>
