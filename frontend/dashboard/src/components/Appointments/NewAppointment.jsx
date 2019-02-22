@@ -199,7 +199,8 @@ export class NewAppointment extends Component {
       errors: {
         appointment: [],
         client: []
-      }
+      },
+      defaultTime: undefined
     };
   }
 
@@ -234,6 +235,21 @@ export class NewAppointment extends Component {
     return _.find(this.state.clients, function(o) {
       return o._id === id;
     });
+  };
+
+  getTimeInDropDown = () => {
+    if (this.props.start) {
+      let _selected = moment(this.props.start).format("HH:mm");
+
+      const result = _.find(this.state.timesDropdown, function(o) {
+        const _time = moment(JSON.parse(o.value)).format("HH:mm");
+        return _time === _selected;
+      });
+
+      if (result) {
+        this.setState({ defaultTime: result.value });
+      }
+    }
   };
 
   toggleClientForm = value => {
@@ -356,8 +372,9 @@ export class NewAppointment extends Component {
         });
       }
     });
-
-    this.setState({ timesDropdown: _times });
+    this.setState({ timesDropdown: _times }, () => {
+      this.getTimeInDropDown();
+    });
   };
 
   setAppointment = item => {
@@ -452,8 +469,7 @@ export class NewAppointment extends Component {
             calendar: {
               dates,
               times
-            },
-            selectedDate: new Date()
+            }
           },
           () => {
             this.setTimesDropdown();
@@ -658,6 +674,16 @@ export class NewAppointment extends Component {
   };
 
   componentDidMount() {
+    if (this.props.start && this.props.end) {
+      this.setState({
+        appointment: {
+          ...this.state.appointment,
+          start: this.props.start,
+          end: this.props.end
+        },
+        selectedDate: this.props.start
+      });
+    }
     const token = localStorage.getItem("token");
     let requestConfig = {
       headers: {
@@ -770,13 +796,31 @@ export class NewAppointment extends Component {
                         first={this.state.isSpecialist}
                       />
                       {this.state.timesDropdown.length > 0 && (
-                        <TimeDropDown
-                          search
-                          selection
-                          options={this.state.timesDropdown}
-                          onChange={this.handleTime}
-                          fluid
-                        />
+                        <>
+                          {this.state.defaultTime && (
+                            <>
+                              <TimeDropDown
+                                search
+                                selection
+                                options={this.state.timesDropdown}
+                                onChange={this.handleTime}
+                                defaultValue={this.state.defaultTime}
+                                fluid
+                              />
+                            </>
+                          )}
+                          {!this.state.defaultTime && (
+                            <>
+                              <TimeDropDown
+                                search
+                                selection
+                                options={this.state.timesDropdown}
+                                onChange={this.handleTime}
+                                fluid
+                              />
+                            </>
+                          )}
+                        </>
                       )}
                       {this.state.timesDropdown.length === 0 && (
                         <TimesUnavailable>

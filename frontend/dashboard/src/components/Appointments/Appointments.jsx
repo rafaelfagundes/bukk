@@ -280,6 +280,10 @@ export class Appointments extends Component {
         content: "Tem certeza que deseja fazer isso?",
         cancelButton: "Cancelar",
         confirmButton: "Confirmar"
+      },
+      newAppointment: {
+        start: undefined,
+        end: undefined
       }
     };
   }
@@ -318,6 +322,21 @@ export class Appointments extends Component {
     this.setState({ activeItem: item }, () => {
       this.mountOrCalendarUpdate();
     });
+  };
+
+  setNewAppointment = (start, end) => {
+    this.setState(
+      {
+        newAppointment: {
+          start,
+          end
+        },
+        activeItem: "new"
+      },
+      () => {
+        this.props.history.push("/dashboard/agendamentos/novo");
+      }
+    );
   };
 
   updateAppointment = appointment => {
@@ -680,6 +699,7 @@ export class Appointments extends Component {
                   maxTime={this.state.maxTime}
                   events={this.state.events}
                   updateHandler={this.mountOrCalendarUpdate}
+                  setNewAppointment={this.setNewAppointment}
                   {...this.props}
                 />
               </>
@@ -691,6 +711,8 @@ export class Appointments extends Component {
             <NewAppointment
               {...this.props}
               setActiveItem={this.setActiveItem}
+              start={this.state.newAppointment.start}
+              end={this.state.newAppointment.end}
             />
           </>
         )}

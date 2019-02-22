@@ -79,3 +79,7 @@ button.rbc-active {
 span.rbc-btn-group button {
   outline: none !important;
 }
+
+.rbc-time-content {
+  cursor: pointer !important;
+}

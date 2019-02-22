@@ -12,7 +12,6 @@ import ValidationError from "../Common/ValidationError";
 import config from "../../config";
 import Axios from "axios";
 import Notification from "../Notification/Notification";
-
 const localizer = BigCalendar.momentLocalizer(moment);
 
 const DragAndDropCalendar = withDragAndDrop(BigCalendar);
@@ -151,19 +150,7 @@ export class Calendar extends Component {
   };
 
   newEvent = event => {
-    console.log(event);
-    // let idList = this.state.events.map(a => a.id)
-    // let newId = Math.max(...idList) + 1
-    // let hour = {
-    //   id: newId,
-    //   title: 'New Event',
-    //   allDay: event.slots.length == 1,
-    //   start: event.start,
-    //   end: event.end,
-    // }
-    // this.setState({
-    //   events: this.state.events.concat([hour]),
-    // })
+    this.props.setNewAppointment(event.start, event.end);
   };
 
   selectEvent = e => {
@@ -180,15 +167,16 @@ export class Calendar extends Component {
           localizer={localizer}
           events={this.state.events}
           onEventDrop={this.moveEvent}
-          // resizable={false}
-          // onEventResize={this.resizeEvent}
           onSelectSlot={this.newEvent}
           onSelectEvent={this.selectEvent}
           defaultView={BigCalendar.Views.WEEK}
           defaultDate={new Date()}
-          min={this.props.minTime}
-          max={this.props.maxTime}
+          scrollToTime={this.props.minTime}
           views={{ month: true, week: true, day: true }}
+          popup={true}
+          onSelecting={() => {
+            return false;
+          }}
           messages={{
             day: "Dia",
             month: "Mês",
