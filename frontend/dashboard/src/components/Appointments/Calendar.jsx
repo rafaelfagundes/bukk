@@ -56,8 +56,6 @@ export class Calendar extends Component {
       this.setState({ errors: _errors });
     } else {
       this.setState({ loading: true, errors: _errors });
-      console.log(_appointments);
-
       const token = localStorage.getItem("token");
       let requestConfig = {
         headers: {

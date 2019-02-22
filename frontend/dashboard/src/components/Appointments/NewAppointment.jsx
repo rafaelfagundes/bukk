@@ -645,7 +645,6 @@ export class NewAppointment extends Component {
       };
 
       _data.client.phone = _data.client.phone.replace(/\D/g, "");
-      console.log("phone", _data.client.phone);
 
       Axios.post(config.api + "/appointment", _data, requestConfig)
         .then(response => {
