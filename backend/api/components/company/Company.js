@@ -8,7 +8,7 @@ const CompanySchema = new Schema({
   companyNickname: { type: String }, // Optional name to show on interface
   cpfCnpj: { type: String, required: true, unique: true },
   businessType: { type: String, required: true, enum: ["F", "J"] }, // Pessoa Física, Pessoa Jurídica
-  logo: { type: String, required: true },
+  logo: { type: String },
   address: {
     street: {
       type: String,

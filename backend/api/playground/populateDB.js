@@ -1,6 +1,6 @@
 const _ = require("lodash");
 const moment = require("moment");
-const keys = require("../config/config");
+const config = require("../config/config");
 const mongoose = require("mongoose");
 const faker = require("faker");
 faker.locale = "pt_BR";
@@ -15,10 +15,7 @@ const Appointment = require("../components/appointment/Appointment");
 // mongoose setup
 mongoose.Promise = global.Promise;
 mongoose
-  .connect(
-    keys.mongoURI,
-    { useNewUrlParser: true }
-  )
+  .connect(config.mongoURI, { useNewUrlParser: true })
   .then(() => console.log("✅  MongoDB connected"))
   .catch(error => console.log(`⛔  ${error}`));
 
@@ -42,12 +39,12 @@ const createCompany = () => {
       "https://res.cloudinary.com/bukkapp/image/upload/v1542735688/Bukk/Assets/logo.png",
     address: {
       street: "Rua Frederico Ozanan",
-      number: 150,
+      number: "150",
       neighborhood: "Guarda-Mor",
       city: "São João del Rei",
       state: "Minas Gerais",
       country: "Brasil",
-      postalCode: 36309012,
+      postalCode: "36309012",
       geolocation: {
         lat: "-21.1394739",
         lng: "-44.2649491"
@@ -114,36 +111,7 @@ const createCompany = () => {
         whatsAppEnabled: true
       }
     ],
-    paymentOptions: [
-      {
-        paymentId: "visa",
-        paymentType: "credit card",
-        name: "Visa",
-        icon:
-          "https://res.cloudinary.com/bukkapp/image/upload/v1543528600/Bukk/Assets/Payment%20Types/visa.png"
-      },
-      {
-        paymentId: "mastercard",
-        paymentType: "credit card",
-        name: "MasterCard",
-        icon:
-          "https://res.cloudinary.com/bukkapp/image/upload/v1543528600/Bukk/Assets/Payment%20Types/mastercard.png"
-      },
-      {
-        paymentId: "amex",
-        paymentType: "credit card",
-        name: "American Express",
-        icon:
-          "https://res.cloudinary.com/bukkapp/image/upload/v1543528599/Bukk/Assets/Payment%20Types/amex.png"
-      },
-      {
-        paymentId: "money",
-        paymentType: "cash",
-        name: "Dinheiro em espécie",
-        icon:
-          "https://res.cloudinary.com/bukkapp/image/upload/v1543529964/Bukk/Assets/Payment%20Types/cash.png"
-      }
-    ],
+    paymentOptions: [],
     settings: {
       appointment: {
         rules: [
