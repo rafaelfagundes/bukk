@@ -6,8 +6,15 @@ export class Overview extends Component {
   state = {
     alreadyUpdated: false
   };
+
   componentDidMount() {
-    console.log(this.props);
+    if (this.props.company) {
+      this.props.setCurrentPage({
+        icon: "home",
+        title: this.props.company.companyNickname
+      });
+      this.setState({ alreadyUpdated: true });
+    }
   }
   componentDidUpdate() {
     if (!this.state.alreadyUpdated && this.props.company) {
