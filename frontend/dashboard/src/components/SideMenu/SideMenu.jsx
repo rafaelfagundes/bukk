@@ -22,7 +22,6 @@ class SideMenu extends Component {
   }
 
   updateMenu() {
-    console.log(this.state.activeItem);
     const _path = window.location.pathname;
     let _role = undefined;
     if (localStorage.getItem("employee")) {
