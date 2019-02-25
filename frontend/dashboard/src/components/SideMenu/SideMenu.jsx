@@ -5,44 +5,54 @@ import { Link } from "react-router-dom";
 import "./SideMenu.css";
 
 class SideMenu extends Component {
-  state = { activeItem: "dashboard", role: undefined };
+  state = { activeItem: "dashboard", role: undefined, path: undefined };
 
   handleItemClick = e => {
     this.setState({ activeItem: e.currentTarget.id });
   };
 
+  componentDidUpdate() {
+    if (window.location.pathname !== this.state.path) {
+      this.updateMenu();
+    }
+  }
+
   componentDidMount() {
+    this.updateMenu();
+  }
+
+  updateMenu() {
+    console.log(this.state.activeItem);
     const _path = window.location.pathname;
+    let _role = undefined;
+    if (localStorage.getItem("employee")) {
+      _role = "employee";
+    } else {
+      _role = "owner";
+    }
     function is(path, value) {
       return path.indexOf(value) >= 0;
     }
-
     if (is(_path, "dashboard")) {
-      this.setState({ activeItem: "dashboard" });
+      this.setState({ activeItem: "dashboard", role: _role, path: _path });
     }
     if (is(_path, "agendamentos")) {
-      this.setState({ activeItem: "agendamentos" });
+      this.setState({ activeItem: "agendamentos", role: _role, path: _path });
     }
     if (is(_path, "relatorios")) {
-      this.setState({ activeItem: "relatorios" });
+      this.setState({ activeItem: "relatorios", role: _role, path: _path });
     }
     if (is(_path, "perfil")) {
-      this.setState({ activeItem: "perfil" });
+      this.setState({ activeItem: "perfil", role: _role, path: _path });
     }
     if (is(_path, "clientes")) {
-      this.setState({ activeItem: "clientes" });
+      this.setState({ activeItem: "clientes", role: _role, path: _path });
     }
     if (is(_path, "financeiro")) {
-      this.setState({ activeItem: "financeiro" });
+      this.setState({ activeItem: "financeiro", role: _role, path: _path });
     }
     if (is(_path, "configuracoes-empresa")) {
-      this.setState({ activeItem: "empresa" });
-    }
-
-    if (localStorage.getItem("employee")) {
-      this.setState({ role: "employee" });
-    } else {
-      this.setState({ role: "owner" });
+      this.setState({ activeItem: "empresa", role: _role, path: _path });
     }
   }
 
