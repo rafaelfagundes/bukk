@@ -17,5 +17,9 @@ const CostumerSchema = new Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
+CostumerSchema.index({
+  "$**": "text"
+});
+
 const Costumer = mongoose.model("Costumer", CostumerSchema);
 module.exports = Costumer;

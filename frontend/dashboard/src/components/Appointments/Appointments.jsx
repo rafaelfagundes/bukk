@@ -12,7 +12,6 @@ import {
   Icon,
   Segment,
   Header,
-  Menu,
   Confirm
 } from "semantic-ui-react";
 import moment from "moment";
@@ -22,6 +21,35 @@ import Loading from "../Loading/Loading";
 import Calendar from "./Calendar";
 import Notification from "../Notification/Notification";
 import NewAppointment from "./NewAppointment";
+import ComponentTopMenu from "../Common/ComponentTopMenu";
+
+const menuItems = [
+  {
+    id: "calendar",
+    icon: "calendar alternate outline",
+    text: "Calendário",
+    link: "/dashboard/agendamentos/calendario"
+  },
+  {
+    id: "new",
+    icon: "plus",
+    text: "Novo Agendamento",
+    link: "/dashboard/agendamentos/novo"
+  },
+  {
+    id: "next",
+    icon: "clock outline",
+    text: "Agendamentos Futuros",
+    link: "/dashboard/agendamentos/futuros"
+  },
+  {
+    id: "before",
+    icon: "history",
+    text: "Agendamentos Terminados",
+    link: "/dashboard/agendamentos/terminados",
+    right: true
+  }
+];
 
 const NoAppointments = props => (
   <Segment placeholder>
@@ -261,6 +289,20 @@ export class Appointments extends Component {
     super(props);
     let _company = JSON.parse(localStorage.getItem("company"));
     const { min, max } = this.setMinMaxTime(_company.workingDays);
+
+    let _activeItem = undefined;
+    if (this.props.match.params.option === "calendario") {
+      _activeItem = "calendar";
+    } else if (this.props.match.params.option === "futuros") {
+      _activeItem = "next";
+    } else if (this.props.match.params.option === "terminados") {
+      _activeItem = "before";
+    } else if (this.props.match.params.option === "novo") {
+      _activeItem = "new";
+    } else {
+      _activeItem = "calendar";
+    }
+
     this.state = {
       loading: false,
       before: [],
@@ -270,7 +312,7 @@ export class Appointments extends Component {
       minTime: min.toDate(),
       maxTime: max.toDate(),
       events: undefined,
-      activeItem: undefined,
+      activeItem: _activeItem,
       selectedId: undefined,
       confirmationModal: {
         open: false,
@@ -490,23 +532,6 @@ export class Appointments extends Component {
     });
   };
 
-  componentDidMount() {
-    let _activeItem = undefined;
-    if (this.props.match.params.option === "calendario") {
-      _activeItem = "calendar";
-    } else if (this.props.match.params.option === "ativos") {
-      _activeItem = "next";
-    } else if (this.props.match.params.option === "terminados") {
-      _activeItem = "before";
-    } else if (this.props.match.params.option === "novo") {
-      _activeItem = "new";
-    } else {
-      _activeItem = "calendar";
-    }
-    this.setState({ activeItem: _activeItem });
-    this.mountOrCalendarUpdate();
-  }
-
   handleItemClick = (e, { name }) => {
     this.setState({ activeItem: name });
   };
@@ -536,6 +561,9 @@ export class Appointments extends Component {
         this.setState({ loading: false });
       });
   };
+  componentDidMount() {
+    this.mountOrCalendarUpdate();
+  }
 
   render() {
     const { activeItem, confirmationModal } = this.state;
@@ -551,50 +579,12 @@ export class Appointments extends Component {
           confirmButton={confirmationModal.confirmButton}
         />
         <div>
-          <Menu borderless className="pages-menu">
-            <Link to="/dashboard/agendamentos/calendario">
-              <Menu.Item
-                as="span"
-                name="calendar"
-                active={activeItem === "calendar"}
-                onClick={this.handleItemClick}
-                icon="calendar alternate outline"
-                content="Calendário"
-              />
-            </Link>
-            <Link to="/dashboard/agendamentos/novo">
-              <Menu.Item
-                as="span"
-                name="new"
-                active={activeItem === "new"}
-                onClick={this.handleItemClick}
-                content="Novo Agendamento"
-                icon="plus"
-              />
-            </Link>
-            <Link to="/dashboard/agendamentos/ativos">
-              <Menu.Item
-                as="span"
-                name="next"
-                active={activeItem === "next"}
-                onClick={this.handleItemClick}
-                content="Agendamentos Ativos"
-                icon="play circle outline"
-              />
-            </Link>
-            <Menu.Menu position="right">
-              <Link to="/dashboard/agendamentos/terminados">
-                <Menu.Item
-                  as="span"
-                  name="before"
-                  active={activeItem === "before"}
-                  onClick={this.handleItemClick}
-                  content="Agendamentos Terminados"
-                  icon="history"
-                />
-              </Link>
-            </Menu.Menu>
-          </Menu>
+          <ComponentTopMenu
+            link
+            items={menuItems}
+            onClick={this.setActiveItem}
+            activeItem={activeItem}
+          />
         </div>
         {this.state.loading && <Loading />}
         {this.state.before.length > 0 && this.state.activeItem === "before" && (

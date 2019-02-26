@@ -166,3 +166,5 @@ router.post(
   verifyToken,
   costumer.getAllCostumers
 );
+router.post(BASE_URL + "/costumers/get", verifyToken, costumer.getCostumer);
+router.post(BASE_URL + "/costumers/find", verifyToken, costumer.findCostumers);
