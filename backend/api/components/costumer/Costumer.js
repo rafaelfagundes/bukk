@@ -6,6 +6,7 @@ const CostumerSchema = new Schema({
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
   fullName: { type: String },
+  normalizedFullName: { type: String },
   email: { type: String },
   gender: { type: String, required: true, enum: ["M", "F", "O"] },
   phone: [
@@ -24,6 +25,9 @@ CostumerSchema.index({
 
 CostumerSchema.pre("save", function(next) {
   this.fullName = this.firstName + " " + this.lastName;
+  this.normalizedFullName = this.fullName
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
   next();
 });
 

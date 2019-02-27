@@ -9,6 +9,7 @@ import { Input, Button } from "semantic-ui-react";
 import styled from "styled-components";
 
 var SEARCH_TIMEOUT = undefined;
+var MAX_NUMBER_RESULTS = 5;
 
 const SearchInput = styled(Input)`
   height: initial !important;
@@ -21,6 +22,12 @@ const SearchInput = styled(Input)`
     height: initial !important;
     width: initial !important;
   }
+`;
+
+const ClearSearchButton = styled(Button)`
+  height: 43px;
+  width: 120px;
+  margin-left: 10px !important;
 `;
 
 const menuItems = [
@@ -54,40 +61,51 @@ export class Clients extends Component {
       costumers: undefined,
       allCostumers: undefined,
       searchQuery: "",
-      searchLoading: false
+      searchLoading: false,
+      pagination: undefined,
+      clearSearchButton: false
     };
   }
 
   componentDidMount() {
-    this.props.setCurrentPage({
-      icon: "users",
-      title: "Clientes"
-    });
+    this.mountOrPagination();
+  }
 
-    const token = localStorage.getItem("token");
-    let requestConfig = {
-      headers: {
-        Authorization: token
-      }
+  setPagination = (count, currentPage, type = "list") => {
+    const pages = Math.ceil(count / MAX_NUMBER_RESULTS);
+
+    let _pagination = {
+      count,
+      currentPage,
+      showPrev: currentPage === 1 ? false : true,
+      showNext: currentPage === pages ? false : true,
+      pages: [],
+      type
     };
 
-    Axios.post(config.api + "/costumers/list", {}, requestConfig)
-      .then(response => {
-        this.setState({
-          costumers: response.data,
-          allCostumers: response.data
-        });
-      })
-      .catch(error => {
-        console.log(error.response.data);
+    for (let index = 0; index < pages; index++) {
+      _pagination.pages.push({
+        number: index + 1
       });
-  }
+    }
+
+    this.setState({ pagination: _pagination });
+  };
+
+  changePage = (page, type = "list") => {
+    if (type === "list") {
+      this.mountOrPagination(page - 1);
+    }
+    if (type === "search") {
+      this.search(this.state.searchQuery, page - 1);
+    }
+  };
 
   handleMenuClick = value => {
     this.setState({ activeItem: value });
   };
 
-  search = e => {
+  handleSearch = e => {
     let { value } = e.currentTarget;
 
     if (e.currentTarget.className.indexOf("button") !== -1) {
@@ -95,49 +113,88 @@ export class Clients extends Component {
     }
 
     if (value === "") {
-      this.setState({
-        searchQuery: value,
-        searchLoading: false,
-        costumers: JSON.parse(JSON.stringify(this.state.allCostumers))
-      });
+      this.clearSearch();
       clearTimeout(SEARCH_TIMEOUT);
     } else {
       this.setState({ searchQuery: value, searchLoading: true });
       clearTimeout(SEARCH_TIMEOUT);
       SEARCH_TIMEOUT = setTimeout(() => {
-        const token = localStorage.getItem("token");
-        let requestConfig = {
-          headers: {
-            Authorization: token
-          }
-        };
-        Axios.post(
-          config.api + "/costumers/find",
-          { query: value },
-          requestConfig
-        )
-          .then(response => {
-            clearTimeout(SEARCH_TIMEOUT);
-            this.setState({
-              costumers: response.data.result,
-              searchLoading: false
-            });
-          })
-          .catch(error => {
-            console.log("Não foi possível pesquisar");
-            this.setState({ searchLoading: false });
-          });
+        this.search(value);
       }, 500);
     }
   };
 
   clearSearch = e => {
-    this.setState({
-      searchQuery: "",
-      searchLoading: false,
-      costumers: JSON.parse(JSON.stringify(this.state.allCostumers))
-    });
+    this.setState(
+      {
+        searchQuery: "",
+        searchLoading: false,
+        costumers: JSON.parse(JSON.stringify(this.state.allCostumers)),
+        clearSearchButton: false
+      },
+      () => {
+        this.setPagination(this.state.allCostumersCount, 1, "list");
+      }
+    );
   };
+
+  search(value, page = 0) {
+    const token = localStorage.getItem("token");
+    let requestConfig = {
+      headers: {
+        Authorization: token
+      }
+    };
+    Axios.post(
+      config.api + "/costumers/find",
+      { query: value, page, limit: MAX_NUMBER_RESULTS },
+      requestConfig
+    )
+      .then(response => {
+        clearTimeout(SEARCH_TIMEOUT);
+        const { count, page, costumers } = response.data;
+        this.setPagination(count, page, "search");
+        this.setState({
+          costumers: costumers,
+          searchLoading: false,
+          clearSearchButton: true
+        });
+      })
+      .catch(error => {
+        console.log(`Não foi possível pesquisar: ${error}`);
+        this.setState({ searchLoading: false });
+      });
+  }
+
+  mountOrPagination(page = 0) {
+    this.props.setCurrentPage({
+      icon: "users",
+      title: "Clientes"
+    });
+    const token = localStorage.getItem("token");
+    let requestConfig = {
+      headers: {
+        Authorization: token
+      }
+    };
+    Axios.post(
+      config.api + "/costumers/list",
+      { page, limit: MAX_NUMBER_RESULTS },
+      requestConfig
+    )
+      .then(response => {
+        const { count, page, costumers } = response.data;
+        this.setPagination(count, page, "list");
+        this.setState({
+          costumers: costumers,
+          allCostumers: costumers,
+          allCostumersCount: count
+        });
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }
 
   render() {
     return (
@@ -150,25 +207,36 @@ export class Clients extends Component {
         />
         {this.state.activeItem === "lista" && (
           <>
-            <div style={{ width: "100%" }}>
+            <div style={{ width: "100%", display: "flex" }}>
               <SearchInput
                 action={
                   <Button
                     icon="search"
                     loading={this.state.searchLoading}
                     content="Pesquisar"
-                    onClick={this.search}
+                    onClick={this.handleSearch}
+                    color="blue"
                   />
                 }
                 placeholder="Pesquisar cliente..."
-                onChange={this.search}
+                onChange={this.handleSearch}
                 value={this.state.searchQuery}
+                size="large"
               />
+              {this.state.clearSearchButton && (
+                <ClearSearchButton
+                  icon="eraser"
+                  content="Limpar"
+                  onClick={this.clearSearch}
+                />
+              )}
             </div>
             {this.state.costumers && (
               <List
                 clients={this.state.costumers}
                 clearSearch={this.clearSearch}
+                pagination={this.state.pagination}
+                changePage={this.changePage}
               />
             )}
 

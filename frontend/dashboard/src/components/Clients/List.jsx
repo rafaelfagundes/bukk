@@ -3,6 +3,17 @@ import { connect } from "react-redux";
 import { Table, Menu, Icon, Button, Segment, Header } from "semantic-ui-react";
 import { formatBrazilianPhoneNumber } from "../utils";
 import { Link } from "react-router-dom";
+import styled from "styled-components";
+
+const Results = styled.div`
+  position: absolute;
+  line-height: 42px;
+  color: rgba(0, 0, 0, 0.7);
+`;
+
+const SinglePage = styled.div`
+  min-height: 42px;
+`;
 
 const mapGender = gender => {
   if (gender === "M") {
@@ -66,33 +77,92 @@ export class List extends Component {
                   <Table.Cell>{phoneFormat(client.phone)}</Table.Cell>
                   <Table.Cell>
                     <Link to={`/dashboard/client/id/${client._id}`}>
-                      <Button icon="edit outline" color="blue" title="" />
+                      <Button
+                        compact
+                        icon="edit outline"
+                        color="blue"
+                        title="Ver/Editar Cliente"
+                      />
                     </Link>
 
-                    <Button icon="delete" color="red" title="" />
+                    <Button
+                      compact
+                      icon="delete"
+                      color="red"
+                      title="Remover Cliente"
+                    />
                   </Table.Cell>
                 </Table.Row>
               ))}
             </Table.Body>
 
-            <Table.Footer>
-              <Table.Row>
-                <Table.HeaderCell colSpan="5">
-                  <Menu floated="right" pagination>
-                    <Menu.Item as="a" icon>
-                      <Icon name="chevron left" />
-                    </Menu.Item>
-                    <Menu.Item as="a">1</Menu.Item>
-                    <Menu.Item as="a">2</Menu.Item>
-                    <Menu.Item as="a">3</Menu.Item>
-                    <Menu.Item as="a">4</Menu.Item>
-                    <Menu.Item as="a" icon>
-                      <Icon name="chevron right" />
-                    </Menu.Item>
-                  </Menu>
-                </Table.HeaderCell>
-              </Table.Row>
-            </Table.Footer>
+            {this.props.pagination && (
+              <Table.Footer>
+                <Table.Row>
+                  <Table.HeaderCell colSpan="5">
+                    <Results>
+                      <Icon name="list" />
+                      {this.props.pagination.count} resultados
+                    </Results>
+                    {this.props.pagination.pages.length <= 1 && <SinglePage />}
+                    {this.props.pagination.pages.length > 1 && (
+                      <Menu floated="right" pagination>
+                        {this.props.pagination.showPrev && (
+                          <Menu.Item
+                            as="a"
+                            icon
+                            onClick={() => {
+                              this.props.changePage(
+                                this.props.pagination.currentPage - 1,
+                                this.props.pagination.type
+                              );
+                            }}
+                          >
+                            <Icon name="chevron left" />
+                          </Menu.Item>
+                        )}
+                        {this.props.pagination.pages.map((p, index) => (
+                          <React.Fragment key={index}>
+                            {p.number === this.props.pagination.currentPage && (
+                              <Menu.Item active={true} as="a">
+                                {p.number}
+                              </Menu.Item>
+                            )}
+                            {p.number !== this.props.pagination.currentPage && (
+                              <Menu.Item
+                                as="a"
+                                onClick={() => {
+                                  this.props.changePage(
+                                    p.number,
+                                    this.props.pagination.type
+                                  );
+                                }}
+                              >
+                                {p.number}
+                              </Menu.Item>
+                            )}
+                          </React.Fragment>
+                        ))}
+                        {this.props.pagination.showNext && (
+                          <Menu.Item
+                            as="a"
+                            icon
+                            onClick={() => {
+                              this.props.changePage(
+                                this.props.pagination.currentPage + 1,
+                                this.props.pagination.type
+                              );
+                            }}
+                          >
+                            <Icon name="chevron right" />
+                          </Menu.Item>
+                        )}
+                      </Menu>
+                    )}
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Footer>
+            )}
           </Table>
         )}
         {this.props.clients.length === 0 && (

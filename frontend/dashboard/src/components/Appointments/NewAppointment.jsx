@@ -702,8 +702,8 @@ export class NewAppointment extends Component {
 
     Axios.post(config.api + "/costumers/list", {}, requestConfig)
       .then(response => {
-        this.setState({ clients: response.data }, () => {
-          this.setClientsDropdown(response.data);
+        this.setState({ clients: response.data.costumers }, () => {
+          this.setClientsDropdown(response.data.costumers);
         });
       })
       .catch(error => {

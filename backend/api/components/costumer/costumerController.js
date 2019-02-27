@@ -14,14 +14,36 @@ exports.getAllCostumers = async (req, res) => {
         msg: "Token inválido."
       });
     }
+    let costumers = undefined;
+    let costumersCount = undefined;
 
-    const costumers = await Costumer.find({ company: token.company }).sort({
-      fullName: 1
-    });
-    if (costumers.length) {
-      res.status(200).send(costumers);
+    if (req.body.page !== undefined && req.body.limit !== undefined) {
+      const _skip = req.body.page * req.body.limit;
+      const _limit = req.body.limit;
+
+      costumers = await Costumer.find({ company: token.company })
+        .sort({ normalizedFullName: "asc" })
+        .skip(_skip)
+        .limit(_limit)
+        .exec();
+      costumersCount = await Costumer.count({ company: token.company });
+      if (costumers.length) {
+        res
+          .status(200)
+          .send({ costumers, count: costumersCount, page: req.body.page + 1 });
+      } else {
+        res.status(404).send({ msg: "Nenhum cliente encontrado" });
+      }
     } else {
-      res.status(404).send({ msg: "Nenhum cliente encontrado" });
+      costumers = await Costumer.find({ company: token.company }).sort({
+        normalizedFullName: "asc"
+      });
+      costumersCount = costumers.length;
+      if (costumers.length) {
+        res.status(200).send({ costumers, count: costumersCount });
+      } else {
+        res.status(404).send({ msg: "Nenhum cliente encontrado" });
+      }
     }
   } catch (err) {
     // throw boom.boomify(err);
@@ -62,22 +84,41 @@ exports.findCostumers = async (req, res) => {
         msg: "Token inválido."
       });
     }
-
+    console.log(req.body);
     let { query } = req.body;
+    query = query.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
     let regExQuery = new RegExp(query, "i");
     console.log("regExQuery", regExQuery);
 
-    const costumers = await Costumer.find({
+    const _skip = req.body.page * req.body.limit;
+    const _limit = req.body.limit;
+
+    const countCostumers = await Costumer.count({
       $or: [
-        { fullName: { $in: regExQuery } },
+        // { fullName: { $in: regExQuery } },
+        { normalizedFullName: { $in: regExQuery } },
         { email: { $in: regExQuery } },
         { "phone.number": { $in: regExQuery } }
       ]
-    }).sort({ createdAt: -1 });
+    });
+    const costumers = await Costumer.find({
+      $or: [
+        // { fullName: { $in: regExQuery } },
+        { normalizedFullName: { $in: regExQuery } },
+        { email: { $in: regExQuery } },
+        { "phone.number": { $in: regExQuery } }
+      ]
+    })
+      .sort({ normalizedFullName: "asc" })
+      .skip(_skip)
+      .limit(_limit)
+      .exec();
 
     if (costumers) {
-      res.status(200).send({ count: costumers.length, result: costumers });
+      res
+        .status(200)
+        .send({ count: countCostumers, costumers, page: req.body.page + 1 });
     } else {
       res.status(404).send({ msg: "Nenhum cliente encontrado" });
     }
