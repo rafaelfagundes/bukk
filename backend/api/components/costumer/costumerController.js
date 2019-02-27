@@ -15,7 +15,9 @@ exports.getAllCostumers = async (req, res) => {
       });
     }
 
-    const costumers = await Costumer.find({ company: token.company });
+    const costumers = await Costumer.find({ company: token.company }).sort({
+      fullName: 1
+    });
     if (costumers.length) {
       res.status(200).send(costumers);
     } else {
@@ -62,21 +64,17 @@ exports.findCostumers = async (req, res) => {
     }
 
     let { query } = req.body;
-    querys = query.split(" ");
 
-    let regExQuery = [];
-    querys.forEach(q => {
-      regExQuery.push(new RegExp(q, "i"));
-    });
+    let regExQuery = new RegExp(query, "i");
+    console.log("regExQuery", regExQuery);
 
     const costumers = await Costumer.find({
       $or: [
-        { firstName: { $in: regExQuery } },
-        { lastName: { $in: regExQuery } },
+        { fullName: { $in: regExQuery } },
         { email: { $in: regExQuery } },
         { "phone.number": { $in: regExQuery } }
       ]
-    });
+    }).sort({ createdAt: -1 });
 
     if (costumers) {
       res.status(200).send({ count: costumers.length, result: costumers });

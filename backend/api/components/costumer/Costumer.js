@@ -5,6 +5,7 @@ const Schema = mongoose.Schema;
 const CostumerSchema = new Schema({
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
+  fullName: { type: String },
   email: { type: String },
   gender: { type: String, required: true, enum: ["M", "F", "O"] },
   phone: [
@@ -19,6 +20,11 @@ const CostumerSchema = new Schema({
 
 CostumerSchema.index({
   "$**": "text"
+});
+
+CostumerSchema.pre("save", function(next) {
+  this.fullName = this.firstName + " " + this.lastName;
+  next();
 });
 
 const Costumer = mongoose.model("Costumer", CostumerSchema);

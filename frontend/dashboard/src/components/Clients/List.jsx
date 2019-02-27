@@ -60,9 +60,7 @@ export class List extends Component {
             <Table.Body>
               {this.props.clients.map((client, index) => (
                 <Table.Row key={index}>
-                  <Table.Cell>{`${client.firstName} ${
-                    client.lastName
-                  }`}</Table.Cell>
+                  <Table.Cell>{client.fullName}</Table.Cell>
                   <Table.Cell>{mapGender(client.gender)}</Table.Cell>
                   <Table.Cell>{client.email}</Table.Cell>
                   <Table.Cell>{phoneFormat(client.phone)}</Table.Cell>

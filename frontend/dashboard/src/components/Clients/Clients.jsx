@@ -13,7 +13,10 @@ var SEARCH_TIMEOUT = undefined;
 const SearchInput = styled(Input)`
   height: initial !important;
   width: 100% !important;
-
+  margin-bottom: 20px;
+  > ::placeholder {
+    color: #555 !important;
+  }
   > button {
     height: initial !important;
     width: initial !important;
@@ -85,15 +88,6 @@ export class Clients extends Component {
   };
 
   search = e => {
-    /*
-var delayTimer;
-function doSearch(text) {
-    clearTimeout(delayTimer);
-    delayTimer = setTimeout(function() {
-        // Do the ajax stuff
-    }, 1000); // Will do the ajax stuff after 1000 ms, or 1 s
-}
-*/
     let { value } = e.currentTarget;
 
     if (e.currentTarget.className.indexOf("button") !== -1) {
