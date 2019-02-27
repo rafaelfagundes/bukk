@@ -60,11 +60,23 @@ exports.findCostumers = async (req, res) => {
         msg: "Token inválido."
       });
     }
+
+    let { query } = req.body;
+    querys = query.split(" ");
+
+    let regExQuery = [];
+    querys.forEach(q => {
+      regExQuery.push(new RegExp(q, "i"));
+    });
+
     const costumers = await Costumer.find({
-      $text: { $search: req.body.query }
-    })
-      .select({ score: { $meta: "textScore" } })
-      .sort({ score: { $meta: "textScore" } });
+      $or: [
+        { firstName: { $in: regExQuery } },
+        { lastName: { $in: regExQuery } },
+        { email: { $in: regExQuery } },
+        { "phone.number": { $in: regExQuery } }
+      ]
+    });
 
     if (costumers) {
       res.status(200).send({ count: costumers.length, result: costumers });
