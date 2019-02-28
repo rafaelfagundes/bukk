@@ -16,7 +16,34 @@ const CostumerSchema = new Schema({
     }
   ],
   company: { type: Schema.Types.ObjectId, ref: "Company" },
-  createdAt: { type: Date, default: Date.now }
+  createdAt: { type: Date, default: Date.now },
+  notes: { type: String, default: "" },
+  tags: [
+    {
+      text: { type: String },
+      color: { type: String }
+    }
+  ],
+  other: {
+    personal: [
+      {
+        title: { type: String },
+        text: { type: String }
+      }
+    ],
+    contact: [
+      {
+        title: { type: String },
+        text: { type: String }
+      }
+    ],
+    other: [
+      {
+        title: { type: String },
+        text: { type: String }
+      }
+    ]
+  }
 });
 
 CostumerSchema.index({

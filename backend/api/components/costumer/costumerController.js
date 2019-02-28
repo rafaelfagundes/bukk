@@ -63,7 +63,7 @@ exports.getCostumer = async (req, res) => {
     const costumer = await Costumer.findOne({
       _id: _id,
       company: token.company
-    });
+    }).select("firstName lastName gender email phone notes tags other");
 
     if (costumer) {
       res.status(200).send(costumer);

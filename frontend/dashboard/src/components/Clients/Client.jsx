@@ -2,14 +2,40 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import config from "../../config";
 import Axios from "axios";
+import ComponentTopMenu from "../Common/ComponentTopMenu";
+import { General } from "./General";
+import { Appointments } from "./Appointments";
+import { Notes } from "./Notes";
+
+const menuItems = [
+  {
+    id: "geral",
+    icon: "user"
+  },
+  {
+    id: "agendamentos",
+    icon: "calendar alternate outline",
+    text: "Agendamentos"
+  },
+  {
+    id: "notas",
+    icon: "pencil",
+    text: "Anotações"
+  }
+];
+
 export class Client extends Component {
   state = {
-    client: undefined
+    client: undefined,
+    activeItem: "geral",
+    menuItems: undefined
+  };
+
+  handleMenuClick = name => {
+    this.setState({ activeItem: name });
   };
 
   componentDidMount() {
-    console.log();
-
     const token = localStorage.getItem("token");
     let requestConfig = {
       headers: {
@@ -23,7 +49,9 @@ export class Client extends Component {
       requestConfig
     )
       .then(response => {
-        this.setState({ client: response.data });
+        const { firstName, lastName } = response.data;
+        menuItems[0].text = firstName + " " + lastName;
+        this.setState({ client: response.data, menuItems });
       })
       .catch(error => {
         console.log(error.response.data);
@@ -31,10 +59,23 @@ export class Client extends Component {
   }
 
   render() {
+    const { activeItem } = this.state;
+
     return (
       <div>
-        <h1>Criente</h1>
-        <pre>{JSON.stringify(this.state.client, null, 2)}</pre>
+        {this.state.menuItems && (
+          <ComponentTopMenu
+            items={this.state.menuItems}
+            onClick={this.handleMenuClick}
+            activeItem={activeItem}
+          />
+        )}
+
+        {activeItem === "geral" && this.state.client && (
+          <General client={this.state.client} />
+        )}
+        {activeItem === "agendamentos" && <Appointments />}
+        {activeItem === "notas" && <Notes />}
       </div>
     );
   }

@@ -9,7 +9,7 @@ import { Input, Button } from "semantic-ui-react";
 import styled from "styled-components";
 
 var SEARCH_TIMEOUT = undefined;
-var MAX_NUMBER_RESULTS = 5;
+var MAX_NUMBER_RESULTS = 20;
 
 const SearchInput = styled(Input)`
   height: initial !important;
