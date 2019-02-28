@@ -38,6 +38,12 @@ const menuItems = [
     link: "/dashboard/clientes"
   },
   {
+    id: "new",
+    icon: "user plus",
+    text: "Adicionar Cliente",
+    link: "/dashboard/clientes/novo"
+  },
+  {
     id: "info",
     icon: "chart bar",
     text: "Informações",

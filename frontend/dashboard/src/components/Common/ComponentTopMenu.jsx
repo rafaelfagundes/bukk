@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 import styled from "styled-components";
 import { Menu } from "semantic-ui-react";
 import { Link } from "react-router-dom";
@@ -16,13 +17,29 @@ menuItem = {
 
 const StyledMenu = styled(Menu)`
   margin-bottom: 40px !important;
-  /* background-color: #490e49 !important;
-  > a {
-    color: white !important;
-  } */
+
+  > a .item {
+    color: ${props => props.colors.primaryText} !important;
+  }
+
+  > a .active {
+    background-color: ${props => props.colors.secondaryBack} !important;
+    color: ${props => props.colors.secondaryText} !important;
+  }
+
+  > .item {
+    color: ${props => props.colors.primaryText} !important;
+  }
+
+  > .active {
+    background-color: ${props => props.colors.secondaryBack} !important;
+    color: ${props => props.colors.secondaryText} !important;
+  }
+
+  background-color: ${props => props.colors.primaryBack} !important;
 `;
 
-export default class ComponentTopMenu extends Component {
+class ComponentTopMenu extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -40,22 +57,12 @@ export default class ComponentTopMenu extends Component {
     const { activeItem } = this.state;
     return (
       <>
-        <StyledMenu borderless>
-          {!this.props.link &&
-            this.state.items.map(item => (
-              <Menu.Item
-                key={item.id}
-                id={item.id}
-                content={item.text}
-                icon={item.icon}
-                active={activeItem}
-              />
-            ))}
-          {this.props.link &&
-            this.state.items.map(item => (
-              <Link to={item.link} key={item.id}>
+        {this.props.company && (
+          <StyledMenu borderless colors={this.props.company.settings.colors}>
+            {!this.props.link &&
+              this.state.items.map(item => (
                 <Menu.Item
-                  as="span"
+                  key={item.id}
                   name={item.id}
                   content={item.text}
                   icon={item.icon}
@@ -65,10 +72,38 @@ export default class ComponentTopMenu extends Component {
                     this.props.onClick(item.id);
                   }}
                 />
-              </Link>
-            ))}
-        </StyledMenu>
+              ))}
+            {this.props.link &&
+              this.state.items.map(item => (
+                <Link to={item.link} key={item.id}>
+                  <Menu.Item
+                    as="span"
+                    name={item.id}
+                    content={item.text}
+                    icon={item.icon}
+                    active={activeItem === item.id}
+                    onClick={e => {
+                      this.handleItemClick(item.id);
+                      this.props.onClick(item.id);
+                    }}
+                  />
+                </Link>
+              ))}
+          </StyledMenu>
+        )}
       </>
     );
   }
 }
+const mapStateToProps = state => {
+  return {
+    company: state.dashboard.company
+  };
+};
+
+const mapDispatchToProps = {};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ComponentTopMenu);

@@ -169,7 +169,7 @@ const TableBody = ({
               </>
             )}
           </Table.Cell>
-          <Table.Cell collapsing>
+          <Table.Cell collapsing textAlign="center">
             {!past && (
               <>
                 {app.status === "created" && (
@@ -191,18 +191,12 @@ const TableBody = ({
                       <Icon name="check" />
                     </Button>
                     <Link to={"/dashboard/agendamento/id/" + app._id}>
-                      <Button
-                        icon
-                        color="blue"
-                        compact
-                        title="Ver ou editar agendamento"
-                      >
+                      <Button icon compact title="Ver ou editar agendamento">
                         <Icon name="edit outline" />
                       </Button>
                     </Link>
                     <Button
                       icon
-                      color="red"
                       compact
                       title="Cancelar agendamento"
                       onClick={() =>

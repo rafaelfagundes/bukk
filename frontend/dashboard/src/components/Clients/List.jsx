@@ -75,22 +75,16 @@ export class List extends Component {
                   <Table.Cell>{mapGender(client.gender)}</Table.Cell>
                   <Table.Cell>{client.email}</Table.Cell>
                   <Table.Cell>{phoneFormat(client.phone)}</Table.Cell>
-                  <Table.Cell>
+                  <Table.Cell textAlign="center">
                     <Link to={`/dashboard/client/id/${client._id}`}>
                       <Button
                         compact
                         icon="edit outline"
-                        color="blue"
                         title="Ver/Editar Cliente"
                       />
                     </Link>
 
-                    <Button
-                      compact
-                      icon="delete"
-                      color="red"
-                      title="Remover Cliente"
-                    />
+                    <Button compact icon="delete" title="Remover Cliente" />
                   </Table.Cell>
                 </Table.Row>
               ))}
