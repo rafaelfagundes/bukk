@@ -17,14 +17,14 @@ const CostumerSchema = new Schema({
   ],
   company: { type: Schema.Types.ObjectId, ref: "Company" },
   createdAt: { type: Date, default: Date.now },
-  notes: { type: String, default: "" },
+  notes: [{ title: { type: String } }, { text: { type: String } }],
   tags: [
     {
       text: { type: String },
       color: { type: String }
     }
   ],
-  other: {
+  otherInfo: {
     personal: [
       {
         title: { type: String },

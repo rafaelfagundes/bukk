@@ -54,7 +54,7 @@ export class Client extends Component {
         this.setState({ client: response.data, menuItems });
       })
       .catch(error => {
-        console.log(error.response.data);
+        console.log(error);
       });
   }
 
