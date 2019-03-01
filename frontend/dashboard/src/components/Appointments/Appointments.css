@@ -49,23 +49,23 @@ button.rbc-active {
 }
 
 .appointments-row-canceled {
-  background-color: rgba(255, 0, 0, 0.08);
+  background-color: rgba(255, 0, 0, 0.08) !important;
 }
 
 .appointments-row-confirmed {
-  background-color: rgba(0, 128, 0, 0.08);
+  background-color: rgba(0, 128, 0, 0.08) !important;
 }
 
 .appointments-row-done {
-  background-color: rgba(0, 0, 255, 0.08);
+  background-color: rgba(0, 0, 255, 0.08) !important;
 }
 
 .appointments-row-payed {
-  background-color: rgba(0, 128, 128, 0.08);
+  background-color: rgba(0, 128, 128, 0.08) !important;
 }
 
 .appointments-row-missed {
-  background-color: rgba(255, 166, 0, 0.08);
+  background-color: rgba(255, 166, 0, 0.08) !important;
 }
 
 .rbc-addons-dnd-resize-ns-anchor {

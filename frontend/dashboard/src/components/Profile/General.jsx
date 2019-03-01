@@ -1003,7 +1003,12 @@ class Profile extends Component {
           </div>
           <Divider style={{ marginTop: "40px" }} />
           {this.state.page === "general" && (
-            <Button icon labelPosition="left" onClick={this.editGeneral}>
+            <Button
+              icon
+              labelPosition="left"
+              color="green"
+              onClick={this.editGeneral}
+            >
               <Icon name="pencil" />
               Editar Informações
             </Button>

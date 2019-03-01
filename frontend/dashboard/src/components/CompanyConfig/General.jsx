@@ -864,12 +864,9 @@ class General extends Component {
                   seu logotipo será exibido, portanto tente deixar seu logo bem
                   visível.
                 </span>
-                <label
-                  className="ui icon left labeled button"
-                  htmlFor="logo-image"
-                >
+                <label className="ui blue compact button" htmlFor="logo-image">
                   <Icon name="pencil" />
-                  Alterar logotipo
+                  Alterar Logotipo
                 </label>
                 <input
                   type="file"
@@ -1320,15 +1317,12 @@ class General extends Component {
                               <Button
                                 size="mini"
                                 compact
-                                icon
-                                labelPosition="left"
                                 onClick={this.removeWorkTime}
                                 data-day="sunday"
                                 data-index={index}
-                              >
-                                <Icon name="delete" />
-                                Remover
-                              </Button>
+                                icon="delete"
+                                content="Remover"
+                              />
                             </span>
                           )
                         )}
@@ -1342,12 +1336,9 @@ class General extends Component {
                           size="mini"
                           compact
                           color="blue"
-                          icon
-                          labelPosition="left"
-                        >
-                          <Icon name="plus" />
-                          Adicionar
-                        </Button>
+                          icon="plus"
+                          content="Adicionar"
+                        />
                       )}
                     </Table.Cell>
                     {/* Monday */}
@@ -1374,15 +1365,12 @@ class General extends Component {
                               <Button
                                 size="mini"
                                 compact
-                                icon
-                                labelPosition="left"
                                 onClick={this.removeWorkTime}
                                 data-day="monday"
                                 data-index={index}
-                              >
-                                <Icon name="delete" />
-                                Remover
-                              </Button>
+                                icon="delete"
+                                content="Remover"
+                              />
                             </span>
                           )
                         )}
@@ -1396,12 +1384,9 @@ class General extends Component {
                           size="mini"
                           compact
                           color="blue"
-                          icon
-                          labelPosition="left"
-                        >
-                          <Icon name="plus" />
-                          Adicionar
-                        </Button>
+                          icon="plus"
+                          content="Adicionar"
+                        />
                       )}
                     </Table.Cell>
                     {/* Tuesday */}
@@ -1428,15 +1413,12 @@ class General extends Component {
                               <Button
                                 size="mini"
                                 compact
-                                icon
-                                labelPosition="left"
                                 onClick={this.removeWorkTime}
                                 data-day="tuesday"
                                 data-index={index}
-                              >
-                                <Icon name="delete" />
-                                Remover
-                              </Button>
+                                icon="delete"
+                                content="Remover"
+                              />
                             </span>
                           )
                         )}
@@ -1450,12 +1432,9 @@ class General extends Component {
                           size="mini"
                           compact
                           color="blue"
-                          icon
-                          labelPosition="left"
-                        >
-                          <Icon name="plus" />
-                          Adicionar
-                        </Button>
+                          icon="plus"
+                          content="Adicionar"
+                        />
                       )}
                     </Table.Cell>
                     {/* Wednesday */}
@@ -1482,15 +1461,12 @@ class General extends Component {
                               <Button
                                 size="mini"
                                 compact
-                                icon
-                                labelPosition="left"
                                 onClick={this.removeWorkTime}
                                 data-day="wednesday"
                                 data-index={index}
-                              >
-                                <Icon name="delete" />
-                                Remover
-                              </Button>
+                                icon="delete"
+                                content="Remover"
+                              />
                             </span>
                           )
                         )}
@@ -1504,12 +1480,9 @@ class General extends Component {
                           size="mini"
                           compact
                           color="blue"
-                          icon
-                          labelPosition="left"
-                        >
-                          <Icon name="plus" />
-                          Adicionar
-                        </Button>
+                          icon="plus"
+                          content="Adicionar"
+                        />
                       )}
                     </Table.Cell>
                     {/* Thursday */}
@@ -1536,15 +1509,12 @@ class General extends Component {
                               <Button
                                 size="mini"
                                 compact
-                                icon
-                                labelPosition="left"
                                 onClick={this.removeWorkTime}
                                 data-day="thursday"
                                 data-index={index}
-                              >
-                                <Icon name="delete" />
-                                Remover
-                              </Button>
+                                icon="delete"
+                                content="Remover"
+                              />
                             </span>
                           )
                         )}
@@ -1558,12 +1528,9 @@ class General extends Component {
                           size="mini"
                           compact
                           color="blue"
-                          icon
-                          labelPosition="left"
-                        >
-                          <Icon name="plus" />
-                          Adicionar
-                        </Button>
+                          icon="plus"
+                          content="Adicionar"
+                        />
                       )}
                     </Table.Cell>
                     {/* Friday */}
@@ -1590,15 +1557,12 @@ class General extends Component {
                               <Button
                                 size="mini"
                                 compact
-                                icon
-                                labelPosition="left"
                                 onClick={this.removeWorkTime}
                                 data-day="friday"
                                 data-index={index}
-                              >
-                                <Icon name="delete" />
-                                Remover
-                              </Button>
+                                icon="delete"
+                                content="Remover"
+                              />
                             </span>
                           )
                         )}
@@ -1612,12 +1576,9 @@ class General extends Component {
                           size="mini"
                           compact
                           color="blue"
-                          icon
-                          labelPosition="left"
-                        >
-                          <Icon name="plus" />
-                          Adicionar
-                        </Button>
+                          icon="plus"
+                          content="Adicionar"
+                        />
                       )}
                     </Table.Cell>
                     {/* Saturday */}
@@ -1644,15 +1605,12 @@ class General extends Component {
                               <Button
                                 size="mini"
                                 compact
-                                icon
-                                labelPosition="left"
                                 onClick={this.removeWorkTime}
                                 data-day="saturday"
                                 data-index={index}
-                              >
-                                <Icon name="delete" />
-                                Remover
-                              </Button>
+                                icon="delete"
+                                content="Remover"
+                              />
                             </span>
                           )
                         )}
@@ -1666,12 +1624,9 @@ class General extends Component {
                           size="mini"
                           compact
                           color="blue"
-                          icon
-                          labelPosition="left"
-                        >
-                          <Icon name="plus" />
-                          Adicionar
-                        </Button>
+                          icon="plus"
+                          content="Adicionar"
+                        />
                       )}
                     </Table.Cell>
                   </Table.Row>

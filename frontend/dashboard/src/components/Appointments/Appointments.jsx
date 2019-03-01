@@ -45,8 +45,8 @@ const menuItems = [
   {
     id: "before",
     icon: "history",
-    text: "Agendamentos Terminados",
-    link: "/dashboard/agendamentos/terminados",
+    text: "Agendamentos Anteriores",
+    link: "/dashboard/agendamentos/anteriores",
     right: true
   }
 ];
@@ -63,12 +63,12 @@ const NoAppointments = props => (
 const TableHeader = () => (
   <Table.Header>
     <Table.Row>
-      <Table.HeaderCell>Status</Table.HeaderCell>
-      <Table.HeaderCell>Serviço</Table.HeaderCell>
-      <Table.HeaderCell>Especialista</Table.HeaderCell>
-      <Table.HeaderCell>Cliente</Table.HeaderCell>
-      <Table.HeaderCell>Data/Horário</Table.HeaderCell>
-      <Table.HeaderCell>Ações</Table.HeaderCell>
+      <Table.HeaderCell width={1}>Status</Table.HeaderCell>
+      <Table.HeaderCell width={3}>Serviço</Table.HeaderCell>
+      <Table.HeaderCell width={3}>Especialista</Table.HeaderCell>
+      <Table.HeaderCell width={3}>Cliente</Table.HeaderCell>
+      <Table.HeaderCell width={4}>Data/Horário</Table.HeaderCell>
+      <Table.HeaderCell width={2} />
     </Table.Row>
   </Table.Header>
 );
@@ -96,7 +96,7 @@ const TableBody = ({
     <Table.Body>
       {data.map((app, index) => (
         <Table.Row key={index} className={"appointments-row-" + app.status}>
-          <Table.Cell width={1} textAlign="center">
+          <Table.Cell width={1} textAlign="left">
             {app.status === "created" && (
               <Icon
                 color="grey"
@@ -146,17 +146,27 @@ const TableBody = ({
               />
             )}
           </Table.Cell>
-          <Table.Cell width={6}>{app.service.desc}</Table.Cell>
-          <Table.Cell collapsing>
+          <Table.Cell width={6} title={app.service.desc}>
+            {app.service.desc}
+          </Table.Cell>
+          <Table.Cell title={app.user.firstName + " " + app.user.lastName}>
             {app.user.firstName + " " + app.user.lastName}
           </Table.Cell>
-          <Table.Cell collapsing>
+          <Table.Cell
+            title={app.costumer.firstName + " " + app.costumer.lastName}
+          >
             {app.costumer.firstName + " " + app.costumer.lastName}
           </Table.Cell>
-          <Table.Cell collapsing>
+          <Table.Cell
+            title={
+              moment(app.start).format("dddd, DD/MM/YYYY[ - ]HH:mm") +
+              " às " +
+              moment(app.end).format("HH:mm")
+            }
+          >
             {_fullDate && (
               <>
-                {moment(app.start).format("dddd, DD/MM/YY[ - ]HH:mm") +
+                {moment(app.start).format("dd DD/MM/YY[ - ]HH:mm") +
                   " às " +
                   moment(app.end).format("HH:mm")}
               </>
@@ -169,7 +179,7 @@ const TableBody = ({
               </>
             )}
           </Table.Cell>
-          <Table.Cell collapsing textAlign="center">
+          <Table.Cell textAlign="right">
             {!past && (
               <>
                 {app.status === "created" && (
@@ -179,6 +189,7 @@ const TableBody = ({
                       color="green"
                       compact
                       title="Confirmar agendamento"
+                      inverted
                       onClick={() =>
                         setConfirmationModal(
                           confirmAppointment,
@@ -191,7 +202,13 @@ const TableBody = ({
                       <Icon name="check" />
                     </Button>
                     <Link to={"/dashboard/agendamento/id/" + app._id}>
-                      <Button icon compact title="Ver ou editar agendamento">
+                      <Button
+                        icon
+                        compact
+                        title="Ver ou editar agendamento"
+                        color="blue"
+                        inverted
+                      >
                         <Icon name="edit outline" />
                       </Button>
                     </Link>
@@ -199,6 +216,8 @@ const TableBody = ({
                       icon
                       compact
                       title="Cancelar agendamento"
+                      color="red"
+                      inverted
                       onClick={() =>
                         setConfirmationModal(
                           cancelAppointment,
@@ -223,6 +242,7 @@ const TableBody = ({
                         color="blue"
                         compact
                         title="Ver ou editar agendamento"
+                        inverted
                       >
                         <Icon name="edit outline" />
                       </Button>
@@ -232,6 +252,7 @@ const TableBody = ({
                       color="red"
                       compact
                       title="Cancelar agendamento"
+                      inverted
                       onClick={() =>
                         setConfirmationModal(
                           cancelAppointment,
@@ -252,7 +273,7 @@ const TableBody = ({
                   app.status === "payed" ||
                   app.status === "missed") && (
                   <Link to={"/dashboard/agendamento/id/" + app._id}>
-                    <Button icon color="blue" compact title="Ver">
+                    <Button icon color="blue" compact title="Ver" inverted>
                       <Icon name="search" />
                     </Button>
                   </Link>
@@ -264,6 +285,7 @@ const TableBody = ({
                 <Button
                   icon
                   color="blue"
+                  inverted
                   compact
                   title="Visualizar agendamento"
                 >
@@ -289,7 +311,7 @@ export class Appointments extends Component {
       _activeItem = "calendar";
     } else if (this.props.match.params.option === "futuros") {
       _activeItem = "next";
-    } else if (this.props.match.params.option === "terminados") {
+    } else if (this.props.match.params.option === "anteriores") {
       _activeItem = "before";
     } else if (this.props.match.params.option === "novo") {
       _activeItem = "new";
@@ -584,12 +606,9 @@ export class Appointments extends Component {
         {this.state.before.length > 0 && this.state.activeItem === "before" && (
           <>
             <div>
-              <FormTitle
-                text="Pagos, A Pagar, Cancelados ou Clientes Ausentes"
-                first
-              />
+              <FormTitle text="Agendamentos Anteriores" first />
             </div>
-            <Table celled compact>
+            <Table fixed singleLine striped compact>
               <TableHeader />
               <TableBody
                 data={this.state.before}
@@ -617,7 +636,7 @@ export class Appointments extends Component {
                 first
               />
             </div>
-            <Table celled compact>
+            <Table fixed singleLine striped compact>
               <TableHeader />
               <TableBody
                 data={this.state.today}
@@ -641,7 +660,7 @@ export class Appointments extends Component {
                 first={this.state.today.length === 0}
               />
             </div>
-            <Table celled compact>
+            <Table fixed singleLine striped compact>
               <TableHeader />
               <TableBody
                 data={this.state.tomorrow}
@@ -663,7 +682,7 @@ export class Appointments extends Component {
                 }
               />
             </div>
-            <Table celled compact>
+            <Table fixed singleLine striped compact>
               <TableHeader />
               <TableBody
                 data={this.state.next}

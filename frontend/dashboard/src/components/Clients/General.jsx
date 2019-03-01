@@ -305,7 +305,7 @@ export class General extends Component {
                             />
                           </Table.Cell>
                           <Table.Cell>
-                            <Form.Field>
+                            <Form.Field title="Informe se este número está vinculado ao WhatsApp">
                               <WhatsAppCheckbox
                                 label="Número WhatsApp"
                                 checked={phone.whatsApp}
@@ -318,9 +318,10 @@ export class General extends Component {
                                 <PhoneRemoveButton
                                   icon="delete"
                                   title="Remover telefone"
-                                  color="red"
                                   onClick={() => this.removePhoneNumber(index)}
                                   compact
+                                  inverted
+                                  color="red"
                                 />
                               </Form.Field>
                             </Table.Cell>
@@ -333,7 +334,8 @@ export class General extends Component {
                     <Form.Field>
                       <Button
                         icon="plus"
-                        content="Adicionar"
+                        content="Adicionar Telefone"
+                        title="Adicione mais um número de telefone"
                         color="blue"
                         onClick={this.addPhoneNumber}
                         compact
@@ -384,7 +386,12 @@ export class General extends Component {
                               {info.text}
                             </Table.Cell>
                             <Table.Cell textAlign="right">
-                              <Button icon="edit" compact />
+                              <Button
+                                icon="edit"
+                                compact
+                                inverted
+                                color="blue"
+                              />
                             </Table.Cell>
                           </Table.Row>
                         )
@@ -399,7 +406,12 @@ export class General extends Component {
                               {info.text}
                             </Table.Cell>
                             <Table.Cell textAlign="right">
-                              <Button icon="edit" compact />
+                              <Button
+                                icon="edit"
+                                compact
+                                inverted
+                                color="blue"
+                              />
                             </Table.Cell>
                           </Table.Row>
                         )
@@ -411,7 +423,7 @@ export class General extends Component {
                           </Table.Cell>
                           <Table.Cell title={info.text}>{info.text}</Table.Cell>
                           <Table.Cell textAlign="right">
-                            <Button icon="edit" compact />
+                            <Button icon="edit" compact inverted color="blue" />
                           </Table.Cell>
                         </Table.Row>
                       ))}
@@ -421,7 +433,8 @@ export class General extends Component {
 
                 <Button
                   icon="plus"
-                  content="Adicionar"
+                  content="Adicionar Informação"
+                  title="Adicione informações sobre o cliente"
                   color="blue"
                   onClick={this.addPhoneNumber}
                   compact

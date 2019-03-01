@@ -15,40 +15,58 @@ const SinglePage = styled.div`
   min-height: 42px;
 `;
 
-const mapGender = gender => {
-  if (gender === "M") {
-    return (
-      <span>
-        <Icon name="mars" /> Masculino
-      </span>
-    );
-  } else if (gender === "F") {
-    return (
-      <span>
-        <Icon name="venus" /> Feminino
-      </span>
-    );
+const mapGender = (gender, title = false) => {
+  if (!title) {
+    if (gender === "M") {
+      return (
+        <span>
+          <Icon name="mars" /> Masculino
+        </span>
+      );
+    } else if (gender === "F") {
+      return (
+        <span>
+          <Icon name="venus" /> Feminino
+        </span>
+      );
+    } else {
+      return (
+        <span>
+          <Icon name="genderless" /> Outro
+        </span>
+      );
+    }
   } else {
-    return (
-      <span>
-        <Icon name="genderless" /> Outro
-      </span>
-    );
+    if (gender === "M") {
+      return "Masculino";
+    } else if (gender === "F") {
+      return "Feminino";
+    } else {
+      return "Outro";
+    }
   }
 };
 
-const phoneFormat = phone => {
-  const [_phone] = phone;
+const phoneFormat = (phone, title = false) => {
+  if (!title) {
+    const [_phone] = phone;
 
-  if (_phone.whatsApp) {
-    return (
-      <span>
-        {formatBrazilianPhoneNumber(_phone.number)}{" "}
-        <Icon name="whatsapp" color="green" />
-      </span>
-    );
+    if (_phone.whatsApp) {
+      return (
+        <span>
+          {formatBrazilianPhoneNumber(_phone.number)}{" "}
+          <Icon name="whatsapp" color="green" />
+        </span>
+      );
+    } else {
+      return <span>{formatBrazilianPhoneNumber(_phone.number)}</span>;
+    }
   } else {
-    return <span>{formatBrazilianPhoneNumber(_phone.number)}</span>;
+    if (phone[0].whatsApp) {
+      return formatBrazilianPhoneNumber(phone[0].number) + " - Número WhatsApp";
+    } else {
+      return formatBrazilianPhoneNumber(phone[0].number);
+    }
   }
 };
 
@@ -57,34 +75,48 @@ export class List extends Component {
     return (
       <>
         {this.props.clients.length > 0 && (
-          <Table celled compact>
+          <Table singleLine compact striped fixed>
             <Table.Header>
               <Table.Row>
-                <Table.HeaderCell>Nome</Table.HeaderCell>
-                <Table.HeaderCell>Sexo</Table.HeaderCell>
-                <Table.HeaderCell>Email</Table.HeaderCell>
-                <Table.HeaderCell>Telefone</Table.HeaderCell>
-                <Table.HeaderCell>Ações</Table.HeaderCell>
+                <Table.HeaderCell width={5}>Nome</Table.HeaderCell>
+                <Table.HeaderCell width={2}>Sexo</Table.HeaderCell>
+                <Table.HeaderCell width={4}>Email</Table.HeaderCell>
+                <Table.HeaderCell width={3}>Telefone</Table.HeaderCell>
+                <Table.HeaderCell width={2} />
               </Table.Row>
             </Table.Header>
 
             <Table.Body>
               {this.props.clients.map((client, index) => (
                 <Table.Row key={index}>
-                  <Table.Cell>{client.fullName}</Table.Cell>
-                  <Table.Cell>{mapGender(client.gender)}</Table.Cell>
-                  <Table.Cell>{client.email}</Table.Cell>
-                  <Table.Cell>{phoneFormat(client.phone)}</Table.Cell>
-                  <Table.Cell textAlign="center">
+                  <Table.Cell title={client.fullName}>
+                    {client.fullName}
+                  </Table.Cell>
+                  <Table.Cell title={mapGender(client.gender, true)}>
+                    {mapGender(client.gender)}
+                  </Table.Cell>
+                  <Table.Cell title={client.email}>{client.email}</Table.Cell>
+                  <Table.Cell title={phoneFormat(client.phone, true)}>
+                    {phoneFormat(client.phone)}
+                  </Table.Cell>
+                  <Table.Cell textAlign="right">
                     <Link to={`/dashboard/client/id/${client._id}`}>
                       <Button
                         compact
                         icon="edit outline"
                         title="Ver/Editar Cliente"
+                        inverted
+                        color="blue"
                       />
                     </Link>
 
-                    <Button compact icon="delete" title="Remover Cliente" />
+                    <Button
+                      compact
+                      icon="delete"
+                      title="Remover Cliente"
+                      inverted
+                      color="red"
+                    />
                   </Table.Cell>
                 </Table.Row>
               ))}

@@ -697,6 +697,9 @@ class Settings extends Component {
                         onChange={this.toggleOption}
                         id="centerLogo"
                         checked={this.state.company.settings.options.centerLogo}
+                        disabled={
+                          this.state.company.settings.options.disableLogo
+                        }
                       />
                     </Form.Field>
                     <Form.Field>
@@ -708,6 +711,9 @@ class Settings extends Component {
                         checked={
                           this.state.company.settings.options.roundedLogo
                         }
+                        disabled={
+                          this.state.company.settings.options.disableLogo
+                        }
                       />
                     </Form.Field>
                     <Form.Field>
@@ -717,6 +723,9 @@ class Settings extends Component {
                         onChange={this.toggleOption}
                         id="squareLogo"
                         checked={this.state.company.settings.options.squareLogo}
+                        disabled={
+                          this.state.company.settings.options.disableLogo
+                        }
                       />
                     </Form.Field>
                     <Form.Field>
@@ -727,6 +736,9 @@ class Settings extends Component {
                         id="softSquareLogo"
                         checked={
                           this.state.company.settings.options.softSquareLogo
+                        }
+                        disabled={
+                          this.state.company.settings.options.disableLogo
                         }
                       />
                     </Form.Field>
@@ -739,6 +751,10 @@ class Settings extends Component {
                         checked={
                           this.state.company.settings.options
                             .showCompanyNickname
+                        }
+                        disabled={
+                          this.state.company.settings.options.disableLogo ||
+                          this.state.company.settings.options.centerLogo
                         }
                       />
                     </Form.Field>
@@ -754,6 +770,7 @@ class Settings extends Component {
                           <Button
                             color="red"
                             icon="delete"
+                            inverted
                             onClick={this.removeRule}
                             id={"rule-" + index}
                           />
@@ -765,10 +782,13 @@ class Settings extends Component {
                     </FormField>
                   )
                 )}
-                <Button icon labelPosition="left" onClick={this.addRule}>
-                  <Icon name="plus" />
-                  Adicionar regra
-                </Button>
+                <Button
+                  icon="plus"
+                  content="Adicionar Regra"
+                  color="blue"
+                  compact
+                  onClick={this.addRule}
+                />
                 <Divider style={{ marginTop: "40px" }} />
                 <Button icon labelPosition="left" color="green" type="submit">
                   <Icon name="cloud" />

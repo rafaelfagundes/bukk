@@ -224,21 +224,21 @@ export class Services extends Component {
     return (
       <div>
         <FormTitle text="Serviços" first />
-        <Table celled padded>
+        <Table fixed singleLine striped compact>
           <Table.Header>
             <Table.Row>
-              <Table.HeaderCell>Mostrar</Table.HeaderCell>
-              <Table.HeaderCell>Descrição</Table.HeaderCell>
-              <Table.HeaderCell>Duração</Table.HeaderCell>
-              <Table.HeaderCell>Valor</Table.HeaderCell>
-              <Table.HeaderCell>Ações</Table.HeaderCell>
+              <Table.HeaderCell width={1}>Status</Table.HeaderCell>
+              <Table.HeaderCell width={9}>Descrição</Table.HeaderCell>
+              <Table.HeaderCell width={2}>Duração</Table.HeaderCell>
+              <Table.HeaderCell width={2}>Valor</Table.HeaderCell>
+              <Table.HeaderCell width={1} />
             </Table.Row>
           </Table.Header>
 
           <Table.Body>
             {this.state.services.map((service, index) => (
               <Table.Row key={index}>
-                <Table.Cell width={1}>
+                <Table.Cell>
                   <Checkbox
                     toggle
                     checked={service.display}
@@ -246,7 +246,7 @@ export class Services extends Component {
                     id={"display-" + index}
                   />
                 </Table.Cell>
-                <Table.Cell width={12}>
+                <Table.Cell>
                   {!this.state.newAdded && (
                     <div className="company-config-service-cell">
                       {this.state.errors.length > 0 && (
@@ -279,7 +279,7 @@ export class Services extends Component {
                     </div>
                   )}
                 </Table.Cell>
-                <Table.Cell width={1}>
+                <Table.Cell>
                   <div className="company-config-service-cell">
                     <Input
                       className="company-config-service-duration"
@@ -290,7 +290,7 @@ export class Services extends Component {
                     <div className="company-config-service-label">min</div>
                   </div>
                 </Table.Cell>
-                <Table.Cell width={1}>
+                <Table.Cell>
                   <div className="company-config-service-cell">
                     <div className="company-config-service-label">R$</div>
                     <Input
@@ -302,11 +302,14 @@ export class Services extends Component {
                     />
                   </div>
                 </Table.Cell>
-                <Table.Cell width={1}>
+                <Table.Cell textAlign="right">
                   <Button
                     icon
                     onClick={this.handleRemoveService}
                     id={"remove-" + index}
+                    compact
+                    inverted
+                    color="red"
                   >
                     <Icon name="delete" />
                   </Button>
@@ -315,10 +318,14 @@ export class Services extends Component {
             ))}
           </Table.Body>
         </Table>
-        <Button icon labelPosition="left" onClick={this.handleAddService}>
-          <Icon name="plus" />
-          Adicionar serviço
-        </Button>
+        <Button
+          icon="plus"
+          content="Adicionar Serviço"
+          // labelPosition="left"
+          onClick={this.handleAddService}
+          compact
+          color="blue"
+        />
         <div className="services-error">
           {this.state.errors.map((error, index) => (
             <ValidationError key={index} show={error.error} error={error.msg} />

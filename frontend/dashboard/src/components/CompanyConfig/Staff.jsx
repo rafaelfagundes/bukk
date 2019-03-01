@@ -673,15 +673,15 @@ export class Staff extends Component {
           !this.state.addClicked && (
             <>
               <FormTitle text="Funcionários" first />
-              <Table celled padded>
+              <Table fixed striped singleLine compact>
                 <Table.Header>
                   <Table.Row>
-                    <Table.HeaderCell>Ativo?</Table.HeaderCell>
-                    <Table.HeaderCell>Nome</Table.HeaderCell>
-                    <Table.HeaderCell>Função</Table.HeaderCell>
-                    <Table.HeaderCell>Email</Table.HeaderCell>
-                    <Table.HeaderCell>Telefone</Table.HeaderCell>
-                    <Table.HeaderCell>Ações</Table.HeaderCell>
+                    <Table.HeaderCell width={1}>Status</Table.HeaderCell>
+                    <Table.HeaderCell width={3}>Nome</Table.HeaderCell>
+                    <Table.HeaderCell width={4}>Função</Table.HeaderCell>
+                    <Table.HeaderCell width={3}>Email</Table.HeaderCell>
+                    <Table.HeaderCell width={2}>Telefone</Table.HeaderCell>
+                    <Table.HeaderCell width={2} />
                   </Table.Row>
                 </Table.Header>
                 <Table.Body>
@@ -709,11 +709,14 @@ export class Staff extends Component {
                           ? formatBrazilianPhoneNumber(employee.phone)
                           : "-"}
                       </Table.Cell>
-                      <Table.Cell>
+                      <Table.Cell textAlign="right">
                         <Button
                           icon
                           onClick={this.handleEditEmployee}
                           id={"edit-" + index}
+                          color="blue"
+                          compact
+                          inverted
                         >
                           <Icon name="edit" />
                         </Button>
@@ -722,6 +725,8 @@ export class Staff extends Component {
                           onClick={this.handleEmployeeActions}
                           id={"remove-" + index}
                           color="red"
+                          compact
+                          inverted
                         >
                           <Icon name="delete" />
                         </Button>
@@ -732,14 +737,12 @@ export class Staff extends Component {
               </Table>
 
               <Button
-                color="green"
-                icon
-                labelPosition="left"
+                icon="plus"
+                color="blue"
+                content="Adicionar Funcionário"
+                compact
                 onClick={this.handleEmployeeAdd}
-              >
-                <Icon name="plus" />
-                Adicionar Funcionário
-              </Button>
+              />
             </>
           )}
         {/* ===========================================================
