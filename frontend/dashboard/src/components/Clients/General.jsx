@@ -65,7 +65,7 @@ const infoTypes = [
 
 export class General extends Component {
   state = {
-    page: "edit",
+    page: "view",
     client: this.props.client
   };
 
@@ -223,7 +223,12 @@ export class General extends Component {
               Editar Informações
             </Button>
 
-            <Button icon labelPosition="left" floated="right">
+            <Button
+              icon
+              labelPosition="left"
+              floated="right"
+              onClick={() => this.props.history.goBack()}
+            >
               <Icon name="arrow left" />
               Voltar
             </Button>

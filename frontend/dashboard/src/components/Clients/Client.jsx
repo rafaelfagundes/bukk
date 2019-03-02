@@ -72,7 +72,7 @@ export class Client extends Component {
         )}
 
         {activeItem === "geral" && this.state.client && (
-          <General client={this.state.client} />
+          <General client={this.state.client} history={this.props.history} />
         )}
         {activeItem === "agendamentos" && <Appointments />}
         {activeItem === "notas" && <Notes />}
