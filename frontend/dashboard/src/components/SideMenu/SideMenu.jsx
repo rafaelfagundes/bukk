@@ -24,10 +24,13 @@ const StyledSideMenu = styled(Menu)`
 const Logo = styled.div`
   padding-top: 22px;
   padding-bottom: 22px;
+  min-height: 82px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   > img {
-    margin-left: 16px;
-    max-width: 160px;
+    max-width: calc(100% - 30px);
   }
 `;
 
