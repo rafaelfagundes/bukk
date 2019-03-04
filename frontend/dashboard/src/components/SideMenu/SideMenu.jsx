@@ -24,7 +24,7 @@ const StyledSideMenu = styled(Menu)`
 const Logo = styled.div`
   padding-top: 22px;
   padding-bottom: 22px;
-  min-height: 82px;
+  min-height: 83px;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -1,6 +1,7 @@
 /* eslint no-loop-func: 0 */
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import styled from "styled-components";
 import { toast } from "react-toastify";
 import Spinner from "react-spinkit";
 import Axios from "axios";
@@ -37,6 +38,19 @@ import {
   isMobilePhoneWithDDD,
   isPhoneWithDDD
 } from "../validation";
+
+/* ===============================================================================
+  STYLED COMPONENTES
+=============================================================================== */
+
+const CompanyConfigGeneral = styled.div`
+  @media (min-width: 1441px) {
+    /* limit some compenents width on full hd resolutions*/
+    max-width: calc(50vw + 200px) !important;
+  }
+`;
+
+/* ============================================================================ */
 
 const errorList = {
   general: [],
@@ -845,11 +859,10 @@ class General extends Component {
     return (
       <>
         {this.state.company !== undefined && (
-          <div className="company-config-general">
+          <CompanyConfigGeneral className="company-config-general max-width-fhd">
             <Form
               ref={formCompany => (this.formCompany = formCompany)}
               onSubmit={this.saveCompanyInfo}
-              className="max-width-fhd"
             >
               <FormTitle text="Logotipo" first />
               <div className="company-config-logo">
@@ -1653,7 +1666,7 @@ class General extends Component {
                 />
               )}
             </Form>
-          </div>
+          </CompanyConfigGeneral>
         )}
       </>
     );
