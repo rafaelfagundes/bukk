@@ -96,7 +96,7 @@ class SideMenu extends Component {
     const { activeItem } = this.state;
     return (
       <>
-        {this.props.user && (
+        {this.props.user && this.props.company && (
           <StyledSideMenu
             vertical
             inverted

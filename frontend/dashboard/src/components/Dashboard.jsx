@@ -23,7 +23,7 @@ import config from "../config";
 import Appointments from "./Appointments/Appointments";
 import Appointment from "./Appointments/Appointment";
 import Clients from "./Clients/Clients";
-import { Client } from "./Clients/Client";
+import Client from "./Clients/Client";
 
 /* ===============================================================================
   STYLED COMPONENTS
@@ -45,6 +45,16 @@ const Pages = styled.div`
 const PagesInner = styled.div`
   padding: 0 0 40px 0;
   width: calc(100vw - 290px);
+`;
+
+const BukkNotification = styled(ToastContainer)`
+  > .Toastify__toast {
+    font-family: "Lato", "sans-serif";
+    background-color: rgba(247, 247, 247, 0.98) !important;
+    color: #444 !important;
+    font-weight: 400 !important;
+    border-radius: 4px;
+  }
 `;
 
 /* ============================================================================ */
@@ -136,8 +146,7 @@ class Dashboard extends Component {
   render() {
     return (
       <div className="Dashboard">
-        <ToastContainer
-          className="bukk-notification"
+        <BukkNotification
           hideProgressBar={true}
           position="bottom-left"
           newestOnTop={true}
@@ -148,7 +157,6 @@ class Dashboard extends Component {
               <BrowserRouter>
                 <>
                   <SideMenu />
-
                   <div id="content">
                     <TopMenu className="top-menu" />
 
