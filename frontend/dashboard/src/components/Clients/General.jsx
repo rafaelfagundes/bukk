@@ -15,7 +15,7 @@ import {
 import { formatBrazilianPhoneNumber } from "../utils";
 
 /* ============================================================================
-  STYLED COMPONENTES
+  STYLED COMPONENTS
 ============================================================================ */
 
 const Columns = styled.div`
@@ -291,9 +291,7 @@ export class General extends Component {
                     <Table.Header>
                       <Table.Row>
                         <Table.HeaderCell width={8}>Telefone</Table.HeaderCell>
-                        <Table.HeaderCell width={6}>
-                          Características
-                        </Table.HeaderCell>
+                        <Table.HeaderCell width={6} />
                         {this.state.client.phone.length > 1 && (
                           <Table.HeaderCell width={2} />
                         )}

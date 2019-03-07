@@ -25,6 +25,34 @@ import Information from "../Common/Information";
 import ValidationError from "../Common/ValidationError";
 import validator from "validator";
 import { isAlpha, isMobilePhoneWithDDD, isPhoneWithDDD } from "../validation";
+import styled from "styled-components";
+
+/* ===============================================================================
+  STYLED COMPONENTS
+=============================================================================== */
+
+const NewEmployeeInfo = styled.div`
+  border-left: 3px solid #2185d0;
+  padding: 10px 10px 10px 15px;
+  margin-top: 30px;
+
+  > h3 {
+    font-size: 1.1rem;
+    color: #186199;
+  }
+  > p {
+    color: #666;
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.8rem;
+  }
+`;
+
+const Avatar = styled(Image)`
+  margin: 0 0px 15px 0;
+`;
+
+/* ============================================================================ */
 
 const errorsTemplate = {
   basic: [],
@@ -794,25 +822,25 @@ export class Staff extends Component {
                 error={error.msg}
               />
             ))}
-            <div className="add-new-employee-info">
-              <h3 className="add-new-employee-info-title">Observações:</h3>
-              <p className="add-new-employee-info-text">
+            <NewEmployeeInfo>
+              <h3>Observações:</h3>
+              <p>
                 O novo funcionário receberá por email as instruções de como
                 acessar o sistema.
               </p>
-              <p className="add-new-employee-info-text">
+              <p>
                 Ao acessar o sistema pela primeira vez, o funcionário deverá
                 alterar a senha gerada automaticamente.
               </p>
-              <p className="add-new-employee-info-text">
+              <p>
                 O novo funcionário só poderá ser habilitado após preenchido
                 todos os campos obrigatórios.
               </p>
-              <p className="add-new-employee-info-text">
+              <p>
                 Após clicar em adicionar, você será redirecionado para a tela de
                 conclusão de cadastro.
               </p>
-            </div>
+            </NewEmployeeInfo>
             <Divider style={{ marginTop: "40px" }} />
             <Button
               icon
@@ -914,7 +942,7 @@ export class Staff extends Component {
                 text={_employee.firstName + " " + _employee.lastName}
               />
               <FormSubTitle text="Foto do Funcionário" />
-              <Image
+              <Avatar
                 src={_employee.avatar}
                 size="small"
                 rounded

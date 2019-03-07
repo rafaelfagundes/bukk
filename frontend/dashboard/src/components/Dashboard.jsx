@@ -26,7 +26,7 @@ import Clients from "./Clients/Clients";
 import { Client } from "./Clients/Client";
 
 /* ===============================================================================
-  STYLED COMPONENTES
+  STYLED COMPONENTS
 =============================================================================== */
 
 const Pages = styled.div`

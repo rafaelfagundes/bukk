@@ -16,7 +16,6 @@ import {
   Input
 } from "semantic-ui-react";
 import { setCompany, setCompanyLogo } from "../dashboardActions";
-import "./CompanyConfig.css";
 import { states } from "../../config/BrasilAddress";
 import {
   formatCEP,
@@ -40,7 +39,7 @@ import {
 } from "../validation";
 
 /* ===============================================================================
-  STYLED COMPONENTES
+  STYLED COMPONENTS
 =============================================================================== */
 
 const CompanyConfigGeneral = styled.div`
@@ -48,6 +47,79 @@ const CompanyConfigGeneral = styled.div`
     /* limit some compenents width on full hd resolutions*/
     max-width: calc(50vw + 200px) !important;
   }
+`;
+
+const CompanyLogo = styled.div`
+  display: block;
+
+  > canvas {
+    background-color: #ccc;
+    padding: 20px;
+    border-radius: 4px;
+    display: block;
+    max-width: 700px;
+  }
+  > span {
+    display: block;
+    padding: 5px 0 20px 0;
+    color: rgb(102, 97, 143);
+  }
+`;
+
+const PaymentTypesHolder = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 1000px;
+`;
+
+const PaymentType = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 128px;
+  box-sizing: border-box;
+  margin-right: 14px;
+
+  > img {
+    width: 128px;
+    height: 128px;
+    margin: 0 auto;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    border: 2px solid #f5f5f5;
+    cursor: pointer;
+  }
+  > label {
+    padding-left: 23px !important;
+    font-size: 0.9rem !important;
+  }
+  > :last-child {
+    margin-right: 0px;
+  }
+  > .checkbox {
+    margin: 0 auto !important;
+  }
+`;
+
+const TimeTable = styled(Table)``;
+
+const TimeTableInput = styled(Input)`
+  > input {
+    text-align: center !important;
+  }
+  > input:last-child {
+    margin-bottom: 5px !important;
+  }
+`;
+
+const TimeTableButton = styled(Button)`
+  width: 100% !important;
+`;
+
+const TimeBlock = styled.span`
+  display: block;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(34, 36, 38, 0.1);
 `;
 
 /* ============================================================================ */
@@ -859,20 +931,20 @@ class General extends Component {
     return (
       <>
         {this.state.company !== undefined && (
-          <CompanyConfigGeneral className="company-config-general max-width-fhd">
+          <CompanyConfigGeneral>
             <Form
               ref={formCompany => (this.formCompany = formCompany)}
               onSubmit={this.saveCompanyInfo}
             >
               <FormTitle text="Logotipo" first />
-              <div className="company-config-logo">
+              <CompanyLogo>
                 <canvas
                   id="company-config-logo-canvas"
                   ref={canvasLogo => (this.canvasLogo = canvasLogo)}
                   height="10"
                   width="10"
                 />
-                <span className="company-config-logo-info">
+                <span>
                   <strong>Dica:</strong> A cor de fundo acima é a mesma de onde
                   seu logotipo será exibido, portanto tente deixar seu logo bem
                   visível.
@@ -889,7 +961,7 @@ class General extends Component {
                   ref={imageInput => (this.imageInput = imageInput)}
                   hidden
                 />
-              </div>
+              </CompanyLogo>
               <FormTitle text="Dados da Empresa" />
               <Form.Group inline>
                 <label>Tipo de pessoa</label>
@@ -1056,8 +1128,8 @@ class General extends Component {
 
               <FormTitle text="Formas de Pagamento" />
               <FormSubTitle text="Cartões de Crédito" first />
-              <div className="company-payment-types">
-                <div className="company-payment-type">
+              <PaymentTypesHolder>
+                <PaymentType>
                   <img
                     src={this.state.paymentTypes.cc.amex.icon}
                     alt={this.state.paymentTypes.cc.amex.name}
@@ -1067,13 +1139,12 @@ class General extends Component {
                   />
                   <Checkbox
                     label={this.state.paymentTypes.cc.amex.name}
-                    className="company-payment-type-chkbox"
                     checked={this.state.paymentTypes.cc.amex.enabled}
                     id={this.state.paymentTypes.cc.amex.id}
                     onChange={this.handlePaymentTypeCc}
                   />
-                </div>
-                <div className="company-payment-type">
+                </PaymentType>
+                <PaymentType>
                   <img
                     src={this.state.paymentTypes.cc.dinersclub.icon}
                     alt={this.state.paymentTypes.cc.dinersclub.name}
@@ -1083,13 +1154,12 @@ class General extends Component {
                   />
                   <Checkbox
                     label={this.state.paymentTypes.cc.dinersclub.name}
-                    className="company-payment-type-chkbox"
                     checked={this.state.paymentTypes.cc.dinersclub.enabled}
                     id={this.state.paymentTypes.cc.dinersclub.id}
                     onChange={this.handlePaymentTypeCc}
                   />
-                </div>
-                <div className="company-payment-type">
+                </PaymentType>
+                <PaymentType>
                   <img
                     src={this.state.paymentTypes.cc.discover.icon}
                     alt={this.state.paymentTypes.cc.discover.name}
@@ -1099,13 +1169,12 @@ class General extends Component {
                   />
                   <Checkbox
                     label={this.state.paymentTypes.cc.discover.name}
-                    className="company-payment-type-chkbox"
                     checked={this.state.paymentTypes.cc.discover.enabled}
                     id={this.state.paymentTypes.cc.discover.id}
                     onChange={this.handlePaymentTypeCc}
                   />
-                </div>
-                <div className="company-payment-type">
+                </PaymentType>
+                <PaymentType>
                   <img
                     src={this.state.paymentTypes.cc.elo.icon}
                     alt={this.state.paymentTypes.cc.elo.name}
@@ -1115,13 +1184,12 @@ class General extends Component {
                   />
                   <Checkbox
                     label={this.state.paymentTypes.cc.elo.name}
-                    className="company-payment-type-chkbox"
                     checked={this.state.paymentTypes.cc.elo.enabled}
                     id={this.state.paymentTypes.cc.elo.id}
                     onChange={this.handlePaymentTypeCc}
                   />
-                </div>
-                <div className="company-payment-type">
+                </PaymentType>
+                <PaymentType>
                   <img
                     src={this.state.paymentTypes.cc.hipercard.icon}
                     alt={this.state.paymentTypes.cc.hipercard.name}
@@ -1131,13 +1199,12 @@ class General extends Component {
                   />
                   <Checkbox
                     label={this.state.paymentTypes.cc.hipercard.name}
-                    className="company-payment-type-chkbox"
                     checked={this.state.paymentTypes.cc.hipercard.enabled}
                     id={this.state.paymentTypes.cc.hipercard.id}
                     onChange={this.handlePaymentTypeCc}
                   />
-                </div>
-                <div className="company-payment-type">
+                </PaymentType>
+                <PaymentType>
                   <img
                     src={this.state.paymentTypes.cc.mastercard.icon}
                     alt={this.state.paymentTypes.cc.mastercard.name}
@@ -1147,13 +1214,12 @@ class General extends Component {
                   />
                   <Checkbox
                     label={this.state.paymentTypes.cc.mastercard.name}
-                    className="company-payment-type-chkbox"
                     checked={this.state.paymentTypes.cc.mastercard.enabled}
                     id={this.state.paymentTypes.cc.mastercard.id}
                     onChange={this.handlePaymentTypeCc}
                   />
-                </div>
-                <div className="company-payment-type">
+                </PaymentType>
+                <PaymentType>
                   <img
                     src={this.state.paymentTypes.cc.visa.icon}
                     alt={this.state.paymentTypes.cc.visa.name}
@@ -1163,16 +1229,15 @@ class General extends Component {
                   />
                   <Checkbox
                     label={this.state.paymentTypes.cc.visa.name}
-                    className="company-payment-type-chkbox"
                     checked={this.state.paymentTypes.cc.visa.enabled}
                     id={this.state.paymentTypes.cc.visa.id}
                     onChange={this.handlePaymentTypeCc}
                   />
-                </div>
-              </div>
+                </PaymentType>
+              </PaymentTypesHolder>
               <FormSubTitle text="Outras modalidades" />
-              <div className="company-payment-types">
-                <div className="company-payment-type">
+              <PaymentTypesHolder className="company-payment-types">
+                <PaymentType>
                   <img
                     src={this.state.paymentTypes.other.boleto.icon}
                     alt={this.state.paymentTypes.other.boleto.name}
@@ -1182,13 +1247,12 @@ class General extends Component {
                   />
                   <Checkbox
                     label={this.state.paymentTypes.other.boleto.name}
-                    className="company-payment-type-chkbox"
                     checked={this.state.paymentTypes.other.boleto.enabled}
                     onChange={this.handlePaymentTypeOther}
                     id={this.state.paymentTypes.other.boleto.id}
                   />
-                </div>
-                <div className="company-payment-type">
+                </PaymentType>
+                <PaymentType>
                   <img
                     src={this.state.paymentTypes.other.debitCard.icon}
                     alt={this.state.paymentTypes.other.debitCard.name}
@@ -1198,13 +1262,12 @@ class General extends Component {
                   />
                   <Checkbox
                     label={this.state.paymentTypes.other.debitCard.name}
-                    className="company-payment-type-chkbox"
                     checked={this.state.paymentTypes.other.debitCard.enabled}
                     onChange={this.handlePaymentTypeOther}
                     id={this.state.paymentTypes.other.debitCard.id}
                   />
-                </div>
-                <div className="company-payment-type">
+                </PaymentType>
+                <PaymentType>
                   <img
                     src={this.state.paymentTypes.other.cash.icon}
                     alt={this.state.paymentTypes.other.cash.name}
@@ -1214,13 +1277,12 @@ class General extends Component {
                   />
                   <Checkbox
                     label={this.state.paymentTypes.other.cash.name}
-                    className="company-payment-type-chkbox"
                     checked={this.state.paymentTypes.other.cash.enabled}
                     onChange={this.handlePaymentTypeOther}
                     id={this.state.paymentTypes.other.cash.id}
                   />
-                </div>
-                <div className="company-payment-type">
+                </PaymentType>
+                <PaymentType>
                   <img
                     src={this.state.paymentTypes.other.wireTransfer.icon}
                     alt={this.state.paymentTypes.other.wireTransfer.name}
@@ -1230,20 +1292,18 @@ class General extends Component {
                   />
                   <Checkbox
                     label={this.state.paymentTypes.other.wireTransfer.name}
-                    className="company-payment-type-chkbox"
                     checked={this.state.paymentTypes.other.wireTransfer.enabled}
                     onChange={this.handlePaymentTypeOther}
                     id={this.state.paymentTypes.other.wireTransfer.id}
                   />
-                </div>
-              </div>
-              <br />
+                </PaymentType>
+              </PaymentTypesHolder>
               <ValidationError
                 show={this.state.errors.paymentTypes.error}
                 error={this.state.errors.paymentTypes.msg}
               />
               <FormTitle text="Horário de Funcionamento" />
-              <Table celled className="company-timetable max-width-fhd">
+              <TimeTable celled fixed>
                 <Table.Header>
                   <Table.Row>
                     <Table.HeaderCell>
@@ -1307,27 +1367,25 @@ class General extends Component {
                 <Table.Body>
                   <Table.Row>
                     {/* Sunday */}
-                    <Table.Cell>
+                    <Table.Cell textAlign="center">
                       {this.state.workingDays.sunday.checked &&
                         this.state.workingDays.sunday.workingHours.map(
                           (h, index) => (
-                            <span className="company-config-time" key={index}>
-                              <Input
+                            <TimeBlock key={index}>
+                              <TimeTableInput
                                 onChange={this.handleWorkTime}
                                 value={formatHour(h.start)}
                                 size="small"
-                                className="company-config-time-start"
                                 id={"sunday-" + index + "-start"}
                               />{" "}
                               às{" "}
-                              <Input
+                              <TimeTableInput
                                 onChange={this.handleWorkTime}
                                 value={formatHour(h.end)}
                                 size="small"
-                                className="company-config-time-end"
                                 id={"sunday-" + index + "-end"}
                               />
-                              <Button
+                              <TimeTableButton
                                 size="mini"
                                 compact
                                 onClick={this.removeWorkTime}
@@ -1336,14 +1394,14 @@ class General extends Component {
                                 icon="delete"
                                 content="Remover"
                               />
-                            </span>
+                            </TimeBlock>
                           )
                         )}
                       {!this.state.workingDays.sunday.checked && (
                         <span>Não há expediente</span>
                       )}
                       {this.state.workingDays.sunday.checked && (
-                        <Button
+                        <TimeTableButton
                           onClick={this.addWorkTime}
                           data-day="sunday"
                           size="mini"
@@ -1355,27 +1413,25 @@ class General extends Component {
                       )}
                     </Table.Cell>
                     {/* Monday */}
-                    <Table.Cell>
+                    <Table.Cell textAlign="center">
                       {this.state.workingDays.monday.checked &&
                         this.state.workingDays.monday.workingHours.map(
                           (h, index) => (
-                            <span className="company-config-time" key={index}>
-                              <Input
+                            <TimeBlock key={index}>
+                              <TimeTableInput
                                 onChange={this.handleWorkTime}
                                 value={formatHour(h.start)}
                                 size="small"
-                                className="company-config-time-start"
                                 id={"monday-" + index + "-start"}
                               />{" "}
                               às{" "}
-                              <Input
+                              <TimeTableInput
                                 onChange={this.handleWorkTime}
                                 value={formatHour(h.end)}
                                 size="small"
-                                className="company-config-time-end"
                                 id={"monday-" + index + "-end"}
                               />
-                              <Button
+                              <TimeTableButton
                                 size="mini"
                                 compact
                                 onClick={this.removeWorkTime}
@@ -1384,14 +1440,14 @@ class General extends Component {
                                 icon="delete"
                                 content="Remover"
                               />
-                            </span>
+                            </TimeBlock>
                           )
                         )}
                       {!this.state.workingDays.monday.checked && (
                         <span>Não há expediente</span>
                       )}
                       {this.state.workingDays.monday.checked && (
-                        <Button
+                        <TimeTableButton
                           onClick={this.addWorkTime}
                           data-day="monday"
                           size="mini"
@@ -1403,27 +1459,25 @@ class General extends Component {
                       )}
                     </Table.Cell>
                     {/* Tuesday */}
-                    <Table.Cell>
+                    <Table.Cell textAlign="center">
                       {this.state.workingDays.tuesday.checked &&
                         this.state.workingDays.tuesday.workingHours.map(
                           (h, index) => (
-                            <span className="company-config-time" key={index}>
-                              <Input
+                            <TimeBlock key={index}>
+                              <TimeTableInput
                                 onChange={this.handleWorkTime}
                                 value={formatHour(h.start)}
                                 size="small"
-                                className="company-config-time-start"
                                 id={"tuesday-" + index + "-start"}
                               />{" "}
                               às{" "}
-                              <Input
+                              <TimeTableInput
                                 onChange={this.handleWorkTime}
                                 value={formatHour(h.end)}
                                 size="small"
-                                className="company-config-time-end"
                                 id={"tuesday-" + index + "-end"}
                               />
-                              <Button
+                              <TimeTableButton
                                 size="mini"
                                 compact
                                 onClick={this.removeWorkTime}
@@ -1432,14 +1486,14 @@ class General extends Component {
                                 icon="delete"
                                 content="Remover"
                               />
-                            </span>
+                            </TimeBlock>
                           )
                         )}
                       {!this.state.workingDays.tuesday.checked && (
                         <span>Não há expediente</span>
                       )}
                       {this.state.workingDays.tuesday.checked && (
-                        <Button
+                        <TimeTableButton
                           onClick={this.addWorkTime}
                           data-day="tuesday"
                           size="mini"
@@ -1451,27 +1505,25 @@ class General extends Component {
                       )}
                     </Table.Cell>
                     {/* Wednesday */}
-                    <Table.Cell>
+                    <Table.Cell textAlign="center">
                       {this.state.workingDays.wednesday.checked &&
                         this.state.workingDays.wednesday.workingHours.map(
                           (h, index) => (
-                            <span className="company-config-time" key={index}>
-                              <Input
+                            <TimeBlock key={index}>
+                              <TimeTableInput
                                 onChange={this.handleWorkTime}
                                 value={formatHour(h.start)}
                                 size="small"
-                                className="company-config-time-start"
                                 id={"wednesday-" + index + "-start"}
                               />{" "}
                               às{" "}
-                              <Input
+                              <TimeTableInput
                                 onChange={this.handleWorkTime}
                                 value={formatHour(h.end)}
                                 size="small"
-                                className="company-config-time-end"
                                 id={"wednesday-" + index + "-end"}
                               />
-                              <Button
+                              <TimeTableButton
                                 size="mini"
                                 compact
                                 onClick={this.removeWorkTime}
@@ -1480,14 +1532,14 @@ class General extends Component {
                                 icon="delete"
                                 content="Remover"
                               />
-                            </span>
+                            </TimeBlock>
                           )
                         )}
                       {!this.state.workingDays.wednesday.checked && (
                         <span>Não há expediente</span>
                       )}
                       {this.state.workingDays.wednesday.checked && (
-                        <Button
+                        <TimeTableButton
                           onClick={this.addWorkTime}
                           data-day="wednesday"
                           size="mini"
@@ -1499,27 +1551,25 @@ class General extends Component {
                       )}
                     </Table.Cell>
                     {/* Thursday */}
-                    <Table.Cell>
+                    <Table.Cell textAlign="center">
                       {this.state.workingDays.thursday.checked &&
                         this.state.workingDays.thursday.workingHours.map(
                           (h, index) => (
-                            <span className="company-config-time" key={index}>
-                              <Input
+                            <TimeBlock key={index}>
+                              <TimeTableInput
                                 onChange={this.handleWorkTime}
                                 value={formatHour(h.start)}
                                 size="small"
-                                className="company-config-time-start"
                                 id={"thursday-" + index + "-start"}
                               />{" "}
                               às{" "}
-                              <Input
+                              <TimeTableInput
                                 onChange={this.handleWorkTime}
                                 value={formatHour(h.end)}
                                 size="small"
-                                className="company-config-time-end"
                                 id={"thursday-" + index + "-end"}
                               />
-                              <Button
+                              <TimeTableButton
                                 size="mini"
                                 compact
                                 onClick={this.removeWorkTime}
@@ -1528,14 +1578,14 @@ class General extends Component {
                                 icon="delete"
                                 content="Remover"
                               />
-                            </span>
+                            </TimeBlock>
                           )
                         )}
                       {!this.state.workingDays.thursday.checked && (
                         <span>Não há expediente</span>
                       )}
                       {this.state.workingDays.thursday.checked && (
-                        <Button
+                        <TimeTableButton
                           onClick={this.addWorkTime}
                           data-day="thursday"
                           size="mini"
@@ -1547,27 +1597,25 @@ class General extends Component {
                       )}
                     </Table.Cell>
                     {/* Friday */}
-                    <Table.Cell>
+                    <Table.Cell textAlign="center">
                       {this.state.workingDays.friday.checked &&
                         this.state.workingDays.friday.workingHours.map(
                           (h, index) => (
-                            <span className="company-config-time" key={index}>
-                              <Input
+                            <TimeBlock key={index}>
+                              <TimeTableInput
                                 onChange={this.handleWorkTime}
                                 value={formatHour(h.start)}
                                 size="small"
-                                className="company-config-time-start"
                                 id={"friday-" + index + "-start"}
                               />{" "}
                               às{" "}
-                              <Input
+                              <TimeTableInput
                                 onChange={this.handleWorkTime}
                                 value={formatHour(h.end)}
                                 size="small"
-                                className="company-config-time-end"
                                 id={"friday-" + index + "-end"}
                               />
-                              <Button
+                              <TimeTableButton
                                 size="mini"
                                 compact
                                 onClick={this.removeWorkTime}
@@ -1576,14 +1624,14 @@ class General extends Component {
                                 icon="delete"
                                 content="Remover"
                               />
-                            </span>
+                            </TimeBlock>
                           )
                         )}
                       {!this.state.workingDays.friday.checked && (
                         <span>Não há expediente</span>
                       )}
                       {this.state.workingDays.friday.checked && (
-                        <Button
+                        <TimeTableButton
                           onClick={this.addWorkTime}
                           data-day="friday"
                           size="mini"
@@ -1595,27 +1643,25 @@ class General extends Component {
                       )}
                     </Table.Cell>
                     {/* Saturday */}
-                    <Table.Cell>
+                    <Table.Cell textAlign="center">
                       {this.state.workingDays.saturday.checked &&
                         this.state.workingDays.saturday.workingHours.map(
                           (h, index) => (
-                            <span className="company-config-time" key={index}>
-                              <Input
+                            <TimeBlock key={index}>
+                              <TimeTableInput
                                 onChange={this.handleWorkTime}
                                 value={formatHour(h.start)}
                                 size="small"
-                                className="company-config-time-start"
                                 id={"saturday-" + index + "-start"}
                               />{" "}
                               às{" "}
-                              <Input
+                              <TimeTableInput
                                 onChange={this.handleWorkTime}
                                 value={formatHour(h.end)}
                                 size="small"
-                                className="company-config-time-end"
                                 id={"saturday-" + index + "-end"}
                               />
-                              <Button
+                              <TimeTableButton
                                 size="mini"
                                 compact
                                 onClick={this.removeWorkTime}
@@ -1624,14 +1670,14 @@ class General extends Component {
                                 icon="delete"
                                 content="Remover"
                               />
-                            </span>
+                            </TimeBlock>
                           )
                         )}
                       {!this.state.workingDays.saturday.checked && (
                         <span>Não há expediente</span>
                       )}
                       {this.state.workingDays.saturday.checked && (
-                        <Button
+                        <TimeTableButton
                           onClick={this.addWorkTime}
                           data-day="saturday"
                           size="mini"
@@ -1644,7 +1690,7 @@ class General extends Component {
                     </Table.Cell>
                   </Table.Row>
                 </Table.Body>
-              </Table>
+              </TimeTable>
               {this.state.errors.workingDays.map((error, index) => (
                 <ValidationError
                   key={index}

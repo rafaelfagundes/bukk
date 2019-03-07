@@ -18,6 +18,76 @@ import {
 import FormSubTitle from "../Common/FormSubTitle";
 import config from "../../config";
 import Notification from "../Notification/Notification";
+import styled from "styled-components";
+
+/* ===============================================================================
+  STYLED COMPONENTS
+=============================================================================== */
+
+const ColorSettings = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+
+const ColorGroup = styled.div`
+  width: 25%;
+`;
+
+const Color = styled.div`
+  display: flex;
+  flex-direction: row;
+  line-height: 36px;
+  margin-bottom: 10px;
+
+  > span {
+    margin-right: 5px;
+    opacity: 0.8;
+    min-width: 50px;
+  }
+  > div {
+    width: 75px;
+    height: 36px;
+    border: 1px solid #eee;
+    margin-right: 5px;
+    border-radius: 4px;
+  }
+`;
+
+const StyledSketchPicker = styled(SketchPicker)`
+  position: absolute !important;
+  z-index: 9999 !important;
+`;
+
+const PopOver = styled.div`
+  position: absolute !important;
+  z-index: 9998 !important;
+`;
+
+const Cover = styled.div`
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  top: 0;
+  right: 0;
+  left: 200px;
+  bottom: 0;
+  position: fixed;
+`;
+
+const SettingsHolder = styled.div`
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+`;
+
+const SettingsGroup = styled.div`
+  margin: 0;
+  padding: 0;
+  width: 50%;
+`;
+
+/* ============================================================================ */
 
 class Settings extends Component {
   state = {
@@ -250,17 +320,16 @@ class Settings extends Component {
             <div className="Settings">
               <Form onSubmit={this.saveSettings}>
                 <FormTitle text="Cores" first />
-                <div className="company-colors-settings">
-                  <div className="company-colors-group">
+                <ColorSettings>
+                  <ColorGroup>
                     <FormSubTitle first text="Primária" />
-                    <div className="company-colors-container">
-                      <span className="company-colors-label">Fundo:</span>
+                    <Color>
+                      <span>Fundo:</span>
                       <div
                         style={{
                           backgroundColor: this.state.company.settings.colors
                             .primaryBack
                         }}
-                        className="company-colors-color"
                       />
 
                       <Button
@@ -280,29 +349,26 @@ class Settings extends Component {
                             : ""
                         }}
                       />
-                    </div>
+                    </Color>
                     {this.state.colorPicker.primaryBack && (
-                      <div className="popover">
-                        <div
-                          className="cover"
+                      <PopOver>
+                        <Cover
                           onClick={this.colorPickerClose}
                           data-id="primaryBack"
                         />
-                        <SketchPicker
-                          className="color-picker"
+                        <StyledSketchPicker
                           color={this.state.company.settings.colors.primaryBack}
                           onChange={this.handleColorPrimaryBack}
                         />
-                      </div>
+                      </PopOver>
                     )}
-                    <div className="company-colors-container">
-                      <span className="company-colors-label">Texto:</span>
+                    <Color>
+                      <span>Texto:</span>
                       <div
                         style={{
                           backgroundColor: this.state.company.settings.colors
                             .primaryText
                         }}
-                        className="company-colors-color"
                       />
                       <Button
                         icon={
@@ -321,11 +387,10 @@ class Settings extends Component {
                             : ""
                         }}
                       />
-                    </div>
+                    </Color>
                     {this.state.colorPicker.primaryText && (
-                      <div className="popover">
-                        <div
-                          className="cover"
+                      <PopOver>
+                        <Cover
                           onClick={this.colorPickerClose}
                           data-id="primaryText"
                         />
@@ -334,19 +399,18 @@ class Settings extends Component {
                           color={this.state.company.settings.colors.primaryText}
                           onChange={this.handleColorPrimaryText}
                         />
-                      </div>
+                      </PopOver>
                     )}
-                  </div>
-                  <div className="company-colors-group">
+                  </ColorGroup>
+                  <ColorGroup>
                     <FormSubTitle first text="Secundária" />
-                    <div className="company-colors-container">
-                      <span className="company-colors-label">Fundo:</span>
+                    <Color>
+                      <span>Fundo:</span>
                       <div
                         style={{
                           backgroundColor: this.state.company.settings.colors
                             .secondaryBack
                         }}
-                        className="company-colors-color"
                       />
                       <Button
                         icon={
@@ -365,11 +429,10 @@ class Settings extends Component {
                             : ""
                         }}
                       />
-                    </div>
+                    </Color>
                     {this.state.colorPicker.secondaryBack && (
-                      <div className="popover">
-                        <div
-                          className="cover"
+                      <PopOver>
+                        <Cover
                           onClick={this.colorPickerClose}
                           data-id="secondaryBack"
                         />
@@ -380,16 +443,15 @@ class Settings extends Component {
                           }
                           onChange={this.handleColorSecondaryBack}
                         />
-                      </div>
+                      </PopOver>
                     )}
-                    <div className="company-colors-container">
-                      <span className="company-colors-label">Texto:</span>
+                    <Color>
+                      <span>Texto:</span>
                       <div
                         style={{
                           backgroundColor: this.state.company.settings.colors
                             .secondaryText
                         }}
-                        className="company-colors-color"
                       />
                       <Button
                         icon={
@@ -408,10 +470,10 @@ class Settings extends Component {
                             : ""
                         }}
                       />
-                    </div>
+                    </Color>
                     {this.state.colorPicker.secondaryText && (
-                      <div className="popover">
-                        <div
+                      <PopOver>
+                        <Cover
                           className="cover"
                           onClick={this.colorPickerClose}
                           data-id="secondaryText"
@@ -423,19 +485,18 @@ class Settings extends Component {
                           }
                           onChange={this.handleColorSecondaryText}
                         />
-                      </div>
+                      </PopOver>
                     )}
-                  </div>
-                  <div className="company-colors-group">
+                  </ColorGroup>
+                  <ColorGroup>
                     <FormSubTitle first text="Cor do Cabeçalho" />
-                    <div className="company-colors-container">
-                      <span className="company-colors-label">Fundo:</span>
+                    <Color>
+                      <span>Fundo:</span>
                       <div
                         style={{
                           backgroundColor: this.state.company.settings.colors
                             .headerBack
                         }}
-                        className="company-colors-color"
                       />
                       <Button
                         icon={
@@ -452,11 +513,10 @@ class Settings extends Component {
                           color: this.state.colorPicker.headerBack ? "#FFF" : ""
                         }}
                       />
-                    </div>
+                    </Color>
                     {this.state.colorPicker.headerBack && (
-                      <div className="popover">
-                        <div
-                          className="cover"
+                      <PopOver>
+                        <Cover
                           onClick={this.colorPickerClose}
                           data-id="headerBack"
                         />
@@ -465,16 +525,15 @@ class Settings extends Component {
                           color={this.state.company.settings.colors.headerBack}
                           onChange={this.handleColorHeaderBack}
                         />
-                      </div>
+                      </PopOver>
                     )}
-                    <div className="company-colors-container">
-                      <span className="company-colors-label">Texto:</span>
+                    <Color>
+                      <span>Texto:</span>
                       <div
                         style={{
                           backgroundColor: this.state.company.settings.colors
                             .headerText
                         }}
-                        className="company-colors-color"
                       />
                       <Button
                         icon={
@@ -491,10 +550,10 @@ class Settings extends Component {
                           color: this.state.colorPicker.headerText ? "#FFF" : ""
                         }}
                       />
-                    </div>
+                    </Color>
                     {this.state.colorPicker.headerText && (
-                      <div className="popover">
-                        <div
+                      <PopOver>
+                        <Cover
                           className="cover"
                           onClick={this.colorPickerClose}
                           data-id="headerText"
@@ -504,19 +563,18 @@ class Settings extends Component {
                           color={this.state.company.settings.colors.headerText}
                           onChange={this.handleColorHeaderText}
                         />
-                      </div>
+                      </PopOver>
                     )}
-                  </div>
-                  <div className="company-colors-group">
+                  </ColorGroup>
+                  <ColorGroup>
                     <FormSubTitle first text="Botões de Confirmação" />
-                    <div className="company-colors-container">
-                      <span className="company-colors-label">Fundo:</span>
+                    <Color>
+                      <span>Fundo:</span>
                       <div
                         style={{
                           backgroundColor: this.state.company.settings.colors
                             .confirmationBack
                         }}
-                        className="company-colors-color"
                       />
                       <Button
                         icon={
@@ -536,10 +594,10 @@ class Settings extends Component {
                             : ""
                         }}
                       />
-                    </div>
+                    </Color>
                     {this.state.colorPicker.confirmationBack && (
-                      <div className="popover">
-                        <div
+                      <PopOver>
+                        <Cover
                           className="cover"
                           onClick={this.colorPickerClose}
                           data-id="confirmationBack"
@@ -551,17 +609,16 @@ class Settings extends Component {
                           }
                           onChange={this.handleColorConfirmationBack}
                         />
-                      </div>
+                      </PopOver>
                     )}
 
-                    <div className="company-colors-container">
-                      <span className="company-colors-label">Texto:</span>
+                    <Color>
+                      <span>Texto:</span>
                       <div
                         style={{
                           backgroundColor: this.state.company.settings.colors
                             .confirmationText
                         }}
-                        className="company-colors-color"
                       />
                       <Button
                         icon={
@@ -581,10 +638,10 @@ class Settings extends Component {
                             : ""
                         }}
                       />
-                    </div>
+                    </Color>
                     {this.state.colorPicker.confirmationText && (
-                      <div className="popover">
-                        <div
+                      <PopOver>
+                        <Cover
                           className="cover"
                           onClick={this.colorPickerClose}
                           data-id="confirmationText"
@@ -596,13 +653,13 @@ class Settings extends Component {
                           }
                           onChange={this.handleColorConfirmationText}
                         />
-                      </div>
+                      </PopOver>
                     )}
-                  </div>
-                </div>
+                  </ColorGroup>
+                </ColorSettings>
                 <FormTitle text="Layout do Agendador" />
-                <div className="company-settings-container">
-                  <div className="company-settings-group">
+                <SettingsHolder>
+                  <SettingsGroup>
                     <FormSubTitle
                       first
                       text="Personalização da Interface do Agendador"
@@ -676,8 +733,8 @@ class Settings extends Component {
                         }
                       />
                     </Form.Field>
-                  </div>
-                  <div className="company-settings-group">
+                  </SettingsGroup>
+                  <SettingsGroup>
                     <FormSubTitle first text="Logotipo" />
                     <Form.Field>
                       <Checkbox
@@ -758,8 +815,8 @@ class Settings extends Component {
                         }
                       />
                     </Form.Field>
-                  </div>
-                </div>
+                  </SettingsGroup>
+                </SettingsHolder>
                 <FormTitle text="Regras de Agendamento" />
                 {this.state.company.settings.appointment.rules.map(
                   (rule, index) => (

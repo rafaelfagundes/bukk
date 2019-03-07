@@ -1,13 +1,21 @@
-/* eslint no-loop-func: 0 */
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { setCurrentPage, setCompany } from "../dashboardActions";
-import "./CompanyConfig.css";
 import General from "./General";
 import Settings from "./Settings";
 import Services from "./Services";
 import Staff from "./Staff";
 import ComponentTopMenu from "../Common/ComponentTopMenu";
+import styled from "styled-components";
+
+/* ===============================================================================
+  STYLED COMPONENTS
+=============================================================================== */
+const StyledCompanyConfig = styled.div`
+  padding-bottom: 50px;
+`;
+
+/* ============================================================================ */
 
 const menuItems = [
   {
@@ -68,22 +76,21 @@ export class CompanyConfig extends Component {
     return (
       <>
         {this.props.company !== undefined && (
-          <div className="CompanyConfig">
-            <div className="div company-config-menu">
-              <ComponentTopMenu
-                items={menuItems}
-                onClick={this.handleItemClick}
-                activeItem={this.state.activeItem}
-                colors={this.props.company.settings.colors}
-              />
-            </div>
-            <div className="company-config-body">
+          <StyledCompanyConfig>
+            <ComponentTopMenu
+              items={menuItems}
+              onClick={this.handleItemClick}
+              activeItem={this.state.activeItem}
+              colors={this.props.company.settings.colors}
+            />
+
+            <React.Fragment>
               {this.state.activeItem === "geral" && <General />}
               {this.state.activeItem === "servicos" && <Services />}
               {this.state.activeItem === "funcionarios" && <Staff />}
               {this.state.activeItem === "preferencias" && <Settings />}
-            </div>
-          </div>
+            </React.Fragment>
+          </StyledCompanyConfig>
         )}
       </>
     );

@@ -33,7 +33,7 @@ ptBR.options.weekStartsOn = 0;
 registerLocale("pt-BR", ptBR);
 
 /* ===============================================================================
-  STYLED COMPONENTES
+  STYLED COMPONENTS
 =============================================================================== */
 const StyledFormGroup = styled(Form.Group)`
   display: flex !important;

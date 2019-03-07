@@ -16,6 +16,37 @@ import config from "../../config";
 import Notification from "../Notification/Notification";
 import FormTitle from "../Common/FormTitle";
 import ValidationError from "../Common/ValidationError";
+import styled from "styled-components";
+
+/* ===============================================================================
+  STYLED COMPONENTS
+=============================================================================== */
+
+const ServicesError = styled.div`
+  margin: 15px 0 0px 0;
+`;
+
+const ServiceInput = styled.div`
+  display: flex;
+  flex-direction: row;
+  line-height: 38px;
+`;
+
+const ServiceDescInput = styled(Input)`
+  width: 100%;
+`;
+
+const ServiceDurationInput = styled(Input)`
+  width: calc(100% - 40px);
+  margin-right: 5px;
+`;
+
+const ServiceValueInput = styled(Input)`
+  width: calc(100% - 35px);
+  margin-left: 5px;
+`;
+
+/* ============================================================================ */
 
 export class Services extends Component {
   state = {
@@ -248,59 +279,61 @@ export class Services extends Component {
                 </Table.Cell>
                 <Table.Cell>
                   {!this.state.newAdded && (
-                    <div className="company-config-service-cell">
+                    <ServiceInput>
                       {this.state.errors.length > 0 && (
                         <div className="company-config-service-label">
-                          {index + 1}.
+                          {index + 1}
+                          {"-"}
                         </div>
                       )}
-                      <Input
+                      <ServiceDescInput
                         className="company-config-service-desc"
                         value={service.desc}
                         onChange={this.handleServiceValue}
                         id={"desc-" + index}
                       />
-                    </div>
+                    </ServiceInput>
                   )}
                   {this.state.newAdded && (
-                    <div className="company-config-service-cell">
+                    <ServiceInput>
                       {this.state.errors.length > 0 && (
                         <div className="company-config-service-label">
-                          {index + 1}.
+                          {index + 1}
+                          {"-"}
                         </div>
                       )}
-                      <Input
+                      <ServiceDescInput
                         className="company-config-service-desc"
                         value={service.desc}
                         onChange={this.handleServiceValue}
                         id={"desc-" + index}
                         autoFocus
                       />
-                    </div>
+                    </ServiceInput>
                   )}
                 </Table.Cell>
                 <Table.Cell>
-                  <div className="company-config-service-cell">
-                    <Input
+                  <ServiceInput>
+                    <ServiceDurationInput
                       className="company-config-service-duration"
                       value={service.duration}
                       onChange={this.handleServiceValue}
                       id={"duration-" + index}
                     />
                     <div className="company-config-service-label">min</div>
-                  </div>
+                  </ServiceInput>
                 </Table.Cell>
                 <Table.Cell>
-                  <div className="company-config-service-cell">
+                  <ServiceInput>
                     <div className="company-config-service-label">R$</div>
-                    <Input
+                    <ServiceValueInput
                       className="company-config-service-value"
                       value={this.formatCurrency(service.value)}
                       onChange={this.handleServiceValue}
                       onBlur={this.formatCurrencyOnBlur}
                       id={"value-" + index}
                     />
-                  </div>
+                  </ServiceInput>
                 </Table.Cell>
                 <Table.Cell textAlign="right">
                   <Button
@@ -321,16 +354,15 @@ export class Services extends Component {
         <Button
           icon="plus"
           content="Adicionar Serviço"
-          // labelPosition="left"
           onClick={this.handleAddService}
           compact
           color="blue"
         />
-        <div className="services-error">
+        <ServicesError>
           {this.state.errors.map((error, index) => (
             <ValidationError key={index} show={error.error} error={error.msg} />
           ))}
-        </div>
+        </ServicesError>
         {/* <pre>{JSON.stringify(this.state.services, null, 2)}</pre> */}
         <Divider style={{ marginTop: "40px" }} />
         <Button
