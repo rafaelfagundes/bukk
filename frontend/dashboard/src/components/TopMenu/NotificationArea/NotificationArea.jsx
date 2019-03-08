@@ -2,8 +2,84 @@ import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import { connect } from "react-redux";
 
-import "./NotificationArea.css";
 import { Icon } from "semantic-ui-react";
+
+import styled from "styled-components";
+
+/* ===============================================================================
+  STYLED COMPONENTS
+=============================================================================== */
+
+const Notification = styled.div`
+  top: 47px;
+  right: 0;
+  text-align: left;
+  position: absolute;
+  z-index: 101;
+  padding-top: 0;
+  min-width: 300px;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  border-radius: 4px;
+`;
+
+const NotificationInner = styled.div`
+  background-color: #fff;
+  box-shadow: 0px 5px 15px 1px rgba(69, 65, 78, 0.2);
+  border-radius: 4px;
+`;
+
+const NotificationHeader = styled.div`
+  padding: 20px 20px;
+  box-shadow: 1px 34px 52px -19px rgba(68, 62, 84, 0.03);
+
+  > div {
+    font-weight: 400;
+    font-size: 1.1rem;
+    opacity: 0.9;
+  }
+  > div > span {
+    min-width: 32px;
+    min-height: 32px;
+    background-color: #0e6eb8;
+    border-radius: 32px;
+    color: white;
+    margin-right: 3px;
+    padding: 5px 10px;
+    font-weight: 700 !important;
+  }
+`;
+
+const NotificationBody = styled.div`
+  padding: 0 20px 5px 20px;
+  > div > div:last-child {
+    border-bottom: none;
+  }
+`;
+
+const NotificationItem = styled.div`
+  padding: 20px 0px 20px 0;
+  border-bottom: 1px solid #eee;
+  box-sizing: border-box;
+`;
+
+const NotificationItemDesc = styled.div`
+  font-size: 1rem;
+`;
+
+const NotificationItemDetails = styled.div`
+  font-size: 0.8rem;
+  display: flex;
+  flex-direction: row;
+  opacity: 0.8;
+  padding-top: 5px;
+
+  > div {
+    margin-right: 5px;
+  }
+`;
+
+/* ============================================================================ */
 
 export class NotificationArea extends Component {
   state = {
@@ -58,22 +134,21 @@ export class NotificationArea extends Component {
     return (
       <>
         {this.state.visible && (
-          <div className="notification-area">
-            <div className="notification-area-inner">
-              <div className="notification-area-header">
-                <div className="notification-area-header-txt">
-                  <span className="notification-area-header-counter">4</span>{" "}
-                  Novas notificações
+          <Notification>
+            <NotificationInner>
+              <NotificationHeader>
+                <div>
+                  <span>5</span> Novas notificações
                 </div>
-              </div>
+              </NotificationHeader>
 
-              <div className="notification-area-body">
-                <div className="notifation-area-list">
-                  <div className="notification-area-item">
-                    <div className="notification-area-item-desc">
+              <NotificationBody>
+                <div>
+                  <NotificationItem className="notification-area-item">
+                    <NotificationItemDesc className="notification-area-item-desc">
                       Novo agendamento
-                    </div>
-                    <div className="notification-area-item-details">
+                    </NotificationItemDesc>
+                    <NotificationItemDetails className="notification-area-item-details">
                       <div className="notification-area-item-time">
                         <Icon name="clock outline" />
                         09:45
@@ -86,13 +161,13 @@ export class NotificationArea extends Component {
                         <Icon name="envelope open outline" />
                         Marcar como lido
                       </div>
-                    </div>
-                  </div>
-                  <div className="notification-area-item">
-                    <div className="notification-area-item-desc">
+                    </NotificationItemDetails>
+                  </NotificationItem>
+                  <NotificationItem className="notification-area-item">
+                    <NotificationItemDesc className="notification-area-item-desc">
                       Novo agendamento
-                    </div>
-                    <div className="notification-area-item-details">
+                    </NotificationItemDesc>
+                    <NotificationItemDetails className="notification-area-item-details">
                       <div className="notification-area-item-time">
                         <Icon name="clock outline" />
                         11:01
@@ -105,13 +180,13 @@ export class NotificationArea extends Component {
                         <Icon name="envelope open outline" />
                         Marcar como lido
                       </div>
-                    </div>
-                  </div>
-                  <div className="notification-area-item">
-                    <div className="notification-area-item-desc">
+                    </NotificationItemDetails>
+                  </NotificationItem>
+                  <NotificationItem className="notification-area-item">
+                    <NotificationItemDesc className="notification-area-item-desc">
                       Cancelamento
-                    </div>
-                    <div className="notification-area-item-details">
+                    </NotificationItemDesc>
+                    <NotificationItemDetails className="notification-area-item-details">
                       <div className="notification-area-item-time">
                         <Icon name="clock outline" />
                         11:14
@@ -124,13 +199,13 @@ export class NotificationArea extends Component {
                         <Icon name="envelope open outline" />
                         Marcar como lido
                       </div>
-                    </div>
-                  </div>
-                  <div className="notification-area-item">
-                    <div className="notification-area-item-desc">
+                    </NotificationItemDetails>
+                  </NotificationItem>
+                  <NotificationItem className="notification-area-item">
+                    <NotificationItemDesc className="notification-area-item-desc">
                       Novo agendamento
-                    </div>
-                    <div className="notification-area-item-details">
+                    </NotificationItemDesc>
+                    <NotificationItemDetails className="notification-area-item-details">
                       <div className="notification-area-item-time">
                         <Icon name="clock outline" />
                         14:37
@@ -143,12 +218,12 @@ export class NotificationArea extends Component {
                         <Icon name="envelope open outline" />
                         Marcar como lido
                       </div>
-                    </div>
-                  </div>
+                    </NotificationItemDetails>
+                  </NotificationItem>
                 </div>
-              </div>
-            </div>
-          </div>
+              </NotificationBody>
+            </NotificationInner>
+          </Notification>
         )}
       </>
     );

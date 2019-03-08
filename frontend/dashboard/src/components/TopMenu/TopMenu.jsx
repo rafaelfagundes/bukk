@@ -5,6 +5,10 @@ import { connect } from "react-redux";
 import { NotificationArea } from "./NotificationArea/NotificationArea";
 import styled from "styled-components";
 
+/* ===============================================================================
+  STYLED COMPONENTS
+=============================================================================== */
+
 const StyledIcon = styled(Icon)`
   color: ${props => props.iconcolor || "#333"};
 `;
@@ -53,6 +57,24 @@ const UserMenuTrigger = styled(Image)`
 const MenuRightSpacer = styled.div`
   width: 25px;
 `;
+
+const Trigger = styled(Menu.Item)`
+  cursor: pointer;
+`;
+
+const TriggerNumber = styled.div`
+  font-weight: 700;
+  background-color: #0e6eb8;
+  color: #fff;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  line-height: 18px;
+  display: inline-block;
+  text-align: center;
+`;
+
+/* ============================================================================ */
 
 class TopMenu extends Component {
   state = {
@@ -120,13 +142,13 @@ class TopMenu extends Component {
           {/* <Menu.Item>
             <Input icon="search" placeholder="Procurar..." />
           </Menu.Item> */}
-          <Menu.Item className="notification-area-trigger">
+          <Trigger className="notification-area-trigger">
             <div>
               <Icon name="bell outline" />
-              <span>4</span>
+              <TriggerNumber>5</TriggerNumber>
             </div>
             <NotificationArea triggerClass="notification-area-trigger" />
-          </Menu.Item>
+          </Trigger>
           <Menu.Item>
             <UserMenuTrigger
               src={this.props.user === undefined ? "" : this.props.user.avatar}
