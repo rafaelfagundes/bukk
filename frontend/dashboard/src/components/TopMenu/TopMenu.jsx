@@ -58,7 +58,7 @@ const MenuRightSpacer = styled.div`
   width: 25px;
 `;
 
-const Trigger = styled(Menu.Item)`
+const NotificationTrigger = styled(Menu.Item)`
   cursor: pointer;
 `;
 
@@ -142,13 +142,13 @@ class TopMenu extends Component {
           {/* <Menu.Item>
             <Input icon="search" placeholder="Procurar..." />
           </Menu.Item> */}
-          <Trigger className="notification-area-trigger">
+          <NotificationTrigger className="notification-area-trigger">
             <div>
               <Icon name="bell outline" />
               <TriggerNumber>5</TriggerNumber>
             </div>
             <NotificationArea triggerClass="notification-area-trigger" />
-          </Trigger>
+          </NotificationTrigger>
           <Menu.Item>
             <UserMenuTrigger
               src={this.props.user === undefined ? "" : this.props.user.avatar}

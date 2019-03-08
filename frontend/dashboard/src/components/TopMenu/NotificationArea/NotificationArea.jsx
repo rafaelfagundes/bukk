@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import { connect } from "react-redux";
-
 import { Icon } from "semantic-ui-react";
 
 import styled from "styled-components";
@@ -96,38 +95,42 @@ export class NotificationArea extends Component {
   }
 
   handleClick = event => {
-    const domNode = ReactDOM.findDOMNode(this);
+    if (typeof event.target.className !== "string") {
+      return false;
+    } else {
+      const domNode = ReactDOM.findDOMNode(this);
 
-    // if clicked in a node above the trigger
-    let parent = -1;
-    if (event.target.offsetParent) {
-      parent = event.target.offsetParent.className.indexOf(
-        this.props.triggerClass
-      );
-    }
-    if (
-      event.target.className.indexOf(this.props.triggerClass) >= 0 ||
-      parent > 0
-    ) {
-      if (this.state.visible) {
+      // if clicked in a node above the trigger
+      let parent = -1;
+      if (event.target.offsetParent) {
+        parent = event.target.offsetParent.className.indexOf(
+          this.props.triggerClass
+        );
+      }
+      if (
+        event.target.className.indexOf(this.props.triggerClass) >= 0 ||
+        parent > 0
+      ) {
+        if (this.state.visible) {
+          this.setState({
+            clickedOutside: false,
+            visible: false
+          });
+        } else {
+          this.setState({
+            clickedOutside: false,
+            visible: true
+          });
+        }
+        return false;
+      }
+
+      if (!domNode || !domNode.contains(event.target)) {
         this.setState({
-          clickedOutside: false,
+          clickedOutside: true,
           visible: false
         });
-      } else {
-        this.setState({
-          clickedOutside: false,
-          visible: true
-        });
       }
-      return false;
-    }
-
-    if (!domNode || !domNode.contains(event.target)) {
-      this.setState({
-        clickedOutside: true,
-        visible: false
-      });
     }
   };
   render() {

@@ -111,28 +111,32 @@ export class UserMenu extends Component {
   }
 
   handleClick = event => {
-    const domNode = ReactDOM.findDOMNode(this);
+    if (typeof event.target.className !== "string") {
+      return false;
+    } else {
+      const domNode = ReactDOM.findDOMNode(this);
 
-    if (event.target.className.indexOf(this.props.triggerClass) >= 0) {
-      if (this.state.visible) {
+      if (event.target.className.indexOf(this.props.triggerClass) >= 0) {
+        if (this.state.visible) {
+          this.setState({
+            clickedOutside: false,
+            visible: false
+          });
+        } else {
+          this.setState({
+            clickedOutside: false,
+            visible: true
+          });
+        }
+        return false;
+      }
+
+      if (!domNode || !domNode.contains(event.target)) {
         this.setState({
-          clickedOutside: false,
+          clickedOutside: true,
           visible: false
         });
-      } else {
-        this.setState({
-          clickedOutside: false,
-          visible: true
-        });
       }
-      return false;
-    }
-
-    if (!domNode || !domNode.contains(event.target)) {
-      this.setState({
-        clickedOutside: true,
-        visible: false
-      });
     }
   };
   handleClickOnLink = () => {
