@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { setCurrentPage } from "../dashboardActions";
-import "./Profile.css";
 import Services from "./Services";
 import General from "./General";
 import TimeTable from "./TimeTable";

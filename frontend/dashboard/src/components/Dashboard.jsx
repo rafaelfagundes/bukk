@@ -150,6 +150,7 @@ class Dashboard extends Component {
           hideProgressBar={true}
           position="bottom-left"
           newestOnTop={true}
+          suppressClassNameWarning
         />
         <Container fluid>
           <Grid>

@@ -125,13 +125,13 @@ class Services extends Component {
           text="Selecione os serviços que você presta pela empresa"
           first
         />
-        <Table celled>
+        <Table fixed singleLine striped>
           <Table.Header>
             <Table.Row>
-              <Table.HeaderCell>Ativar?</Table.HeaderCell>
-              <Table.HeaderCell>Descrição</Table.HeaderCell>
-              <Table.HeaderCell>Duração</Table.HeaderCell>
-              <Table.HeaderCell>Valor</Table.HeaderCell>
+              <Table.HeaderCell width={1}>Status</Table.HeaderCell>
+              <Table.HeaderCell width={11}>Descrição</Table.HeaderCell>
+              <Table.HeaderCell width={2}>Duração</Table.HeaderCell>
+              <Table.HeaderCell width={2}>Valor</Table.HeaderCell>
             </Table.Row>
           </Table.Header>
           <Table.Body>

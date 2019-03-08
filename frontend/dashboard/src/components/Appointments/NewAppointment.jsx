@@ -135,6 +135,10 @@ const StyledSegmentClient = styled(Segment)`
   }
 `;
 
+const StyledDatePicker = styled(DatePicker)`
+  font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+`;
+
 /* ============================================================================ */
 
 /* ===============================================================================
@@ -778,7 +782,7 @@ export class NewAppointment extends Component {
                         text="Data"
                         first={this.state.isSpecialist}
                       />
-                      <DatePicker
+                      <StyledDatePicker
                         inline
                         selected={this.state.selectedDate}
                         onChange={this.handleDate}

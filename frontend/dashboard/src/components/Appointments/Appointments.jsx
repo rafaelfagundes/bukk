@@ -15,13 +15,45 @@ import {
   Confirm
 } from "semantic-ui-react";
 import moment from "moment";
-import "./Appointments.css";
 import _ from "lodash";
 import Loading from "../Loading/Loading";
 import Calendar from "./Calendar";
 import Notification from "../Notification/Notification";
 import NewAppointment from "./NewAppointment";
 import ComponentTopMenu from "../Common/ComponentTopMenu";
+import styled from "styled-components";
+
+/* ===============================================================================
+  STYLED COMPONENTS
+=============================================================================== */
+
+const AppointmentRow = styled(Table.Row)`
+  background: ${props => props.bgcolor} !important;
+`;
+
+// Helper Functions
+const getAppointmentBgColor = status => {
+  switch (status) {
+    case "canceled":
+      return "rgba(255,0,0,0.08)";
+    case "confirmed":
+      return "rgba(0, 128, 0, 0.08)";
+    case "done":
+      return "rgba(0, 0, 255, 0.08)";
+    case "payed":
+      return "rgba(0, 128, 128, 0.08)";
+    case "missed":
+      return "rgba(255, 166, 0, 0.08)";
+    default:
+      break;
+  }
+};
+
+/* ============================================================================ */
+
+/* ===============================================================================
+  GLOBALS
+=============================================================================== */
 
 const menuItems = [
   {
@@ -50,6 +82,12 @@ const menuItems = [
     right: true
   }
 ];
+
+/* ============================================================================ */
+
+/* ===============================================================================
+  COMPONENTS
+=============================================================================== */
 
 const NoAppointments = props => (
   <Segment placeholder>
@@ -95,7 +133,7 @@ const TableBody = ({
   return (
     <Table.Body>
       {data.map((app, index) => (
-        <Table.Row key={index} className={"appointments-row-" + app.status}>
+        <AppointmentRow key={index} bgcolor={getAppointmentBgColor(app.status)}>
           <Table.Cell width={1} textAlign="left">
             {app.status === "created" && (
               <Icon
@@ -294,11 +332,12 @@ const TableBody = ({
               </Link>
             )}
           </Table.Cell>
-        </Table.Row>
+        </AppointmentRow>
       ))}
     </Table.Body>
   );
 };
+/* ============================================================================ */
 
 export class Appointments extends Component {
   constructor(props) {
