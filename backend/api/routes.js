@@ -168,3 +168,13 @@ router.post(
 );
 router.post(BASE_URL + "/costumers/get", verifyToken, costumer.getCostumer);
 router.post(BASE_URL + "/costumers/find", verifyToken, costumer.findCostumers);
+router.post(
+  BASE_URL + "/costumers/notes/get",
+  verifyToken,
+  costumer.getCostumerNotes
+);
+router.post(
+  BASE_URL + "/costumers/notes/save",
+  verifyToken,
+  costumer.saveCostumerNotes
+);

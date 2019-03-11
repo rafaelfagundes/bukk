@@ -1,7 +1,6 @@
 // External Dependancies
 const boom = require("boom");
 const auth = require("../../auth");
-
 // Get Data Models
 const Costumer = require("./Costumer");
 
@@ -84,12 +83,11 @@ exports.findCostumers = async (req, res) => {
         msg: "Token inválido."
       });
     }
-    console.log(req.body);
+
     let { query } = req.body;
     query = query.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
     let regExQuery = new RegExp(query, "i");
-    console.log("regExQuery", regExQuery);
 
     const _skip = req.body.page * req.body.limit;
     const _limit = req.body.limit;
@@ -125,4 +123,50 @@ exports.findCostumers = async (req, res) => {
   } catch (err) {
     // throw boom.boomify(err);
   }
+};
+
+// Get Notes
+exports.getCostumerNotes = async (req, res) => {
+  try {
+    const token = auth.verify(req.token);
+    if (!token) {
+      res.status(403).json({
+        msg: "Token inválido."
+      });
+    }
+
+    const { id } = req.body;
+
+    const [costumers] = await Costumer.find({ _id: id }, "notes");
+
+    if (costumers.notes.length) {
+      res.status(200).send(costumers);
+    } else {
+      res.status(404).send({ msg: "Sem notas" });
+    }
+  } catch (error) {}
+};
+
+// Save notes
+exports.saveCostumerNotes = async (req, res) => {
+  try {
+    const token = auth.verify(req.token);
+    if (!token) {
+      res.status(403).json({
+        msg: "Token inválido."
+      });
+    }
+
+    const { id, notes } = req.body;
+
+    const result = await Costumer.updateOne({ _id: id }, { notes });
+
+    console.log("result", result);
+
+    if (result.ok) {
+      res.status(200).send({ msg: "OK" });
+    } else {
+      res.status(404).send({ msg: "Notas não puderam ser atualizadas" });
+    }
+  } catch (error) {}
 };

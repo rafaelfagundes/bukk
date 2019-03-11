@@ -1,10 +1,13 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
+import moment from "moment";
 
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { Input, Button, Confirm } from "semantic-ui-react";
+import Axios from "axios";
+import config from "../../config";
 
 /* ===============================================================================
   Components
@@ -45,7 +48,7 @@ const Editor = styled(ReactQuill)`
 
 const NotesMenu = styled.div`
   border: 1px solid #ccc;
-  width: 200px;
+  width: 20vw;
   border-bottom-left-radius: 4px;
   border-right: none;
   position: relative;
@@ -88,7 +91,7 @@ const StyledNoteItem = styled(NoteItem)`
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    width: 145px;
+    width: 18vw;
   }
   > div:last-child {
     color: ${props => (props.selected ? "white" : "#888")};
@@ -97,7 +100,7 @@ const StyledNoteItem = styled(NoteItem)`
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    width: 145px;
+    width: 18vw;
   }
 `;
 
@@ -152,29 +155,48 @@ export class Notes extends Component {
       selectedIndex: 0,
       modified: -1,
       confirmSave: false,
-      notes: [
-        {
-          title: "Nova Nota",
-          text:
-            "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quibusdam nostrum amet ipsum possimus, debitis et unde at deleniti corporis accusamus nam doloremque cumque reprehenderit rem quaerat, est consequuntur, cum beatae."
-        },
-        {
-          title: "Lista de Supermercado",
-          text:
-            "Quibusdam nostrum amet ipsum possimus, debitis et unde at deleniti corporis accusamus nam doloremque cumque reprehenderit rem quaerat, est consequuntur, cum beatae."
-        }
-      ]
+      notes: []
     };
 
     // You can also pass a Quill Delta here
     this.handleChange = this.handleChange.bind(this);
   }
 
+  removeLast = () => {
+    const _remover =
+      this.state.title === "" &&
+      this.state.text.replace(/<(?:.|\n)*?>/gm, "") === "";
+
+    if (this.state.notes.length === 1) {
+      if (_remover) {
+        this.setState({ notes: [], title: "", text: "" });
+      }
+    }
+  };
+
   handleChange(value) {
     let _notes = JSON.parse(JSON.stringify(this.state.notes));
+    if (!_notes.length) {
+      if (this.state.title === this.state.text && this.state.modified > 0) {
+        return false;
+      }
+    }
     if (_notes.length > 0) {
       const _index = this.state.selectedIndex;
       _notes[_index].text = value;
+      _notes[_index].updatedAt = moment().toDate();
+      this.setState(
+        {
+          text: value,
+          notes: _notes,
+          modified: this.state.modified + 1
+        },
+        () => {
+          this.removeLast();
+        }
+      );
+    } else {
+      const _notes = [{ title: "", text: value }];
       this.setState({
         text: value,
         notes: _notes,
@@ -185,23 +207,65 @@ export class Notes extends Component {
 
   handleTitleChange = e => {
     const _value = e.currentTarget.value;
-
     let _notes = JSON.parse(JSON.stringify(this.state.notes));
-    const _index = this.state.selectedIndex;
-    _notes[_index].title = _value;
-    this.setState({
-      title: _value,
-      notes: _notes,
-      modified: this.state.modified + 1
-    });
+    if (_notes.length > 0) {
+      let _notes = JSON.parse(JSON.stringify(this.state.notes));
+      const _index = this.state.selectedIndex;
+      _notes[_index].title = _value;
+      _notes[_index].updatedAt = moment().toDate();
+      this.setState(
+        {
+          title: _value,
+          notes: _notes,
+          modified: this.state.modified + 1
+        },
+        () => {
+          this.removeLast();
+        }
+      );
+    } else {
+      const _notes = [{ title: _value, text: "" }];
+      this.setState({
+        title: _value,
+        notes: _notes,
+        modified: this.state.modified + 1
+      });
+    }
+  };
+
+  loadNotes = () => {
+    const token = localStorage.getItem("token");
+
+    let requestConfig = {
+      headers: {
+        Authorization: token
+      }
+    };
+
+    const _clientId = this.props.match.params.id;
+
+    Axios.post(
+      config.api + "/costumers/notes/get",
+      { id: _clientId },
+      requestConfig
+    )
+      .then(response => {
+        if (response.data.notes) {
+          this.setState({
+            notes: response.data.notes,
+            selectedIndex: 0,
+            title: response.data.notes[0].title,
+            text: response.data.notes[0].text
+          });
+        }
+      })
+      .catch(error => {
+        console.log(error.response.data.msg);
+      });
   };
 
   componentDidMount() {
-    this.setState({
-      title: this.state.notes[0].title,
-      text: this.state.notes[0].text,
-      selectedIndex: 0
-    });
+    this.loadNotes();
   }
 
   selectNote = index => {
@@ -218,7 +282,10 @@ export class Notes extends Component {
   };
 
   newNote = () => {
-    let _notes = JSON.parse(JSON.stringify(this.state.notes));
+    let _notes = [];
+    if (this.state.notes.length) {
+      _notes = JSON.parse(JSON.stringify(this.state.notes));
+    }
 
     _notes.unshift({ title: "Nova Nota", text: "" });
 
@@ -235,26 +302,27 @@ export class Notes extends Component {
     this.editor.current.focus();
   };
 
-  deleteNote = () => {
+  deleteNote = index => {
     let _notes = JSON.parse(JSON.stringify(this.state.notes));
-    _notes.shift();
-    let _newIndex = 0;
+    _notes.splice(index, 1);
+    let _newIndex = index - 1 < 0 ? 0 : index - 1;
+    let _title = "";
+    let _text = "";
 
-    if (_notes.length === 0) {
-      this.setState({
-        notes: _notes,
-        selectedIndex: _newIndex,
-        title: "",
-        text: ""
-      });
+    if (_newIndex) {
+      _title = this.state.notes[_newIndex].title;
+      _text = this.state.notes[_newIndex].text;
     } else {
-      this.setState({
-        notes: _notes,
-        selectedIndex: _newIndex,
-        title: this.state.notes[_newIndex].title,
-        text: this.state.notes[_newIndex].text
-      });
+      _title = "";
+      _text = "";
     }
+
+    this.setState({
+      notes: _notes,
+      selectedIndex: _newIndex,
+      title: _title,
+      text: _text
+    });
   };
 
   closeSaveConfirm = () => {
@@ -264,6 +332,27 @@ export class Notes extends Component {
   saveNote = () => {
     console.log("salvar nota");
     this.setState({ confirmSave: false, modified: 0 });
+
+    console.log("this.state.notes", this.state.notes);
+
+    const token = localStorage.getItem("token");
+    let requestConfig = {
+      headers: {
+        Authorization: token
+      }
+    };
+    const _clientId = this.props.match.params.id;
+    Axios.post(
+      config.api + "/costumers/notes/save",
+      { id: _clientId, notes: this.state.notes },
+      requestConfig
+    )
+      .then(response => {
+        console.log(response.data);
+      })
+      .catch(error => {
+        console.log(error.response.data);
+      });
   };
 
   render() {
@@ -297,7 +386,7 @@ export class Notes extends Component {
           )}
           <NewNoteButton
             content="Nova Nota"
-            icon="file"
+            icon="file alternate outline"
             onClick={this.newNote}
           />
         </NotesMenu>
@@ -317,7 +406,8 @@ export class Notes extends Component {
                 icon="delete"
                 compact
                 color="red"
-                onClick={this.deleteNote}
+                disabled={this.state.notes.length === 0}
+                onClick={() => this.deleteNote(this.state.selectedIndex)}
               />
             </Button.Group>
           </NoteTitle>

@@ -17,7 +17,14 @@ const CostumerSchema = new Schema({
   ],
   company: { type: Schema.Types.ObjectId, ref: "Company" },
   createdAt: { type: Date, default: Date.now },
-  notes: [{ title: { type: String } }, { text: { type: String } }],
+  notes: [
+    {
+      title: { type: String },
+      text: { type: String },
+      createdAt: { type: Date, default: Date.now },
+      updatedAt: { type: Date, default: Date.now }
+    }
+  ],
   tags: [
     {
       text: { type: String },

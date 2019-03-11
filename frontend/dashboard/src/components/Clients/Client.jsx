@@ -3,9 +3,9 @@ import { connect } from "react-redux";
 import config from "../../config";
 import Axios from "axios";
 import ComponentTopMenu from "../Common/ComponentTopMenu";
-import { General } from "./General";
-import { Appointments } from "./Appointments";
-import { Notes } from "./Notes";
+import General from "./General";
+import Appointments from "./Appointments";
+import Notes from "./Notes";
 
 const menuItems = [
   {
@@ -75,7 +75,7 @@ export class Client extends Component {
           <General client={this.state.client} history={this.props.history} />
         )}
         {activeItem === "agendamentos" && <Appointments />}
-        {activeItem === "notas" && <Notes />}
+        {activeItem === "notas" && <Notes {...this.props} />}
       </div>
     );
   }
