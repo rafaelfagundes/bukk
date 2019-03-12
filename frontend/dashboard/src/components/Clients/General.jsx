@@ -51,22 +51,17 @@ const OtherColumn = styled.div`
   overflow: auto;
 `;
 
-const InformationCell = styled(Table.Cell)`
-  padding: 20px !important;
-`;
-
 /* ========================================================================= */
-
-const infoTypes = [
-  { key: 1, text: "Pessoal", value: "personal" },
-  { key: 2, text: "Contato", value: "contact" },
-  { key: 3, text: "Outro", value: "other" }
-];
 
 export class General extends Component {
   state = {
-    page: "view",
-    client: this.props.client
+    page: "edit",
+    client: this.props.client,
+    info: {
+      title: "",
+      text: ""
+    },
+    showInfoForm: false
   };
 
   toggleEdit = () => {
@@ -362,86 +357,6 @@ export class General extends Component {
                     ))}
                   </>
                 )}
-                <FormSubTitle
-                  text="Outras Informações"
-                  first={this.state.client.tags.length === 0}
-                />
-                {(client.otherInfo.personal.length > 0 ||
-                  client.otherInfo.contact.length > 0 ||
-                  client.otherInfo.other.length > 0) && (
-                  <Table fixed singleLine>
-                    <Table.Header>
-                      <Table.Row>
-                        <Table.HeaderCell width={5}>Item</Table.HeaderCell>
-                        <Table.HeaderCell width={8}>Texto</Table.HeaderCell>
-                        <Table.HeaderCell textAlign="right" width={2} />
-                      </Table.Row>
-                    </Table.Header>
-
-                    <Table.Body>
-                      {this.state.client.otherInfo.personal.map(
-                        (info, index) => (
-                          <Table.Row key={index}>
-                            <Table.Cell title={info.title}>
-                              {info.title}
-                            </Table.Cell>
-                            <Table.Cell title={info.text}>
-                              {info.text}
-                            </Table.Cell>
-                            <Table.Cell textAlign="right">
-                              <Button
-                                icon="edit"
-                                compact
-                                inverted
-                                color="blue"
-                              />
-                            </Table.Cell>
-                          </Table.Row>
-                        )
-                      )}
-                      {this.state.client.otherInfo.contact.map(
-                        (info, index) => (
-                          <Table.Row key={index}>
-                            <Table.Cell title={info.title}>
-                              {info.title}
-                            </Table.Cell>
-                            <Table.Cell title={info.text}>
-                              {info.text}
-                            </Table.Cell>
-                            <Table.Cell textAlign="right">
-                              <Button
-                                icon="edit"
-                                compact
-                                inverted
-                                color="blue"
-                              />
-                            </Table.Cell>
-                          </Table.Row>
-                        )
-                      )}
-                      {this.state.client.otherInfo.other.map((info, index) => (
-                        <Table.Row key={index}>
-                          <Table.Cell title={info.title}>
-                            {info.title}
-                          </Table.Cell>
-                          <Table.Cell title={info.text}>{info.text}</Table.Cell>
-                          <Table.Cell textAlign="right">
-                            <Button icon="edit" compact inverted color="blue" />
-                          </Table.Cell>
-                        </Table.Row>
-                      ))}
-                    </Table.Body>
-                  </Table>
-                )}
-
-                <Button
-                  icon="plus"
-                  content="Adicionar Informação"
-                  title="Adicione informações sobre o cliente"
-                  color="blue"
-                  onClick={this.addPhoneNumber}
-                  compact
-                />
               </OtherColumn>
             </Columns>
             <Divider style={{ marginTop: "40px" }} />
@@ -460,7 +375,7 @@ export class General extends Component {
               <Icon name="delete" />
               Cancelar
             </Button>
-            <pre>{JSON.stringify(this.props.client, null, 2)}</pre>
+            {/* <pre>{JSON.stringify(this.props.client, null, 2)}</pre> */}
           </>
         )}
       </>

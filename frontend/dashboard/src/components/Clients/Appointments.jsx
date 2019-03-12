@@ -9,6 +9,7 @@ import {
   Confirm,
   Divider
 } from "semantic-ui-react";
+import { toast } from "react-toastify";
 import moment from "moment";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
@@ -16,6 +17,7 @@ import Loading from "../Loading/Loading";
 import Axios from "axios";
 import config from "../../config";
 import _ from "lodash";
+import Notification from "../Notification/Notification";
 
 /* ===============================================================================
   STYLED COMPONENTS
@@ -302,23 +304,54 @@ const TableBody = ({
 /* ============================================================================ */
 
 export class Appointments extends Component {
-  state = {
-    confirmationModal: {
-      open: false,
-      onCancel: this.cancelConfirmationModal,
-      onConfirm: undefined,
-      header: "Tem certeza?",
-      content: "Tem certeza que deseja fazer isso?",
-      cancelButton: "Cancelar",
-      confirmButton: "Confirmar"
-    },
-    loading: false,
-    appointments: []
+  constructor(props) {
+    super(props);
+    this.state = {
+      confirmationModal: {
+        open: false,
+        onCancel: this.cancelConfirmationModal,
+        onConfirm: undefined,
+        header: "Tem certeza?",
+        content: "Tem certeza que deseja fazer isso?",
+        cancelButton: "Cancelar",
+        confirmButton: "Confirmar"
+      },
+      loading: false,
+      appointments: []
+    };
+  }
+
+  cancelConfirmationModal = () => {
+    this.setState({
+      confirmationModal: {
+        ...this.state.confirmationModal,
+        open: false
+      }
+    });
   };
 
-  mountOrCalendarUpdate = () => {
-    // console.log(this.props);
+  setConfirmationModal = (
+    action,
+    id,
+    header,
+    content,
+    cancelButton = "Cancelar",
+    confirmButton = "Confirmar"
+  ) => {
+    const _confirmationModal = {
+      ...this.state.confirmationModal,
+      open: true,
+      onConfirm: action,
+      header,
+      content,
+      cancelButton,
+      confirmButton
+    };
 
+    this.setState({ selectedId: id, confirmationModal: _confirmationModal });
+  };
+
+  mountOrUpdate = () => {
     this.setState({
       loading: true,
       events: undefined
@@ -330,15 +363,13 @@ export class Appointments extends Component {
         Authorization: token
       }
     };
-    // console.log("object");
+
     Axios.post(
       config.api + "/appointments/clientlist",
       { id: this.props.match.params.id },
       requestConfig
     )
       .then(response => {
-        // this.sortAppointments(response.data.appointments);
-        // this.setEvents(response.data.appointments);
         _.reverse(response.data.appointments);
         this.setState({
           loading: false,
@@ -351,8 +382,58 @@ export class Appointments extends Component {
   };
 
   componentDidMount() {
-    this.mountOrCalendarUpdate();
+    this.mountOrUpdate();
   }
+
+  updateAppointment = appointment => {
+    const token = localStorage.getItem("token");
+    let requestConfig = {
+      headers: {
+        Authorization: token
+      }
+    };
+
+    Axios.patch(config.api + "/appointment/update", appointment, requestConfig)
+      .then(response => {
+        toast(
+          <Notification
+            type="success"
+            title="Agendamento atualizado"
+            text="O agendamento foi atualizado com sucesso"
+          />
+        );
+        this.mountOrUpdate();
+      })
+      .catch(error => {
+        toast(
+          <Notification
+            type="error"
+            title="Erro ao atualizar agendamento"
+            text="Erro ao tentar atualizar os agendamento"
+          />
+        );
+      });
+  };
+
+  confirmAppointment = () => {
+    const _appointment = {
+      _id: this.state.selectedId,
+      status: "confirmed"
+    };
+
+    this.updateAppointment(_appointment);
+    this.cancelConfirmationModal();
+  };
+
+  cancelAppointment = () => {
+    const _appointment = {
+      _id: this.state.selectedId,
+      status: "canceled"
+    };
+
+    this.updateAppointment(_appointment);
+    this.cancelConfirmationModal();
+  };
 
   render() {
     const { confirmationModal } = this.state;
@@ -378,6 +459,8 @@ export class Appointments extends Component {
               data={this.state.appointments}
               past={false}
               setConfirmationModal={this.setConfirmationModal}
+              confirmAppointment={this.confirmAppointment}
+              cancelAppointment={this.cancelAppointment}
             />
           </Table>
         )}

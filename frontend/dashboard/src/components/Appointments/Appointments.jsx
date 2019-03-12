@@ -616,6 +616,7 @@ export class Appointments extends Component {
         this.setState({ loading: false });
       });
   };
+
   componentDidMount() {
     this.mountOrCalendarUpdate();
   }

@@ -36,7 +36,8 @@ const Columns = styled.div`
 const Editor = styled(ReactQuill)`
   width: 100%;
   font-family: "Lato";
-  height: calc(70vh - 93px);
+  height: calc(68vh - 85px);
+
   > .ql-toolbar {
     background-color: #fdfdfd;
   }
@@ -55,27 +56,33 @@ const NotesMenu = styled.div`
   border-right: none;
   position: relative;
   border-top-left-radius: 4px;
-  height: 70vh;
+  height: 68vh;
   box-sizing: border-box;
 `;
 
 const NotesSearch = styled.div`
   background-color: #fafafa;
   border-bottom: 1px solid #ccc;
-  height: 51px;
+  height: 43px;
   padding: 5px 8px;
 `;
 
 const SearchInput = styled(Input)`
-  /* > input {
-    font-size: 14px !important;
-    padding: 5px 5px 5px 10px !important;
-  } */
+  > input {
+    height: 32px !important;
+  }
+`;
+
+const TitleInput = styled(Input)`
+  height: 32px;
+  > input {
+    font-weight: 700 !important;
+  }
 `;
 
 const NotesList = styled.div`
   overflow: auto;
-  height: calc(70vh - 88px);
+  height: calc(68vh - 88px);
 `;
 
 const StyledNoteItem = styled(NoteItem)`
@@ -83,10 +90,9 @@ const StyledNoteItem = styled(NoteItem)`
   padding: 5px 10px;
   height: 52px;
   cursor: pointer;
-
   border-bottom: 1px solid #ccc;
-
   width: 18vw;
+
   > div:first-child {
     color: #666;
     color: ${props => (props.selected ? "white" : "#666")};
@@ -95,6 +101,7 @@ const StyledNoteItem = styled(NoteItem)`
     overflow: hidden;
     text-overflow: ellipsis;
   }
+
   > div:last-child {
     color: ${props => (props.selected ? "white" : "#888")};
     opacity: 0.8;
@@ -132,15 +139,19 @@ const NoteTitle = styled.div`
 `;
 
 const NoteTitleLabel = styled.div`
-  line-height: 40px;
+  line-height: 32px;
   margin: 0 10px;
   font-size: 1rem;
 `;
 
 const SaveButton = styled(Button)`
-  width: 40px;
+  height: 32px;
+  width: 100px;
+  border-right: 1px solid #fff !important;
 `;
+
 const DeleteButton = styled(Button)`
+  height: 32px;
   width: 40px;
 `;
 
@@ -154,6 +165,47 @@ const NoResults = styled.div`
   display: flex;
   flex-direction: column;
 `;
+
+/* ============================================================================ */
+
+/* ===============================================================================
+  COMPONENTS
+=============================================================================== */
+
+const editorModules = {
+  toolbar: [
+    [{ font: [] }],
+    [{ header: [1, 2, 3, 4, false] }],
+    ["bold", "italic", "underline", "strike", "link"],
+    [{ align: [] }, { color: [] }, { background: [] }],
+    ["blockquote", "code-block"],
+    [
+      { list: "ordered" },
+      { list: "bullet" },
+      { indent: "-1" },
+      { indent: "+1" }
+    ],
+    ["clean"]
+  ]
+};
+
+const editorFormats = [
+  "header",
+  "bold",
+  "italic",
+  "align",
+  "underline",
+  "strike",
+  "blockquote",
+  "code-block",
+  "list",
+  "bullet",
+  "indent",
+  "link",
+  "color",
+  "background",
+  "font"
+];
 
 /* ============================================================================ */
 
@@ -281,8 +333,6 @@ export class Notes extends Component {
             title: response.data.notes[0].title,
             text: response.data.notes[0].text
           });
-
-          console.log("Notas carregadas");
         }
       })
       .catch(error => {
@@ -488,21 +538,25 @@ export class Notes extends Component {
         <EditorHolder>
           <NoteTitle>
             <NoteTitleLabel>Título</NoteTitleLabel>
-            <Input value={this.state.title} onChange={this.handleTitleChange} />
+            <TitleInput
+              value={this.state.title}
+              onChange={this.handleTitleChange}
+            />
             <Button.Group>
               <SaveButton
                 icon="save"
-                compact
-                color="green"
                 disabled={this.state.modified <= 0}
                 onClick={this.saveNote}
+                content="Salvar"
+                compact
               />
               <DeleteButton
+                // icon={<Icon name="delete" color="red" />}
                 icon="delete"
-                compact
                 color="red"
                 disabled={this.state.notes.length === 0}
                 onClick={() => this.deleteNote(this.state.selectedId)}
+                compact
               />
             </Button.Group>
           </NoteTitle>
@@ -510,6 +564,8 @@ export class Notes extends Component {
             value={this.state.text}
             onChange={this.handleChange}
             ref={this.editor}
+            modules={editorModules}
+            formats={editorFormats}
           />
         </EditorHolder>
       </Columns>

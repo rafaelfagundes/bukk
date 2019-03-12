@@ -28,7 +28,7 @@ const menuItems = [
 export class Client extends Component {
   state = {
     client: undefined,
-    activeItem: "notas",
+    activeItem: "geral",
     menuItems: undefined
   };
 

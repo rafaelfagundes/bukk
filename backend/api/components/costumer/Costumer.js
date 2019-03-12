@@ -30,27 +30,7 @@ const CostumerSchema = new Schema({
       text: { type: String },
       color: { type: String }
     }
-  ],
-  otherInfo: {
-    personal: [
-      {
-        title: { type: String },
-        text: { type: String }
-      }
-    ],
-    contact: [
-      {
-        title: { type: String },
-        text: { type: String }
-      }
-    ],
-    other: [
-      {
-        title: { type: String },
-        text: { type: String }
-      }
-    ]
-  }
+  ]
 });
 
 CostumerSchema.index({
