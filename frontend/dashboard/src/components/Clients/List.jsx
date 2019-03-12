@@ -100,7 +100,7 @@ export class List extends Component {
                     {phoneFormat(client.phone)}
                   </Table.Cell>
                   <Table.Cell textAlign="right">
-                    <Link to={`/dashboard/client/id/${client._id}`}>
+                    <Link to={`/dashboard/cliente/id/${client._id}`}>
                       <Button
                         compact
                         icon="edit outline"

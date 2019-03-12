@@ -75,6 +75,9 @@ class SideMenu extends Component {
     if (is(_path, "agendamentos")) {
       this.setState({ activeItem: "agendamentos", role: _role, path: _path });
     }
+    if (is(_path, "agendamento")) {
+      this.setState({ activeItem: "agendamentos", role: _role, path: _path });
+    }
     if (is(_path, "relatorios")) {
       this.setState({ activeItem: "relatorios", role: _role, path: _path });
     }
@@ -82,6 +85,9 @@ class SideMenu extends Component {
       this.setState({ activeItem: "perfil", role: _role, path: _path });
     }
     if (is(_path, "clientes")) {
+      this.setState({ activeItem: "clientes", role: _role, path: _path });
+    }
+    if (is(_path, "cliente")) {
       this.setState({ activeItem: "clientes", role: _role, path: _path });
     }
     if (is(_path, "financeiro")) {

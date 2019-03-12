@@ -125,6 +125,11 @@ router.post(
   appointment.getAllAppointments
 );
 router.post(
+  BASE_URL + "/appointments/clientlist",
+  verifyToken,
+  appointment.getAllClientAppointments
+);
+router.post(
   BASE_URL + "/appointments/get",
   verifyToken,
   appointment.getOneAppointment

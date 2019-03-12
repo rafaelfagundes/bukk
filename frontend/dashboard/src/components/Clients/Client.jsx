@@ -4,8 +4,9 @@ import config from "../../config";
 import Axios from "axios";
 import ComponentTopMenu from "../Common/ComponentTopMenu";
 import General from "./General";
-import Appointments from "./Appointments";
 import Notes from "./Notes";
+import Appointments from "./Appointments";
+import { setCurrentPage } from "../dashboardActions";
 
 const menuItems = [
   {
@@ -36,6 +37,10 @@ export class Client extends Component {
   };
 
   componentDidMount() {
+    this.props.setCurrentPage({
+      title: "Carregando cliente...",
+      icon: "hourglass half"
+    });
     const token = localStorage.getItem("token");
     let requestConfig = {
       headers: {
@@ -51,6 +56,12 @@ export class Client extends Component {
       .then(response => {
         const { firstName, lastName } = response.data;
         menuItems[0].text = firstName + " " + lastName;
+
+        this.props.setCurrentPage({
+          title: firstName + " " + lastName,
+          icon: "user outline"
+        });
+
         this.setState({ client: response.data, menuItems });
       })
       .catch(error => {
@@ -74,16 +85,24 @@ export class Client extends Component {
         {activeItem === "geral" && this.state.client && (
           <General client={this.state.client} history={this.props.history} />
         )}
-        {activeItem === "agendamentos" && <Appointments />}
+        {activeItem === "agendamentos" && <Appointments {...this.props} />}
         {activeItem === "notas" && <Notes {...this.props} />}
       </div>
     );
   }
 }
 
-const mapStateToProps = state => ({});
+const mapStateToProps = state => {
+  return {
+    currentPage: state.dashboard.currentPage
+  };
+};
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = dispatch => {
+  return {
+    setCurrentPage: currentPage => dispatch(setCurrentPage(currentPage))
+  };
+};
 
 export default connect(
   mapStateToProps,

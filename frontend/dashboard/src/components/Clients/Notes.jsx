@@ -2,10 +2,12 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
 import moment from "moment";
+import _ from "lodash";
+import shortid from "shortid";
 
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import { Input, Button, Confirm } from "semantic-ui-react";
+import { Input, Button, Confirm, Icon } from "semantic-ui-react";
 import Axios from "axios";
 import config from "../../config";
 
@@ -84,6 +86,7 @@ const StyledNoteItem = styled(NoteItem)`
 
   border-bottom: 1px solid #ccc;
 
+  width: 18vw;
   > div:first-child {
     color: #666;
     color: ${props => (props.selected ? "white" : "#666")};
@@ -91,7 +94,6 @@ const StyledNoteItem = styled(NoteItem)`
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    width: 18vw;
   }
   > div:last-child {
     color: ${props => (props.selected ? "white" : "#888")};
@@ -100,7 +102,6 @@ const StyledNoteItem = styled(NoteItem)`
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    width: 18vw;
   }
 `;
 
@@ -143,6 +144,17 @@ const DeleteButton = styled(Button)`
   width: 40px;
 `;
 
+const NoResults = styled.div`
+  padding: 5px 10px;
+  height: 72px;
+  line-height: 62px;
+  text-align: center;
+  opacity: 0.6;
+  width: 18vw;
+  display: flex;
+  flex-direction: column;
+`;
+
 /* ============================================================================ */
 
 export class Notes extends Component {
@@ -152,10 +164,11 @@ export class Notes extends Component {
     this.state = {
       text: "",
       title: "",
-      selectedIndex: 0,
+      selectedId: undefined,
       modified: -1,
       confirmSave: false,
-      notes: []
+      notes: [],
+      noResults: false
     };
 
     // You can also pass a Quill Delta here
@@ -182,7 +195,9 @@ export class Notes extends Component {
       }
     }
     if (_notes.length > 0) {
-      const _index = this.state.selectedIndex;
+      let _index = _.findIndex(_notes, o => {
+        return o.id === this.state.selectedId;
+      });
       _notes[_index].text = value;
       _notes[_index].updatedAt = moment().toDate();
       this.setState(
@@ -210,7 +225,11 @@ export class Notes extends Component {
     let _notes = JSON.parse(JSON.stringify(this.state.notes));
     if (_notes.length > 0) {
       let _notes = JSON.parse(JSON.stringify(this.state.notes));
-      const _index = this.state.selectedIndex;
+
+      let _index = _.findIndex(_notes, o => {
+        return o.id === this.state.selectedId;
+      });
+
       _notes[_index].title = _value;
       _notes[_index].updatedAt = moment().toDate();
       this.setState(
@@ -251,12 +270,19 @@ export class Notes extends Component {
     )
       .then(response => {
         if (response.data.notes) {
+          response.data.notes.forEach(note => {
+            note["show"] = true;
+            note["id"] = note._id;
+          });
+
           this.setState({
             notes: response.data.notes,
-            selectedIndex: 0,
+            selectedId: response.data.notes[0].id,
             title: response.data.notes[0].title,
             text: response.data.notes[0].text
           });
+
+          console.log("Notas carregadas");
         }
       })
       .catch(error => {
@@ -268,15 +294,19 @@ export class Notes extends Component {
     this.loadNotes();
   }
 
-  selectNote = index => {
+  selectNote = id => {
     if (this.state.modified > 1) {
       this.setState({ confirmSave: true });
     }
 
+    const result = _.find(this.state.notes, function(o) {
+      return o.id === id;
+    });
+
     this.setState({
-      selectedIndex: index,
-      title: this.state.notes[index].title,
-      text: this.state.notes[index].text,
+      selectedId: result.id,
+      title: result.title,
+      text: result.text,
       modified: -1
     });
   };
@@ -287,42 +317,51 @@ export class Notes extends Component {
       _notes = JSON.parse(JSON.stringify(this.state.notes));
     }
 
-    _notes.unshift({ title: "Nova Nota", text: "" });
+    const newId = shortid.generate();
 
-    const _index = 0;
+    _notes.unshift({ title: "Nova Nota", text: "", id: newId, show: true });
 
     this.setState({
       notes: _notes,
-      selectedIndex: _index,
-      title: _notes[_index].title,
-      text: _notes[_index].text,
+      selectedId: newId,
+      title: _notes[0].title,
+      text: _notes[0].text,
       modified: -1
     });
 
     this.editor.current.focus();
   };
 
-  deleteNote = index => {
+  deleteNote = id => {
     let _notes = JSON.parse(JSON.stringify(this.state.notes));
-    _notes.splice(index, 1);
-    let _newIndex = index - 1 < 0 ? 0 : index - 1;
-    let _title = "";
-    let _text = "";
 
-    if (_newIndex) {
-      _title = this.state.notes[_newIndex].title;
-      _text = this.state.notes[_newIndex].text;
-    } else {
-      _title = "";
-      _text = "";
+    let _index = _.findIndex(_notes, function(o) {
+      return o.id === id;
+    });
+
+    _index = _index - 1;
+
+    if (_index < 0) {
+      _index = 0;
     }
 
-    this.setState({
-      notes: _notes,
-      selectedIndex: _newIndex,
-      title: _title,
-      text: _text
+    _.remove(_notes, function(o) {
+      return o.id === id;
     });
+
+    this.setState(
+      {
+        notes: _notes
+      },
+      () => {
+        if (this.state.notes.length > 0) {
+          this.selectNote(this.state.notes[_index].id);
+        } else {
+          this.setState({ title: "", text: "" });
+        }
+        this.saveNote();
+      }
+    );
   };
 
   closeSaveConfirm = () => {
@@ -330,10 +369,7 @@ export class Notes extends Component {
   };
 
   saveNote = () => {
-    console.log("salvar nota");
     this.setState({ confirmSave: false, modified: 0 });
-
-    console.log("this.state.notes", this.state.notes);
 
     const token = localStorage.getItem("token");
     let requestConfig = {
@@ -349,10 +385,53 @@ export class Notes extends Component {
     )
       .then(response => {
         console.log(response.data);
+        this.loadNotes();
       })
       .catch(error => {
         console.log(error.response.data);
       });
+  };
+
+  search = e => {
+    const _matchedNotes = JSON.parse(JSON.stringify(this.state.notes));
+    let _searchInput = String(e.currentTarget.value);
+    _searchInput = _searchInput.toLowerCase();
+
+    if (_searchInput !== "") {
+      _matchedNotes.forEach(note => {
+        if (note.title.toLowerCase().indexOf(_searchInput) >= 0) {
+          note.show = true;
+        } else if (
+          note.text
+            .replace(/<(?:.|\n)*?>/gm, "")
+            .toLowerCase()
+            .indexOf(_searchInput) >= 0
+        ) {
+          note.show = true;
+        } else {
+          note.show = false;
+        }
+      });
+    } else {
+      _matchedNotes.forEach(note => {
+        note.show = true;
+      });
+    }
+    this.setState({ notes: _matchedNotes, noResults: false }, () => {
+      let _id = undefined;
+      this.state.notes.forEach(note => {
+        if (note.show) {
+          if (_id === undefined) {
+            _id = note.id;
+          }
+        }
+      });
+      if (_id !== undefined) {
+        this.selectNote(_id);
+      } else {
+        this.setState({ noResults: true });
+      }
+    });
   };
 
   render() {
@@ -369,19 +448,35 @@ export class Notes extends Component {
         />
         <NotesMenu>
           <NotesSearch>
-            <SearchInput icon="search" placeholder="Procurar..." fluid />
+            <SearchInput
+              icon="search"
+              placeholder="Procurar..."
+              fluid
+              onChange={this.search}
+            />
           </NotesSearch>
           {this.state.notes && (
             <NotesList>
               {this.state.notes.map((note, index) => (
-                <StyledNoteItem
-                  key={index}
-                  title={note.title}
-                  text={note.text}
-                  selected={index === this.state.selectedIndex}
-                  onClick={() => this.selectNote(index)}
-                />
+                <React.Fragment key={index}>
+                  {note.show && (
+                    <StyledNoteItem
+                      title={note.title}
+                      text={note.text}
+                      selected={note.id === this.state.selectedId}
+                      onClick={() => this.selectNote(note.id)}
+                    />
+                  )}
+                </React.Fragment>
               ))}
+              {this.state.noResults && (
+                <NoResults>
+                  <span>
+                    <Icon name="search" />
+                    Sem resultados
+                  </span>
+                </NoResults>
+              )}
             </NotesList>
           )}
           <NewNoteButton
@@ -407,7 +502,7 @@ export class Notes extends Component {
                 compact
                 color="red"
                 disabled={this.state.notes.length === 0}
-                onClick={() => this.deleteNote(this.state.selectedIndex)}
+                onClick={() => this.deleteNote(this.state.selectedId)}
               />
             </Button.Group>
           </NoteTitle>

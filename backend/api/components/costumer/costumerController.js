@@ -1,8 +1,7 @@
-// External Dependancies
 const boom = require("boom");
 const auth = require("../../auth");
-// Get Data Models
 const Costumer = require("./Costumer");
+const _ = require("lodash");
 
 // Get all costumers
 exports.getAllCostumers = async (req, res) => {
@@ -136,11 +135,11 @@ exports.getCostumerNotes = async (req, res) => {
     }
 
     const { id } = req.body;
-
     const [costumers] = await Costumer.find({ _id: id }, "notes");
+    const notes = _.orderBy(costumers.notes, "updatedAt", "desc");
 
     if (costumers.notes.length) {
-      res.status(200).send(costumers);
+      res.status(200).send({ msg: "OK", notes });
     } else {
       res.status(404).send({ msg: "Sem notas" });
     }
@@ -160,8 +159,6 @@ exports.saveCostumerNotes = async (req, res) => {
     const { id, notes } = req.body;
 
     const result = await Costumer.updateOne({ _id: id }, { notes });
-
-    console.log("result", result);
 
     if (result.ok) {
       res.status(200).send({ msg: "OK" });

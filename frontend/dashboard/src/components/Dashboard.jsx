@@ -197,7 +197,7 @@ class Dashboard extends Component {
                             component={Clients}
                           />
                           <PrivateRoute
-                            path="/dashboard/client/id/:id"
+                            path="/dashboard/cliente/id/:id"
                             component={Client}
                           />
                           <PrivateRoute
