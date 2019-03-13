@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { toast } from "react-toastify";
 import Spinner from "react-spinkit";
 import Axios from "axios";
+import _ from "lodash";
 import {
   Button,
   Form,
@@ -16,7 +17,7 @@ import {
   Input
 } from "semantic-ui-react";
 import { setCompany, setCompanyLogo } from "../dashboardActions";
-import { states } from "../../config/BrasilAddress";
+import { citiesStates } from "../../config/BrazilCitiesStates";
 import {
   formatCEP,
   formatBrazilianPhoneNumber,
@@ -257,6 +258,8 @@ class General extends Component {
         weekDayId: "sat"
       }
     },
+    states: [],
+    cities: [],
     errors: JSON.parse(JSON.stringify(errorList))
   };
 
@@ -396,7 +399,26 @@ class General extends Component {
     });
   };
 
+  populateCities = state => {
+    const _state = _.find(citiesStates.estados, function(o) {
+      return o.nome === state;
+    });
+
+    const _cities = [];
+    _state.cidades.forEach(city => {
+      _cities.push({ key: city, text: city, value: city });
+    });
+
+    this.setState({
+      cities: _cities
+    });
+  };
+
   handleAddressValue = (e, { id, value }) => {
+    if (id === "state") {
+      this.populateCities(value);
+    }
+
     let _id = e.currentTarget.id;
     let _value = e.currentTarget.value;
 
@@ -780,6 +802,13 @@ class General extends Component {
   };
 
   componentDidMount() {
+    const _states = [];
+    citiesStates.estados.forEach(state => {
+      _states.push({ key: state.nome, text: state.nome, value: state.nome });
+    });
+
+    this.setState({ states: _states });
+
     if (this.state.company === undefined && this.props.company) {
       this.setState({ company: this.props.company }, () => {
         let _state = {
@@ -909,6 +938,9 @@ class General extends Component {
   componentDidUpdate() {
     // Load logo on Canvas
     if (this.state.company !== undefined && this.canvasLogo) {
+      if (!this.state.cities.length) {
+        this.populateCities(this.state.company.address.state);
+      }
       this.canvasLogo.style.backgroundColor = this.state.company.settings.colors.primaryBack;
 
       const context = this.canvasLogo.getContext("2d");
@@ -1021,13 +1053,14 @@ class General extends Component {
               ))}
 
               <FormTitle text="Endereço" />
+
               <Form.Group widths="equal">
                 <Form.Input
                   fluid
                   label="Logradouro"
                   placeholder="Logradouro"
                   width="9"
-                  value={this.state.company.address.street || ""}
+                  value={this.state.company.address.street}
                   onChange={this.handleAddressValue}
                   id="street"
                 />
@@ -1062,24 +1095,27 @@ class General extends Component {
                 />
               </Form.Group>
               <Form.Group>
-                <Form.Input
-                  fluid
-                  label="Cidade"
-                  placeholder="Cidade"
-                  width="6"
-                  onChange={this.handleAddressValue}
-                  id="city"
-                  value={this.state.company.address.city}
-                />
                 <Form.Select
                   fluid
                   label="Estado"
-                  options={states}
+                  options={this.state.states}
                   placeholder="Estado"
                   width="4"
                   onChange={this.handleAddressValue}
                   id="state"
                   value={this.state.company.address.state}
+                  search
+                />
+                <Form.Select
+                  fluid
+                  label="Cidade"
+                  options={this.state.cities}
+                  placeholder="Cidade"
+                  width="4"
+                  onChange={this.handleAddressValue}
+                  id="city"
+                  value={this.state.company.address.city}
+                  search
                 />
               </Form.Group>
 

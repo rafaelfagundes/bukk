@@ -61,7 +61,7 @@ exports.getCostumer = async (req, res) => {
     const costumer = await Costumer.findOne({
       _id: _id,
       company: token.company
-    }).select("firstName lastName gender email phone notes tags otherInfo");
+    }).select("firstName lastName gender email phone notes tags address");
 
     if (costumer) {
       res.status(200).send(costumer);
@@ -142,6 +142,29 @@ exports.getCostumerNotes = async (req, res) => {
       res.status(200).send({ msg: "OK", notes });
     } else {
       res.status(404).send({ msg: "Sem notas" });
+    }
+  } catch (error) {}
+};
+
+// Save Clients
+exports.saveCostumer = async (req, res) => {
+  try {
+    const token = auth.verify(req.token);
+    if (!token) {
+      res.status(403).json({
+        msg: "Token inválido."
+      });
+    }
+
+    const result = await Costumer.updateOne(
+      { _id: req.body.client._id },
+      req.body.client
+    );
+
+    if (result.ok) {
+      res.status(200).send({ msg: "OK" });
+    } else {
+      res.status(404).send({ msg: "Erro ao salvar informações do cliente" });
     }
   } catch (error) {}
 };

@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import FormTitle from "../Common/FormTitle";
 import styled from "styled-components";
+import { toast } from "react-toastify";
 import FormSubTitle from "../Common/FormSubTitle";
 import {
   Icon,
@@ -14,9 +15,12 @@ import {
   Input,
   Dropdown
 } from "semantic-ui-react";
-import { formatBrazilianPhoneNumber } from "../utils";
+import { formatBrazilianPhoneNumber, formatCEP } from "../utils";
 import { citiesStates } from "../../config/BrazilCitiesStates";
 import _ from "lodash";
+import config from "../../config";
+import Axios from "axios";
+import Notification from "../Notification/Notification";
 
 /* ============================================================================
   GLOBALS
@@ -109,11 +113,10 @@ const Tag = props => (
     as="a"
     color={props.color}
     key={props.index}
-    {...props}
     className={props.className}
   >
     {props.text}
-    <Icon name="delete" onClick={() => alert("remover tag")} />
+    <Icon name="delete" onClick={props.onClick} />
   </Label>
 );
 
@@ -123,12 +126,21 @@ const Tag = props => (
   STYLED COMPONENTS
 ============================================================================ */
 
-const Columns = styled.div`
+const TwoColumns = styled.div`
   display: flex;
   flex-direction: row;
 
   > div {
     width: 50%;
+  }
+`;
+
+const ThreeColumns = styled.div`
+  display: flex;
+  flex-direction: row;
+
+  > div {
+    width: 33%;
   }
 `;
 
@@ -177,7 +189,7 @@ const StyledTag = styled(Tag)`
 
 export class General extends Component {
   state = {
-    page: "edit",
+    page: "view",
     client: this.props.client,
     info: {
       title: "",
@@ -189,25 +201,41 @@ export class General extends Component {
       text: ""
     },
     states: [],
-    cities: []
+    cities: [],
+    newPhone: {
+      number: "",
+      whatsApp: false
+    }
   };
 
   componentDidMount() {
     this.populateStates();
-    this.setState({
-      client: {
-        ...this.state.client,
-        address: {
-          street: "",
-          number: "",
-          neighborhood: "",
-          city: "",
-          state: "",
-          country: "",
-          postalCode: ""
+
+    if (!this.state.client.address) {
+      this.setState({
+        client: {
+          ...this.state.client,
+          address: {
+            street: "",
+            number: "",
+            neighborhood: "",
+            city: "",
+            state: "",
+            country: "",
+            postalCode: ""
+          }
         }
-      }
-    });
+      });
+    }
+  }
+
+  componentDidUpdate() {
+    if (
+      this.state.client.address.state !== "" &&
+      this.state.cities.length === 0
+    ) {
+      this.getCities(this.state.client.address.state);
+    }
   }
 
   populateStates = () => {
@@ -220,15 +248,17 @@ export class General extends Component {
   };
 
   populateCities = (e, { value }) => {
+    this.getCities(value);
+  };
+
+  getCities(value) {
     const _state = _.find(citiesStates.estados, function(o) {
       return o.nome === value;
     });
-
     const _cities = [];
     _state.cidades.forEach(city => {
       _cities.push({ key: city, text: city, value: city });
     });
-
     this.setState({
       cities: _cities,
       client: {
@@ -239,7 +269,7 @@ export class General extends Component {
         }
       }
     });
-  };
+  }
 
   toggleEdit = () => {
     if (this.state.page === "view") {
@@ -284,6 +314,18 @@ export class General extends Component {
     });
 
     this.setState({ client: _client, tag: { color: "grey", text: "" } });
+  };
+
+  removeTag = index => {
+    const _tags = JSON.parse(JSON.stringify(this.state.client.tags));
+    _tags.splice(index, 1);
+
+    this.setState({
+      client: {
+        ...this.state.client,
+        tags: _tags
+      }
+    });
   };
 
   handleTag = e => {
@@ -334,6 +376,30 @@ export class General extends Component {
     }
   };
 
+  handleChange = (key, value) => {
+    this.setState({
+      client: {
+        ...this.state.client,
+        [key]: value
+      }
+    });
+  };
+
+  handlePhoneChange = (index, key, value) => {
+    console.log(index, key, value);
+    // const _phones = JSON.parse(JSON.stringify(this.state.client.phone));
+    const _phones = this.state.client.phone;
+
+    _phones[index][key] = value;
+
+    this.setState({
+      client: {
+        ...this.state.client,
+        phone: _phones
+      }
+    });
+  };
+
   mapGender(gender) {
     if (gender === "F") {
       return (
@@ -372,17 +438,49 @@ export class General extends Component {
     }
   }
 
+  save = () => {
+    const token = localStorage.getItem("token");
+    let requestConfig = {
+      headers: {
+        Authorization: token
+      }
+    };
+
+    Axios.post(
+      config.api + "/costumers/save",
+      { client: this.state.client },
+      requestConfig
+    )
+      .then(response => {
+        console.log(response.data);
+        toast(
+          <Notification
+            type="success"
+            title="Dados atualizados"
+            text="Os dados foram atualizados com sucesso"
+          />
+        );
+      })
+      .catch(error => {
+        console.log(error.response.data);
+        toast(
+          <Notification
+            type="error"
+            title="Erro ao atualizar"
+            text="Erro ao tentar atualizar os dados"
+          />
+        );
+      });
+  };
+
   render() {
     const { client } = this.props;
     return (
       <>
         {this.state.page === "view" && (
           <>
-            <FormTitle
-              first
-              text={`Dados de ${client.firstName} ${client.lastName}`}
-            />
-            <Columns>
+            <FormTitle first text={`Informações Básicas`} />
+            <ThreeColumns>
               <div>
                 <FormSubTitle first text="Dados Pessoais" />
                 <p>
@@ -393,12 +491,7 @@ export class General extends Component {
                   <StyledLabel>Sexo: </StyledLabel>
                   {this.mapGender(client.gender)}
                 </p>
-                {client.otherInfo.personal.map((o, index) => (
-                  <p key={index}>
-                    <StyledLabel>{o.title}: </StyledLabel>
-                    {o.text}
-                  </p>
-                ))}
+
                 <FormSubTitle text="Contato" />
                 <p>
                   <StyledLabel>Email: </StyledLabel>
@@ -410,28 +503,40 @@ export class General extends Component {
                     {this.mapPhone(phone.number, phone.whatsApp)}
                   </p>
                 ))}
-                {client.otherInfo.contact.map((o, index) => (
-                  <p key={index}>
-                    <StyledLabel>{o.title}: </StyledLabel>
-                    {o.text}
-                  </p>
-                ))}
               </div>
               <div>
-                {client.otherInfo.other.length > 0 && (
+                {client.address && (
                   <>
-                    <FormSubTitle first text="Outras Informações" />
-                    {client.otherInfo.other.map((o, index) => (
-                      <p key={index}>
-                        <StyledLabel>{o.title}: </StyledLabel>
-                        {o.text}
-                      </p>
-                    ))}
+                    <FormSubTitle text="Endereço" first />
+                    <p>
+                      <StyledLabel>Logradouro: </StyledLabel>
+                      {client.address.street}
+                      {", "}
+                      {client.address.number}
+                    </p>
+                    <p>
+                      <StyledLabel>Bairro: </StyledLabel>
+                      {client.address.neighborhood}
+                    </p>
+                    <p>
+                      <StyledLabel>Cidade: </StyledLabel>
+                      {client.address.city}
+                    </p>
+                    <p>
+                      <StyledLabel>Estado: </StyledLabel>
+                      {client.address.state}
+                    </p>
+                    <p>
+                      <StyledLabel>CEP: </StyledLabel>
+                      {formatCEP(client.address.postalCode)}
+                    </p>
                   </>
                 )}
+              </div>
+              <div>
                 {client.tags.length > 0 && (
                   <>
-                    <FormSubTitle text="Tags" />
+                    <FormSubTitle text="Tags" first />
                     {client.tags.map((tag, index) => (
                       <Label color={tag.color} key={tag.text}>
                         {tag.text}
@@ -440,7 +545,7 @@ export class General extends Component {
                   </>
                 )}
               </div>
-            </Columns>
+            </ThreeColumns>
             <Divider style={{ marginTop: "40px" }} />
 
             <Button
@@ -466,11 +571,8 @@ export class General extends Component {
         )}
         {this.state.page === "edit" && (
           <>
-            <FormTitle
-              first
-              text={`Editar Dados de ${client.firstName} ${client.lastName}`}
-            />
-            <Columns>
+            <FormTitle first text={`Editar Informações Básicas`} />
+            <TwoColumns>
               <BasicColumn>
                 <FormSubTitle text="Informações Pessoais" first />
                 <Form>
@@ -480,12 +582,18 @@ export class General extends Component {
                       label="Nome"
                       placeholder="Nome"
                       value={this.state.client.firstName}
+                      onChange={e =>
+                        this.handleChange("firstName", e.currentTarget.value)
+                      }
                     />
                     <Form.Input
                       fluid
                       label="Sobrenome"
                       placeholder="Sobrenome"
                       value={this.state.client.lastName}
+                      onChange={e =>
+                        this.handleChange("lastName", e.currentTarget.value)
+                      }
                     />
                   </Form.Group>
                   <Form.Group inline>
@@ -494,19 +602,19 @@ export class General extends Component {
                       label="Feminino"
                       value="F"
                       checked={this.state.client.gender === "F"}
-                      onChange={this.handleChange}
+                      onChange={e => this.handleChange("gender", "F")}
                     />
                     <Form.Radio
                       label="Masculino"
                       value="M"
                       checked={this.state.client.gender === "M"}
-                      onChange={this.handleChange}
+                      onChange={e => this.handleChange("gender", "M")}
                     />
                     <Form.Radio
                       label="Outro"
                       value="O"
                       checked={this.state.client.gender === "O"}
-                      onChange={this.handleChange}
+                      onChange={e => this.handleChange("gender", "O")}
                     />
                   </Form.Group>
                   <FormSubTitle text="Contato" />
@@ -515,6 +623,9 @@ export class General extends Component {
                       label="Email"
                       placeholder="Email"
                       value={this.state.client.email}
+                      onChange={e =>
+                        this.handleChange("email", e.currentTarget.value)
+                      }
                     />
                   </Form.Group>
                   <Table fixed singleLine>
@@ -530,11 +641,19 @@ export class General extends Component {
 
                     <Table.Body>
                       {this.state.client.phone.map((phone, index) => (
-                        <Table.Row key={index + phone.number}>
+                        <Table.Row key={index}>
                           <Table.Cell>
                             <Form.Input
                               placeholder={`Telefone ${index + 1}`}
                               value={formatBrazilianPhoneNumber(phone.number)}
+                              id={index}
+                              onChange={e =>
+                                this.handlePhoneChange(
+                                  index,
+                                  "number",
+                                  e.currentTarget.value
+                                )
+                              }
                             />
                           </Table.Cell>
                           <Table.Cell>
@@ -542,6 +661,13 @@ export class General extends Component {
                               <WhatsAppCheckbox
                                 label="Número WhatsApp"
                                 checked={phone.whatsApp}
+                                onChange={e =>
+                                  this.handlePhoneChange(
+                                    index,
+                                    "whatsApp",
+                                    !phone.whatsApp
+                                  )
+                                }
                               />
                             </Form.Field>
                           </Table.Cell>
@@ -645,39 +771,42 @@ export class General extends Component {
                     </>
                   )}
                 </Form>
+                <FormSubTitle text="Tags" />
+                <TagInput
+                  label={
+                    <Dropdown
+                      defaultValue={this.state.tag.color}
+                      options={colorOptions}
+                      onChange={this.handleTagColor}
+                    />
+                  }
+                  action={
+                    <Button icon="plus" color="blue" onClick={this.addTag} />
+                  }
+                  labelPosition="left"
+                  placeholder="Nova tag"
+                  value={this.state.tag.text}
+                  onChange={this.handleTag}
+                  onKeyDown={this.handleTagKeyPress}
+                />
                 {this.state.client.tags.length > 0 && (
                   <>
-                    <FormSubTitle text="Tags" />
-                    <TagInput
-                      label={
-                        <Dropdown
-                          defaultValue={this.state.tag.color}
-                          options={colorOptions}
-                          onChange={this.handleTagColor}
-                        />
-                      }
-                      action={<Button icon="plus" color="blue" />}
-                      labelPosition="left"
-                      placeholder="Nova tag"
-                      value={this.state.tag.text}
-                      onChange={this.handleTag}
-                      onKeyDown={this.handleTagKeyPress}
-                    />
                     <Divider />
                     {this.state.client.tags.map((tag, index) => (
                       <StyledTag
                         color={tag.color}
                         key={index}
                         text={tag.text}
+                        onClick={() => this.removeTag(index)}
                       />
                     ))}
                   </>
                 )}
               </OtherColumn>
-            </Columns>
+            </TwoColumns>
             <Divider style={{ marginTop: "40px" }} />
 
-            <Button icon labelPosition="left" color="green">
+            <Button icon labelPosition="left" color="green" onClick={this.save}>
               <Icon name="cloud" />
               Atualizar Cliente
             </Button>
@@ -691,8 +820,8 @@ export class General extends Component {
               <Icon name="delete" />
               Cancelar
             </Button>
-            <pre>{JSON.stringify(this.state.client, null, 4)}</pre>
-            {/* <pre>{JSON.stringify(this.state.client.tags, null, 4)}</pre> */}
+            {/* <pre>{JSON.stringify(this.state.client, null, 2)}</pre> */}
+            {/* <pre>{JSON.stringify(this.state.client.tags, null, 4)}</pre>  */}
           </>
         )}
       </>
