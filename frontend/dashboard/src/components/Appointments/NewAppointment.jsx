@@ -129,7 +129,7 @@ const StyledSegment = styled(Segment)`
 `;
 
 const StyledSegmentClient = styled(Segment)`
-  height: 404px;
+  height: 368px;
   > .header {
     padding-top: 18px;
   }
@@ -1064,10 +1064,6 @@ export class NewAppointment extends Component {
               color={this.props.company.settings.colors.primaryBack}
             />
           )}
-          <Button floated="right" icon labelPosition="left">
-            <Icon name="delete" />
-            Cancelar
-          </Button>
         </Form>
         {/* <pre>{JSON.stringify(this.state.appointment, null, 2)}</pre> */}
       </div>

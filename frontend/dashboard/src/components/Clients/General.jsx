@@ -639,16 +639,6 @@ export class General extends Component {
                     )}
                   </PhoneLabel>
                   <Table fixed singleLine compact striped>
-                    {/* <Table.Header>
-                      <Table.Row>
-                        <Table.HeaderCell width={8}>Telefone</Table.HeaderCell>
-                        <Table.HeaderCell width={6} />
-                        {this.state.client.phone.length > 1 && (
-                          <Table.HeaderCell width={2} />
-                        )}
-                      </Table.Row>
-                    </Table.Header> */}
-
                     <Table.Body>
                       {this.state.client.phone.map((phone, index) => (
                         <Table.Row key={index}>
