@@ -10,9 +10,114 @@ import {
   Label,
   Form,
   Checkbox,
-  Table
+  Table,
+  Input,
+  Dropdown
 } from "semantic-ui-react";
 import { formatBrazilianPhoneNumber } from "../utils";
+import { citiesStates } from "../../config/BrazilCitiesStates";
+import _ from "lodash";
+
+/* ============================================================================
+  GLOBALS
+============================================================================ */
+
+const colorOptions = [
+  {
+    key: "red",
+    text: "Vermelho",
+    value: "red",
+    label: { color: "red", circular: true, empty: true }
+  },
+  {
+    key: "orange",
+    text: "Laranja",
+    value: "orange",
+    label: { color: "orange", circular: true, empty: true }
+  },
+  {
+    key: "yellow",
+    text: "Amarelo",
+    value: "yellow",
+    label: { color: "yellow", circular: true, empty: true }
+  },
+
+  {
+    key: "green",
+    text: "Verde",
+    value: "green",
+    label: { color: "green", circular: true, empty: true }
+  },
+  {
+    key: "teal",
+    text: "Verde-Azulado",
+    value: "teal",
+    label: { color: "teal", circular: true, empty: true }
+  },
+  {
+    key: "blue",
+    text: "Azul",
+    value: "blue",
+    label: { color: "blue", circular: true, empty: true }
+  },
+  {
+    key: "violet",
+    text: "Violeta",
+    value: "violet",
+    label: { color: "violet", circular: true, empty: true }
+  },
+  {
+    key: "purple",
+    text: "Roxo",
+    value: "purple",
+    label: { color: "purple", circular: true, empty: true }
+  },
+  {
+    key: "pink",
+    text: "Rosa",
+    value: "pink",
+    label: { color: "pink", circular: true, empty: true }
+  },
+  {
+    key: "brown",
+    text: "Marrom",
+    value: "brown",
+    label: { color: "brown", circular: true, empty: true }
+  },
+  {
+    key: "grey",
+    value: "grey",
+    text: "Cinza",
+    label: { color: "grey", circular: true, empty: true }
+  },
+  {
+    key: "black",
+    text: "Preto",
+    value: "black",
+    label: { color: "black", circular: true, empty: true }
+  }
+];
+
+/* ========================================================================= */
+
+/* ============================================================================
+  COMPONENTS
+============================================================================ */
+
+const Tag = props => (
+  <Label
+    as="a"
+    color={props.color}
+    key={props.index}
+    {...props}
+    className={props.className}
+  >
+    {props.text}
+    <Icon name="delete" onClick={() => alert("remover tag")} />
+  </Label>
+);
+
+/* ========================================================================= */
 
 /* ============================================================================
   STYLED COMPONENTS
@@ -47,8 +152,25 @@ const BasicColumn = styled.div`
 
 const OtherColumn = styled.div`
   padding-left: 40px;
-  max-height: 80vh !important;
-  overflow: auto;
+  /* max-height: 80vh !important; */
+  /* overflow: auto; */
+`;
+
+const TagInput = styled(Input)`
+  /* margin-top: 23px; */
+
+  width: 100%;
+
+  > div > div > div > .label {
+    border-radius: 50% !important;
+  }
+
+  > .ui .dropdown .label {
+  }
+`;
+
+const StyledTag = styled(Tag)`
+  margin-bottom: 3px !important;
 `;
 
 /* ========================================================================= */
@@ -61,7 +183,62 @@ export class General extends Component {
       title: "",
       text: ""
     },
-    showInfoForm: false
+    showInfoForm: false,
+    tag: {
+      color: "blue",
+      text: ""
+    },
+    states: [],
+    cities: []
+  };
+
+  componentDidMount() {
+    this.populateStates();
+    this.setState({
+      client: {
+        ...this.state.client,
+        address: {
+          street: "",
+          number: "",
+          neighborhood: "",
+          city: "",
+          state: "",
+          country: "",
+          postalCode: ""
+        }
+      }
+    });
+  }
+
+  populateStates = () => {
+    const _states = [];
+    citiesStates.estados.forEach(state => {
+      _states.push({ key: state.nome, text: state.nome, value: state.nome });
+    });
+
+    this.setState({ states: _states });
+  };
+
+  populateCities = (e, { value }) => {
+    const _state = _.find(citiesStates.estados, function(o) {
+      return o.nome === value;
+    });
+
+    const _cities = [];
+    _state.cidades.forEach(city => {
+      _cities.push({ key: city, text: city, value: city });
+    });
+
+    this.setState({
+      cities: _cities,
+      client: {
+        ...this.state.client,
+        address: {
+          ...this.state.client.address,
+          state: value
+        }
+      }
+    });
   };
 
   toggleEdit = () => {
@@ -96,6 +273,65 @@ export class General extends Component {
         phone: _phones
       }
     });
+  };
+
+  addTag = () => {
+    const _client = JSON.parse(JSON.stringify(this.state.client));
+
+    _client.tags.push({
+      color: this.state.tag.color,
+      text: this.state.tag.text
+    });
+
+    this.setState({ client: _client, tag: { color: "grey", text: "" } });
+  };
+
+  handleTag = e => {
+    this.setState({
+      tag: {
+        ...this.state.tag,
+        text: e.currentTarget.value
+      }
+    });
+  };
+
+  handleTagColor = (e, { value }) => {
+    this.setState({
+      tag: {
+        ...this.state.tag,
+        color: value
+      }
+    });
+  };
+
+  handleTagKeyPress = e => {
+    if (e.keyCode === 13) {
+      this.addTag();
+    }
+  };
+
+  handleAddress = (e, { value }) => {
+    if (e.currentTarget.name !== undefined) {
+      this.setState({
+        client: {
+          ...this.state.client,
+          address: {
+            ...this.state.client.address,
+            [e.currentTarget.name]: e.currentTarget.value
+          }
+        }
+      });
+    } else {
+      this.setState({
+        client: {
+          ...this.state.client,
+          address: {
+            ...this.state.client.address,
+            city: value
+          }
+        }
+      });
+    }
   };
 
   mapGender(gender) {
@@ -203,7 +439,6 @@ export class General extends Component {
                     ))}
                   </>
                 )}
-                {/* <pre>{JSON.stringify(this.props.client, null, 2)}</pre> */}
               </div>
             </Columns>
             <Divider style={{ marginTop: "40px" }} />
@@ -343,17 +578,98 @@ export class General extends Component {
                 </Form>
               </BasicColumn>
               <OtherColumn>
+                <Form>
+                  <FormSubTitle text="Endereço" first />
+                  {this.state.client.address && (
+                    <>
+                      <Form.Group>
+                        <Form.Input
+                          width={12}
+                          id="street"
+                          name="street"
+                          label="Rua"
+                          placeholder="Rua"
+                          onChange={this.handleAddress}
+                          value={this.state.client.address.street}
+                        />
+                        <Form.Input
+                          width={4}
+                          id="number"
+                          name="number"
+                          label="Número"
+                          placeholder="Número"
+                          onChange={this.handleAddress}
+                          value={this.state.client.address.number}
+                        />
+                      </Form.Group>
+                      <Form.Group>
+                        <Form.Select
+                          label="Estado"
+                          placeholder="Estado"
+                          options={this.state.states}
+                          onChange={this.populateCities}
+                          value={this.state.client.address.state}
+                          width={7}
+                          search
+                        />
+                        <Form.Select
+                          label="Cidade"
+                          placeholder="Cidade"
+                          options={this.state.cities}
+                          width={11}
+                          onChange={this.handleAddress}
+                          value={this.state.client.address.city}
+                          search
+                        />
+                      </Form.Group>
+                      <Form.Group>
+                        <Form.Input
+                          id="neighborhood"
+                          name="neighborhood"
+                          label="Bairro"
+                          placeholder="Bairro"
+                          onChange={this.handleAddress}
+                          value={this.state.client.address.neighborhood}
+                          width={11}
+                        />
+                        <Form.Input
+                          id="postalCode"
+                          name="postalCode"
+                          label="CEP"
+                          placeholder="CEP"
+                          onChange={this.handleAddress}
+                          value={this.state.client.address.postalCode}
+                          width={5}
+                        />
+                      </Form.Group>
+                    </>
+                  )}
+                </Form>
                 {this.state.client.tags.length > 0 && (
                   <>
-                    <FormSubTitle text="Tags" first />
-                    {this.state.client.tags.map((tag, index) => (
-                      <Label as="a" color={tag.color} key={index}>
-                        {tag.text}
-                        <Icon
-                          name="delete"
-                          onClick={() => alert("remover tag")}
+                    <FormSubTitle text="Tags" />
+                    <TagInput
+                      label={
+                        <Dropdown
+                          defaultValue={this.state.tag.color}
+                          options={colorOptions}
+                          onChange={this.handleTagColor}
                         />
-                      </Label>
+                      }
+                      action={<Button icon="plus" color="blue" />}
+                      labelPosition="left"
+                      placeholder="Nova tag"
+                      value={this.state.tag.text}
+                      onChange={this.handleTag}
+                      onKeyDown={this.handleTagKeyPress}
+                    />
+                    <Divider />
+                    {this.state.client.tags.map((tag, index) => (
+                      <StyledTag
+                        color={tag.color}
+                        key={index}
+                        text={tag.text}
+                      />
                     ))}
                   </>
                 )}
@@ -375,7 +691,8 @@ export class General extends Component {
               <Icon name="delete" />
               Cancelar
             </Button>
-            {/* <pre>{JSON.stringify(this.props.client, null, 2)}</pre> */}
+            <pre>{JSON.stringify(this.state.client, null, 4)}</pre>
+            {/* <pre>{JSON.stringify(this.state.client.tags, null, 4)}</pre> */}
           </>
         )}
       </>

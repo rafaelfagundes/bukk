@@ -791,6 +791,7 @@ export class NewAppointment extends Component {
                         allowSameDay={false}
                         locale="pt-BR"
                         minDate={new Date()}
+                        suppressClassNameWarning
                       />
                     </DateColumn>
                     <TimeColumn>

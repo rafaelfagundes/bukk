@@ -9,7 +9,7 @@ import { Input, Button } from "semantic-ui-react";
 import styled from "styled-components";
 
 var SEARCH_TIMEOUT = undefined;
-var MAX_NUMBER_RESULTS = 20;
+var MAX_NUMBER_RESULTS = 10;
 
 const SearchInput = styled(Input)`
   height: initial !important;
@@ -32,6 +32,12 @@ const ClearSearchButton = styled(Button)`
 
 const menuItems = [
   {
+    id: "info",
+    icon: "chart bar",
+    text: "Informações",
+    link: "/dashboard/clientes/informacoes"
+  },
+  {
     id: "lista",
     icon: "address book outline",
     text: "Listagem",
@@ -42,12 +48,6 @@ const menuItems = [
     icon: "user plus",
     text: "Adicionar Cliente",
     link: "/dashboard/clientes/novo"
-  },
-  {
-    id: "info",
-    icon: "chart bar",
-    text: "Informações",
-    link: "/dashboard/clientes/informacoes"
   }
 ];
 
