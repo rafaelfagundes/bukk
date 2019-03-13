@@ -148,6 +148,10 @@ const StyledLabel = styled.span`
   opacity: 0.8;
 `;
 
+const PhoneLabel = styled.div`
+  margin: 0px 0 -10px 0 !important;
+`;
+
 const WhatsAppCheckbox = styled(Checkbox)`
   > label {
     color: rgb(25, 183, 25) !important;
@@ -189,7 +193,7 @@ const StyledTag = styled(Tag)`
 
 export class General extends Component {
   state = {
-    page: "view",
+    page: "edit",
     client: this.props.client,
     info: {
       title: "",
@@ -386,8 +390,6 @@ export class General extends Component {
   };
 
   handlePhoneChange = (index, key, value) => {
-    console.log(index, key, value);
-    // const _phones = JSON.parse(JSON.stringify(this.state.client.phone));
     const _phones = this.state.client.phone;
 
     _phones[index][key] = value;
@@ -628,8 +630,16 @@ export class General extends Component {
                       }
                     />
                   </Form.Group>
-                  <Table fixed singleLine>
-                    <Table.Header>
+                  <PhoneLabel className="field">
+                    {this.state.client.phone.length <= 1 && (
+                      <label>Telefone</label>
+                    )}
+                    {this.state.client.phone.length > 1 && (
+                      <label>Telefones</label>
+                    )}
+                  </PhoneLabel>
+                  <Table fixed singleLine compact striped>
+                    {/* <Table.Header>
                       <Table.Row>
                         <Table.HeaderCell width={8}>Telefone</Table.HeaderCell>
                         <Table.HeaderCell width={6} />
@@ -637,12 +647,12 @@ export class General extends Component {
                           <Table.HeaderCell width={2} />
                         )}
                       </Table.Row>
-                    </Table.Header>
+                    </Table.Header> */}
 
                     <Table.Body>
                       {this.state.client.phone.map((phone, index) => (
                         <Table.Row key={index}>
-                          <Table.Cell>
+                          <Table.Cell width={4}>
                             <Form.Input
                               placeholder={`Telefone ${index + 1}`}
                               value={formatBrazilianPhoneNumber(phone.number)}
@@ -656,7 +666,7 @@ export class General extends Component {
                               }
                             />
                           </Table.Cell>
-                          <Table.Cell>
+                          <Table.Cell width={4}>
                             <Form.Field title="Informe se este número está vinculado ao WhatsApp">
                               <WhatsAppCheckbox
                                 label="Número WhatsApp"
@@ -672,7 +682,7 @@ export class General extends Component {
                             </Form.Field>
                           </Table.Cell>
                           {this.state.client.phone.length > 1 && (
-                            <Table.Cell textAlign="right">
+                            <Table.Cell textAlign="right" width={1}>
                               <Form.Field>
                                 <PhoneRemoveButton
                                   icon="delete"
