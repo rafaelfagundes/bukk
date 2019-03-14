@@ -7,6 +7,7 @@ import config from "../../config";
 import { List } from "./List";
 import { Input, Button } from "semantic-ui-react";
 import styled from "styled-components";
+import NewEdit from "./NewEdit";
 
 var SEARCH_TIMEOUT = undefined;
 var MAX_NUMBER_RESULTS = 10;
@@ -14,7 +15,6 @@ var MAX_NUMBER_RESULTS = 10;
 const SearchInput = styled(Input)`
   height: initial !important;
   width: 100% !important;
-  margin-bottom: 20px;
   > ::placeholder {
     color: #555 !important;
   }
@@ -30,7 +30,17 @@ const ClearSearchButton = styled(Button)`
   margin-left: 10px !important;
 `;
 
+const SearchHolder = styled.div`
+  display: flex;
+`;
+
 const menuItems = [
+  {
+    id: "novo",
+    icon: "user plus",
+    text: "Adicionar Cliente",
+    link: "/dashboard/clientes/novo"
+  },
   {
     id: "info",
     icon: "chart bar",
@@ -40,14 +50,8 @@ const menuItems = [
   {
     id: "lista",
     icon: "address book outline",
-    text: "Listagem",
+    text: "Lista de Clientes",
     link: "/dashboard/clientes"
-  },
-  {
-    id: "new",
-    icon: "user plus",
-    text: "Adicionar Cliente",
-    link: "/dashboard/clientes/novo"
   }
 ];
 
@@ -55,10 +59,15 @@ export class Clients extends Component {
   constructor(props) {
     super(props);
     let _activeItem = undefined;
+
     if (props.match.params.option === "lista") {
       _activeItem = "lista";
+    } else if (props.match.params.option === "novo") {
+      _activeItem = "novo";
     } else if (props.match.params.option === "informacoes") {
       _activeItem = "info";
+    } else if (props.match.params.option === undefined) {
+      _activeItem = "lista";
     } else {
       _activeItem = "lista";
     }
@@ -177,6 +186,10 @@ export class Clients extends Component {
       icon: "users",
       title: "Clientes"
     });
+    this.getClients(page);
+  }
+
+  getClients(page = 0) {
     const token = localStorage.getItem("token");
     let requestConfig = {
       headers: {
@@ -213,7 +226,7 @@ export class Clients extends Component {
         />
         {this.state.activeItem === "lista" && (
           <>
-            <div style={{ width: "100%", display: "flex" }}>
+            <SearchHolder>
               <SearchInput
                 action={
                   <Button
@@ -227,7 +240,7 @@ export class Clients extends Component {
                 placeholder="Pesquisar cliente..."
                 onChange={this.handleSearch}
                 value={this.state.searchQuery}
-                size="large"
+                // size="large"
               />
               {this.state.clearSearchButton && (
                 <ClearSearchButton
@@ -236,7 +249,7 @@ export class Clients extends Component {
                   onClick={this.clearSearch}
                 />
               )}
-            </div>
+            </SearchHolder>
             {this.state.costumers && (
               <List
                 clients={this.state.costumers}
@@ -252,6 +265,11 @@ export class Clients extends Component {
         {this.state.activeItem === "info" && (
           <>
             <h1>Informações</h1>
+          </>
+        )}
+        {this.state.activeItem === "novo" && (
+          <>
+            <NewEdit {...this.props} newOrEdit="new" />
           </>
         )}
       </>

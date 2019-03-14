@@ -57,16 +57,16 @@ const getAppointmentBgColor = status => {
 
 const menuItems = [
   {
-    id: "calendar",
-    icon: "calendar alternate outline",
-    text: "Calendário",
-    link: "/dashboard/agendamentos/calendario"
-  },
-  {
     id: "new",
     icon: "plus",
     text: "Novo Agendamento",
     link: "/dashboard/agendamentos/novo"
+  },
+  {
+    id: "calendar",
+    icon: "calendar alternate outline",
+    text: "Calendário",
+    link: "/dashboard/agendamentos/calendario"
   },
   {
     id: "next",
@@ -75,10 +75,10 @@ const menuItems = [
     link: "/dashboard/agendamentos/futuros"
   },
   {
-    id: "before",
+    id: "closed",
     icon: "history",
-    text: "Agendamentos Anteriores",
-    link: "/dashboard/agendamentos/anteriores",
+    text: "Agendamentos Terminados",
+    link: "/dashboard/agendamentos/terminados",
     right: true
   }
 ];
@@ -118,16 +118,35 @@ const TableBody = ({
   cancelAppointment,
   setConfirmationModal
 }) => {
-  let _fullDate = true;
-  if (moment().isSame(moment(data[0].start), "day")) {
-    _fullDate = false;
+  function getFullDate(start, end) {
+    return (
+      moment(start).format("dddd, DD/MM/YYYY[ - ]HH:mm") +
+      " às " +
+      moment(end).format("HH:mm")
+    );
   }
-  if (
-    moment()
-      .add(1, "day")
-      .isSame(moment(data[0].start), "day")
-  ) {
-    _fullDate = false;
+
+  function getDate(start, end, status) {
+    const _fullDate =
+      moment(start).format("ddd, DD/MM/YYYY[ - ]HH:mm") +
+      " às " +
+      moment(end).format("HH:mm");
+    const _shortDate =
+      moment(start).format("HH:mm") + " às " + moment(end).format("HH:mm");
+
+    if (status === "canceled") {
+      return _fullDate;
+    } else if (moment().isSame(moment(start), "day")) {
+      return _shortDate;
+    } else if (
+      moment()
+        .add(1, "day")
+        .isSame(moment(start), "day")
+    ) {
+      return _shortDate;
+    } else {
+      return _fullDate;
+    }
   }
 
   return (
@@ -195,27 +214,8 @@ const TableBody = ({
           >
             {app.costumer.firstName + " " + app.costumer.lastName}
           </Table.Cell>
-          <Table.Cell
-            title={
-              moment(app.start).format("dddd, DD/MM/YYYY[ - ]HH:mm") +
-              " às " +
-              moment(app.end).format("HH:mm")
-            }
-          >
-            {_fullDate && (
-              <>
-                {moment(app.start).format("dd DD/MM/YY[ - ]HH:mm") +
-                  " às " +
-                  moment(app.end).format("HH:mm")}
-              </>
-            )}
-            {!_fullDate && (
-              <>
-                {moment(app.start).format("HH:mm") +
-                  " às " +
-                  moment(app.end).format("HH:mm")}
-              </>
-            )}
+          <Table.Cell title={getFullDate(app.start, app.end)}>
+            {getDate(app.start, app.end, app.status)}
           </Table.Cell>
           <Table.Cell textAlign="right">
             {!past && (
@@ -350,8 +350,8 @@ export class Appointments extends Component {
       _activeItem = "calendar";
     } else if (this.props.match.params.option === "futuros") {
       _activeItem = "next";
-    } else if (this.props.match.params.option === "anteriores") {
-      _activeItem = "before";
+    } else if (this.props.match.params.option === "terminados") {
+      _activeItem = "closed";
     } else if (this.props.match.params.option === "novo") {
       _activeItem = "new";
     } else {
@@ -643,10 +643,10 @@ export class Appointments extends Component {
           />
         </div>
         {this.state.loading && <Loading />}
-        {this.state.before.length > 0 && this.state.activeItem === "before" && (
+        {this.state.before.length > 0 && this.state.activeItem === "closed" && (
           <>
             <div>
-              <FormTitle text="Agendamentos Anteriores" first />
+              <FormTitle text="Agendamentos Terminados" first />
             </div>
             <Table fixed singleLine striped compact>
               <TableHeader />
@@ -659,7 +659,7 @@ export class Appointments extends Component {
           </>
         )}
         {this.state.before.length === 0 &&
-          this.state.activeItem === "before" && (
+          this.state.activeItem === "closed" && (
             <NoAppointments text="Não há agendamentos prévios" />
           )}
         {this.state.today.length === 0 &&

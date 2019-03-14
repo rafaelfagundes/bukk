@@ -156,17 +156,31 @@ exports.saveCostumer = async (req, res) => {
       });
     }
 
-    const result = await Costumer.updateOne(
-      { _id: req.body.client._id },
-      req.body.client
-    );
+    let result = undefined;
+    if (req.body.newOrEdit === "new") {
+      req.body.client["company"] = token.company;
+      result = await Costumer.create(req.body.client);
+    }
+    if (req.body.newOrEdit === "edit") {
+      result = await Costumer.updateOne(
+        { _id: req.body.client._id },
+        req.body.client
+      );
+    }
 
-    if (result.ok) {
+    if (req.body.newOrEdit === "edit" && result.ok) {
+      res.status(200).send({ msg: "OK" });
+    } else if (req.body.newOrEdit === "new" && result) {
       res.status(200).send({ msg: "OK" });
     } else {
       res.status(404).send({ msg: "Erro ao salvar informações do cliente" });
     }
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .send({ msg: "Erro ao salvar informações do cliente", error });
+  }
 };
 
 // Save notes

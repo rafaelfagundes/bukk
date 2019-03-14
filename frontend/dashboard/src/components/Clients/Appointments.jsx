@@ -80,18 +80,20 @@ const TableBody = ({
   cancelAppointment,
   setConfirmationModal
 }) => {
-  let _fullDate = undefined;
-
-  _fullDate = true;
-  if (moment().isSame(moment(data[0].start), "day")) {
-    _fullDate = false;
+  function getFullDate(start, end) {
+    return (
+      moment(start).format("dddd, DD/MM/YYYY[ - ]HH:mm") +
+      " às " +
+      moment(end).format("HH:mm")
+    );
   }
-  if (
-    moment()
-      .add(1, "day")
-      .isSame(moment(data[0].start), "day")
-  ) {
-    _fullDate = false;
+
+  function getDate(start, end) {
+    return (
+      moment(start).format("dd, DD/MM/YYYY[ - ]HH:mm") +
+      " às " +
+      moment(end).format("HH:mm")
+    );
   }
 
   return (
@@ -154,32 +156,8 @@ const TableBody = ({
           <Table.Cell title={app.user.firstName + " " + app.user.lastName}>
             {app.user.firstName + " " + app.user.lastName}
           </Table.Cell>
-          {/* <Table.Cell
-            title={app.costumer.firstName + " " + app.costumer.lastName}
-          >
-            {app.costumer.firstName + " " + app.costumer.lastName}
-          </Table.Cell> */}
-          <Table.Cell
-            title={
-              moment(app.start).format("dddd, DD/MM/YYYY[ - ]HH:mm") +
-              " às " +
-              moment(app.end).format("HH:mm")
-            }
-          >
-            {_fullDate && (
-              <>
-                {moment(app.start).format("dd DD/MM/YY[ - ]HH:mm") +
-                  " às " +
-                  moment(app.end).format("HH:mm")}
-              </>
-            )}
-            {!_fullDate && (
-              <>
-                {moment(app.start).format("HH:mm") +
-                  " às " +
-                  moment(app.end).format("HH:mm")}
-              </>
-            )}
+          <Table.Cell title={getFullDate(app.start, app.end)}>
+            {getDate(app.start, app.end)}
           </Table.Cell>
           <Table.Cell textAlign="right">
             {!past && (
