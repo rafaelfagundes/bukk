@@ -3,6 +3,14 @@ import { connect } from "react-redux";
 import styled from "styled-components";
 import FormTitle from "../Common/FormTitle";
 import FormSubTitle from "../Common/FormSubTitle";
+import ValidationError from "../Common/ValidationError";
+import {
+  isEmail,
+  isAlpha,
+  isNumeric,
+  isAlphaNumeric,
+  isPostalCode
+} from "../validation";
 import { toast } from "react-toastify";
 import {
   Form,
@@ -102,6 +110,19 @@ const colorOptions = [
   }
 ];
 
+const errorsTemplate = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  gender: "",
+  street: "",
+  number: "",
+  neighborhood: "",
+  city: "",
+  state: "",
+  postalCode: ""
+};
+
 /* ========================================================================= */
 
 /* ============================================================================
@@ -174,6 +195,11 @@ const StyledTag = styled(Tag)`
   margin-bottom: 3px !important;
 `;
 
+const ErrorHolder = styled.div`
+  padding-bottom: 10px;
+  margin-top: -10px;
+`;
+
 /* ========================================================================= */
 export class NewEdit extends Component {
   state = {
@@ -190,7 +216,6 @@ export class NewEdit extends Component {
           whatsApp: false
         }
       ],
-      company: "",
       tags: [],
       address: {
         street: "",
@@ -212,7 +237,8 @@ export class NewEdit extends Component {
       text: ""
     },
     states: [],
-    cities: []
+    cities: [],
+    errors: errorsTemplate
   };
 
   componentDidMount() {
@@ -248,6 +274,82 @@ export class NewEdit extends Component {
       this.getCities(this.state.client.address.state);
     }
   }
+
+  mapKeyToLabel = value => {
+    const labels = {
+      firstName: "Nome",
+      lastName: "Sobrenome",
+      email: "Email",
+      gender: "Sexo",
+      street: "Logradouro",
+      number: "Número",
+      neighborhood: "Bairro",
+      city: "Cidade",
+      state: "Estado",
+      postalCode: "CEP"
+    };
+
+    return labels[value];
+  };
+
+  validate = () => {
+    let _errors = JSON.parse(JSON.stringify(errorsTemplate));
+
+    for (var key in this.state.client) {
+      if (key === "firstName" || key === "lastName") {
+        if (!isAlpha(this.state.client[key])) {
+          _errors[key] = `O valor do campo ${this.mapKeyToLabel(
+            key
+          )} é inválido`;
+        }
+      }
+      if (key === "email") {
+        if (!isEmail(this.state.client[key])) {
+          _errors[key] = `O valor do campo ${this.mapKeyToLabel(
+            key
+          )} é inválido`;
+        }
+      }
+      if (this.state.client[key] === "") {
+        _errors[key] = `Por favor, preencha o campo ${this.mapKeyToLabel(key)}`;
+      }
+      if (key === "address") {
+        for (var key2 in this.state.client.address) {
+          if (key2 === "street" || key2 === "neighborhood") {
+            if (!isAlpha(this.state.client.address[key2])) {
+              _errors[key2] = `O valor do campo ${this.mapKeyToLabel(
+                key2
+              )} é inválido`;
+            }
+          }
+
+          if (key2 === "postalCode") {
+            if (
+              this.state.client.address[key2] !== "" &&
+              !isPostalCode(this.state.client.address[key2])
+            ) {
+              _errors[key2] = `O valor do campo ${this.mapKeyToLabel(
+                key2
+              )} é inválido`;
+            }
+          }
+          if (this.state.client.address[key2] === "") {
+            _errors[key2] = `Por favor, preencha o campo ${this.mapKeyToLabel(
+              key2
+            )}`;
+          }
+        }
+      }
+    }
+
+    let hasErrors = false;
+    for (var error in _errors) {
+      hasErrors = _errors[error] !== "";
+    }
+    this.setState({ errors: _errors });
+    console.log("hasErrors", hasErrors);
+    return !hasErrors;
+  };
 
   populateStates = () => {
     const _states = [];
@@ -448,6 +550,10 @@ export class NewEdit extends Component {
   }
 
   save = () => {
+    if (!this.validate()) {
+      return false;
+    }
+
     const token = localStorage.getItem("token");
     let requestConfig = {
       headers: {
@@ -470,7 +576,8 @@ export class NewEdit extends Component {
             />
           );
         } else {
-          this.props.updated(true);
+          this.props.setPage("lista");
+          this.props.history.push("/dashboard/clientes/lista");
           toast(
             <Notification
               type="success"
@@ -521,6 +628,7 @@ export class NewEdit extends Component {
                   label="Nome"
                   placeholder="Nome"
                   value={this.state.client.firstName}
+                  error={this.state.errors.firstName !== ""}
                   onChange={e =>
                     this.handleChange("firstName", e.currentTarget.value)
                   }
@@ -530,11 +638,22 @@ export class NewEdit extends Component {
                   label="Sobrenome"
                   placeholder="Sobrenome"
                   value={this.state.client.lastName}
+                  error={this.state.errors.lastName !== ""}
                   onChange={e =>
                     this.handleChange("lastName", e.currentTarget.value)
                   }
                 />
               </Form.Group>
+              <ErrorHolder>
+                <ValidationError
+                  show={this.state.errors.firstName !== ""}
+                  error={this.state.errors.firstName}
+                />
+                <ValidationError
+                  show={this.state.errors.lastName !== ""}
+                  error={this.state.errors.lastName}
+                />
+              </ErrorHolder>
               <Form.Group inline>
                 <label>Sexo</label>
                 <Form.Radio
@@ -556,17 +675,30 @@ export class NewEdit extends Component {
                   onChange={e => this.handleChange("gender", "O")}
                 />
               </Form.Group>
+              <ErrorHolder>
+                <ValidationError
+                  show={this.state.errors.gender !== ""}
+                  error={this.state.errors.gender}
+                />
+              </ErrorHolder>
               <FormSubTitle text="Contato" />
               <Form.Group widths="equal">
                 <Form.Input
                   label="Email"
                   placeholder="Email"
                   value={this.state.client.email}
+                  error={this.state.errors.email !== ""}
                   onChange={e =>
                     this.handleChange("email", e.currentTarget.value)
                   }
                 />
               </Form.Group>
+              <ErrorHolder>
+                <ValidationError
+                  show={this.state.errors.email !== ""}
+                  error={this.state.errors.email}
+                />
+              </ErrorHolder>
               <PhoneLabel className="field">
                 {this.state.client.phone.length <= 1 && <label>Telefone</label>}
                 {this.state.client.phone.length > 1 && <label>Telefones</label>}
@@ -646,9 +778,10 @@ export class NewEdit extends Component {
                       width={12}
                       id="street"
                       name="street"
-                      label="Rua"
-                      placeholder="Rua"
+                      label="Logradouro"
+                      placeholder="Logradouro"
                       onChange={this.handleAddress}
+                      error={this.state.errors.street !== ""}
                       value={this.state.client.address.street}
                     />
                     <Form.Input
@@ -658,15 +791,27 @@ export class NewEdit extends Component {
                       label="Número"
                       placeholder="Número"
                       onChange={this.handleAddress}
+                      error={this.state.errors.number !== ""}
                       value={this.state.client.address.number}
                     />
                   </Form.Group>
+                  <ErrorHolder>
+                    <ValidationError
+                      show={this.state.errors.street !== ""}
+                      error={this.state.errors.street}
+                    />
+                    <ValidationError
+                      show={this.state.errors.number !== ""}
+                      error={this.state.errors.number}
+                    />
+                  </ErrorHolder>
                   <Form.Group>
                     <Form.Select
                       label="Estado"
                       placeholder="Estado"
                       options={this.state.states}
                       onChange={this.populateCities}
+                      error={this.state.errors.state !== ""}
                       value={this.state.client.address.state}
                       width={7}
                       search
@@ -677,10 +822,21 @@ export class NewEdit extends Component {
                       options={this.state.cities}
                       width={11}
                       onChange={this.handleAddress}
+                      error={this.state.errors.city !== ""}
                       value={this.state.client.address.city}
                       search
                     />
                   </Form.Group>
+                  <ErrorHolder>
+                    <ValidationError
+                      show={this.state.errors.state !== ""}
+                      error={this.state.errors.state}
+                    />
+                    <ValidationError
+                      show={this.state.errors.city !== ""}
+                      error={this.state.errors.city}
+                    />
+                  </ErrorHolder>
                   <Form.Group>
                     <Form.Input
                       id="neighborhood"
@@ -688,6 +844,7 @@ export class NewEdit extends Component {
                       label="Bairro"
                       placeholder="Bairro"
                       onChange={this.handleAddress}
+                      error={this.state.errors.neighborhood !== ""}
                       value={this.state.client.address.neighborhood}
                       width={11}
                     />
@@ -697,10 +854,21 @@ export class NewEdit extends Component {
                       label="CEP"
                       placeholder="CEP"
                       onChange={this.handleAddress}
+                      error={this.state.errors.postalCode !== ""}
                       value={formatCEP(this.state.client.address.postalCode)}
                       width={5}
                     />
                   </Form.Group>
+                  <ErrorHolder>
+                    <ValidationError
+                      show={this.state.errors.neighborhood !== ""}
+                      error={this.state.errors.neighborhood}
+                    />
+                    <ValidationError
+                      show={this.state.errors.postalCode !== ""}
+                      error={this.state.errors.postalCode}
+                    />
+                  </ErrorHolder>
                 </>
               )}
             </Form>

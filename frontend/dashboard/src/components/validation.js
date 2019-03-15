@@ -7,7 +7,9 @@ exports.isEmpty = validator.isEmpty;
 
 exports.isAlpha = value => {
   try {
-    let v = String(value).replace(/\s/g, "");
+    let v = String(value)
+      .replace(/\s/g, "")
+      .replace(/-/g, "");
     return validator.isAlpha(v, locale);
   } catch (err) {
     console.error(err);
@@ -17,7 +19,9 @@ exports.isAlpha = value => {
 
 exports.isAlphaNumeric = value => {
   try {
-    let v = String(value).replace(/\s/g, "");
+    let v = String(value)
+      .replace(/\s/g, "")
+      .replace(/-/g, "");
     return validator.isAlphanumeric(v, locale);
   } catch (err) {
     console.error(err);
