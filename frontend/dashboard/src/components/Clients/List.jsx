@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { toast } from "react-toastify";
 import {
   Table,
   Menu,
@@ -7,16 +8,18 @@ import {
   Button,
   Segment,
   Header,
-  Input
+  Input,
+  Confirm
 } from "semantic-ui-react";
 import { formatBrazilianPhoneNumber } from "../utils";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Axios from "axios";
 import config from "../../config";
+import Notification from "../Notification/Notification";
 
 var SEARCH_TIMEOUT = undefined;
-var MAX_NUMBER_RESULTS = 10;
+var MAX_NUMBER_RESULTS = 9;
 
 /* ===============================================================================
   STYLED COMPONENTS
@@ -121,7 +124,9 @@ export class List extends Component {
     pagination: {
       pages: []
     },
-    clearSearchButton: false
+    clearSearchButton: false,
+    confirm: false,
+    removeId: ""
   };
 
   componentDidMount() {
@@ -250,9 +255,65 @@ export class List extends Component {
         console.log(error);
       });
   }
+
+  delete = () => {
+    console.log("remover cliente", this.state.removeId);
+    this.setState({ confirm: false });
+
+    const token = localStorage.getItem("token");
+    let requestConfig = {
+      headers: {
+        Authorization: token
+      }
+    };
+
+    Axios.post(
+      config.api + "/costumers/delete",
+      { id: this.state.removeId },
+      requestConfig
+    )
+      .then(response => {
+        console.log(response.data);
+        this.getClients();
+        toast(
+          <Notification
+            type="success"
+            title="Cliente removido"
+            text="Os cliente foi removido com sucesso"
+          />
+        );
+      })
+      .catch(error => {
+        toast(
+          <Notification
+            type="error"
+            title="Erro ao remover"
+            text="Erro ao tentar remover o cliente"
+          />
+        );
+      });
+  };
+
+  removeClient = id => {
+    this.setState({ confirm: true, removeId: id });
+  };
+
+  closeConfirm = () => {
+    this.setState({ confirm: false });
+  };
+
   render() {
     return (
       <>
+        <Confirm
+          open={this.state.confirm}
+          header="Tem certeza?"
+          content="Tem certeza que deseja remover o cliente?"
+          onCancel={this.closeConfirm}
+          onConfirm={this.delete}
+          cancelButton="Cancelar"
+          confirmButton="Remover"
+        />
         {this.state.costumers.length > 0 && (
           <>
             <SearchHolder>
@@ -319,6 +380,7 @@ export class List extends Component {
                         title="Remover Cliente"
                         inverted
                         color="red"
+                        onClick={() => this.removeClient(client._id)}
                       />
                     </Table.Cell>
                   </Table.Row>

@@ -1,11 +1,15 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { toast } from "react-toastify";
 import FormTitle from "../Common/FormTitle";
 import styled from "styled-components";
 import FormSubTitle from "../Common/FormSubTitle";
 import { Icon, Divider, Button, Label } from "semantic-ui-react";
 import { formatBrazilianPhoneNumber, formatCEP } from "../utils";
 import { NewEdit } from "./NewEdit";
+import Axios from "axios";
+import config from "../../config";
+import Notification from "../Notification/Notification";
 
 /* ============================================================================
   STYLED COMPONENTS
@@ -112,6 +116,39 @@ export class General extends Component {
     }
   }
 
+  delete = id => {
+    this.setState({ confirm: false });
+
+    const token = localStorage.getItem("token");
+    let requestConfig = {
+      headers: {
+        Authorization: token
+      }
+    };
+
+    Axios.post(config.api + "/costumers/delete", { id }, requestConfig)
+      .then(response => {
+        console.log(response.data);
+        this.props.history.goBack();
+        toast(
+          <Notification
+            type="success"
+            title="Cliente removido"
+            text="Os cliente foi removido com sucesso"
+          />
+        );
+      })
+      .catch(error => {
+        toast(
+          <Notification
+            type="error"
+            title="Erro ao remover"
+            text="Erro ao tentar remover o cliente"
+          />
+        );
+      });
+  };
+
   render() {
     const { client } = this.props;
     return (
@@ -196,7 +233,15 @@ export class General extends Component {
               <Icon name="pencil" />
               Editar Informações
             </Button>
-
+            <Button
+              icon
+              labelPosition="left"
+              color="red"
+              onClick={() => this.delete(this.state.client._id)}
+            >
+              <Icon name="delete" />
+              Remover Cliente
+            </Button>
             <Button
               icon
               labelPosition="left"

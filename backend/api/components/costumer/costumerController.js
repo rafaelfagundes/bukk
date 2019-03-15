@@ -44,7 +44,7 @@ exports.getAllCostumers = async (req, res) => {
       }
     }
   } catch (err) {
-    // throw boom.boomify(err);
+    res.status(500).send({ msg: err });
   }
 };
 
@@ -176,7 +176,6 @@ exports.saveCostumer = async (req, res) => {
       res.status(404).send({ msg: "Erro ao salvar informações do cliente" });
     }
   } catch (error) {
-    console.log(error);
     res
       .status(500)
       .send({ msg: "Erro ao salvar informações do cliente", error });
@@ -203,4 +202,28 @@ exports.saveCostumerNotes = async (req, res) => {
       res.status(404).send({ msg: "Notas não puderam ser atualizadas" });
     }
   } catch (error) {}
+};
+
+// Delete Costumer
+
+exports.deleteCostumer = async (req, res) => {
+  try {
+    const token = auth.verify(req.token);
+    if (!token) {
+      res.status(403).json({
+        msg: "Token inválido."
+      });
+    }
+
+    const { id } = req.body;
+    const result = await Costumer.deleteOne({ _id: id });
+
+    if (result.ok) {
+      res.status(200).send({ msg: "OK" });
+    } else {
+      res.status(404).send({ msg: "Notas não puderam ser atualizadas" });
+    }
+  } catch (error) {
+    res.status(500).send({ msg: error });
+  }
 };

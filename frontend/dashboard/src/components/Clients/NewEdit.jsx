@@ -4,13 +4,7 @@ import styled from "styled-components";
 import FormTitle from "../Common/FormTitle";
 import FormSubTitle from "../Common/FormSubTitle";
 import ValidationError from "../Common/ValidationError";
-import {
-  isEmail,
-  isAlpha,
-  isNumeric,
-  isAlphaNumeric,
-  isPostalCode
-} from "../validation";
+import { isEmail, isAlpha, isPostalCode } from "../validation";
 import { toast } from "react-toastify";
 import {
   Form,
