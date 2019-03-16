@@ -37,7 +37,7 @@ const Pages = styled.div`
   padding: 40px;
   overflow-y: auto;
   z-index: 98;
-  height: calc(100vh - 50px);
+  height: calc(100vh - 40px);
   background-color: white;
   margin-left: 214px;
 `;

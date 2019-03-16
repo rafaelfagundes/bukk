@@ -31,7 +31,13 @@ export class Client extends Component {
     client: undefined,
     activeItem: "geral",
     menuItems: undefined,
-    stats: []
+    stats: [],
+    statistics: true
+  };
+
+  showStatistics = value => {
+    console.log(value);
+    this.setState({ statistics: value });
   };
 
   handleMenuClick = name => {
@@ -145,8 +151,12 @@ export class Client extends Component {
 
         {activeItem === "geral" && this.state.client && (
           <>
-            <Statistics stats={this.state.stats} />
-            <General client={this.state.client} history={this.props.history} />
+            {this.state.statistics && <Statistics stats={this.state.stats} />}
+            <General
+              client={this.state.client}
+              history={this.props.history}
+              showStatistics={this.showStatistics}
+            />
           </>
         )}
         {activeItem === "agendamentos" && <Appointments {...this.props} />}

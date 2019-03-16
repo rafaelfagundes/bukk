@@ -5,7 +5,6 @@ import styled from "styled-components";
 import { toast } from "react-toastify";
 import Spinner from "react-spinkit";
 import Axios from "axios";
-import _ from "lodash";
 import {
   Button,
   Form,
@@ -17,7 +16,6 @@ import {
   Input
 } from "semantic-ui-react";
 import { setCompany, setCompanyLogo } from "../dashboardActions";
-import { citiesStates } from "../../config/BrazilCitiesStates";
 import {
   formatCEP,
   formatBrazilianPhoneNumber,
@@ -400,18 +398,7 @@ class General extends Component {
   };
 
   populateCities = state => {
-    const _state = _.find(citiesStates.estados, function(o) {
-      return o.nome === state;
-    });
-
-    const _cities = [];
-    _state.cidades.forEach(city => {
-      _cities.push({ key: city, text: city, value: city });
-    });
-
-    this.setState({
-      cities: _cities
-    });
+    this.getStates(state);
   };
 
   handleAddressValue = (e, { id, value }) => {
@@ -801,13 +788,49 @@ class General extends Component {
       });
   };
 
-  componentDidMount() {
-    const _states = [];
-    citiesStates.estados.forEach(state => {
-      _states.push({ key: state.nome, text: state.nome, value: state.nome });
-    });
+  getStates = () => {
+    Axios.get(config.api + "/utils/getstates")
+      .then(response => {
+        let _states = [];
+        response.data.states.forEach(state => {
+          _states.push({
+            key: state.abbr,
+            text: state.name,
+            value: state.name
+          });
+        });
+        this.setState({ states: _states });
+      })
+      .catch();
+  };
 
-    this.setState({ states: _states });
+  getCities = () => {
+    Axios.get(config.api + "/utils/getcities", {
+      params: {
+        state: this.state.company.address.state
+      }
+    })
+      .then(response => {
+        let _cities = [];
+        response.data.cities.forEach(city => {
+          _cities.push({
+            key: city,
+            text: city,
+            value: city
+          });
+        });
+        this.setState({ cities: _cities });
+      })
+      .catch();
+  };
+
+  componentDidMount() {
+    // const _states = [];
+    // citiesStates.estados.forEach(state => {
+    //   _states.push({ key: state.nome, text: state.nome, value: state.nome });
+    // });
+
+    // this.setState({ states: _states });
 
     if (this.state.company === undefined && this.props.company) {
       this.setState({ company: this.props.company }, () => {
@@ -939,7 +962,8 @@ class General extends Component {
     // Load logo on Canvas
     if (this.state.company !== undefined && this.canvasLogo) {
       if (!this.state.cities.length) {
-        this.populateCities(this.state.company.address.state);
+        this.getStates();
+        this.getCities(this.state.company.address.state);
       }
       this.canvasLogo.style.backgroundColor = this.state.company.settings.colors.primaryBack;
 

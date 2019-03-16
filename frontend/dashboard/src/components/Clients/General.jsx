@@ -73,8 +73,10 @@ export class General extends Component {
   toggleEdit = () => {
     if (this.state.page === "view") {
       this.setState({ page: "edit" });
+      this.props.showStatistics(false);
     } else {
       this.setState({ page: "view" });
+      this.props.showStatistics(true);
     }
   };
 

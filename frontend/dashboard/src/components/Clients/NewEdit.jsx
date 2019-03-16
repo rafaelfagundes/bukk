@@ -18,8 +18,6 @@ import {
   Label
 } from "semantic-ui-react";
 import { formatBrazilianPhoneNumber, formatCEP } from "../utils";
-import { citiesStates } from "../../config/BrazilCitiesStates";
-import _ from "lodash";
 import config from "../../config";
 import Axios from "axios";
 import Notification from "../Notification/Notification";
@@ -235,9 +233,43 @@ export class NewEdit extends Component {
     errors: errorsTemplate
   };
 
-  componentDidMount() {
-    this.populateStates();
+  getStates = () => {
+    Axios.get(config.api + "/utils/getstates")
+      .then(response => {
+        let _states = [];
+        response.data.states.forEach(state => {
+          _states.push({
+            key: state.abbr,
+            text: state.name,
+            value: state.name
+          });
+        });
+        this.setState({ states: _states });
+      })
+      .catch();
+  };
 
+  getCities = state => {
+    Axios.get(config.api + "/utils/getcities", {
+      params: {
+        state
+      }
+    })
+      .then(response => {
+        let _cities = [];
+        response.data.cities.forEach(city => {
+          _cities.push({
+            key: city,
+            text: city,
+            value: city
+          });
+        });
+        this.setState({ cities: _cities });
+      })
+      .catch();
+  };
+
+  componentDidMount() {
     if (this.state.newOrEdit === "edit" && this.props.client) {
       this.setState({ client: this.props.client });
     }
@@ -265,6 +297,7 @@ export class NewEdit extends Component {
       this.state.client.address.state !== "" &&
       this.state.cities.length === 0
     ) {
+      this.getStates();
       this.getCities(this.state.client.address.state);
     }
   }
@@ -344,39 +377,6 @@ export class NewEdit extends Component {
     console.log("hasErrors", hasErrors);
     return !hasErrors;
   };
-
-  populateStates = () => {
-    const _states = [];
-    citiesStates.estados.forEach(state => {
-      _states.push({ key: state.nome, text: state.nome, value: state.nome });
-    });
-
-    this.setState({ states: _states });
-  };
-
-  populateCities = (e, { value }) => {
-    this.getCities(value);
-  };
-
-  getCities(value) {
-    const _state = _.find(citiesStates.estados, function(o) {
-      return o.nome === value;
-    });
-    const _cities = [];
-    _state.cidades.forEach(city => {
-      _cities.push({ key: city, text: city, value: city });
-    });
-    this.setState({
-      cities: _cities,
-      client: {
-        ...this.state.client,
-        address: {
-          ...this.state.client.address,
-          state: value
-        }
-      }
-    });
-  }
 
   toggleEdit = () => {
     if (this.state.page === "view") {
@@ -800,26 +800,31 @@ export class NewEdit extends Component {
                     />
                   </ErrorHolder>
                   <Form.Group>
-                    <Form.Select
-                      label="Estado"
-                      placeholder="Estado"
-                      options={this.state.states}
-                      onChange={this.populateCities}
-                      error={this.state.errors.state !== ""}
-                      value={this.state.client.address.state}
-                      width={7}
-                      search
-                    />
-                    <Form.Select
-                      label="Cidade"
-                      placeholder="Cidade"
-                      options={this.state.cities}
-                      width={11}
-                      onChange={this.handleAddress}
-                      error={this.state.errors.city !== ""}
-                      value={this.state.client.address.city}
-                      search
-                    />
+                    {this.state.states.length > 0 && (
+                      <Form.Select
+                        label="Estado"
+                        placeholder="Estado"
+                        options={this.state.states}
+                        onChange={this.populateCities}
+                        error={this.state.errors.state !== ""}
+                        value={this.state.client.address.state}
+                        width={7}
+                        search
+                      />
+                    )}
+
+                    {this.state.cities.length > 0 && (
+                      <Form.Select
+                        label="Cidade"
+                        placeholder="Cidade"
+                        options={this.state.cities}
+                        width={11}
+                        onChange={this.handleAddress}
+                        error={this.state.errors.city !== ""}
+                        value={this.state.client.address.city}
+                        search
+                      />
+                    )}
                   </Form.Group>
                   <ErrorHolder>
                     <ValidationError
@@ -915,8 +920,6 @@ export class NewEdit extends Component {
           <Icon name="delete" />
           Cancelar
         </Button>
-        {/* <pre>{JSON.stringify(this.state.client, null, 2)}</pre> */}
-        {/* <pre>{JSON.stringify(this.state.client.tags, null, 4)}</pre>  */}
       </>
     );
   }
