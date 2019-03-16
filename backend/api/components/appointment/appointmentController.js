@@ -10,6 +10,7 @@ shortid.characters(
 // Get Data Models
 const Appointment = require("./Appointment");
 const Costumer = require("../costumer/Costumer");
+const Service = require("../service/Service");
 
 const Mail = require("../mail/Mail");
 const templates = require("../mail/templates/emailTemplates");
@@ -74,6 +75,10 @@ exports.addAppointmentViaDashboard = async (req, res) => {
     try {
       const _confirmationId = shortid.generate();
       appointment.confirmationId = _confirmationId;
+
+      const _service = await Service.findById(appointment.service);
+      appointment["value"] = _service.value;
+
       const _costumer = {
         firstName: client.firstName,
         lastName: client.lastName,
@@ -159,6 +164,7 @@ exports.addAppointment = async (req, res) => {
 
       let _appointments = [];
       _services.forEach(_service => {
+        console.log(_service);
         let _appointment = {
           confirmationId: _confirmationId,
           costumer: resultCostumer._id,
@@ -167,6 +173,7 @@ exports.addAppointment = async (req, res) => {
           service: _service.serviceId,
           start: _service.start,
           end: _service.end,
+          value: _service.value,
           status: "created",
           notes: _client.obs
         };

@@ -1,6 +1,8 @@
 const boom = require("boom");
 const auth = require("../../auth");
+const mongoose = require("mongoose");
 const Costumer = require("./Costumer");
+const Appointment = require("../appointment/Appointment");
 const _ = require("lodash");
 
 // Get all costumers
@@ -120,7 +122,7 @@ exports.findCostumers = async (req, res) => {
       res.status(404).send({ msg: "Nenhum cliente encontrado" });
     }
   } catch (err) {
-    // throw boom.boomify(err);
+    res.status(500).send({ msg: err });
   }
 };
 
@@ -205,7 +207,6 @@ exports.saveCostumerNotes = async (req, res) => {
 };
 
 // Delete Costumer
-
 exports.deleteCostumer = async (req, res) => {
   try {
     const token = auth.verify(req.token);
@@ -223,6 +224,49 @@ exports.deleteCostumer = async (req, res) => {
     } else {
       res.status(404).send({ msg: "Notas não puderam ser atualizadas" });
     }
+  } catch (error) {
+    res.status(500).send({ msg: error });
+  }
+};
+
+// Costumer Stats
+exports.stats = async (req, res) => {
+  try {
+    const token = auth.verify(req.token);
+    if (!token) {
+      res.status(403).json({
+        msg: "Token inválido."
+      });
+    }
+
+    const appointments = await Appointment.find({ costumer: req.body.id });
+
+    let stats = {};
+    stats["appointments"] = appointments.length;
+
+    let _totalPayed = 0;
+    let _totalNotPayed = 0;
+    let _totalCanceled = 0;
+    let _totalMissed = 0;
+
+    appointments.forEach(app => {
+      if (app.status === "payed") {
+        _totalPayed += app.value;
+      } else if (app.status === "done") {
+        _totalNotPayed += app.value;
+      } else if (app.status === "canceled") {
+        _totalCanceled++;
+      } else if (app.status === "missed") {
+        _totalMissed++;
+      }
+    });
+
+    stats["totalPayed"] = _totalPayed;
+    stats["totalNotPayed"] = _totalNotPayed;
+    stats["totalCanceled"] = _totalCanceled;
+    stats["totalMissed"] = _totalMissed;
+
+    res.status(200).send({ msg: "OK", stats });
   } catch (error) {
     res.status(500).send({ msg: error });
   }

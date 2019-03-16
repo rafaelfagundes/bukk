@@ -7,6 +7,7 @@ import General from "./General";
 import Notes from "./Notes";
 import Appointments from "./Appointments";
 import { setCurrentPage } from "../dashboardActions";
+import { Statistics } from "./Statistics";
 
 const menuItems = [
   {
@@ -29,7 +30,8 @@ export class Client extends Component {
   state = {
     client: undefined,
     activeItem: "geral",
-    menuItems: undefined
+    menuItems: undefined,
+    stats: []
   };
 
   handleMenuClick = name => {
@@ -67,6 +69,65 @@ export class Client extends Component {
       .catch(error => {
         console.log(error);
       });
+
+    Axios.post(
+      config.api + "/costumers/stats",
+      { id: this.props.match.params.id },
+      requestConfig
+    )
+      .then(response => {
+        console.log("response.data", response.data);
+
+        let _stats = response.data.stats;
+
+        this.setState({
+          stats: [
+            {
+              prefix: "",
+              suffix: "",
+              label: "Agendamentos",
+              value: _stats.appointments,
+              type: "number",
+              color: "blue"
+            },
+            {
+              prefix: "R$",
+              suffix: "",
+              label: "Pago",
+              value: _stats.totalPayed,
+              type: "currency",
+              color: "teal"
+            },
+            {
+              prefix: "R$",
+              suffix: "",
+              label: "Não-Pago",
+              value: _stats.totalNotPayed,
+              type: "currency",
+              color: "yellow"
+            },
+            {
+              prefix: "",
+              suffix: "",
+              label: "Cancelados",
+              value: _stats.totalCanceled,
+              type: "number",
+              color: "red"
+            },
+            {
+              prefix: "",
+              suffix: "",
+              label: "Faltas",
+              value: _stats.totalMissed,
+              type: "number",
+              color: "orange"
+            }
+          ]
+        });
+      })
+      .catch(error => {
+        console.log(error);
+      });
   }
 
   render() {
@@ -83,7 +144,10 @@ export class Client extends Component {
         )}
 
         {activeItem === "geral" && this.state.client && (
-          <General client={this.state.client} history={this.props.history} />
+          <>
+            <Statistics stats={this.state.stats} />
+            <General client={this.state.client} history={this.props.history} />
+          </>
         )}
         {activeItem === "agendamentos" && <Appointments {...this.props} />}
         {activeItem === "notas" && <Notes {...this.props} />}

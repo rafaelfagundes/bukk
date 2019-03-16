@@ -348,7 +348,7 @@ class DateTimePage extends Component {
 
   handleService = (e, { value }) => {
     const _serviceKey = generateUUID();
-    const { duration } = getService(value, this.props.services);
+    const _serviceObj = getService(value, this.props.services);
 
     const _service = {
       serviceKey: _serviceKey,
@@ -356,7 +356,8 @@ class DateTimePage extends Component {
       start: moment(),
       end: "",
       specialistId: "",
-      duration: duration
+      duration: _serviceObj.duration,
+      value: _serviceObj.value
     };
 
     // If already exists a entry, set to this entry

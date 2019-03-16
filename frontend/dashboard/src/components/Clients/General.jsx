@@ -155,7 +155,7 @@ export class General extends Component {
       <>
         {this.state.page === "view" && (
           <>
-            <FormTitle first text={`Informações Básicas`} />
+            <FormTitle text={`Informações Básicas`} />
             <ThreeColumns>
               <div>
                 <FormSubTitle first text="Dados Pessoais" />

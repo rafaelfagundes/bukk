@@ -607,7 +607,7 @@ export class NewEdit extends Component {
     return (
       <>
         {this.state.newOrEdit === "edit" && (
-          <FormTitle first text={`Editar Informações Básicas`} />
+          <FormTitle text={`Editar Informações Básicas`} />
         )}
         {this.state.newOrEdit === "new" && (
           <FormTitle first text={`Novo Cliente`} />

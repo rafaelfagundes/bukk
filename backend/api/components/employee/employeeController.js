@@ -61,7 +61,6 @@ function generateMonthSchedule(date, workingDays, timeFrame = 30) {
           minute: hour.end.split(":")[1],
           second: "00"
         });
-
         // Check if it is in time range
         if (
           moment(monthStart).isSameOrAfter(_s) &&
