@@ -36,7 +36,6 @@ export class Client extends Component {
   };
 
   showStatistics = value => {
-    console.log(value);
     this.setState({ statistics: value });
   };
 
@@ -82,8 +81,6 @@ export class Client extends Component {
       requestConfig
     )
       .then(response => {
-        console.log("response.data", response.data);
-
         let _stats = response.data.stats;
 
         this.setState({

@@ -825,13 +825,6 @@ class General extends Component {
   };
 
   componentDidMount() {
-    // const _states = [];
-    // citiesStates.estados.forEach(state => {
-    //   _states.push({ key: state.nome, text: state.nome, value: state.nome });
-    // });
-
-    // this.setState({ states: _states });
-
     if (this.state.company === undefined && this.props.company) {
       this.setState({ company: this.props.company }, () => {
         let _state = {
@@ -955,16 +948,24 @@ class General extends Component {
         });
         this.setState(_state);
       });
+      if (!this.state.cities.length) {
+        setTimeout(() => {
+          this.getStates();
+          this.getCities(this.state.company.address.state);
+        }, 500);
+      }
     }
   }
 
   componentDidUpdate() {
     // Load logo on Canvas
     if (this.state.company !== undefined && this.canvasLogo) {
-      if (!this.state.cities.length) {
-        this.getStates();
-        this.getCities(this.state.company.address.state);
-      }
+      // if (!this.state.cities.length) {
+      //   setTimeout(() => {
+      //     this.getStates();
+      //     this.getCities(this.state.company.address.state);
+      //   }, 250);
+      // }
       this.canvasLogo.style.backgroundColor = this.state.company.settings.colors.primaryBack;
 
       const context = this.canvasLogo.getContext("2d");

@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import styled from "styled-components";
 import FormTitle from "../Common/FormTitle";
 import FormSubTitle from "../Common/FormSubTitle";
+import Spinner from "react-spinkit";
 import ValidationError from "../Common/ValidationError";
 import { isEmail, isAlpha, isPostalCode } from "../validation";
 import { toast } from "react-toastify";
@@ -297,8 +298,10 @@ export class NewEdit extends Component {
       this.state.client.address.state !== "" &&
       this.state.cities.length === 0
     ) {
-      this.getStates();
-      this.getCities(this.state.client.address.state);
+      setTimeout(() => {
+        this.getStates();
+        this.getCities(this.state.client.address.state);
+      }, 500);
     }
   }
 
@@ -374,7 +377,6 @@ export class NewEdit extends Component {
       hasErrors = _errors[error] !== "";
     }
     this.setState({ errors: _errors });
-    console.log("hasErrors", hasErrors);
     return !hasErrors;
   };
 
@@ -582,7 +584,6 @@ export class NewEdit extends Component {
         }
       })
       .catch(error => {
-        console.log(error);
         if (this.state.newOrEdit === "edit") {
           toast(
             <Notification
@@ -800,6 +801,16 @@ export class NewEdit extends Component {
                     />
                   </ErrorHolder>
                   <Form.Group>
+                    {this.state.cities.length === 0 && (
+                      <Spinner
+                        style={{
+                          top: "6px",
+                          left: "5px",
+                          display: "inline-block"
+                        }}
+                        name="circle"
+                      />
+                    )}
                     {this.state.states.length > 0 && (
                       <Form.Select
                         label="Estado"
