@@ -10,13 +10,13 @@ shortid.characters(
 // Get Data Models
 const Appointment = require("./Appointment");
 const Costumer = require("../costumer/Costumer");
+const Service = require("../service/Service");
 
 const Mail = require("../mail/Mail");
 const templates = require("../mail/templates/emailTemplates");
 
 // Aux functions
 const checkEmptyTimeInSchedule = async services => {
-  console.log("@checkEmptyTimeInSchedule");
   const jobs = [];
 
   services.forEach(service => {
@@ -75,6 +75,10 @@ exports.addAppointmentViaDashboard = async (req, res) => {
     try {
       const _confirmationId = shortid.generate();
       appointment.confirmationId = _confirmationId;
+
+      const _service = await Service.findById(appointment.service);
+      appointment["value"] = _service.value;
+
       const _costumer = {
         firstName: client.firstName,
         lastName: client.lastName,
@@ -160,6 +164,7 @@ exports.addAppointment = async (req, res) => {
 
       let _appointments = [];
       _services.forEach(_service => {
+        console.log(_service);
         let _appointment = {
           confirmationId: _confirmationId,
           costumer: resultCostumer._id,
@@ -168,6 +173,7 @@ exports.addAppointment = async (req, res) => {
           service: _service.serviceId,
           start: _service.start,
           end: _service.end,
+          value: _service.value,
           status: "created",
           notes: _client.obs
         };
@@ -224,6 +230,90 @@ exports.getAllAppointments = async (req, res) => {
   try {
     let _match = {
       company: mongoose.Types.ObjectId(token.company)
+    };
+    if (token.role === "employee") {
+      _match["employee"] = mongoose.Types.ObjectId(token.employee);
+    }
+    const appointments = await Appointment.aggregate([
+      {
+        $match: _match
+      },
+      {
+        $lookup: {
+          from: "employees",
+          localField: "employee",
+          foreignField: "_id",
+          as: "employee"
+        }
+      },
+      {
+        $unwind: {
+          path: "$employee"
+        }
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "employee.user",
+          foreignField: "_id",
+          as: "user"
+        }
+      },
+      {
+        $unwind: {
+          path: "$user"
+        }
+      },
+      {
+        $lookup: {
+          from: "costumers",
+          localField: "costumer",
+          foreignField: "_id",
+          as: "costumer"
+        }
+      },
+      {
+        $unwind: {
+          path: "$costumer"
+        }
+      },
+      {
+        $lookup: {
+          from: "services",
+          localField: "service",
+          foreignField: "_id",
+          as: "service"
+        }
+      },
+      {
+        $unwind: {
+          path: "$service"
+        }
+      },
+      {
+        $sort: {
+          start: 1
+        }
+      }
+    ]);
+    res.status(200).send({ msg: "OK", appointments });
+  } catch (error) {
+    res.status(500).send({ msg: "Erro ao listar agendamentos" });
+  }
+};
+
+exports.getAllClientAppointments = async (req, res) => {
+  const token = auth.verify(req.token);
+  if (!token) {
+    res.status(403).json({
+      msg: "Token inválido."
+    });
+  }
+
+  try {
+    let _match = {
+      company: mongoose.Types.ObjectId(token.company),
+      costumer: mongoose.Types.ObjectId(req.body.id)
     };
     if (token.role === "employee") {
       _match["employee"] = mongoose.Types.ObjectId(token.employee);
@@ -444,9 +534,6 @@ exports.updateMany = async (req, res) => {
       _match["employee"] = token.employee;
     }
 
-    console.log(req.body);
-    console.log(_match);
-
     let _ops = [];
 
     req.body.forEach(appointment => {
@@ -462,7 +549,6 @@ exports.updateMany = async (req, res) => {
     // console.dir(JSON.stringify(_ops));
 
     const update = await Appointment.bulkWrite(_ops);
-    console.log(update);
     if (update.ok) {
       res.status(200).send({ msg: "OK" });
     } else {

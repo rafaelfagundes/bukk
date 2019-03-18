@@ -1,16 +1,80 @@
 import React, { Component } from "react";
 import { Menu, Icon, Image } from "semantic-ui-react";
-import "./TopMenu.css";
 import UserMenu from "./UserMenu/UserMenu";
 import { connect } from "react-redux";
 import { NotificationArea } from "./NotificationArea/NotificationArea";
+import styled from "styled-components";
 
-const mapStateToProps = state => {
-  return {
-    user: state.dashboard.user,
-    currentPage: state.dashboard.currentPage
-  };
-};
+/* ===============================================================================
+  STYLED COMPONENTS
+=============================================================================== */
+
+const StyledIcon = styled(Icon)`
+  color: ${props => props.iconcolor || "#333"};
+`;
+
+const StyledTitle = styled.span`
+  color: ${props => props.fontcolor || "#333"};
+`;
+
+const StyledTopMenu = styled(Menu)`
+  box-shadow: 0px 1px 15px 1px rgba(69, 65, 78, 0.1) !important;
+  position: fixed;
+  width: calc(100% - 190px);
+  top: 0px;
+  left: 205px;
+  z-index: 100;
+  background-color: white !important;
+  min-height: 80px;
+`;
+
+const StyledSubTitle = styled.span`
+  color: #666;
+  padding-left: 10px;
+  font-size: 1rem;
+  margin-left: 10px;
+`;
+
+const TopMenuTitle = styled.div`
+  min-width: 400px;
+  line-height: 80px;
+  font-size: 1.5rem;
+  font-weight: 400;
+  padding-left: 38px;
+  color: #333;
+  > i {
+    margin-right: 5px;
+  }
+`;
+
+const UserMenuTrigger = styled(Image)`
+  cursor: pointer;
+  min-width: 36px;
+  min-height: 36px;
+  border-radius: 100%;
+`;
+
+const MenuRightSpacer = styled.div`
+  width: 25px;
+`;
+
+const NotificationTrigger = styled(Menu.Item)`
+  cursor: pointer;
+`;
+
+const TriggerNumber = styled.div`
+  font-weight: 700;
+  background-color: #0e6eb8;
+  color: #fff;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  line-height: 18px;
+  display: inline-block;
+  text-align: center;
+`;
+
+/* ============================================================================ */
 
 class TopMenu extends Component {
   state = {
@@ -56,38 +120,37 @@ class TopMenu extends Component {
 
   render() {
     return (
-      <Menu secondary className="TopMenu" id="top-menu">
-        <div id="top-menu-title" className="top-menu-title">
-          <Icon
-            name={
-              this.props.currentPage === undefined
-                ? "home"
-                : this.props.currentPage.icon
-            }
-          />
-          {this.props.currentPage === undefined
-            ? ""
-            : this.props.currentPage.title}
-          <span className="top-menu-subtitle">
-            {this.props.currentPage === undefined
-              ? ""
-              : this.props.currentPage.subtitle}
-          </span>
-        </div>
+      <StyledTopMenu secondary className="TopMenu" id="top-menu">
+        {this.props.company && this.props.currentPage && (
+          <TopMenuTitle id="top-menu-title" className="top-menu-title">
+            <StyledIcon
+              name={this.props.currentPage.icon}
+              iconcolor={this.props.company.settings.colors.primaryBack}
+            />
+            <StyledTitle
+              fontcolor={this.props.company.settings.colors.primaryBack}
+            >
+              {this.props.currentPage.title}
+            </StyledTitle>
+            <StyledSubTitle className="top-menu-subtitle">
+              {this.props.currentPage.subtitle}
+            </StyledSubTitle>
+          </TopMenuTitle>
+        )}
 
         <Menu.Menu position="right">
           {/* <Menu.Item>
             <Input icon="search" placeholder="Procurar..." />
           </Menu.Item> */}
-          <Menu.Item className="notification-area-trigger">
+          <NotificationTrigger className="notification-area-trigger">
             <div>
               <Icon name="bell outline" />
-              <span>4</span>
+              <TriggerNumber>5</TriggerNumber>
             </div>
             <NotificationArea triggerClass="notification-area-trigger" />
-          </Menu.Item>
+          </NotificationTrigger>
           <Menu.Item>
-            <Image
+            <UserMenuTrigger
               src={this.props.user === undefined ? "" : this.props.user.avatar}
               avatar
               rounded
@@ -99,12 +162,20 @@ class TopMenu extends Component {
           <Menu.Item name="expand" onClick={this.toggleFullScreen}>
             <Icon name={this.state.fullscreenIcon} />
           </Menu.Item>
-          <div id="menu-right-spacer" />
+          <MenuRightSpacer />
         </Menu.Menu>
-      </Menu>
+      </StyledTopMenu>
     );
   }
 }
+
+const mapStateToProps = state => {
+  return {
+    user: state.dashboard.user,
+    currentPage: state.dashboard.currentPage,
+    company: state.dashboard.company
+  };
+};
 
 export default connect(
   mapStateToProps,

@@ -25,6 +25,34 @@ import Information from "../Common/Information";
 import ValidationError from "../Common/ValidationError";
 import validator from "validator";
 import { isAlpha, isMobilePhoneWithDDD, isPhoneWithDDD } from "../validation";
+import styled from "styled-components";
+
+/* ===============================================================================
+  STYLED COMPONENTS
+=============================================================================== */
+
+const NewEmployeeInfo = styled.div`
+  border-left: 3px solid #2185d0;
+  padding: 10px 10px 10px 15px;
+  margin-top: 30px;
+
+  > h3 {
+    font-size: 1.1rem;
+    color: #186199;
+  }
+  > p {
+    color: #666;
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.8rem;
+  }
+`;
+
+const Avatar = styled(Image)`
+  margin: 0 0px 15px 0;
+`;
+
+/* ============================================================================ */
 
 const errorsTemplate = {
   basic: [],
@@ -673,15 +701,15 @@ export class Staff extends Component {
           !this.state.addClicked && (
             <>
               <FormTitle text="Funcionários" first />
-              <Table celled padded>
+              <Table fixed striped singleLine compact>
                 <Table.Header>
                   <Table.Row>
-                    <Table.HeaderCell>Ativo?</Table.HeaderCell>
-                    <Table.HeaderCell>Nome</Table.HeaderCell>
-                    <Table.HeaderCell>Função</Table.HeaderCell>
-                    <Table.HeaderCell>Email</Table.HeaderCell>
-                    <Table.HeaderCell>Telefone</Table.HeaderCell>
-                    <Table.HeaderCell>Ações</Table.HeaderCell>
+                    <Table.HeaderCell width={1}>Status</Table.HeaderCell>
+                    <Table.HeaderCell width={3}>Nome</Table.HeaderCell>
+                    <Table.HeaderCell width={4}>Função</Table.HeaderCell>
+                    <Table.HeaderCell width={3}>Email</Table.HeaderCell>
+                    <Table.HeaderCell width={2}>Telefone</Table.HeaderCell>
+                    <Table.HeaderCell width={2} />
                   </Table.Row>
                 </Table.Header>
                 <Table.Body>
@@ -709,11 +737,14 @@ export class Staff extends Component {
                           ? formatBrazilianPhoneNumber(employee.phone)
                           : "-"}
                       </Table.Cell>
-                      <Table.Cell>
+                      <Table.Cell textAlign="right">
                         <Button
                           icon
                           onClick={this.handleEditEmployee}
                           id={"edit-" + index}
+                          color="blue"
+                          compact
+                          inverted
                         >
                           <Icon name="edit" />
                         </Button>
@@ -722,6 +753,8 @@ export class Staff extends Component {
                           onClick={this.handleEmployeeActions}
                           id={"remove-" + index}
                           color="red"
+                          compact
+                          inverted
                         >
                           <Icon name="delete" />
                         </Button>
@@ -732,14 +765,12 @@ export class Staff extends Component {
               </Table>
 
               <Button
-                color="green"
-                icon
-                labelPosition="left"
+                icon="plus"
+                color="blue"
+                content="Adicionar Funcionário"
+                compact
                 onClick={this.handleEmployeeAdd}
-              >
-                <Icon name="plus" />
-                Adicionar Funcionário
-              </Button>
+              />
             </>
           )}
         {/* ===========================================================
@@ -791,25 +822,25 @@ export class Staff extends Component {
                 error={error.msg}
               />
             ))}
-            <div className="add-new-employee-info">
-              <h3 className="add-new-employee-info-title">Observações:</h3>
-              <p className="add-new-employee-info-text">
+            <NewEmployeeInfo>
+              <h3>Observações:</h3>
+              <p>
                 O novo funcionário receberá por email as instruções de como
                 acessar o sistema.
               </p>
-              <p className="add-new-employee-info-text">
+              <p>
                 Ao acessar o sistema pela primeira vez, o funcionário deverá
                 alterar a senha gerada automaticamente.
               </p>
-              <p className="add-new-employee-info-text">
+              <p>
                 O novo funcionário só poderá ser habilitado após preenchido
                 todos os campos obrigatórios.
               </p>
-              <p className="add-new-employee-info-text">
+              <p>
                 Após clicar em adicionar, você será redirecionado para a tela de
                 conclusão de cadastro.
               </p>
-            </div>
+            </NewEmployeeInfo>
             <Divider style={{ marginTop: "40px" }} />
             <Button
               icon
@@ -911,7 +942,7 @@ export class Staff extends Component {
                 text={_employee.firstName + " " + _employee.lastName}
               />
               <FormSubTitle text="Foto do Funcionário" />
-              <Image
+              <Avatar
                 src={_employee.avatar}
                 size="small"
                 rounded

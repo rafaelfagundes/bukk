@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import { toast } from "react-toastify";
 import { connect } from "react-redux";
+import styled, { keyframes } from "styled-components";
 import Spinner from "react-spinkit";
 import {
   Image,
@@ -21,7 +22,6 @@ import {
   setUser,
   setUserAvatar
 } from "../dashboardActions";
-import "./Profile.css";
 import Axios from "axios";
 import config from "../../config";
 import { formatCEP, formatBrazilianPhoneNumber } from "../utils";
@@ -33,6 +33,114 @@ import FormTitle from "../Common/FormTitle";
 
 // Locale file for moment
 moment.locale("pt-br", calendarLocale);
+
+/* ===============================================================================
+  STYLED COMPONENTS
+=============================================================================== */
+
+const StyledProfile = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+
+const ProfileView = styled.div`
+  padding: 0 20px 0 30px;
+  width: 100%;
+
+  > h2 {
+    font-weight: 400;
+    color: #777;
+    padding: 0 !important;
+    margin: 0 0 10px 0 !important;
+  }
+  > ul {
+    padding: 0 0 0 0px;
+    margin: 0 0 30px 0 !important;
+  }
+  > ul li {
+    list-style: none;
+    line-height: 25px;
+    opacity: 0.9;
+  }
+`;
+
+const Avatar = styled(Image)`
+  min-width: 290px;
+`;
+
+const CardLinks = styled(Card.Content)`
+  display: flex;
+  flex-direction: column;
+`;
+
+const CardLink = styled(Label)`
+  background: transparent !important;
+  padding: 0 !important;
+  font-weight: 400 !important;
+  margin-bottom: 5px !important;
+  color: rgba(0, 0, 0, 0.8) !important;
+  cursor: pointer;
+  > i {
+    margin-right: 5px !important;
+  }
+
+  > :hover {
+    opacity: 1.5;
+    cursor: pointer;
+    color: rgba(0, 5, 70, 0.8) !important;
+  }
+
+  > :first-child {
+    margin-top: 5px !important;
+    margin-bottom: 15px !important;
+  }
+`;
+
+const PasswordChangeLink = styled(Button)`
+  color: rgba(0, 0, 0, 0.8) !important;
+  background: transparent !important;
+  padding: 0 !important;
+  font-weight: 400 !important;
+  margin-bottom: 5px !important;
+  text-align: left !important;
+  opacity: 1 !important;
+  cursor: pointer;
+  > :hover {
+    color: rgba(0, 5, 70, 0.8) !important;
+    opacity: 1 !important;
+  }
+  > i {
+    margin: 0 3px 0 0 !important;
+    opacity: 1 !important;
+  }
+`;
+
+const ProfileLabel = styled.span`
+  opacity: 0.8;
+`;
+
+const Edit = styled.div`
+  width: 100%;
+`;
+
+const PasswordForm = styled.div`
+  width: 100%;
+`;
+
+const Error = styled.div`
+  color: red;
+`;
+
+const spin = keyframes`
+100% {
+  transform: rotate(360deg);
+}
+`;
+
+const ImageSpinner = styled(Icon)`
+  animation: ${spin} 1s linear infinite;
+`;
+/* ============================================================================ */
 
 const genderOptions = [
   { key: "f", text: "Feminino", value: "F" },
@@ -576,19 +684,18 @@ class Profile extends Component {
   render() {
     return (
       <>
-        <div className="profile-general">
-          <div className="profile-general-inner">
+        <div>
+          <StyledProfile>
             {this.state.page === "general" &&
               (this.props.user !== undefined && (
                 <>
                   <Card>
-                    <Image
+                    <Avatar
                       src={
                         this.props.user === undefined
                           ? ""
                           : this.props.user.avatar
                       }
-                      className="profile-avatar-img"
                     />
                     <Card.Content>
                       <Card.Header>
@@ -614,29 +721,25 @@ class Profile extends Component {
                           : this.mapRole(this.props.user.role)}
                       </Card.Description>
                     </Card.Content>
-                    <Card.Content extra className="profile-card-links">
+                    <CardLinks extra>
                       <Form
                         onSubmit={this.submitAvatarImage}
                         id="form-avatar-image"
                         ref="formAvatarImage"
                       >
-                        <Label
+                        <CardLink
                           as="label"
                           htmlFor="avatar-image"
                           size="large"
-                          className="profile-card-link"
                         >
                           {!this.state.loadingAvatarUpload && (
                             <Icon name="photo" />
                           )}
                           {this.state.loadingAvatarUpload && (
-                            <Icon
-                              name="asterisk"
-                              className="image-upload-spinner"
-                            />
+                            <ImageSpinner name="asterisk" />
                           )}
                           Alterar imagem
-                        </Label>
+                        </CardLink>
                         <input
                           id="avatar-image"
                           name="avatar-image"
@@ -645,16 +748,16 @@ class Profile extends Component {
                           onChange={this.handleAvatarImage}
                         />
                       </Form>
-                      <Button
+                      <PasswordChangeLink
                         className="profile-card-password-change"
                         onClick={this.changePasswordPage}
                       >
                         <Icon name="key" />
                         Alterar senha
-                      </Button>
-                    </Card.Content>
+                      </PasswordChangeLink>
+                    </CardLinks>
                   </Card>
-                  <div className="profile-general-view">
+                  <ProfileView>
                     <FormTitle first text="Endereço" />
                     <ul>
                       <li>
@@ -671,34 +774,32 @@ class Profile extends Component {
                     <FormTitle text="Contato" />
                     <ul>
                       <li>
-                        <span className="profile-details-label">Email:</span>{" "}
+                        <ProfileLabel>Email:</ProfileLabel>{" "}
                         {this.props.user.email}
                       </li>
                       <li>
-                        <span className="profile-details-label">Telefone:</span>{" "}
+                        <ProfileLabel>Telefone:</ProfileLabel>{" "}
                         {formatBrazilianPhoneNumber(this.props.user.phone)}
                       </li>
                     </ul>
-                    <FormTitle text="Outros" />
+                    <FormTitle text="Dados Pessoais" />
                     <ul>
                       <li>
-                        <span className="profile-details-label">Sexo:</span>{" "}
+                        <ProfileLabel>Sexo:</ProfileLabel>{" "}
                         {this.formatGender(this.props.user.gender)}
                       </li>
                       <li>
-                        <span className="profile-details-label">
-                          Aniversário:
-                        </span>{" "}
+                        <ProfileLabel>Aniversário:</ProfileLabel>{" "}
                         {moment(this.props.user.birthday).format(
                           "DD [de] MMMM [de] YYYY"
                         )}
                       </li>
                     </ul>
-                  </div>
+                  </ProfileView>
                 </>
               ))}
             {this.state.page === "changePassword" && (
-              <div className="profile-change-password">
+              <PasswordForm className="profile-change-password">
                 <FormTitle first text="Alterar Senha" />
                 <Form
                   className="change-password-form"
@@ -739,14 +840,12 @@ class Profile extends Component {
                   </Form.Group>
                 </Form>
                 {this.state.password.error.error && (
-                  <div className="profile-form-error">
-                    {this.state.password.error.msg}
-                  </div>
+                  <Error>{this.state.password.error.msg}</Error>
                 )}
-              </div>
+              </PasswordForm>
             )}
             {this.state.page === "editProfile" && (
-              <div className="profile-general-edit">
+              <Edit>
                 <Form>
                   <FormTitle text="Dados pessoais" first />
                   <Form.Group widths="4">
@@ -825,19 +924,13 @@ class Profile extends Component {
                     </div>
                   </Form.Group>
                   {this.state.errors.firstName.error && (
-                    <div className="profile-form-error">
-                      {this.state.errors.firstName.msg}
-                    </div>
+                    <Error>{this.state.errors.firstName.msg}</Error>
                   )}
                   {this.state.errors.lastName.error && (
-                    <div className="profile-form-error">
-                      {this.state.errors.lastName.msg}
-                    </div>
+                    <Error>{this.state.errors.lastName.msg}</Error>
                   )}
                   {this.state.errors.birthday.error && (
-                    <div className="profile-form-error">
-                      {this.state.errors.birthday.msg}
-                    </div>
+                    <Error>{this.state.errors.birthday.msg}</Error>
                   )}
 
                   <FormTitle text="Endereço e Contato" />
@@ -944,25 +1037,17 @@ class Profile extends Component {
                     />
                   </Form.Group>
                   {this.state.errors.phone.error && (
-                    <div className="profile-form-error">
-                      {this.state.errors.phone.msg}
-                    </div>
+                    <Error>{this.state.errors.phone.msg}</Error>
                   )}
 
                   {this.state.errors.addressNumber.error && (
-                    <div className="profile-form-error">
-                      {this.state.errors.addressNumber.msg}
-                    </div>
+                    <Error>{this.state.errors.addressNumber.msg}</Error>
                   )}
                   {this.state.errors.addressCEP.error && (
-                    <div className="profile-form-error">
-                      {this.state.errors.addressCEP.msg}
-                    </div>
+                    <Error>{this.state.errors.addressCEP.msg}</Error>
                   )}
                   {this.state.errors.addressCEP.error && (
-                    <div className="profile-form-error">
-                      {this.state.errors.addressNumber.msg}
-                    </div>
+                    <Error>{this.state.errors.addressNumber.msg}</Error>
                   )}
 
                   {this.state.user !== undefined && (
@@ -989,21 +1074,24 @@ class Profile extends Component {
                             />
                           </Form.Group>
                           {this.state.errors.workTitle.error && (
-                            <div className="profile-form-error">
-                              {this.state.errors.workTitle.msg}
-                            </div>
+                            <Error>{this.state.errors.workTitle.msg}</Error>
                           )}
                         </>
                       )}
                     </>
                   )}
                 </Form>
-              </div>
+              </Edit>
             )}
-          </div>
+          </StyledProfile>
           <Divider style={{ marginTop: "40px" }} />
           {this.state.page === "general" && (
-            <Button icon labelPosition="left" onClick={this.editGeneral}>
+            <Button
+              icon
+              labelPosition="left"
+              color="green"
+              onClick={this.editGeneral}
+            >
               <Icon name="pencil" />
               Editar Informações
             </Button>

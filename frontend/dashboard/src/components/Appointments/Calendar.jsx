@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import Spinner from "react-spinkit";
 import { toast } from "react-toastify";
+import styled from "styled-components";
 import BigCalendar from "react-big-calendar";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import moment from "moment";
@@ -15,6 +16,52 @@ import Notification from "../Notification/Notification";
 const localizer = BigCalendar.momentLocalizer(moment);
 
 const DragAndDropCalendar = withDragAndDrop(BigCalendar);
+
+/* ===============================================================================
+  STYLED COMPONENTS
+=============================================================================== */
+
+const StyledDragAndDropCalendar = styled(DragAndDropCalendar)`
+  font-family: "Lato";
+  font-size: 0.9rem;
+
+  > .rbc-toolbar > .rbc-btn-group > button {
+    font-size: 0.9rem !important;
+    border-color: #e3e4e4 !important;
+    box-shadow: none !important;
+    border-color: none !important;
+    outline: none !important;
+  }
+  > .rbc-toolbar > .rbc-toolbar-label {
+    font-size: 1rem !important;
+  }
+  > .rbc-time-view
+    > .rbc-time-header
+    > .rbc-time-header-content
+    > .rbc-allday-cell {
+    display: none;
+  }
+
+  > .rbc-time-view {
+    font-size: 0.87rem;
+  }
+
+  > .rbc-time-view > .rbc-time-content {
+    border-top: none !important;
+    cursor: pointer !important;
+  }
+  > .rbc-time-view
+    > .rbc-time-content
+    > .rbc-time-column
+    > .rbc-events-container
+    > div
+    > .rbc-addons-dnd-resizable
+    > .rbc-addons-dnd-resize-ns-anchor {
+    display: none;
+  }
+`;
+
+/* ============================================================================ */
 
 export class Calendar extends Component {
   state = {
@@ -160,7 +207,7 @@ export class Calendar extends Component {
       <div
         style={{ height: "calc(100vh - 265px)", width: "calc(100vw - 290px)" }}
       >
-        <DragAndDropCalendar
+        <StyledDragAndDropCalendar
           selectable
           localizer={localizer}
           events={this.state.events}

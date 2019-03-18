@@ -2,6 +2,7 @@ import React, { Component } from "react";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import styled from "styled-components";
 
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import { Container, Grid } from "semantic-ui-react";
@@ -15,13 +16,48 @@ import Reports from "./Reports/Reports";
 import Profile from "./Profile/Profile";
 import CompanyConfig from "./CompanyConfig/CompanyConfig";
 
-import "./Dashboard.css";
 import { isAuthenticated } from "../auth";
 import Axios from "axios";
 
 import config from "../config";
 import Appointments from "./Appointments/Appointments";
 import Appointment from "./Appointments/Appointment";
+import Clients from "./Clients/Clients";
+import Client from "./Clients/Client";
+
+/* ===============================================================================
+  STYLED COMPONENTS
+=============================================================================== */
+
+const Pages = styled.div`
+  position: fixed;
+  min-width: calc(100vw - 200px);
+  top: 80px;
+  bottom: -25px;
+  padding: 40px;
+  overflow-y: auto;
+  z-index: 98;
+  height: calc(100vh - 40px);
+  background-color: white;
+  margin-left: 214px;
+`;
+
+const PagesInner = styled.div`
+  padding: 0 0 40px 0;
+  width: calc(100vw - 290px);
+`;
+
+const BukkNotification = styled(ToastContainer)`
+  > .Toastify__toast {
+    font-family: "Lato", "sans-serif";
+    background-color: rgba(247, 247, 247, 0.98) !important;
+    color: #444 !important;
+    font-weight: 400 !important;
+    border-radius: 4px;
+  }
+`;
+
+/* ============================================================================ */
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route
@@ -110,11 +146,11 @@ class Dashboard extends Component {
   render() {
     return (
       <div className="Dashboard">
-        <ToastContainer
-          className="bukk-notification"
+        <BukkNotification
           hideProgressBar={true}
           position="bottom-left"
           newestOnTop={true}
+          suppressClassNameWarning
         />
         <Container fluid>
           <Grid>
@@ -122,12 +158,11 @@ class Dashboard extends Component {
               <BrowserRouter>
                 <>
                   <SideMenu />
-
                   <div id="content">
                     <TopMenu className="top-menu" />
 
-                    <div id="pages">
-                      <div className="pages-inner">
+                    <Pages>
+                      <PagesInner>
                         <Switch>
                           <PrivateRoute
                             path="/dashboard"
@@ -153,6 +188,19 @@ class Dashboard extends Component {
                             component={Appointment}
                           />
                           <PrivateRoute
+                            path="/dashboard/clientes/"
+                            component={Clients}
+                            exact
+                          />
+                          <PrivateRoute
+                            path="/dashboard/clientes/:option"
+                            component={Clients}
+                          />
+                          <PrivateRoute
+                            path="/dashboard/cliente/id/:id"
+                            component={Client}
+                          />
+                          <PrivateRoute
                             path="/dashboard/perfil"
                             component={Profile}
                           />
@@ -161,8 +209,8 @@ class Dashboard extends Component {
                             component={CompanyConfig}
                           />
                         </Switch>
-                      </div>
-                    </div>
+                      </PagesInner>
+                    </Pages>
                   </div>
                 </>
               </BrowserRouter>

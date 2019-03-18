@@ -1,11 +1,46 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Menu } from "semantic-ui-react";
 import { setCurrentPage } from "../dashboardActions";
-import "./Profile.css";
 import Services from "./Services";
 import General from "./General";
 import TimeTable from "./TimeTable";
+import ComponentTopMenu from "../Common/ComponentTopMenu";
+
+const menuItemsAdmin = [
+  {
+    id: "geral",
+    icon: "user outline",
+    text: "Dados Pessoais"
+  },
+  {
+    id: "preferencias",
+    icon: "settings",
+    text: "Preferências"
+  }
+];
+
+const menuItemsEmployee = [
+  {
+    id: "geral",
+    icon: "user outline",
+    text: "Dados Pessoais"
+  },
+  {
+    id: "servicos",
+    icon: "wrench",
+    text: "Serviços"
+  },
+  {
+    id: "horarios",
+    icon: "clock outline",
+    text: "Horários"
+  },
+  {
+    id: "preferencias",
+    icon: "settings",
+    text: "Preferências"
+  }
+];
 
 class Profile extends Component {
   state = {
@@ -14,7 +49,7 @@ class Profile extends Component {
     loading: false
   };
 
-  handleItemClick = (e, { name }) => this.setState({ activeItem: name });
+  handleItemClick = name => this.setState({ activeItem: name });
 
   componentDidMount() {
     if (this.props.user) {
@@ -26,46 +61,27 @@ class Profile extends Component {
   }
 
   render() {
-    const { activeItem } = this.state;
     return (
       <>
         <div className="profile-container">
           {this.props.user !== undefined && (
             <>
-              <Menu borderless className="pages-menu">
-                <Menu.Item
-                  name="geral"
-                  active={activeItem === "geral"}
+              {this.props.user.role === "owner" && (
+                <ComponentTopMenu
+                  items={menuItemsAdmin}
                   onClick={this.handleItemClick}
-                  icon="user outline"
-                  content="Dados Pessoais"
+                  activeItem={this.state.activeItem}
+                  colors={this.props.company.settings.colors}
                 />
-                {this.props.user.role === "employee" && (
-                  <>
-                    <Menu.Item
-                      name="servicos"
-                      active={activeItem === "servicos"}
-                      onClick={this.handleItemClick}
-                      content="Serviços"
-                      icon="wrench"
-                    />
-                    <Menu.Item
-                      name="horarios"
-                      active={activeItem === "horarios"}
-                      onClick={this.handleItemClick}
-                      content="Horários"
-                      icon="clock outline"
-                    />
-                  </>
-                )}
-                <Menu.Item
-                  name="preferencias"
-                  active={activeItem === "preferencias"}
+              )}
+              {this.props.user.role === "employee" && (
+                <ComponentTopMenu
+                  items={menuItemsEmployee}
                   onClick={this.handleItemClick}
-                  content="Preferências"
-                  icon="settings"
+                  activeItem={this.state.activeItem}
+                  colors={this.props.company.settings.colors}
                 />
-              </Menu>
+              )}
             </>
           )}
 

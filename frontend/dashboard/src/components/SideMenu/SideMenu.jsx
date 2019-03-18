@@ -2,7 +2,44 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Menu, Icon } from "semantic-ui-react";
 import { Link } from "react-router-dom";
-import "./SideMenu.css";
+import styled from "styled-components";
+
+const StyledSideMenu = styled(Menu)`
+  text-align: left;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  height: 100vh;
+  width: 200px !important;
+  box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.3) !important;
+  z-index: 99;
+  border-radius: 0px !important;
+  box-sizing: border-box !important;
+  background-color: ${props => props.companycolors.primaryBack} !important;
+  > a {
+    line-height: 22px !important;
+  }
+`;
+
+const Logo = styled.div`
+  padding-top: 22px;
+  padding-bottom: 22px;
+  min-height: 83px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  > img {
+    max-width: calc(100% - 30px);
+  }
+`;
+
+const StyledLink = styled(Link)`
+  > i.icon {
+    float: left !important;
+    margin: 0 0.5em 0 0 !important;
+  }
+`;
 
 class SideMenu extends Component {
   state = { activeItem: "dashboard", role: undefined, path: undefined };
@@ -38,6 +75,9 @@ class SideMenu extends Component {
     if (is(_path, "agendamentos")) {
       this.setState({ activeItem: "agendamentos", role: _role, path: _path });
     }
+    if (is(_path, "agendamento")) {
+      this.setState({ activeItem: "agendamentos", role: _role, path: _path });
+    }
     if (is(_path, "relatorios")) {
       this.setState({ activeItem: "relatorios", role: _role, path: _path });
     }
@@ -45,6 +85,9 @@ class SideMenu extends Component {
       this.setState({ activeItem: "perfil", role: _role, path: _path });
     }
     if (is(_path, "clientes")) {
+      this.setState({ activeItem: "clientes", role: _role, path: _path });
+    }
+    if (is(_path, "cliente")) {
       this.setState({ activeItem: "clientes", role: _role, path: _path });
     }
     if (is(_path, "financeiro")) {
@@ -59,25 +102,19 @@ class SideMenu extends Component {
     const { activeItem } = this.state;
     return (
       <>
-        {this.props.user && (
-          <Menu
-            className="SideMenu"
-            style={{
-              backgroundColor: this.props.company
-                ? this.props.company.settings.colors.primaryBack
-                : "#888"
-            }}
-            id="side-menu"
+        {this.props.user && this.props.company && (
+          <StyledSideMenu
             vertical
             inverted
+            companycolors={this.props.company.settings.colors}
           >
-            <div className="menu-logo">
+            <Logo className="menu-logo">
               <img
                 src={this.props.company ? this.props.company.logo : ""}
                 alt="Logo"
               />
-            </div>
-            <Link
+            </Logo>
+            <StyledLink
               id="dashboard"
               to="/dashboard"
               className={activeItem === "dashboard" ? "active item" : "item"}
@@ -85,8 +122,8 @@ class SideMenu extends Component {
             >
               <Icon name="dashboard" />
               Início
-            </Link>
-            <Link
+            </StyledLink>
+            <StyledLink
               to="/dashboard/agendamentos"
               className={activeItem === "agendamentos" ? "active item" : "item"}
               onClick={this.handleItemClick}
@@ -94,8 +131,8 @@ class SideMenu extends Component {
             >
               <Icon name="calendar alternate outline" />
               Agendamentos
-            </Link>
-            <Link
+            </StyledLink>
+            <StyledLink
               to="/dashboard/clientes"
               className={activeItem === "clientes" ? "active item" : "item"}
               onClick={this.handleItemClick}
@@ -103,8 +140,8 @@ class SideMenu extends Component {
             >
               <Icon name="users" />
               Clientes
-            </Link>
-            <Link
+            </StyledLink>
+            <StyledLink
               to="/dashboard/relatorios"
               className={activeItem === "relatorios" ? "active item" : "item"}
               onClick={this.handleItemClick}
@@ -112,8 +149,8 @@ class SideMenu extends Component {
             >
               <Icon name="chart line" />
               Relatórios
-            </Link>
-            <Link
+            </StyledLink>
+            <StyledLink
               to="/dashboard/financeiro"
               className={activeItem === "financeiro" ? "active item" : "item"}
               onClick={this.handleItemClick}
@@ -121,8 +158,8 @@ class SideMenu extends Component {
             >
               <Icon name="dollar" />
               Financeiro
-            </Link>
-            <Link
+            </StyledLink>
+            <StyledLink
               to="/dashboard/perfil"
               className={activeItem === "perfil" ? "active item" : "item"}
               onClick={this.handleItemClick}
@@ -130,10 +167,10 @@ class SideMenu extends Component {
             >
               <Icon name="settings" />
               Preferências
-            </Link>
+            </StyledLink>
             {this.props.user.role === "owner" && (
               <>
-                <Link
+                <StyledLink
                   to="/dashboard/configuracoes-empresa"
                   className={activeItem === "empresa" ? "active item" : "item"}
                   onClick={this.handleItemClick}
@@ -141,10 +178,10 @@ class SideMenu extends Component {
                 >
                   <Icon name="building" />
                   Config. da Empresa
-                </Link>
+                </StyledLink>
               </>
             )}
-          </Menu>
+          </StyledSideMenu>
         )}
       </>
     );

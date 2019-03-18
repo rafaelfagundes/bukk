@@ -12,16 +12,82 @@ import {
   Icon,
   Segment,
   Header,
-  Menu,
   Confirm
 } from "semantic-ui-react";
 import moment from "moment";
-import "./Appointments.css";
 import _ from "lodash";
 import Loading from "../Loading/Loading";
 import Calendar from "./Calendar";
 import Notification from "../Notification/Notification";
 import NewAppointment from "./NewAppointment";
+import ComponentTopMenu from "../Common/ComponentTopMenu";
+import styled from "styled-components";
+
+/* ===============================================================================
+  STYLED COMPONENTS
+=============================================================================== */
+
+const AppointmentRow = styled(Table.Row)`
+  background: ${props => props.bgcolor} !important;
+`;
+
+// Helper Functions
+const getAppointmentBgColor = status => {
+  switch (status) {
+    case "canceled":
+      return "rgba(255,0,0,0.08)";
+    case "confirmed":
+      return "rgba(0, 128, 0, 0.08)";
+    case "done":
+      return "rgba(0, 0, 255, 0.08)";
+    case "payed":
+      return "rgba(0, 128, 128, 0.08)";
+    case "missed":
+      return "rgba(255, 166, 0, 0.08)";
+    default:
+      break;
+  }
+};
+
+/* ============================================================================ */
+
+/* ===============================================================================
+  GLOBALS
+=============================================================================== */
+
+const menuItems = [
+  {
+    id: "new",
+    icon: "plus",
+    text: "Novo Agendamento",
+    link: "/dashboard/agendamentos/novo"
+  },
+  {
+    id: "calendar",
+    icon: "calendar alternate outline",
+    text: "Calendário",
+    link: "/dashboard/agendamentos/calendario"
+  },
+  {
+    id: "next",
+    icon: "clock outline",
+    text: "Agendamentos Futuros",
+    link: "/dashboard/agendamentos/futuros"
+  },
+  {
+    id: "closed",
+    icon: "history",
+    text: "Agendamentos Terminados",
+    link: "/dashboard/agendamentos/terminados",
+    right: true
+  }
+];
+
+/* ============================================================================ */
+
+/* ===============================================================================
+  COMPONENTS
+=============================================================================== */
 
 const NoAppointments = props => (
   <Segment placeholder>
@@ -35,12 +101,12 @@ const NoAppointments = props => (
 const TableHeader = () => (
   <Table.Header>
     <Table.Row>
-      <Table.HeaderCell>Status</Table.HeaderCell>
-      <Table.HeaderCell>Serviço</Table.HeaderCell>
-      <Table.HeaderCell>Especialista</Table.HeaderCell>
-      <Table.HeaderCell>Cliente</Table.HeaderCell>
-      <Table.HeaderCell>Data/Horário</Table.HeaderCell>
-      <Table.HeaderCell>Ações</Table.HeaderCell>
+      <Table.HeaderCell width={1}>Status</Table.HeaderCell>
+      <Table.HeaderCell width={3}>Serviço</Table.HeaderCell>
+      <Table.HeaderCell width={3}>Especialista</Table.HeaderCell>
+      <Table.HeaderCell width={3}>Cliente</Table.HeaderCell>
+      <Table.HeaderCell width={4}>Data/Horário</Table.HeaderCell>
+      <Table.HeaderCell width={2} />
     </Table.Row>
   </Table.Header>
 );
@@ -52,23 +118,42 @@ const TableBody = ({
   cancelAppointment,
   setConfirmationModal
 }) => {
-  let _fullDate = true;
-  if (moment().isSame(moment(data[0].start), "day")) {
-    _fullDate = false;
+  function getFullDate(start, end) {
+    return (
+      moment(start).format("dddd, DD/MM/YYYY[ - ]HH:mm") +
+      " às " +
+      moment(end).format("HH:mm")
+    );
   }
-  if (
-    moment()
-      .add(1, "day")
-      .isSame(moment(data[0].start), "day")
-  ) {
-    _fullDate = false;
+
+  function getDate(start, end, status) {
+    const _fullDate =
+      moment(start).format("ddd, DD/MM/YYYY[ - ]HH:mm") +
+      " às " +
+      moment(end).format("HH:mm");
+    const _shortDate =
+      moment(start).format("HH:mm") + " às " + moment(end).format("HH:mm");
+
+    if (status === "canceled") {
+      return _fullDate;
+    } else if (moment().isSame(moment(start), "day")) {
+      return _shortDate;
+    } else if (
+      moment()
+        .add(1, "day")
+        .isSame(moment(start), "day")
+    ) {
+      return _shortDate;
+    } else {
+      return _fullDate;
+    }
   }
 
   return (
     <Table.Body>
       {data.map((app, index) => (
-        <Table.Row key={index} className={"appointments-row-" + app.status}>
-          <Table.Cell width={1} textAlign="center">
+        <AppointmentRow key={index} bgcolor={getAppointmentBgColor(app.status)}>
+          <Table.Cell width={1} textAlign="left">
             {app.status === "created" && (
               <Icon
                 color="grey"
@@ -118,30 +203,21 @@ const TableBody = ({
               />
             )}
           </Table.Cell>
-          <Table.Cell width={6}>{app.service.desc}</Table.Cell>
-          <Table.Cell collapsing>
+          <Table.Cell width={6} title={app.service.desc}>
+            {app.service.desc}
+          </Table.Cell>
+          <Table.Cell title={app.user.firstName + " " + app.user.lastName}>
             {app.user.firstName + " " + app.user.lastName}
           </Table.Cell>
-          <Table.Cell collapsing>
+          <Table.Cell
+            title={app.costumer.firstName + " " + app.costumer.lastName}
+          >
             {app.costumer.firstName + " " + app.costumer.lastName}
           </Table.Cell>
-          <Table.Cell collapsing>
-            {_fullDate && (
-              <>
-                {moment(app.start).format("dddd, DD/MM/YY[ - ]HH:mm") +
-                  " às " +
-                  moment(app.end).format("HH:mm")}
-              </>
-            )}
-            {!_fullDate && (
-              <>
-                {moment(app.start).format("HH:mm") +
-                  " às " +
-                  moment(app.end).format("HH:mm")}
-              </>
-            )}
+          <Table.Cell title={getFullDate(app.start, app.end)}>
+            {getDate(app.start, app.end, app.status)}
           </Table.Cell>
-          <Table.Cell collapsing>
+          <Table.Cell textAlign="right">
             {!past && (
               <>
                 {app.status === "created" && (
@@ -151,6 +227,7 @@ const TableBody = ({
                       color="green"
                       compact
                       title="Confirmar agendamento"
+                      inverted
                       onClick={() =>
                         setConfirmationModal(
                           confirmAppointment,
@@ -165,18 +242,20 @@ const TableBody = ({
                     <Link to={"/dashboard/agendamento/id/" + app._id}>
                       <Button
                         icon
-                        color="blue"
                         compact
                         title="Ver ou editar agendamento"
+                        color="blue"
+                        inverted
                       >
                         <Icon name="edit outline" />
                       </Button>
                     </Link>
                     <Button
                       icon
-                      color="red"
                       compact
                       title="Cancelar agendamento"
+                      color="red"
+                      inverted
                       onClick={() =>
                         setConfirmationModal(
                           cancelAppointment,
@@ -201,6 +280,7 @@ const TableBody = ({
                         color="blue"
                         compact
                         title="Ver ou editar agendamento"
+                        inverted
                       >
                         <Icon name="edit outline" />
                       </Button>
@@ -210,6 +290,7 @@ const TableBody = ({
                       color="red"
                       compact
                       title="Cancelar agendamento"
+                      inverted
                       onClick={() =>
                         setConfirmationModal(
                           cancelAppointment,
@@ -230,7 +311,7 @@ const TableBody = ({
                   app.status === "payed" ||
                   app.status === "missed") && (
                   <Link to={"/dashboard/agendamento/id/" + app._id}>
-                    <Button icon color="blue" compact title="Ver">
+                    <Button icon color="blue" compact title="Ver" inverted>
                       <Icon name="search" />
                     </Button>
                   </Link>
@@ -242,6 +323,7 @@ const TableBody = ({
                 <Button
                   icon
                   color="blue"
+                  inverted
                   compact
                   title="Visualizar agendamento"
                 >
@@ -250,17 +332,32 @@ const TableBody = ({
               </Link>
             )}
           </Table.Cell>
-        </Table.Row>
+        </AppointmentRow>
       ))}
     </Table.Body>
   );
 };
+/* ============================================================================ */
 
 export class Appointments extends Component {
   constructor(props) {
     super(props);
     let _company = JSON.parse(localStorage.getItem("company"));
     const { min, max } = this.setMinMaxTime(_company.workingDays);
+
+    let _activeItem = undefined;
+    if (this.props.match.params.option === "calendario") {
+      _activeItem = "calendar";
+    } else if (this.props.match.params.option === "futuros") {
+      _activeItem = "next";
+    } else if (this.props.match.params.option === "terminados") {
+      _activeItem = "closed";
+    } else if (this.props.match.params.option === "novo") {
+      _activeItem = "new";
+    } else {
+      _activeItem = "calendar";
+    }
+
     this.state = {
       loading: false,
       before: [],
@@ -270,7 +367,7 @@ export class Appointments extends Component {
       minTime: min.toDate(),
       maxTime: max.toDate(),
       events: undefined,
-      activeItem: undefined,
+      activeItem: _activeItem,
       selectedId: undefined,
       confirmationModal: {
         open: false,
@@ -490,23 +587,6 @@ export class Appointments extends Component {
     });
   };
 
-  componentDidMount() {
-    let _activeItem = undefined;
-    if (this.props.match.params.option === "calendario") {
-      _activeItem = "calendar";
-    } else if (this.props.match.params.option === "ativos") {
-      _activeItem = "next";
-    } else if (this.props.match.params.option === "terminados") {
-      _activeItem = "before";
-    } else if (this.props.match.params.option === "novo") {
-      _activeItem = "new";
-    } else {
-      _activeItem = "calendar";
-    }
-    this.setState({ activeItem: _activeItem });
-    this.mountOrCalendarUpdate();
-  }
-
   handleItemClick = (e, { name }) => {
     this.setState({ activeItem: name });
   };
@@ -537,6 +617,10 @@ export class Appointments extends Component {
       });
   };
 
+  componentDidMount() {
+    this.mountOrCalendarUpdate();
+  }
+
   render() {
     const { activeItem, confirmationModal } = this.state;
     return (
@@ -551,61 +635,20 @@ export class Appointments extends Component {
           confirmButton={confirmationModal.confirmButton}
         />
         <div>
-          <Menu borderless className="pages-menu">
-            <Link to="/dashboard/agendamentos/calendario">
-              <Menu.Item
-                as="span"
-                name="calendar"
-                active={activeItem === "calendar"}
-                onClick={this.handleItemClick}
-                icon="calendar alternate outline"
-                content="Calendário"
-              />
-            </Link>
-            <Link to="/dashboard/agendamentos/novo">
-              <Menu.Item
-                as="span"
-                name="new"
-                active={activeItem === "new"}
-                onClick={this.handleItemClick}
-                content="Novo Agendamento"
-                icon="plus"
-              />
-            </Link>
-            <Link to="/dashboard/agendamentos/ativos">
-              <Menu.Item
-                as="span"
-                name="next"
-                active={activeItem === "next"}
-                onClick={this.handleItemClick}
-                content="Agendamentos Ativos"
-                icon="play circle outline"
-              />
-            </Link>
-            <Menu.Menu position="right">
-              <Link to="/dashboard/agendamentos/terminados">
-                <Menu.Item
-                  as="span"
-                  name="before"
-                  active={activeItem === "before"}
-                  onClick={this.handleItemClick}
-                  content="Agendamentos Terminados"
-                  icon="history"
-                />
-              </Link>
-            </Menu.Menu>
-          </Menu>
+          <ComponentTopMenu
+            link
+            items={menuItems}
+            onClick={this.setActiveItem}
+            activeItem={activeItem}
+          />
         </div>
         {this.state.loading && <Loading />}
-        {this.state.before.length > 0 && this.state.activeItem === "before" && (
+        {this.state.before.length > 0 && this.state.activeItem === "closed" && (
           <>
             <div>
-              <FormTitle
-                text="Pagos, A Pagar, Cancelados ou Clientes Ausentes"
-                first
-              />
+              <FormTitle text="Agendamentos Terminados" first />
             </div>
-            <Table celled compact>
+            <Table fixed singleLine striped compact>
               <TableHeader />
               <TableBody
                 data={this.state.before}
@@ -616,7 +659,7 @@ export class Appointments extends Component {
           </>
         )}
         {this.state.before.length === 0 &&
-          this.state.activeItem === "before" && (
+          this.state.activeItem === "closed" && (
             <NoAppointments text="Não há agendamentos prévios" />
           )}
         {this.state.today.length === 0 &&
@@ -633,7 +676,7 @@ export class Appointments extends Component {
                 first
               />
             </div>
-            <Table celled compact>
+            <Table fixed singleLine striped compact>
               <TableHeader />
               <TableBody
                 data={this.state.today}
@@ -657,7 +700,7 @@ export class Appointments extends Component {
                 first={this.state.today.length === 0}
               />
             </div>
-            <Table celled compact>
+            <Table fixed singleLine striped compact>
               <TableHeader />
               <TableBody
                 data={this.state.tomorrow}
@@ -679,7 +722,7 @@ export class Appointments extends Component {
                 }
               />
             </div>
-            <Table celled compact>
+            <Table fixed singleLine striped compact>
               <TableHeader />
               <TableBody
                 data={this.state.next}

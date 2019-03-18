@@ -7,6 +7,7 @@ const specialist = require("./components/employee/employeeController");
 const appointment = require("./components/appointment/appointmentController");
 const user = require("./components/user/userController");
 const costumer = require("./components/costumer/costumerController");
+const geo = require("./components/utils/geo");
 
 const BASE_URL = "/api";
 
@@ -125,6 +126,11 @@ router.post(
   appointment.getAllAppointments
 );
 router.post(
+  BASE_URL + "/appointments/clientlist",
+  verifyToken,
+  appointment.getAllClientAppointments
+);
+router.post(
   BASE_URL + "/appointments/get",
   verifyToken,
   appointment.getOneAppointment
@@ -166,3 +172,28 @@ router.post(
   verifyToken,
   costumer.getAllCostumers
 );
+router.post(BASE_URL + "/costumers/save", verifyToken, costumer.saveCostumer);
+router.post(
+  BASE_URL + "/costumers/delete",
+  verifyToken,
+  costumer.deleteCostumer
+);
+router.post(BASE_URL + "/costumers/get", verifyToken, costumer.getCostumer);
+router.post(BASE_URL + "/costumers/find", verifyToken, costumer.findCostumers);
+router.post(BASE_URL + "/costumers/stats", verifyToken, costumer.stats);
+router.post(
+  BASE_URL + "/costumers/notes/get",
+  verifyToken,
+  costumer.getCostumerNotes
+);
+router.post(
+  BASE_URL + "/costumers/notes/save",
+  verifyToken,
+  costumer.saveCostumerNotes
+);
+
+/*============================================================
+Utils
+============================================================*/
+router.get(BASE_URL + "/utils/getstates", geo.getStates);
+router.get(BASE_URL + "/utils/getcities", geo.getCities);

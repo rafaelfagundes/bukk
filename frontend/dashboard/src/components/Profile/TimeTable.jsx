@@ -16,6 +16,53 @@ import Axios from "axios";
 import config from "../../config";
 import { toast } from "react-toastify";
 import Notification from "../Notification/Notification";
+import styled from "styled-components";
+
+/* ===============================================================================
+  STYLED COMPONENTS
+=============================================================================== */
+
+const StyledTimeTable = styled(Table)`
+  box-sizing: border-box;
+
+  > td {
+    text-align: center !important;
+  }
+`;
+
+const ConfigTime = styled.span`
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(34, 36, 38, 0.1);
+
+  > div > input {
+    text-align: center !important;
+    width: 100%;
+  }
+  > button {
+    width: 100%;
+    margin-top: 5px !important;
+  }
+`;
+
+const StyledButton = styled(Button)`
+  width: 100%;
+`;
+
+const DoesNotWork = styled.span`
+  font-style: italic;
+`;
+
+const TableCell = styled(Table.Cell)`
+  text-align: center !important;
+`;
+
+/* ============================================================================ */
+
 export class TimeTable extends Component {
   state = {
     loading: false,
@@ -215,7 +262,7 @@ export class TimeTable extends Component {
           first
         />
 
-        <Table celled className="profile-timetable">
+        <StyledTimeTable celled fixed>
           <Table.Header>
             <Table.Row>
               <Table.HeaderCell>
@@ -279,10 +326,10 @@ export class TimeTable extends Component {
           <Table.Body>
             <Table.Row>
               {/* Sunday */}
-              <Table.Cell>
+              <TableCell>
                 {this.state.workingDays.sunday.checked &&
                   this.state.workingDays.sunday.workingHours.map((h, index) => (
-                    <span className="profile-config-time" key={index}>
+                    <ConfigTime key={index}>
                       <Input
                         onChange={this.handleWorkTime}
                         value={formatHour(h.start)}
@@ -295,14 +342,12 @@ export class TimeTable extends Component {
                         onChange={this.handleWorkTime}
                         value={formatHour(h.end)}
                         size="small"
-                        className="profile-config-time-end"
                         id={"sunday-" + index + "-end"}
                       />
                       <Button
                         size="mini"
                         compact
                         icon
-                        labelPosition="left"
                         onClick={this.removeWorkTime}
                         data-day="sunday"
                         data-index={index}
@@ -310,31 +355,30 @@ export class TimeTable extends Component {
                         <Icon name="delete" />
                         Remover
                       </Button>
-                    </span>
+                    </ConfigTime>
                   ))}
                 {!this.state.workingDays.sunday.checked && (
-                  <span>Não trabalha</span>
+                  <DoesNotWork>Não trabalha</DoesNotWork>
                 )}
                 {this.state.workingDays.sunday.checked && (
-                  <Button
+                  <StyledButton
                     onClick={this.addWorkTime}
                     data-day="sunday"
                     size="mini"
                     compact
                     color="blue"
                     icon
-                    labelPosition="left"
                   >
                     <Icon name="plus" />
                     Adicionar
-                  </Button>
+                  </StyledButton>
                 )}
-              </Table.Cell>
+              </TableCell>
               {/* Monday */}
-              <Table.Cell>
+              <TableCell>
                 {this.state.workingDays.monday.checked &&
                   this.state.workingDays.monday.workingHours.map((h, index) => (
-                    <span className="profile-config-time" key={index}>
+                    <ConfigTime key={index}>
                       <Input
                         onChange={this.handleWorkTime}
                         value={formatHour(h.start)}
@@ -347,14 +391,12 @@ export class TimeTable extends Component {
                         onChange={this.handleWorkTime}
                         value={formatHour(h.end)}
                         size="small"
-                        className="profile-config-time-end"
                         id={"monday-" + index + "-end"}
                       />
                       <Button
                         size="mini"
                         compact
                         icon
-                        labelPosition="left"
                         onClick={this.removeWorkTime}
                         data-day="monday"
                         data-index={index}
@@ -362,32 +404,31 @@ export class TimeTable extends Component {
                         <Icon name="delete" />
                         Remover
                       </Button>
-                    </span>
+                    </ConfigTime>
                   ))}
                 {!this.state.workingDays.monday.checked && (
-                  <span>Não trabalha</span>
+                  <DoesNotWork>Não trabalha</DoesNotWork>
                 )}
                 {this.state.workingDays.monday.checked && (
-                  <Button
+                  <StyledButton
                     onClick={this.addWorkTime}
                     data-day="monday"
                     size="mini"
                     compact
                     color="blue"
                     icon
-                    labelPosition="left"
                   >
                     <Icon name="plus" />
                     Adicionar
-                  </Button>
+                  </StyledButton>
                 )}
-              </Table.Cell>
+              </TableCell>
               {/* Tuesday */}
-              <Table.Cell>
+              <TableCell>
                 {this.state.workingDays.tuesday.checked &&
                   this.state.workingDays.tuesday.workingHours.map(
                     (h, index) => (
-                      <span className="profile-config-time" key={index}>
+                      <ConfigTime key={index}>
                         <Input
                           onChange={this.handleWorkTime}
                           value={formatHour(h.start)}
@@ -400,14 +441,12 @@ export class TimeTable extends Component {
                           onChange={this.handleWorkTime}
                           value={formatHour(h.end)}
                           size="small"
-                          className="profile-config-time-end"
                           id={"tuesday-" + index + "-end"}
                         />
                         <Button
                           size="mini"
                           compact
                           icon
-                          labelPosition="left"
                           onClick={this.removeWorkTime}
                           data-day="tuesday"
                           data-index={index}
@@ -415,33 +454,32 @@ export class TimeTable extends Component {
                           <Icon name="delete" />
                           Remover
                         </Button>
-                      </span>
+                      </ConfigTime>
                     )
                   )}
                 {!this.state.workingDays.tuesday.checked && (
-                  <span>Não trabalha</span>
+                  <DoesNotWork>Não trabalha</DoesNotWork>
                 )}
                 {this.state.workingDays.tuesday.checked && (
-                  <Button
+                  <StyledButton
                     onClick={this.addWorkTime}
                     data-day="tuesday"
                     size="mini"
                     compact
                     color="blue"
                     icon
-                    labelPosition="left"
                   >
                     <Icon name="plus" />
                     Adicionar
-                  </Button>
+                  </StyledButton>
                 )}
-              </Table.Cell>
+              </TableCell>
               {/* Wednesday */}
-              <Table.Cell>
+              <TableCell>
                 {this.state.workingDays.wednesday.checked &&
                   this.state.workingDays.wednesday.workingHours.map(
                     (h, index) => (
-                      <span className="profile-config-time" key={index}>
+                      <ConfigTime key={index}>
                         <Input
                           onChange={this.handleWorkTime}
                           value={formatHour(h.start)}
@@ -454,14 +492,12 @@ export class TimeTable extends Component {
                           onChange={this.handleWorkTime}
                           value={formatHour(h.end)}
                           size="small"
-                          className="profile-config-time-end"
                           id={"wednesday-" + index + "-end"}
                         />
                         <Button
                           size="mini"
                           compact
                           icon
-                          labelPosition="left"
                           onClick={this.removeWorkTime}
                           data-day="wednesday"
                           data-index={index}
@@ -469,33 +505,32 @@ export class TimeTable extends Component {
                           <Icon name="delete" />
                           Remover
                         </Button>
-                      </span>
+                      </ConfigTime>
                     )
                   )}
                 {!this.state.workingDays.wednesday.checked && (
-                  <span>Não trabalha</span>
+                  <DoesNotWork>Não trabalha</DoesNotWork>
                 )}
                 {this.state.workingDays.wednesday.checked && (
-                  <Button
+                  <StyledButton
                     onClick={this.addWorkTime}
                     data-day="wednesday"
                     size="mini"
                     compact
                     color="blue"
                     icon
-                    labelPosition="left"
                   >
                     <Icon name="plus" />
                     Adicionar
-                  </Button>
+                  </StyledButton>
                 )}
-              </Table.Cell>
+              </TableCell>
               {/* Thursday */}
-              <Table.Cell>
+              <TableCell>
                 {this.state.workingDays.thursday.checked &&
                   this.state.workingDays.thursday.workingHours.map(
                     (h, index) => (
-                      <span className="profile-config-time" key={index}>
+                      <ConfigTime key={index}>
                         <Input
                           onChange={this.handleWorkTime}
                           value={formatHour(h.start)}
@@ -508,14 +543,12 @@ export class TimeTable extends Component {
                           onChange={this.handleWorkTime}
                           value={formatHour(h.end)}
                           size="small"
-                          className="profile-config-time-end"
                           id={"thursday-" + index + "-end"}
                         />
                         <Button
                           size="mini"
                           compact
                           icon
-                          labelPosition="left"
                           onClick={this.removeWorkTime}
                           data-day="thursday"
                           data-index={index}
@@ -523,32 +556,31 @@ export class TimeTable extends Component {
                           <Icon name="delete" />
                           Remover
                         </Button>
-                      </span>
+                      </ConfigTime>
                     )
                   )}
                 {!this.state.workingDays.thursday.checked && (
-                  <span>Não trabalha</span>
+                  <DoesNotWork>Não trabalha</DoesNotWork>
                 )}
                 {this.state.workingDays.thursday.checked && (
-                  <Button
+                  <StyledButton
                     onClick={this.addWorkTime}
                     data-day="thursday"
                     size="mini"
                     compact
                     color="blue"
                     icon
-                    labelPosition="left"
                   >
                     <Icon name="plus" />
                     Adicionar
-                  </Button>
+                  </StyledButton>
                 )}
-              </Table.Cell>
+              </TableCell>
               {/* Friday */}
-              <Table.Cell>
+              <TableCell>
                 {this.state.workingDays.friday.checked &&
                   this.state.workingDays.friday.workingHours.map((h, index) => (
-                    <span className="profile-config-time" key={index}>
+                    <ConfigTime key={index}>
                       <Input
                         onChange={this.handleWorkTime}
                         value={formatHour(h.start)}
@@ -561,14 +593,12 @@ export class TimeTable extends Component {
                         onChange={this.handleWorkTime}
                         value={formatHour(h.end)}
                         size="small"
-                        className="profile-config-time-end"
                         id={"friday-" + index + "-end"}
                       />
                       <Button
                         size="mini"
                         compact
                         icon
-                        labelPosition="left"
                         onClick={this.removeWorkTime}
                         data-day="friday"
                         data-index={index}
@@ -576,32 +606,31 @@ export class TimeTable extends Component {
                         <Icon name="delete" />
                         Remover
                       </Button>
-                    </span>
+                    </ConfigTime>
                   ))}
                 {!this.state.workingDays.friday.checked && (
-                  <span>Não trabalha</span>
+                  <DoesNotWork>Não trabalha</DoesNotWork>
                 )}
                 {this.state.workingDays.friday.checked && (
-                  <Button
+                  <StyledButton
                     onClick={this.addWorkTime}
                     data-day="friday"
                     size="mini"
                     compact
                     color="blue"
                     icon
-                    labelPosition="left"
                   >
                     <Icon name="plus" />
                     Adicionar
-                  </Button>
+                  </StyledButton>
                 )}
-              </Table.Cell>
+              </TableCell>
               {/* Saturday */}
-              <Table.Cell>
+              <TableCell>
                 {this.state.workingDays.saturday.checked &&
                   this.state.workingDays.saturday.workingHours.map(
                     (h, index) => (
-                      <span className="profile-config-time" key={index}>
+                      <ConfigTime key={index}>
                         <Input
                           onChange={this.handleWorkTime}
                           value={formatHour(h.start)}
@@ -614,14 +643,12 @@ export class TimeTable extends Component {
                           onChange={this.handleWorkTime}
                           value={formatHour(h.end)}
                           size="small"
-                          className="profile-config-time-end"
                           id={"saturday-" + index + "-end"}
                         />
                         <Button
                           size="mini"
                           compact
                           icon
-                          labelPosition="left"
                           onClick={this.removeWorkTime}
                           data-day="saturday"
                           data-index={index}
@@ -629,30 +656,29 @@ export class TimeTable extends Component {
                           <Icon name="delete" />
                           Remover
                         </Button>
-                      </span>
+                      </ConfigTime>
                     )
                   )}
                 {!this.state.workingDays.saturday.checked && (
-                  <span>Não trabalha</span>
+                  <DoesNotWork>Não trabalha</DoesNotWork>
                 )}
                 {this.state.workingDays.saturday.checked && (
-                  <Button
+                  <StyledButton
                     onClick={this.addWorkTime}
                     data-day="saturday"
                     size="mini"
                     compact
                     color="blue"
                     icon
-                    labelPosition="left"
                   >
                     <Icon name="plus" />
                     Adicionar
-                  </Button>
+                  </StyledButton>
                 )}
-              </Table.Cell>
+              </TableCell>
             </Table.Row>
           </Table.Body>
-        </Table>
+        </StyledTimeTable>
         <Divider style={{ marginTop: "40px" }} />
         <Button
           icon

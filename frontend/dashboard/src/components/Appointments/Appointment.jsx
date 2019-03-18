@@ -11,10 +11,46 @@ import FormSubTitle from "../Common/FormSubTitle";
 import { formatBrazilianPhoneNumber, formatCurrency } from "../utils";
 import { Icon, Button, Divider, Confirm } from "semantic-ui-react";
 import Notification from "../Notification/Notification";
+import styled from "styled-components";
+
+/* ===============================================================================
+  STYLED COMPONENTS
+=============================================================================== */
+
+const AppointmentNotes = styled.p`
+  line-height: 20px;
+  max-width: 450px;
+`;
+
+const Label = styled.span`
+  opacity: 0.8;
+`;
+
+const WhatsApp = styled.span`
+  margin-left: 10px;
+  font-weight: 700;
+  color: #19b719;
+`;
+
+const StyledStatus = styled.h3`
+  opacity: 0.8;
+  font-weight: 400;
+  margin-bottom: 25px;
+`;
+
+const Info = styled.div`
+  display: flex;
+  flex-direction: row;
+
+  > div {
+    width: 50%;
+  }
+`;
+/* ============================================================================ */
 
 const Status = ({ status }) => (
   <>
-    <h3 style={{ opacity: ".8", fontWeight: 400, marginBottom: "25px" }}>
+    <StyledStatus>
       {status === "canceled" && (
         <>
           <Icon name="calendar times outline" />
@@ -51,7 +87,7 @@ const Status = ({ status }) => (
           Pago
         </>
       )}
-    </h3>
+    </StyledStatus>
   </>
 );
 
@@ -394,37 +430,31 @@ export class Appointment extends Component {
               />
 
               <FormTitle text="Informações do Agendamento" />
-              <div style={{ display: "flex", flexDirection: "row" }}>
-                <div style={{ width: "50%" }}>
+              <Info>
+                <div>
                   <FormSubTitle text="Cliente" first />
                   <p>
-                    <span style={{ opacity: ".8" }}>Nome: </span>
+                    <Label>Nome: </Label>
                     {appointment.costumer.firstName +
                       " " +
                       appointment.costumer.lastName}
                   </p>
                   <p>
-                    <span style={{ opacity: ".8" }}>Sexo: </span>
+                    <Label>Sexo: </Label>
                     {appointment.costumer.gender === "F" ? "Feminino" : ""}
                     {appointment.costumer.gender === "M" ? "Masculino" : ""}
                     {appointment.costumer.gender === "O" ? "Outro" : ""}
                   </p>
                   <p>
-                    <span style={{ opacity: ".8" }}>Email: </span>
+                    <Label>Email: </Label>
                     {appointment.costumer.email}
                   </p>
                   <p>
-                    <span style={{ opacity: ".8" }}>Telefone: </span>
+                    <Label>Telefone: </Label>
                     {formatBrazilianPhoneNumber(
                       appointment.costumer.phone[0].number
                     )}
-                    <span
-                      style={{
-                        marginLeft: "10px",
-                        fontWeight: 700,
-                        color: "#19b719"
-                      }}
-                    >
+                    <WhatsApp>
                       {appointment.costumer.phone[0].whatsApp ? (
                         <>
                           WhatsApp
@@ -433,54 +463,52 @@ export class Appointment extends Component {
                       ) : (
                         ""
                       )}
-                    </span>
+                    </WhatsApp>
                   </p>
                   {appointment.notes && (
-                    <p className="appointment-notes">
-                      <span style={{ opacity: ".8" }}>
-                        Observações do cliente:{" "}
-                      </span>
+                    <AppointmentNotes>
+                      <Label>Observações do cliente: </Label>
                       {appointment.notes}
-                    </p>
+                    </AppointmentNotes>
                   )}
                   <FormSubTitle text="Serviço" />
                   <p>
-                    <span style={{ opacity: ".8" }}>Descrição: </span>
+                    <Label>Descrição: </Label>
                     {appointment.service.desc}
                   </p>
                   <p>
-                    <span style={{ opacity: ".8" }}>Duração: </span>
+                    <Label>Duração: </Label>
                     {appointment.service.duration} minutos
                   </p>
                   <p>
-                    <span style={{ opacity: ".8" }}>Valor: </span>
+                    <Label>Valor: </Label>
                     R$ {formatCurrency(appointment.service.value)}
                   </p>
                 </div>
-                <div style={{ width: "50%", paddingLeft: "50px" }}>
+                <div>
                   <FormSubTitle text="Data e Hora" first />
                   <p>
-                    <span style={{ opacity: ".8" }}>Data: </span>
+                    <Label>Data: </Label>
                     {moment(appointment.start).format("dddd, DD/MM/YYYY")}
                   </p>
                   <p>
-                    <span style={{ opacity: ".8" }}>Horário: </span>
+                    <Label>Horário: </Label>
                     {moment(appointment.start).format("HH:mm")} às{" "}
                     {moment(appointment.end).format("HH:mm")}
                   </p>
                   <FormSubTitle text="Especialista" />
                   <p>
-                    <span style={{ opacity: ".8" }}>Nome: </span>
+                    <Label>Nome: </Label>
                     {appointment.user.firstName +
                       " " +
                       appointment.user.lastName}
                   </p>
                   <p>
-                    <span style={{ opacity: ".8" }}>Especialidade: </span>
+                    <Label>Especialidade: </Label>
                     {appointment.employee.title}
                   </p>
                 </div>
-              </div>
+              </Info>
             </>
           )}
         </div>

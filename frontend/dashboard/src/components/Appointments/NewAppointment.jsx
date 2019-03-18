@@ -33,7 +33,7 @@ ptBR.options.weekStartsOn = 0;
 registerLocale("pt-BR", ptBR);
 
 /* ===============================================================================
-  STYLED COMPONENTES
+  STYLED COMPONENTS
 =============================================================================== */
 const StyledFormGroup = styled(Form.Group)`
   display: flex !important;
@@ -129,10 +129,14 @@ const StyledSegment = styled(Segment)`
 `;
 
 const StyledSegmentClient = styled(Segment)`
-  height: 404px;
+  height: 368px;
   > .header {
     padding-top: 18px;
   }
+`;
+
+const StyledDatePicker = styled(DatePicker)`
+  font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif !important;
 `;
 
 /* ============================================================================ */
@@ -702,8 +706,8 @@ export class NewAppointment extends Component {
 
     Axios.post(config.api + "/costumers/list", {}, requestConfig)
       .then(response => {
-        this.setState({ clients: response.data }, () => {
-          this.setClientsDropdown(response.data);
+        this.setState({ clients: response.data.costumers }, () => {
+          this.setClientsDropdown(response.data.costumers);
         });
       })
       .catch(error => {
@@ -778,7 +782,7 @@ export class NewAppointment extends Component {
                         text="Data"
                         first={this.state.isSpecialist}
                       />
-                      <DatePicker
+                      <StyledDatePicker
                         inline
                         selected={this.state.selectedDate}
                         onChange={this.handleDate}
@@ -787,6 +791,7 @@ export class NewAppointment extends Component {
                         allowSameDay={false}
                         locale="pt-BR"
                         minDate={new Date()}
+                        suppressClassNameWarning
                       />
                     </DateColumn>
                     <TimeColumn>
@@ -1059,10 +1064,6 @@ export class NewAppointment extends Component {
               color={this.props.company.settings.colors.primaryBack}
             />
           )}
-          <Button floated="right" icon labelPosition="left">
-            <Icon name="delete" />
-            Cancelar
-          </Button>
         </Form>
         {/* <pre>{JSON.stringify(this.state.appointment, null, 2)}</pre> */}
       </div>

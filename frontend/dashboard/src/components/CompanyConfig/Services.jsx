@@ -16,6 +16,37 @@ import config from "../../config";
 import Notification from "../Notification/Notification";
 import FormTitle from "../Common/FormTitle";
 import ValidationError from "../Common/ValidationError";
+import styled from "styled-components";
+
+/* ===============================================================================
+  STYLED COMPONENTS
+=============================================================================== */
+
+const ServicesError = styled.div`
+  margin: 15px 0 0px 0;
+`;
+
+const ServiceInput = styled.div`
+  display: flex;
+  flex-direction: row;
+  line-height: 38px;
+`;
+
+const ServiceDescInput = styled(Input)`
+  width: 100%;
+`;
+
+const ServiceDurationInput = styled(Input)`
+  width: calc(100% - 40px);
+  margin-right: 5px;
+`;
+
+const ServiceValueInput = styled(Input)`
+  width: calc(100% - 35px);
+  margin-left: 5px;
+`;
+
+/* ============================================================================ */
 
 export class Services extends Component {
   state = {
@@ -224,21 +255,21 @@ export class Services extends Component {
     return (
       <div>
         <FormTitle text="Serviços" first />
-        <Table celled padded>
+        <Table fixed singleLine striped compact>
           <Table.Header>
             <Table.Row>
-              <Table.HeaderCell>Mostrar</Table.HeaderCell>
-              <Table.HeaderCell>Descrição</Table.HeaderCell>
-              <Table.HeaderCell>Duração</Table.HeaderCell>
-              <Table.HeaderCell>Valor</Table.HeaderCell>
-              <Table.HeaderCell>Ações</Table.HeaderCell>
+              <Table.HeaderCell width={1}>Status</Table.HeaderCell>
+              <Table.HeaderCell width={9}>Descrição</Table.HeaderCell>
+              <Table.HeaderCell width={2}>Duração</Table.HeaderCell>
+              <Table.HeaderCell width={2}>Valor</Table.HeaderCell>
+              <Table.HeaderCell width={1} />
             </Table.Row>
           </Table.Header>
 
           <Table.Body>
             {this.state.services.map((service, index) => (
               <Table.Row key={index}>
-                <Table.Cell width={1}>
+                <Table.Cell>
                   <Checkbox
                     toggle
                     checked={service.display}
@@ -246,67 +277,72 @@ export class Services extends Component {
                     id={"display-" + index}
                   />
                 </Table.Cell>
-                <Table.Cell width={12}>
+                <Table.Cell>
                   {!this.state.newAdded && (
-                    <div className="company-config-service-cell">
+                    <ServiceInput>
                       {this.state.errors.length > 0 && (
                         <div className="company-config-service-label">
-                          {index + 1}.
+                          {index + 1}
+                          {"-"}
                         </div>
                       )}
-                      <Input
+                      <ServiceDescInput
                         className="company-config-service-desc"
                         value={service.desc}
                         onChange={this.handleServiceValue}
                         id={"desc-" + index}
                       />
-                    </div>
+                    </ServiceInput>
                   )}
                   {this.state.newAdded && (
-                    <div className="company-config-service-cell">
+                    <ServiceInput>
                       {this.state.errors.length > 0 && (
                         <div className="company-config-service-label">
-                          {index + 1}.
+                          {index + 1}
+                          {"-"}
                         </div>
                       )}
-                      <Input
+                      <ServiceDescInput
                         className="company-config-service-desc"
                         value={service.desc}
                         onChange={this.handleServiceValue}
                         id={"desc-" + index}
                         autoFocus
                       />
-                    </div>
+                    </ServiceInput>
                   )}
                 </Table.Cell>
-                <Table.Cell width={1}>
-                  <div className="company-config-service-cell">
-                    <Input
+                <Table.Cell>
+                  <ServiceInput>
+                    <ServiceDurationInput
                       className="company-config-service-duration"
                       value={service.duration}
                       onChange={this.handleServiceValue}
                       id={"duration-" + index}
                     />
                     <div className="company-config-service-label">min</div>
-                  </div>
+                  </ServiceInput>
                 </Table.Cell>
-                <Table.Cell width={1}>
-                  <div className="company-config-service-cell">
+                <Table.Cell>
+                  <ServiceInput>
                     <div className="company-config-service-label">R$</div>
-                    <Input
+                    <ServiceValueInput
                       className="company-config-service-value"
                       value={this.formatCurrency(service.value)}
                       onChange={this.handleServiceValue}
                       onBlur={this.formatCurrencyOnBlur}
                       id={"value-" + index}
                     />
-                  </div>
+                  </ServiceInput>
                 </Table.Cell>
-                <Table.Cell width={1}>
+                <Table.Cell textAlign="right">
                   <Button
                     icon
                     onClick={this.handleRemoveService}
                     id={"remove-" + index}
+                    compact
+                    inverted
+                    color="red"
                   >
                     <Icon name="delete" />
                   </Button>
@@ -315,15 +351,18 @@ export class Services extends Component {
             ))}
           </Table.Body>
         </Table>
-        <Button icon labelPosition="left" onClick={this.handleAddService}>
-          <Icon name="plus" />
-          Adicionar serviço
-        </Button>
-        <div className="services-error">
+        <Button
+          icon="plus"
+          content="Adicionar Serviço"
+          onClick={this.handleAddService}
+          compact
+          color="blue"
+        />
+        <ServicesError>
           {this.state.errors.map((error, index) => (
             <ValidationError key={index} show={error.error} error={error.msg} />
           ))}
-        </div>
+        </ServicesError>
         {/* <pre>{JSON.stringify(this.state.services, null, 2)}</pre> */}
         <Divider style={{ marginTop: "40px" }} />
         <Button

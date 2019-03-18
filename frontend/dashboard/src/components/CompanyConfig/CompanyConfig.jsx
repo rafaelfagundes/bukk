@@ -1,20 +1,51 @@
-/* eslint no-loop-func: 0 */
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Menu } from "semantic-ui-react";
 import { setCurrentPage, setCompany } from "../dashboardActions";
-import "./CompanyConfig.css";
 import General from "./General";
 import Settings from "./Settings";
 import Services from "./Services";
 import Staff from "./Staff";
+import ComponentTopMenu from "../Common/ComponentTopMenu";
+import styled from "styled-components";
+
+/* ===============================================================================
+  STYLED COMPONENTS
+=============================================================================== */
+const StyledCompanyConfig = styled.div`
+  padding-bottom: 50px;
+`;
+
+/* ============================================================================ */
+
+const menuItems = [
+  {
+    id: "geral",
+    icon: "building outline",
+    text: "Empresa"
+  },
+  {
+    id: "servicos",
+    icon: "wrench",
+    text: "Serviços"
+  },
+  {
+    id: "funcionarios",
+    icon: "users",
+    text: "Funcionários"
+  },
+  {
+    id: "preferencias",
+    icon: "settings",
+    text: "Preferências"
+  }
+];
 
 export class CompanyConfig extends Component {
   state = {
     activeItem: "geral"
   };
 
-  handleItemClick = (e, { name }) => this.setState({ activeItem: name });
+  handleItemClick = name => this.setState({ activeItem: name });
 
   componentDidMount() {
     if (this.props.company) {
@@ -42,50 +73,24 @@ export class CompanyConfig extends Component {
   }
 
   render() {
-    const { activeItem } = this.state;
     return (
       <>
         {this.props.company !== undefined && (
-          <div className="CompanyConfig">
-            <div className="div company-config-menu">
-              <Menu borderless className="pages-menu">
-                <Menu.Item
-                  name="geral"
-                  active={activeItem === "geral"}
-                  onClick={this.handleItemClick}
-                  icon="building outline"
-                  content="Empresa"
-                />
-                <Menu.Item
-                  name="servicos"
-                  active={activeItem === "servicos"}
-                  onClick={this.handleItemClick}
-                  content="Serviços"
-                  icon="wrench"
-                />
-                <Menu.Item
-                  name="funcionarios"
-                  active={activeItem === "funcionarios"}
-                  onClick={this.handleItemClick}
-                  content="Funcionários"
-                  icon="users"
-                />
-                <Menu.Item
-                  name="preferencias"
-                  active={activeItem === "preferencias"}
-                  onClick={this.handleItemClick}
-                  content="Preferências"
-                  icon="settings"
-                />
-              </Menu>
-            </div>
-            <div className="company-config-body">
+          <StyledCompanyConfig>
+            <ComponentTopMenu
+              items={menuItems}
+              onClick={this.handleItemClick}
+              activeItem={this.state.activeItem}
+              colors={this.props.company.settings.colors}
+            />
+
+            <React.Fragment>
               {this.state.activeItem === "geral" && <General />}
               {this.state.activeItem === "servicos" && <Services />}
               {this.state.activeItem === "funcionarios" && <Staff />}
               {this.state.activeItem === "preferencias" && <Settings />}
-            </div>
-          </div>
+            </React.Fragment>
+          </StyledCompanyConfig>
         )}
       </>
     );

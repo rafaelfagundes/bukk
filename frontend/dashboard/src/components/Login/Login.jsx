@@ -1,10 +1,164 @@
 import React, { Component } from "react";
 import { Button, Image, Icon, Form } from "semantic-ui-react";
 import validator from "validator";
-import "./Login.css";
 import axios from "axios";
 import { Redirect } from "react-router-dom";
 import config from "../../config";
+import styled, { keyframes } from "styled-components";
+
+/* ===============================================================================
+  STYLED COMPONENTS
+=============================================================================== */
+
+const bouncedelay = keyframes`
+  0%,
+  80%,
+  100% {
+    -webkit-transform: scale(0);
+    transform: scale(0);
+  }
+  40% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
+`;
+
+const Loading = styled.div`
+  background-color: rgba(255, 255, 255, 0.9);
+  width: 380px;
+  height: 320px;
+  position: absolute;
+  z-index: 1000;
+  border-radius: 4px;
+`;
+
+const Spinner = styled.div`
+  width: 70px;
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-35px, 11px);
+
+  > div {
+    width: 18px;
+    height: 18px;
+    background-color: #333;
+
+    border-radius: 100%;
+    display: inline-block;
+    -webkit-animation: ${bouncedelay} 1.4s infinite ease-in-out both;
+    animation: ${bouncedelay} 1.4s infinite ease-in-out both;
+  }
+
+  > .bounce1 {
+    -webkit-animation-delay: -0.32s;
+    animation-delay: -0.32s;
+  }
+
+  > .bounce2 {
+    -webkit-animation-delay: -0.16s;
+    animation-delay: -0.16s;
+  }
+`;
+
+const Outer = styled.div`
+  display: table;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: #f2f7ff;
+`;
+
+const Middle = styled.div`
+  display: table-cell;
+  vertical-align: middle;
+`;
+
+const Inner = styled.div`
+  margin-left: auto;
+  margin-right: auto;
+  width: 380px;
+`;
+
+const StyledLogin = styled.div`
+  box-sizing: border-box !important;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  padding: 40px 30px;
+  background-color: white;
+`;
+
+const LoginImage = styled(Image)`
+  margin: 0 auto;
+  margin-bottom: 40px;
+`;
+
+const LoginEmail = styled(Form.Input)`
+  margin-bottom: 20px !important;
+`;
+
+const EmailError = styled.div`
+  color: #db2828;
+  display: block;
+  margin-top: -20px !important;
+  margin-bottom: 20px !important;
+`;
+
+const PasswordError = styled.div`
+  color: #db2828;
+  display: block;
+  margin-top: -14px !important;
+  margin-bottom: 20px !important;
+`;
+
+const Error = styled.div`
+  background-color: #db2828;
+  color: white;
+  width: 100%;
+  display: block;
+  text-align: center;
+  padding: 10px 10px;
+  border-radius: 4px;
+  margin-top: -30px !important;
+  margin-bottom: 20px !important;
+`;
+
+const LoginForget = styled.a`
+  margin-top: -10px !important;
+  padding-bottom: 40px;
+  display: block;
+`;
+
+const LoginCreate = styled.a`
+  font-weight: 700;
+  line-height: 36px;
+  margin: 0;
+`;
+
+const BottomButtons = styled.div`
+  display: flex;
+  flex-direction: row;
+
+  > a {
+    width: 70%;
+  }
+
+  > .field {
+    width: 30%;
+  }
+
+  > .field > button {
+    width: 100%;
+  }
+`;
+
+/* ============================================================================ */
 
 export default class Login extends Component {
   state = {
@@ -88,44 +242,41 @@ export default class Login extends Component {
       );
     }
     return (
-      <div className="outer">
-        <div className="middle">
-          <div className="inner">
+      <Outer>
+        <Middle>
+          <Inner>
             {this.state.loading && (
-              <div className="loading">
-                <div className="spinner">
+              <Loading>
+                <Spinner>
                   <div className="bounce1" />
                   <div className="bounce2" />
                   <div className="bounce3" />
-                </div>
-              </div>
+                </Spinner>
+              </Loading>
             )}
-            <div className="Login" id="Login">
+            <StyledLogin>
               <Form onSubmit={this.sendForm}>
-                <Image
+                <LoginImage
                   src="http://acmelogos.com/images/logo-7.svg"
                   size="small"
-                  className="login-img"
                 />
-                <Form.Input
+                <LoginEmail
                   iconPosition="left"
                   placeholder="Digite seu email"
-                  className="login-email"
                   type="email"
                   id="Email"
                 >
                   <Icon name="at" />
                   <input />
-                </Form.Input>
+                </LoginEmail>
                 {this.state.email.error && (
-                  <span className="login-email-error">
+                  <EmailError className="login-email-error">
                     {this.state.email.msg}
-                  </span>
+                  </EmailError>
                 )}
                 <Form.Input
                   iconPosition="left"
                   placeholder="Digite sua senha"
-                  className="login-password"
                   type="password"
                   id="Password"
                 >
@@ -133,33 +284,33 @@ export default class Login extends Component {
                   <input />
                 </Form.Input>
                 {this.state.password.error && (
-                  <span className="login-password-error">
+                  <PasswordError className="login-password-error">
                     {this.state.password.msg}
-                  </span>
+                  </PasswordError>
                 )}
-                <a href="/esqueci" className="login-forget">
+                <LoginForget href="/esqueci" className="login-forget">
                   Esqueceu sua senha?
-                </a>
+                </LoginForget>
                 {this.state.login.error && (
-                  <span className="login-error">{this.state.login.msg}</span>
+                  <Error>{this.state.login.msg}</Error>
                 )}
-                <div className="buttons">
-                  <a href="/criar-conta" className="login-create">
+                <BottomButtons>
+                  <LoginCreate href="/criar-conta">
                     <Icon name="signup" />
                     Crie uma conta
-                  </a>
+                  </LoginCreate>
                   <Form.Button color="green" animated>
                     <Button.Content visible>Entrar</Button.Content>
                     <Button.Content hidden>
                       <Icon name="arrow right" />
                     </Button.Content>
                   </Form.Button>
-                </div>
+                </BottomButtons>
               </Form>
-            </div>
-          </div>
-        </div>
-      </div>
+            </StyledLogin>
+          </Inner>
+        </Middle>
+      </Outer>
     );
   }
 }
