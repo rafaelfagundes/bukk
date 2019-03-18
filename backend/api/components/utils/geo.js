@@ -5726,22 +5726,30 @@ const statesAndCities = [
 
 // Get States
 exports.getStates = async (req, res) => {
-  const _states = [];
+  try {
+    const _states = [];
 
-  statesAndCities.forEach(state => {
-    _states.push({ name: state.nome, abbr: state.sigla });
-  });
+    statesAndCities.forEach(state => {
+      _states.push({ name: state.nome, abbr: state.sigla });
+    });
 
-  res.status(200).send({ msg: "OK", states: _states });
+    res.status(200).send({ msg: "OK", states: _states });
+  } catch (error) {
+    res.status(500).send({ msg: "Erro ao buscar estados", error });
+  }
 };
 
 // Get Cities By State
 exports.getCities = async (req, res) => {
-  const { state } = req.query;
+  try {
+    const { state } = req.query;
 
-  const _state = _.find(statesAndCities, function(o) {
-    return o.nome === state;
-  });
+    const _state = _.find(statesAndCities, function(o) {
+      return o.nome === state;
+    });
 
-  res.status(200).send({ msg: "OK", cities: _state.cidades });
+    res.status(200).send({ msg: "OK", cities: _state.cidades });
+  } catch (error) {
+    res.status(500).send({ msg: "Erro ao buscar cidades", error });
+  }
 };

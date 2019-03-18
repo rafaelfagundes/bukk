@@ -247,13 +247,21 @@ export class NewEdit extends Component {
         });
         this.setState({ states: _states });
       })
-      .catch();
+      .catch(error => {
+        console.log(error);
+      });
   };
 
-  getCities = state => {
+  getCities = (state, event) => {
+    let _state = state;
+    if (event) {
+      const { value } = event;
+      _state = value;
+    }
+
     Axios.get(config.api + "/utils/getcities", {
       params: {
-        state
+        state: _state
       }
     })
       .then(response => {
@@ -265,9 +273,20 @@ export class NewEdit extends Component {
             value: city
           });
         });
-        this.setState({ cities: _cities });
+        this.setState({
+          cities: _cities,
+          client: {
+            ...this.state.client,
+            address: {
+              ...this.state.client.address,
+              state: _state
+            }
+          }
+        });
       })
-      .catch();
+      .catch(error => {
+        console.log(error);
+      });
   };
 
   componentDidMount() {
@@ -291,19 +310,30 @@ export class NewEdit extends Component {
         }
       });
     }
-  }
 
-  componentDidUpdate() {
-    if (
-      this.state.client.address.state !== "" &&
-      this.state.cities.length === 0
-    ) {
+    if (this.state.newOrEdit === "new") {
+      setTimeout(() => {
+        this.getStates();
+      }, 500);
+    } else {
       setTimeout(() => {
         this.getStates();
         this.getCities(this.state.client.address.state);
       }, 500);
     }
   }
+
+  // componentDidUpdate() {
+  //   if (
+  //     this.state.client.address.state !== "" &&
+  //     this.state.cities.length === 0
+  //   ) {
+  //     setTimeout(() => {
+  //       this.getStates();
+  //       this.getCities(this.state.client.address.state);
+  //     }, 500);
+  //   }
+  // }
 
   mapKeyToLabel = value => {
     const labels = {
@@ -801,7 +831,7 @@ export class NewEdit extends Component {
                     />
                   </ErrorHolder>
                   <Form.Group>
-                    {this.state.cities.length === 0 && (
+                    {this.state.states.length === 0 && (
                       <Spinner
                         style={{
                           top: "6px",
@@ -816,14 +846,13 @@ export class NewEdit extends Component {
                         label="Estado"
                         placeholder="Estado"
                         options={this.state.states}
-                        onChange={this.populateCities}
+                        onChange={this.getCities}
                         error={this.state.errors.state !== ""}
                         value={this.state.client.address.state}
                         width={7}
                         search
                       />
                     )}
-
                     {this.state.cities.length > 0 && (
                       <Form.Select
                         label="Cidade"
