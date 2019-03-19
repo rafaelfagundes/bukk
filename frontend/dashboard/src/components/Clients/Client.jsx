@@ -7,7 +7,7 @@ import General from "./General";
 import Notes from "./Notes";
 import Appointments from "./Appointments";
 import { setCurrentPage } from "../dashboardActions";
-import { Statistics } from "./Statistics";
+import Statistics from "../Statistics/Statistics";
 
 const menuItems = [
   {

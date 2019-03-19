@@ -103,7 +103,7 @@ export class Statistics extends Component {
               </Value>
               <Label>{s.label}</Label>
             </StatisticHolder>
-            <BottomLine color={s.color} blue />
+            <BottomLine color={s.color} />
           </Statistic>
         ))}
       </StyledStatistics>
