@@ -1,95 +1,190 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import styled from "styled-components";
 import { setCurrentPage } from "../dashboardActions";
-import BukkSimpleLineChart from "../Statistics/BukkSimpleLineChart";
 import FormTitle from "../Common/FormTitle";
-import { colors } from "../colors";
+import calendarLocale from "../../config/CalendarLocale";
+import moment from "moment";
+import { Icon } from "semantic-ui-react";
+import { formatBrazilianPhoneNumber } from "../utils";
+import config from "../../config";
+import Axios from "axios";
+import { Statistics } from "../Statistics/Statistics";
+moment.defineLocale("pt-br", calendarLocale);
 
-const data = [
-  {
-    value: 31
-  },
-  {
-    value: 48
-  },
-  {
-    value: 37
-  },
-  {
-    value: 45
-  },
-  {
-    value: 27
-  },
-  {
-    value: 61
-  },
-  {
-    value: 75
-  }
-];
+/* ===============================================================================
+  COMPONENTS
+=============================================================================== */
+const Appointment = props => (
+  <StyledAppointment to={`/dashboard/agendamento/id/${props.id}`}>
+    <span>{props.service}</span>
+    <span>
+      <span>
+        <Icon name="user" />
+        {props.client}
+      </span>
+      <span>
+        <Icon name="doctor" />
+        {props.specialist}
+      </span>
+    </span>
+    <span>
+      <Icon name="clock outline" />
+      {moment(props.start).format("ddd, DD[ de ]MMMM[ de ]YYYY[ | ]HH:mm")}
+      {" às "}
+      {moment(props.end).format("HH:mm")}
+    </span>
+  </StyledAppointment>
+);
+
+const Client = props => (
+  <StyledClient to={`/dashboard/cliente/id/${props.id}`}>
+    <span>{props.client}</span>
+    <span>
+      <span>
+        <Icon name="mail" />
+        {props.email}
+      </span>
+      <span>
+        <Icon name="phone" />
+        {formatBrazilianPhoneNumber(props.phone)}
+      </span>
+    </span>
+    <span>
+      <Icon name="clock outline" />
+      {moment(props.date).format("ddd, DD[ de ]MMMM[ de ]YYYY[ às ]HH:mm")}
+    </span>
+  </StyledClient>
+);
+/* ============================================================================ */
 
 /* ===============================================================================
   STYLED COMPONENTS
 =============================================================================== */
-const TopCharts = styled.div`
+
+const TwoColumns = styled.div`
   display: flex;
   flex-direction: row;
-`;
+  > div {
+    width: 50%;
+  }
 
-const GraphItem = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  width: 25%;
-
-  text-align: center;
-  border-radius: 4px;
-  box-sizing: border-box;
-
-  margin-right: 10px;
-
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.03);
-  /* box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); */
-
-  &:last-child {
-    margin-right: 0px !important;
+  > div:first-child {
+    margin-right: 20px;
+  }
+  > div:last-child {
+    margin-left: 20px;
   }
 `;
 
-const ContentHolder = styled.div`
-  width: 100%;
-  padding: 20px;
-`;
-
-const Value = styled.div`
-  font-size: 2rem;
-  line-height: 2rem;
-`;
-
-const Label = styled.div`
-  font-size: 1rem;
-  text-transform: uppercase;
-  line-height: 1.5rem;
-  font-weight: 700;
+const StyledAppointment = styled(Link)`
+  display: flex;
+  flex-direction: column;
+  margin: 10px 0px;
+  cursor: pointer !important;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
   opacity: 0.8;
+  color: #222;
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0px !important;
+  }
+  &:hover {
+    opacity: 1;
+  }
+
+  > span:nth-child(1) {
+    font-size: 1.1rem;
+    line-height: 1.5rem;
+    font-weight: 300;
+  }
+  > span:nth-child(2) {
+    line-height: 1.5rem;
+  }
+  > span:nth-child(2) > span:nth-child(1) {
+    margin-right: 10px;
+  }
+  > span:nth-child(3) {
+    line-height: 1.5rem;
+  }
+  > span:nth-child(4) {
+    line-height: 1.5rem;
+  }
 `;
 
-const BottomLine = styled.div`
-  height: 5px;
-  width: 100%;
-  background-color: ${props => colors[props.color]};
-  border-bottom-left-radius: 4px;
-  border-bottom-right-radius: 4px;
+const StyledClient = styled(Link)`
+  display: flex;
+  flex-direction: column;
+  margin: 10px 0px;
+  cursor: pointer !important;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+  opacity: 0.8;
+  color: #222;
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0px !important;
+  }
+  &:hover {
+    opacity: 1;
+  }
+
+  > span:nth-child(1) {
+    font-size: 1.1rem;
+    line-height: 1.5rem;
+    font-weight: 300;
+  }
+  > span:nth-child(2) {
+    line-height: 1.5rem;
+  }
+  > span:nth-child(2) > span:nth-child(1) {
+    margin-right: 10px;
+  }
+  > span:nth-child(3) {
+    line-height: 1.5rem;
+  }
+  > span:nth-child(4) {
+    line-height: 1.5rem;
+  }
 `;
+
 /* ============================================================================ */
 
 export class Overview extends Component {
   state = {
-    alreadyUpdated: false
+    alreadyUpdated: false,
+    clients: [],
+
+    graphData: [
+      {
+        value: 31
+      },
+      {
+        value: 48
+      },
+      {
+        value: 37
+      },
+      {
+        value: 45
+      },
+      {
+        value: 27
+      },
+      {
+        value: 61
+      },
+      {
+        value: 75
+      }
+    ],
+
+    stats: [],
+    appointments: []
   };
 
   componentDidMount() {
@@ -100,7 +195,75 @@ export class Overview extends Component {
       });
       this.setState({ alreadyUpdated: true });
     }
+
+    const token = localStorage.getItem("token");
+    let requestConfig = {
+      headers: {
+        Authorization: token
+      }
+    };
+
+    Axios.post(config.api + "/utils/overview", {}, requestConfig)
+      .then(response => {
+        console.log(response.data);
+        const {
+          appointments,
+          clients,
+          today,
+          week,
+          month,
+          monthPayed
+        } = response.data;
+
+        const _stats = [
+          {
+            prefix: "",
+            suffix: "",
+            label: "Hoje",
+            value: today.count,
+            type: "number",
+            color: "blue"
+          },
+          {
+            prefix: "",
+            suffix: "",
+            label: "Semana",
+            value: week.count,
+            type: "number",
+            color: "violet"
+          },
+          {
+            prefix: "",
+            suffix: "",
+            label: "Mês",
+            value: month.count,
+            type: "number",
+            color: "purple"
+          },
+          {
+            prefix: "R$",
+            suffix: "",
+            label: "Faturamento / Mês",
+            value: monthPayed.value,
+            type: "currency",
+            color: "teal"
+          },
+          {
+            prefix: "R$",
+            suffix: "",
+            label: "Estimativa / Mês",
+            value: month.value,
+            type: "currency",
+            color: "olive"
+          }
+        ];
+        this.setState({ appointments, clients, stats: _stats });
+      })
+      .catch(error => {
+        console.log(error);
+      });
   }
+
   componentDidUpdate() {
     if (!this.state.alreadyUpdated && this.props.company) {
       this.props.setCurrentPage({
@@ -114,40 +277,39 @@ export class Overview extends Component {
     return (
       <>
         <FormTitle text="Agendamentos" first />
-        <TopCharts>
-          <GraphItem>
-            <ContentHolder>
-              <BukkSimpleLineChart height={50} data={data} color="purple" />
-              <Value>5</Value>
-              <Label>Hoje</Label>
-            </ContentHolder>
-            <BottomLine color="purple" />
-          </GraphItem>
-          <GraphItem>
-            <ContentHolder>
-              <BukkSimpleLineChart height={50} data={data} color="olive" />
-              <Value>18</Value>
-              <Label>Semana</Label>
-            </ContentHolder>
-            <BottomLine color="olive" />
-          </GraphItem>
-          <GraphItem>
-            <ContentHolder>
-              <BukkSimpleLineChart height={50} data={data} color="blue" />
-              <Value>82</Value>
-              <Label>Mês</Label>
-            </ContentHolder>
-            <BottomLine color="blue" />
-          </GraphItem>
-          <GraphItem>
-            <ContentHolder>
-              <BukkSimpleLineChart height={50} data={data} color="teal" />
-              <Value>320</Value>
-              <Label>Ano</Label>
-            </ContentHolder>
-            <BottomLine color="teal" />
-          </GraphItem>
-        </TopCharts>
+        <Statistics stats={this.state.stats} />
+        <TwoColumns>
+          <div>
+            <FormTitle text="Próximos Agendamentos" />
+            {this.state.appointments.map((app, index) => (
+              <React.Fragment key={index}>
+                <Appointment
+                  id={app.id}
+                  service={app.service}
+                  specialist={app.specialist}
+                  client={app.client}
+                  start={app.start}
+                  end={app.end}
+                />
+              </React.Fragment>
+            ))}
+          </div>
+          <div>
+            <FormTitle text="Novos Clientes" />
+            {this.state.clients.map((client, index) => (
+              <React.Fragment key={index}>
+                <Client
+                  id={client._id}
+                  email={client.email}
+                  phone={client.phone[0].number}
+                  client={client.fullName}
+                  date={client.createdAt}
+                />
+              </React.Fragment>
+            ))}
+          </div>
+        </TwoColumns>
+        {/* <FormTitle text="Atalhos" /> */}
       </>
     );
   }

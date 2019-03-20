@@ -8,6 +8,7 @@ const appointment = require("./components/appointment/appointmentController");
 const user = require("./components/user/userController");
 const costumer = require("./components/costumer/costumerController");
 const geo = require("./components/utils/geo");
+const stats = require("./components/utils/stats");
 
 const BASE_URL = "/api";
 
@@ -22,7 +23,7 @@ function verifyToken(req, res, next) {
 }
 
 /*============================================================
-Company
+  Company
 ============================================================*/
 router.get(BASE_URL + "/companies/:id", company.getSingleCompany);
 router.get(BASE_URL + "/companies/css/:id", company.getCompanyCss);
@@ -30,7 +31,7 @@ router.post(BASE_URL + "/companies", verifyToken, company.getCompany);
 router.post(BASE_URL + "/companies/update", verifyToken, company.updateCompany);
 
 /*============================================================
-Service
+  Service
 ============================================================*/
 router.get(
   BASE_URL + "/services/company/:companyId",
@@ -50,7 +51,7 @@ router.post(
 );
 
 /*============================================================
-Specialist (Employee)
+  Specialist (Employee)
 ============================================================*/
 router.get(
   BASE_URL + "/specialists/company/:companyId",
@@ -112,7 +113,7 @@ router.post(
 );
 
 /*============================================================
-Appointment
+  Appointment
 ============================================================*/
 router.post(BASE_URL + "/appointments", appointment.addAppointment);
 router.post(
@@ -151,7 +152,7 @@ router.patch(
 );
 
 /*============================================================
-User
+  User
 ============================================================*/
 router.post(BASE_URL + "/users/", verifyToken, user.getUser);
 router.post(BASE_URL + "/users/login", user.login);
@@ -165,7 +166,7 @@ router.post(
 module.exports = router;
 
 /*============================================================
-Costumer
+  Costumer
 ============================================================*/
 router.post(
   BASE_URL + "/costumers/list",
@@ -193,7 +194,8 @@ router.post(
 );
 
 /*============================================================
-Utils
+  Utils
 ============================================================*/
 router.get(BASE_URL + "/utils/getstates", geo.getStates);
 router.get(BASE_URL + "/utils/getcities", geo.getCities);
+router.post(BASE_URL + "/utils/overview", verifyToken, stats.getOverview);

@@ -811,13 +811,12 @@ class General extends Component {
       }
     })
       .then(response => {
-        let _cities = [];
-        response.data.cities.forEach(city => {
-          _cities.push({
+        const _cities = response.data.cities.map(city => {
+          return {
             key: city,
             text: city,
             value: city
-          });
+          };
         });
         this.setState({ cities: _cities });
       })

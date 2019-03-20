@@ -265,13 +265,12 @@ export class NewEdit extends Component {
       }
     })
       .then(response => {
-        let _cities = [];
-        response.data.cities.forEach(city => {
-          _cities.push({
+        const _cities = response.data.cities.map(city => {
+          return {
             key: city,
             text: city,
             value: city
-          });
+          };
         });
         this.setState({
           cities: _cities,
@@ -314,26 +313,16 @@ export class NewEdit extends Component {
     if (this.state.newOrEdit === "new") {
       setTimeout(() => {
         this.getStates();
-      }, 500);
+      }, 250);
     } else {
       setTimeout(() => {
+        console.time("geo");
         this.getStates();
         this.getCities(this.state.client.address.state);
-      }, 500);
+        console.timeEnd("geo");
+      }, 100);
     }
   }
-
-  // componentDidUpdate() {
-  //   if (
-  //     this.state.client.address.state !== "" &&
-  //     this.state.cities.length === 0
-  //   ) {
-  //     setTimeout(() => {
-  //       this.getStates();
-  //       this.getCities(this.state.client.address.state);
-  //     }, 500);
-  //   }
-  // }
 
   mapKeyToLabel = value => {
     const labels = {
