@@ -743,6 +743,7 @@ class General extends Component {
         .then(response => {
           this.props.setCompanyLogo(response.data.logoUrl);
           _company.logo = response.data.logoUrl;
+          _company.logoId = response.data.logoId;
 
           this.callUpdate(_company, requestConfig);
         })
@@ -959,12 +960,6 @@ class General extends Component {
   componentDidUpdate() {
     // Load logo on Canvas
     if (this.state.company !== undefined && this.canvasLogo) {
-      // if (!this.state.cities.length) {
-      //   setTimeout(() => {
-      //     this.getStates();
-      //     this.getCities(this.state.company.address.state);
-      //   }, 250);
-      // }
       this.canvasLogo.style.backgroundColor = this.state.company.settings.colors.primaryBack;
 
       const context = this.canvasLogo.getContext("2d");
@@ -972,13 +967,15 @@ class General extends Component {
       image.src = this.state.company.logo;
 
       image.onload = () => {
-        this.canvasLogo.width = image.width;
-        this.canvasLogo.height = image.height;
-        context.drawImage(
-          image,
-          this.canvasLogo.width / 2 - image.width / 2,
-          this.canvasLogo.height / 2 - image.height / 2
-        );
+        if (this.canvasLogo) {
+          this.canvasLogo.width = image.width;
+          this.canvasLogo.height = image.height;
+          context.drawImage(
+            image,
+            this.canvasLogo.width / 2 - image.width / 2,
+            this.canvasLogo.height / 2 - image.height / 2
+          );
+        }
       };
     }
   }

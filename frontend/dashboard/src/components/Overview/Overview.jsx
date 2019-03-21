@@ -205,7 +205,6 @@ export class Overview extends Component {
 
     Axios.post(config.api + "/utils/overview", {}, requestConfig)
       .then(response => {
-        console.log(response.data);
         const {
           appointments,
           clients,

@@ -3,12 +3,13 @@ const Schema = mongoose.Schema;
 
 // Company Schema & Model
 const CompanySchema = new Schema({
-  companyName: { type: String }, // Razão Social
-  tradingName: { type: String, required: true }, // Nome Fantasia
-  companyNickname: { type: String }, // Optional name to show on interface
+  companyName: { type: String },
+  tradingName: { type: String, required: true },
+  companyNickname: { type: String },
   cpfCnpj: { type: String, required: true, unique: true },
-  businessType: { type: String, required: true, enum: ["F", "J"] }, // Pessoa Física, Pessoa Jurídica
+  businessType: { type: String, required: true, enum: ["F", "J"] },
   logo: { type: String },
+  logoId: { type: Schema.Types.ObjectId, ref: "Image" },
   address: {
     street: {
       type: String,

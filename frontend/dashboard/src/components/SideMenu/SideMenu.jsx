@@ -177,7 +177,7 @@ class SideMenu extends Component {
                   id="empresa"
                 >
                   <Icon name="building" />
-                  Config. da Empresa
+                  Empresa
                 </StyledLink>
               </>
             )}

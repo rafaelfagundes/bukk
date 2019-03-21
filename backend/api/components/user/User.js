@@ -10,6 +10,7 @@ const UserSchema = new Schema({
     required: [true, "O primeiro nome é obrigatório"]
   },
   lastName: { type: String, required: [true, "O sobrenome é obrigatório"] },
+  avatarId: { type: Schema.Types.ObjectId, ref: "Image" },
   avatar: {
     type: String,
     required: true,
