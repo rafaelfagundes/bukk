@@ -91,7 +91,13 @@ exports.getOverview = async (req, res) => {
     }
   });
 
-  const appointments = await Appointment.find({ company })
+  const now = moment();
+  console.log(now.toString());
+
+  const appointments = await Appointment.find({
+    company,
+    start: { $gt: now.toDate() }
+  })
     .limit(6)
     .sort({ start: "asc" });
 
