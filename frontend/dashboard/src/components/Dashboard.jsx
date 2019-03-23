@@ -34,17 +34,36 @@ const Pages = styled.div`
   min-width: calc(100vw - 200px);
   top: 80px;
   bottom: -25px;
-  padding: 40px;
-  overflow-y: auto;
+  /* padding: 40px; */
+  padding: 25px 20px 40px 20px;
   z-index: 98;
   height: calc(100vh - 40px);
   background-color: white;
   margin-left: 214px;
+  overflow-y: auto;
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  /* Track */
+  &::-webkit-scrollbar-track {
+    background: white;
+  }
+
+  /* Handle */
+  &::-webkit-scrollbar-thumb {
+    background: #eee;
+  }
+
+  /* Handle on hover */
+  &::-webkit-scrollbar-thumb:hover {
+    background: #ddd;
+  }
 `;
 
 const PagesInner = styled.div`
   padding: 0 0 40px 0;
-  width: calc(100vw - 290px);
+  width: calc(100vw - 250px);
 `;
 
 const BukkNotification = styled(ToastContainer)`

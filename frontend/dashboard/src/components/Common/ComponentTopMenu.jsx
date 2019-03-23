@@ -16,7 +16,7 @@ menuItem = {
 */
 
 const StyledMenu = styled(Menu)`
-  margin-bottom: 40px !important;
+  margin-bottom: 30px !important;
 
   > a .item {
     color: ${props => props.colors.primaryText} !important;

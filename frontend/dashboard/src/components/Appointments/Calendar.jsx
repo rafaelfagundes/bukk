@@ -61,6 +61,11 @@ const StyledDragAndDropCalendar = styled(DragAndDropCalendar)`
   }
 `;
 
+const StyledCalendar = styled.div`
+  height: calc(100vh - 220px);
+  width: calc(100vw - 250px);
+`;
+
 /* ============================================================================ */
 
 export class Calendar extends Component {
@@ -71,13 +76,32 @@ export class Calendar extends Component {
     previousEvents: [],
     events: [],
     appointmentId: undefined,
-    errors: []
+    errors: [],
+    scrollToTime: undefined
   };
 
   componentDidMount() {
+    const getScrollTime = () => {
+      const _hour = Number(moment().format("HH"));
+      let _hourBack = 0;
+
+      if (_hour >= 0 && _hour < 8) {
+        _hourBack = 6;
+      } else if (_hour > 18 && _hour <= 23) {
+        _hourBack = 12;
+      } else {
+        _hourBack = _hour;
+      }
+
+      return moment()
+        .hour(_hourBack)
+        .toDate();
+    };
+
     this.setState({
       events: this.props.events,
-      initialEvents: this.props.events
+      initialEvents: this.props.events,
+      scrollToTime: getScrollTime()
     });
   }
 
@@ -204,9 +228,7 @@ export class Calendar extends Component {
 
   render() {
     return (
-      <div
-        style={{ height: "calc(100vh - 265px)", width: "calc(100vw - 290px)" }}
-      >
+      <StyledCalendar style={{}}>
         <StyledDragAndDropCalendar
           selectable
           localizer={localizer}
@@ -215,10 +237,13 @@ export class Calendar extends Component {
           onSelectSlot={this.newEvent}
           onSelectEvent={this.selectEvent}
           defaultView={BigCalendar.Views.WEEK}
-          defaultDate={new Date()}
-          scrollToTime={this.props.minTime}
+          defaultDate={moment().toDate()}
+          // scrollToTime={this.props.minTime}
+          scrollToTime={this.state.scrollToTime}
           views={{ month: true, week: true, day: true }}
           popup={true}
+          step={15}
+          timeslots={2}
           onSelecting={() => {
             return false;
           }}
@@ -270,7 +295,7 @@ export class Calendar extends Component {
             color={this.props.company.settings.colors.primaryBack}
           />
         )}
-      </div>
+      </StyledCalendar>
     );
   }
 }
