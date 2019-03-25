@@ -9,6 +9,7 @@ const CostumerSchema = new Schema({
   normalizedFullName: { type: String },
   email: { type: String },
   gender: { type: String, required: true, enum: ["M", "F", "O"] },
+  birthday: { type: Date },
   phone: [
     {
       number: { type: String, required: true },

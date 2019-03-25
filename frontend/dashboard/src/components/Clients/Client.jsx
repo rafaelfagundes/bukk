@@ -8,6 +8,7 @@ import Notes from "./Notes";
 import Appointments from "./Appointments";
 import { setCurrentPage } from "../dashboardActions";
 import Statistics from "../Statistics/Statistics";
+import moment from "moment";
 
 const menuItems = [
   {
@@ -68,7 +69,7 @@ export class Client extends Component {
           title: firstName + " " + lastName,
           icon: "user outline"
         });
-
+        response.data["birthday"] = moment(response.data["birthday"]).toDate();
         this.setState({ client: response.data, menuItems });
       })
       .catch(error => {

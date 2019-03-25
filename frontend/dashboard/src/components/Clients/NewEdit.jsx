@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
+import DatePicker from "react-datepicker";
 import FormTitle from "../Common/FormTitle";
 import FormSubTitle from "../Common/FormSubTitle";
 import Spinner from "react-spinkit";
@@ -113,7 +114,8 @@ const errorsTemplate = {
   neighborhood: "",
   city: "",
   state: "",
-  postalCode: ""
+  postalCode: "",
+  birthday: ""
 };
 
 /* ========================================================================= */
@@ -178,9 +180,6 @@ const TagInput = styled(Input)`
 
   > div > div > div > .label {
     border-radius: 50% !important;
-  }
-
-  > .ui .dropdown .label {
   }
 `;
 
@@ -316,10 +315,8 @@ export class NewEdit extends Component {
       }, 250);
     } else {
       setTimeout(() => {
-        console.time("geo");
         this.getStates();
         this.getCities(this.state.client.address.state);
-        console.timeEnd("geo");
       }, 100);
     }
   }
@@ -688,6 +685,22 @@ export class NewEdit extends Component {
                   checked={this.state.client.gender === "O"}
                   onChange={e => this.handleChange("gender", "O")}
                 />
+              </Form.Group>
+              <Form.Group>
+                <Form.Field>
+                  <label>Data de Nascimento</label>
+                  <DatePicker
+                    selected={this.state.client.birthday}
+                    onChange={e => this.handleChange("birthday", e)}
+                    locale="pt-BR"
+                    showYearDropdown
+                    dateFormatCalendar="MMMM"
+                    scrollableYearDropdown
+                    yearDropdownItemNumber={75}
+                    dateFormat="dd/MM/yyyy"
+                    maxDate={new Date()}
+                  />
+                </Form.Field>
               </Form.Group>
               <ErrorHolder>
                 <ValidationError

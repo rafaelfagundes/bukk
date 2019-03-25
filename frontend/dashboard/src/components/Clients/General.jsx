@@ -10,6 +10,7 @@ import { NewEdit } from "./NewEdit";
 import Axios from "axios";
 import config from "../../config";
 import Notification from "../Notification/Notification";
+import moment from "moment";
 
 /* ============================================================================
   STYLED COMPONENTS
@@ -105,7 +106,7 @@ export class General extends Component {
     }
   }
 
-  mapPhone(number, whatsApp) {
+  mapPhone = (number, whatsApp) => {
     if (whatsApp) {
       return (
         <>
@@ -116,7 +117,14 @@ export class General extends Component {
     } else {
       return formatBrazilianPhoneNumber(number);
     }
-  }
+  };
+
+  birthdayFormat = birthday => {
+    const _birthday = moment(birthday).format("DD/MM/YYYY");
+    const _years = moment().diff(birthday, "years", false);
+
+    return `${_birthday} (${_years} anos)`;
+  };
 
   delete = id => {
     this.setState({ confirm: false });
@@ -169,6 +177,12 @@ export class General extends Component {
                   <StyledLabel>Sexo: </StyledLabel>
                   {this.mapGender(client.gender)}
                 </p>
+                {client.birthday && (
+                  <p>
+                    <StyledLabel>Data de Nascimento: </StyledLabel>
+                    {this.birthdayFormat(client.birthday)}
+                  </p>
+                )}
 
                 <FormSubTitle text="Contato" />
                 <p>
