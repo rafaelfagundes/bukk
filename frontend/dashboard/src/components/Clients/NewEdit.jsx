@@ -23,6 +23,7 @@ import { formatBrazilianPhoneNumber, formatCEP } from "../utils";
 import config from "../../config";
 import Axios from "axios";
 import Notification from "../Notification/Notification";
+import moment from "moment";
 
 /* ============================================================================
   GLOBALS
@@ -388,12 +389,14 @@ export class NewEdit extends Component {
       }
     }
 
-    let hasErrors = false;
+    let hasErrors = 0;
     for (var error in _errors) {
-      hasErrors = _errors[error] !== "";
+      if (_errors[error] !== "") {
+        hasErrors++;
+      }
     }
     this.setState({ errors: _errors });
-    return !hasErrors;
+    return hasErrors ? false : true;
   };
 
   toggleEdit = () => {
@@ -437,7 +440,7 @@ export class NewEdit extends Component {
       color: this.state.tag.color,
       text: this.state.tag.text
     });
-
+    _client.birthday = moment(_client.birthday).toDate();
     this.setState({ client: _client, tag: { color: "grey", text: "" } });
   };
 
@@ -564,60 +567,60 @@ export class NewEdit extends Component {
   save = () => {
     if (!this.validate()) {
       return false;
+    } else {
+      const token = localStorage.getItem("token");
+      let requestConfig = {
+        headers: {
+          Authorization: token
+        }
+      };
+
+      Axios.post(
+        config.api + "/costumers/save",
+        { client: this.state.client, newOrEdit: this.state.newOrEdit },
+        requestConfig
+      )
+        .then(response => {
+          if (this.state.newOrEdit === "edit") {
+            toast(
+              <Notification
+                type="success"
+                title="Dados atualizados"
+                text="Os dados foram atualizados com sucesso"
+              />
+            );
+          } else {
+            this.props.setPage("lista");
+            this.props.history.push("/dashboard/clientes/lista");
+            toast(
+              <Notification
+                type="success"
+                title="Cliente Adicionado"
+                text="O cliente foi adicionado com sucesso"
+              />
+            );
+          }
+        })
+        .catch(error => {
+          if (this.state.newOrEdit === "edit") {
+            toast(
+              <Notification
+                type="error"
+                title="Erro ao atualizar"
+                text="Erro ao tentar atualizar os dados"
+              />
+            );
+          } else {
+            toast(
+              <Notification
+                type="error"
+                title="Erro ao adicionar cliente"
+                text="Não foi possível adicionar o novo cliente"
+              />
+            );
+          }
+        });
     }
-
-    const token = localStorage.getItem("token");
-    let requestConfig = {
-      headers: {
-        Authorization: token
-      }
-    };
-
-    Axios.post(
-      config.api + "/costumers/save",
-      { client: this.state.client, newOrEdit: this.state.newOrEdit },
-      requestConfig
-    )
-      .then(response => {
-        if (this.state.newOrEdit === "edit") {
-          toast(
-            <Notification
-              type="success"
-              title="Dados atualizados"
-              text="Os dados foram atualizados com sucesso"
-            />
-          );
-        } else {
-          this.props.setPage("lista");
-          this.props.history.push("/dashboard/clientes/lista");
-          toast(
-            <Notification
-              type="success"
-              title="Cliente Adicionado"
-              text="O cliente foi adicionado com sucesso"
-            />
-          );
-        }
-      })
-      .catch(error => {
-        if (this.state.newOrEdit === "edit") {
-          toast(
-            <Notification
-              type="error"
-              title="Erro ao atualizar"
-              text="Erro ao tentar atualizar os dados"
-            />
-          );
-        } else {
-          toast(
-            <Notification
-              type="error"
-              title="Erro ao adicionar cliente"
-              text="Não foi possível adicionar o novo cliente"
-            />
-          );
-        }
-      });
   };
 
   render() {
