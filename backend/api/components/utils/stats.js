@@ -82,8 +82,15 @@ exports.getOverview = async (req, res) => {
   };
 
   month.forEach(t => {
-    _month.count++;
-    _month.value += t.value;
+    if (
+      t.status === "created" ||
+      t.status === "confirmed" ||
+      t.status === "done" ||
+      t.status === "payed"
+    ) {
+      _month.count++;
+      _month.value += t.value;
+    }
 
     if (t.status === "payed") {
       _monthPayed.count++;
@@ -92,7 +99,6 @@ exports.getOverview = async (req, res) => {
   });
 
   const now = moment();
-  console.log(now.toString());
 
   const appointments = await Appointment.find({
     company,

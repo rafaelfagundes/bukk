@@ -83,18 +83,9 @@ export class Calendar extends Component {
   componentDidMount() {
     const getScrollTime = () => {
       const _hour = Number(moment().format("HH"));
-      let _hourBack = 0;
-
-      if (_hour >= 0 && _hour < 8) {
-        _hourBack = 6;
-      } else if (_hour > 18 && _hour <= 23) {
-        _hourBack = 12;
-      } else {
-        _hourBack = _hour;
-      }
 
       return moment()
-        .hour(_hourBack)
+        .hour(_hour - 3)
         .toDate();
     };
 

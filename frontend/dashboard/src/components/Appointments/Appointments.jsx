@@ -23,12 +23,39 @@ import NewAppointment from "./NewAppointment";
 import ComponentTopMenu from "../Common/ComponentTopMenu";
 import styled from "styled-components";
 
+const OutdatedMessage = props => {
+  if (props.count === 1) {
+    return (
+      <StyledOutdatedMessage>
+        <Icon name="warning sign" />
+        Há 1 agendamento com status desatualizado.
+      </StyledOutdatedMessage>
+    );
+  } else {
+    return (
+      <StyledOutdatedMessage>
+        <Icon name="warning sign" />
+        {`Há ${props.count} agendamentos com status desatualizados.`}
+      </StyledOutdatedMessage>
+    );
+  }
+};
+
 /* ===============================================================================
   STYLED COMPONENTS
 =============================================================================== */
 
 const AppointmentRow = styled(Table.Row)`
   background: ${props => props.bgcolor} !important;
+`;
+
+const StyledOutdatedMessage = styled.div`
+  color: #fff;
+  background-color: #f2711c;
+  margin: 0px 0px 20px 0;
+  padding: 10px;
+  border-radius: 4px;
+  font-weight: 700;
 `;
 
 // Helper Functions
@@ -322,10 +349,22 @@ const TableBody = ({
               <Link to={"/dashboard/agendamento/id/" + app._id}>
                 <Button
                   icon
-                  color="blue"
-                  inverted
+                  color={
+                    app.status === "confirmed" || app.status === "created"
+                      ? "orange"
+                      : "blue"
+                  }
+                  inverted={
+                    app.status === "confirmed" || app.status === "created"
+                      ? false
+                      : true
+                  }
                   compact
-                  title="Visualizar agendamento"
+                  title={
+                    app.status === "confirmed" || app.status === "created"
+                      ? "(Desatualizado) Visualizar agendamento"
+                      : "Visualizar agendamento"
+                  }
                 >
                   <Icon name="search" />
                 </Button>
@@ -381,7 +420,8 @@ export class Appointments extends Component {
       newAppointment: {
         start: undefined,
         end: undefined
-      }
+      },
+      outdatedAppointments: 0
     };
   }
 
@@ -576,6 +616,15 @@ export class Appointments extends Component {
       }
     });
 
+    // Count outdated appointments
+
+    let _outdated = 0;
+    _before.forEach(b => {
+      if (b.status === "created" || b.status === "confirmed") {
+        _outdated++;
+      }
+    });
+
     // Sorts previous appointments descending
     _.reverse(_before);
 
@@ -583,7 +632,8 @@ export class Appointments extends Component {
       before: _before,
       today: _today,
       tomorrow: _tomorrow,
-      next: _next
+      next: _next,
+      outdatedAppointments: _outdated
     });
   };
 
@@ -643,9 +693,13 @@ export class Appointments extends Component {
             activeItem={activeItem}
           />
         </div>
+
         {this.state.loading && <Loading />}
         {this.state.before.length > 0 && this.state.activeItem === "closed" && (
           <>
+            {this.state.outdatedAppointments > 0 && (
+              <OutdatedMessage count={this.state.outdatedAppointments} />
+            )}
             <div>
               <FormTitle text="Agendamentos Terminados" first />
             </div>

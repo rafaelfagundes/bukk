@@ -15,7 +15,6 @@ import {
 } from "semantic-ui-react";
 import moment from "moment";
 import MaskedInput from "react-text-mask";
-import calendarLocale from "../../config/CalendarLocale";
 import {
   setCurrentPage,
   setEmployee,
@@ -30,9 +29,6 @@ import validator from "validator";
 import { isAlpha, isAlphaNumeric } from "../validation";
 import Notification from "../Notification/Notification";
 import FormTitle from "../Common/FormTitle";
-
-// Locale file for moment
-moment.locale("pt-br", calendarLocale);
 
 /* ===============================================================================
   STYLED COMPONENTS
