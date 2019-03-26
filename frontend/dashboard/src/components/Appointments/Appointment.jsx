@@ -9,9 +9,17 @@ import Loading from "../Loading/Loading";
 import FormTitle from "../Common/FormTitle";
 import FormSubTitle from "../Common/FormSubTitle";
 import { formatBrazilianPhoneNumber, formatCurrency } from "../utils";
-import { Icon, Button, Divider, Confirm } from "semantic-ui-react";
+import {
+  Icon,
+  Button,
+  Divider,
+  Confirm,
+  Modal,
+  Select
+} from "semantic-ui-react";
 import Notification from "../Notification/Notification";
 import styled from "styled-components";
+import DatePicker from "react-datepicker";
 
 /* ===============================================================================
   STYLED COMPONENTS
@@ -44,6 +52,15 @@ const Info = styled.div`
 
   > div {
     width: 50%;
+  }
+`;
+
+const TwoColumns = styled.div`
+  display: flex;
+  flex-direction: row;
+
+  > div:first-child {
+    margin-right: 20px;
   }
 `;
 /* ============================================================================ */
@@ -268,6 +285,7 @@ export class Appointment extends Component {
     appointmentStatus: undefined,
     appointment: undefined,
     inThePast: false,
+    dateTimeModal: false,
     confirmationModal: {
       open: false,
       onCancel: undefined,
@@ -276,6 +294,10 @@ export class Appointment extends Component {
       content: "Tem certeza que deseja fazer isso?",
       cancelButton: "Cancelar",
       confirmButton: "Confirmar"
+    },
+    appointmentModal: {
+      times: [],
+      excludeDates: []
     }
   };
 
@@ -393,13 +415,126 @@ export class Appointment extends Component {
           appointment: response.data.appointment,
           appointmentId: response.data.appointment._id,
           appointmentStatus: response.data.appointment.status,
-          inThePast: _inThePast
+          inThePast: _inThePast,
+          appointmentModal: {
+            ...this.state.appointmentModal,
+            oldStartTime: start,
+            oldEndTime: end
+          }
         });
       })
       .catch(error => {
         this.setState({ loading: false });
       });
   }
+
+  loadSchedule = date => {
+    const token = localStorage.getItem("token");
+    let requestConfig = {
+      headers: {
+        Authorization: token
+      }
+    };
+
+    Axios.post(
+      config.api + "/specialists/schedule",
+      {
+        employeeId: this.state.appointment.employee._id,
+        date: moment(date).format("YYYY-MM"),
+        duration: this.state.appointment.service.duration
+      },
+      requestConfig
+    )
+      .then(response => {
+        const { dates, times } = response.data;
+
+        const _dates = dates.map(date => {
+          return moment(date).toDate();
+        });
+
+        const _times = [];
+        times.forEach(time => {
+          if (
+            moment(time).isSame(moment(this.state.appointment.start), "day")
+          ) {
+            _times.push({
+              key: time,
+              value: time,
+              text: moment(time).format("HH:mm")
+            });
+          }
+        });
+        this.setState({
+          appointmentModal: {
+            ...this.state.appointmentModal,
+            excludeDates: _dates,
+            times: _times
+          }
+        });
+      })
+      .catch(error => {
+        console.log(error.response.data);
+      });
+  };
+
+  toggleDateTimeChange = () => {
+    this.loadSchedule(this.state.appointment.start);
+    this.setState({ dateTimeModal: !this.state.dateTimeModal });
+  };
+
+  closeDateTimeChange = () => {
+    this.setState({
+      dateTimeModal: false,
+      appointment: {
+        ...this.state.appointment,
+        start: this.state.appointmentModal.oldStartTime,
+        end: this.state.appointmentModal.oldEndTime
+      }
+    });
+  };
+
+  changeAppointmentDate = e => {
+    this.setState(
+      {
+        appointment: {
+          ...this.state.appointment,
+          start: e
+        }
+      },
+      () => {
+        this.loadSchedule(e);
+      }
+    );
+  };
+
+  changeAppointmentTime = (e, { value }) => {
+    let _date = moment(this.state.appointment.start);
+    const _newTime = moment(value);
+
+    _date = _date.hour(_newTime.format("HH")).minute(_newTime.format("mm"));
+
+    this.setState({
+      appointment: {
+        ...this.state.appointment,
+        start: _date.toDate(),
+        end: _date
+          .add(this.state.appointment.service.duration, "minute")
+          .toDate()
+      }
+    });
+  };
+
+  updateAppointmentDateTime = () => {
+    const _appointment = {
+      _id: this.state.appointment._id,
+      start: this.state.appointment.start,
+      end: this.state.appointment.end,
+      status: this.state.appointment.status
+    };
+
+    this.updateAppointment(_appointment);
+    this.setState({ dateTimeModal: false });
+  };
 
   render() {
     const { appointment, confirmationModal } = this.state;
@@ -414,6 +549,51 @@ export class Appointment extends Component {
           cancelButton={confirmationModal.cancelButton}
           confirmButton={confirmationModal.confirmButton}
         />
+
+        <Modal
+          size="tiny"
+          open={this.state.dateTimeModal}
+          onClose={this.closeDateTimeChange}
+        >
+          <Modal.Header>Alterar Data e Hora do Agendamento</Modal.Header>
+          {this.state.appointment && (
+            <Modal.Content>
+              <TwoColumns>
+                <div>
+                  <DatePicker
+                    selected={moment(this.state.appointment.start).toDate()}
+                    onChange={this.changeAppointmentDate}
+                    inline
+                    locale="pt-BR"
+                    excludeDates={this.state.appointmentModal.excludeDates}
+                    minDate={new Date()}
+                  />
+                </div>
+                <div>
+                  <FormSubTitle text="Hora" first />
+                  <Select
+                    placeholder="Selecione a hora"
+                    options={this.state.appointmentModal.times}
+                    onChange={this.changeAppointmentTime}
+                  />
+                </div>
+              </TwoColumns>
+            </Modal.Content>
+          )}
+          <Modal.Actions>
+            <Button
+              icon="delete"
+              content="Cancelar"
+              onClick={this.closeDateTimeChange}
+            />
+            <Button
+              positive
+              icon="checkmark"
+              content="Alterar"
+              onClick={this.updateAppointmentDateTime}
+            />
+          </Modal.Actions>
+        </Modal>
         <div>
           {this.state.loading && <Loading />}
           {this.state.appointment !== undefined && (
@@ -496,6 +676,13 @@ export class Appointment extends Component {
                     {moment(appointment.start).format("HH:mm")} às{" "}
                     {moment(appointment.end).format("HH:mm")}
                   </p>
+                  <Button
+                    content="Alterar Data e Hora"
+                    icon="edit"
+                    compact
+                    size="small"
+                    onClick={this.toggleDateTimeChange}
+                  />
                   <FormSubTitle text="Especialista" />
                   <p>
                     <Label>Nome: </Label>

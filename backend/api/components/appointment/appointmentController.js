@@ -465,9 +465,11 @@ exports.getOneAppointment = async (req, res) => {
       },
       {
         $project: {
+          "user._id": 1,
           "user.firstName": 1,
           "user.lastName": 1,
           "employee.title": 1,
+          "employee._id": 1,
           "service.desc": 1,
           "service.value": 1,
           "service.duration": 1,
@@ -514,7 +516,7 @@ exports.updateOne = async (req, res) => {
       res.status(500).send({ msg: "Erro ao atualizar agendamento" });
     }
   } catch (error) {
-    console.log(error);
+    res.status(500).send({ msg: error });
   }
 };
 
@@ -555,7 +557,7 @@ exports.updateMany = async (req, res) => {
       res.status(500).send({ msg: "Erro ao atualizar agendamento" });
     }
   } catch (error) {
-    console.log(error);
+    res.status(500).send({ msg: error });
   }
 };
 
