@@ -14,9 +14,9 @@ import {
 } from "semantic-ui-react";
 import config from "../../config";
 import Notification from "../Notification/Notification";
-import FormTitle from "../Common/FormTitle";
 import ValidationError from "../Common/ValidationError";
 import styled from "styled-components";
+import { setCurrentPage, setCompany } from "../dashboardActions";
 
 /* ===============================================================================
   STYLED COMPONENTS
@@ -249,12 +249,16 @@ export class Services extends Component {
           );
         });
     }
+
+    this.props.setCurrentPage({
+      title: "Serviços",
+      icon: "wrench"
+    });
   }
 
   render() {
     return (
       <div>
-        <FormTitle text="Serviços" first />
         <Table fixed singleLine striped compact>
           <Table.Header>
             <Table.Row>
@@ -388,11 +392,17 @@ export class Services extends Component {
 
 const mapStateToProps = state => {
   return {
+    currentPage: state.dashboard.currentPage,
     company: state.dashboard.company
   };
 };
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = dispatch => {
+  return {
+    setCurrentPage: currentPage => dispatch(setCurrentPage(currentPage)),
+    setCompany: company => dispatch(setCompany(company))
+  };
+};
 
 export default connect(
   mapStateToProps,

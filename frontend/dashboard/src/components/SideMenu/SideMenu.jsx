@@ -90,8 +90,20 @@ class SideMenu extends Component {
     if (is(_path, "cliente")) {
       this.setState({ activeItem: "clientes", role: _role, path: _path });
     }
+    if (is(_path, "funcionarios")) {
+      this.setState({ activeItem: "funcionarios", role: _role, path: _path });
+    }
+    if (is(_path, "funcionario")) {
+      this.setState({ activeItem: "funcionarios", role: _role, path: _path });
+    }
     if (is(_path, "financeiro")) {
       this.setState({ activeItem: "financeiro", role: _role, path: _path });
+    }
+    if (is(_path, "servicos")) {
+      this.setState({ activeItem: "servicos", role: _role, path: _path });
+    }
+    if (is(_path, "servico")) {
+      this.setState({ activeItem: "servicos", role: _role, path: _path });
     }
     if (is(_path, "configuracoes-empresa")) {
       this.setState({ activeItem: "empresa", role: _role, path: _path });
@@ -120,7 +132,7 @@ class SideMenu extends Component {
               className={activeItem === "dashboard" ? "active item" : "item"}
               onClick={this.handleItemClick}
             >
-              <Icon name="dashboard" />
+              <Icon name="home" />
               Início
             </StyledLink>
             <StyledLink
@@ -138,7 +150,7 @@ class SideMenu extends Component {
               onClick={this.handleItemClick}
               id="clientes"
             >
-              <Icon name="users" />
+              <Icon name="address book outline" />
               Clientes
             </StyledLink>
             <StyledLink
@@ -159,6 +171,39 @@ class SideMenu extends Component {
               <Icon name="dollar" />
               Financeiro
             </StyledLink>
+            {this.props.user.role === "owner" && (
+              <>
+                <StyledLink
+                  to="/dashboard/servicos"
+                  className={activeItem === "servicos" ? "active item" : "item"}
+                  onClick={this.handleItemClick}
+                  id="servicos"
+                >
+                  <Icon name="wrench" />
+                  Serviços
+                </StyledLink>
+                <StyledLink
+                  to="/dashboard/funcionarios"
+                  className={
+                    activeItem === "funcionarios" ? "active item" : "item"
+                  }
+                  onClick={this.handleItemClick}
+                  id="funcionarios"
+                >
+                  <Icon name="users" />
+                  Funcionários
+                </StyledLink>
+                <StyledLink
+                  to="/dashboard/configuracoes-empresa"
+                  className={activeItem === "empresa" ? "active item" : "item"}
+                  onClick={this.handleItemClick}
+                  id="empresa"
+                >
+                  <Icon name="building" />
+                  Minha Empresa
+                </StyledLink>
+              </>
+            )}
             <StyledLink
               to="/dashboard/perfil"
               className={activeItem === "perfil" ? "active item" : "item"}
@@ -168,19 +213,6 @@ class SideMenu extends Component {
               <Icon name="settings" />
               Preferências
             </StyledLink>
-            {this.props.user.role === "owner" && (
-              <>
-                <StyledLink
-                  to="/dashboard/configuracoes-empresa"
-                  className={activeItem === "empresa" ? "active item" : "item"}
-                  onClick={this.handleItemClick}
-                  id="empresa"
-                >
-                  <Icon name="building" />
-                  Empresa
-                </StyledLink>
-              </>
-            )}
           </StyledSideMenu>
         )}
       </>

@@ -3,8 +3,6 @@ import { connect } from "react-redux";
 import { setCurrentPage, setCompany } from "../dashboardActions";
 import General from "./General";
 import Settings from "./Settings";
-import Services from "./Services";
-import Staff from "./Staff";
 import ComponentTopMenu from "../Common/ComponentTopMenu";
 import styled from "styled-components";
 
@@ -23,16 +21,7 @@ const menuItems = [
     icon: "building outline",
     text: "Empresa"
   },
-  {
-    id: "servicos",
-    icon: "wrench",
-    text: "Serviços"
-  },
-  {
-    id: "funcionarios",
-    icon: "users",
-    text: "Funcionários"
-  },
+
   {
     id: "preferencias",
     icon: "settings",
@@ -86,8 +75,6 @@ export class CompanyConfig extends Component {
 
             <React.Fragment>
               {this.state.activeItem === "geral" && <General />}
-              {this.state.activeItem === "servicos" && <Services />}
-              {this.state.activeItem === "funcionarios" && <Staff />}
               {this.state.activeItem === "preferencias" && <Settings />}
             </React.Fragment>
           </StyledCompanyConfig>

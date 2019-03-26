@@ -26,6 +26,7 @@ import ValidationError from "../Common/ValidationError";
 import validator from "validator";
 import { isAlpha, isMobilePhoneWithDDD, isPhoneWithDDD } from "../validation";
 import styled from "styled-components";
+import { setCurrentPage, setCompany } from "../dashboardActions";
 
 /* ===============================================================================
   STYLED COMPONENTS
@@ -110,6 +111,11 @@ export class Staff extends Component {
           );
         });
     }
+
+    this.props.setCurrentPage({
+      title: "Funcionários",
+      icon: "users"
+    });
   }
 
   updateEmployees = addUser => {
@@ -700,7 +706,6 @@ export class Staff extends Component {
           !this.state.removeClicked &&
           !this.state.addClicked && (
             <>
-              <FormTitle text="Funcionários" first />
               <Table fixed striped singleLine compact>
                 <Table.Header>
                   <Table.Row>
@@ -1233,11 +1238,17 @@ export class Staff extends Component {
 
 const mapStateToProps = state => {
   return {
+    currentPage: state.dashboard.currentPage,
     company: state.dashboard.company
   };
 };
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = dispatch => {
+  return {
+    setCurrentPage: currentPage => dispatch(setCurrentPage(currentPage)),
+    setCompany: company => dispatch(setCompany(company))
+  };
+};
 
 export default connect(
   mapStateToProps,

@@ -24,6 +24,8 @@ import Appointments from "./Appointments/Appointments";
 import Appointment from "./Appointments/Appointment";
 import Clients from "./Clients/Clients";
 import Client from "./Clients/Client";
+import Services from "./Services/Services";
+import Staff from "./Staff/Staff";
 
 /* ===============================================================================
   STYLED COMPONENTS
@@ -209,6 +211,16 @@ class Dashboard extends Component {
                           <PrivateRoute
                             path="/dashboard/clientes/"
                             component={Clients}
+                            exact
+                          />
+                          <PrivateRoute
+                            path="/dashboard/servicos/"
+                            component={Services}
+                            exact
+                          />
+                          <PrivateRoute
+                            path="/dashboard/funcionarios/"
+                            component={Staff}
                             exact
                           />
                           <PrivateRoute
