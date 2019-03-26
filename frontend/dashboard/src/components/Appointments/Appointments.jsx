@@ -633,6 +633,7 @@ export class Appointments extends Component {
           content={confirmationModal.content}
           cancelButton={confirmationModal.cancelButton}
           confirmButton={confirmationModal.confirmButton}
+          size="tiny"
         />
         <div>
           <ComponentTopMenu

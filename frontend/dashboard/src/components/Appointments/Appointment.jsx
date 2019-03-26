@@ -548,6 +548,7 @@ export class Appointment extends Component {
           content={confirmationModal.content}
           cancelButton={confirmationModal.cancelButton}
           confirmButton={confirmationModal.confirmButton}
+          size="tiny"
         />
 
         <Modal
@@ -676,13 +677,16 @@ export class Appointment extends Component {
                     {moment(appointment.start).format("HH:mm")} às{" "}
                     {moment(appointment.end).format("HH:mm")}
                   </p>
-                  <Button
-                    content="Alterar Data e Hora"
-                    icon="edit"
-                    compact
-                    size="small"
-                    onClick={this.toggleDateTimeChange}
-                  />
+                  {(this.state.appointment.status === "created" ||
+                    this.state.appointment.status === "confirmed") && (
+                    <Button
+                      content="Alterar Data e Hora"
+                      icon="edit"
+                      compact
+                      size="small"
+                      onClick={this.toggleDateTimeChange}
+                    />
+                  )}
                   <FormSubTitle text="Especialista" />
                   <p>
                     <Label>Nome: </Label>

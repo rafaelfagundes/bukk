@@ -907,6 +907,7 @@ export class Staff extends Component {
               content="Essa ação é irreversível. Opte por desativar caso queira somente não exibir o funcionário nas telas de agendamento."
               cancelButton="Cancelar"
               confirmButton="Sim, desejo remover o funcionário"
+              size="tiny"
             />
             <Information
               show

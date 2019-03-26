@@ -313,6 +313,7 @@ export class List extends Component {
           onConfirm={this.delete}
           cancelButton="Cancelar"
           confirmButton="Remover"
+          size="tiny"
         />
         {this.state.costumers.length > 0 && (
           <>

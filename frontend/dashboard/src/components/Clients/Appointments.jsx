@@ -425,6 +425,7 @@ export class Appointments extends Component {
           content={confirmationModal.content}
           cancelButton={confirmationModal.cancelButton}
           confirmButton={confirmationModal.confirmButton}
+          size="tiny"
         />
         {this.state.loading && <Loading />}
         {this.state.appointments.length === 0 && (

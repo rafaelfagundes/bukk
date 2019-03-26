@@ -495,6 +495,7 @@ export class Notes extends Component {
           content="Deseja salvar a nota?"
           onCancel={this.closeSaveConfirm}
           onConfirm={this.saveNote}
+          size="tiny"
         />
         <NotesMenu>
           <NotesSearch>
