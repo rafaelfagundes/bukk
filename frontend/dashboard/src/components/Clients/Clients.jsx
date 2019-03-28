@@ -17,12 +17,6 @@ const menuItems = [
     text: "Adicionar Cliente",
     link: "/dashboard/clientes/novo"
   },
-  // {
-  //   id: "info",
-  //   icon: "chart bar",
-  //   text: "Informações",
-  //   link: "/dashboard/clientes/informacoes"
-  // },
   {
     id: "lista",
     icon: "address book outline",

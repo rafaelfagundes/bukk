@@ -8,8 +8,18 @@ const Service = require("../service/Service");
 const Employee = require("../employee/Employee");
 const User = require("../user/User");
 
+/* ===============================================================================
+  FILTERS
+=============================================================================== */
+
+const FILTER_APPOINTMENT = `start end status  
+  service.desc service.value user.firstName user.lastName 
+  costumer.fullName costumer.email costumer.phone`;
+
+/* ============================================================================ */
+
 exports.getOverview = async (req, res) => {
-  console.time("stats");
+  console.time("@stats");
   const token = auth.verify(req.token);
   if (!token) {
     res.status(403).json({
@@ -22,12 +32,15 @@ exports.getOverview = async (req, res) => {
   const todayStart = moment().startOf("day");
   const todayEnd = moment().endOf("day");
 
-  const today = await Appointment.find({
-    start: {
-      $gte: todayStart.toDate(),
-      $lte: todayEnd.toDate()
-    }
-  });
+  const today = await Appointment.find(
+    {
+      start: {
+        $gte: todayStart.toDate(),
+        $lte: todayEnd.toDate()
+      }
+    },
+    FILTER_APPOINTMENT
+  );
 
   let _today = {
     count: 0,
@@ -43,12 +56,15 @@ exports.getOverview = async (req, res) => {
   const weekStart = moment().startOf("week");
   const weekEnd = moment().endOf("week");
 
-  const week = await Appointment.find({
-    start: {
-      $gte: weekStart.toDate(),
-      $lte: weekEnd.toDate()
-    }
-  });
+  const week = await Appointment.find(
+    {
+      start: {
+        $gte: weekStart.toDate(),
+        $lte: weekEnd.toDate()
+      }
+    },
+    FILTER_APPOINTMENT
+  );
 
   let _week = {
     count: 0,
@@ -64,12 +80,15 @@ exports.getOverview = async (req, res) => {
   const monthStart = moment().startOf("month");
   const monthEnd = moment().endOf("month");
 
-  const month = await Appointment.find({
-    start: {
-      $gte: monthStart.toDate(),
-      $lte: monthEnd.toDate()
-    }
-  });
+  const month = await Appointment.find(
+    {
+      start: {
+        $gte: monthStart.toDate(),
+        $lte: monthEnd.toDate()
+      }
+    },
+    FILTER_APPOINTMENT
+  );
 
   let _month = {
     count: 0,
@@ -89,40 +108,37 @@ exports.getOverview = async (req, res) => {
       t.status === "payed"
     ) {
       _month.count++;
-      _month.value += t.value;
+      _month.value += t.service.value;
     }
 
     if (t.status === "payed") {
       _monthPayed.count++;
-      _monthPayed.value += t.value;
+      _monthPayed.value += t.service.value;
     }
   });
 
   const now = moment();
 
-  const appointments = await Appointment.find({
-    company,
-    start: { $gt: now.toDate() }
-  })
+  const appointments = await Appointment.find(
+    {
+      company,
+      start: { $gt: now.toDate() }
+    },
+    FILTER_APPOINTMENT
+  )
     .limit(6)
     .sort({ start: "asc" });
 
-  let _appointments = [];
-  for (const app of appointments) {
-    const _costumer = await Costumer.findById(app.costumer, "fullName");
-    const _service = await Service.findById(app.service, "desc");
-    const _employee = await Employee.findById(app.employee, "user");
-    const _user = await User.findById(_employee.user, "firstName lastName");
-
-    _appointments.push({
+  let _appointments = appointments.map(app => {
+    return {
       id: app._id,
-      service: _service.desc,
-      specialist: `${_user.firstName} ${_user.lastName}`,
-      client: _costumer.fullName,
+      service: app.service.desc,
+      specialist: `${app.user.firstName} ${app.user.lastName}`,
+      client: app.costumer.fullName,
       start: app.start,
       end: app.end
-    });
-  }
+    };
+  });
 
   const clients = await Costumer.find(
     { company },
@@ -131,8 +147,8 @@ exports.getOverview = async (req, res) => {
     .limit(6)
     .sort({ createdAt: "desc" });
 
-  console.timeEnd("stats");
   if (appointments && clients) {
+    console.timeEnd("@stats");
     res.status(200).send({
       msg: "OK",
       appointments: _appointments,

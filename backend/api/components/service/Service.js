@@ -5,6 +5,7 @@ const Schema = mongoose.Schema;
 const ServiceSchema = new Schema({
   desc: { type: String, required: true },
   value: { type: Number, required: true },
+  cost: { type: Number, required: true, default: 0 },
   duration: { type: Number, required: true }, // Minutes
   products: [{ desc: String, value: Number, units: Number }],
   display: { type: Boolean, required: true, default: true },

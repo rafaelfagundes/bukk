@@ -35,37 +35,30 @@ const CostumerSchema = new Schema({
   address: {
     street: {
       type: String,
-      required: true,
       default: ""
     },
     number: {
       type: String,
-      required: true,
       default: ""
     },
     neighborhood: {
       type: String,
-      required: true,
       default: ""
     },
     city: {
       type: String,
-      required: true,
       default: ""
     },
     state: {
       type: String,
-      required: true,
       default: ""
     },
     country: {
       type: String,
-      required: true,
       default: ""
     },
     postalCode: {
       type: String,
-      required: true,
       default: ""
     }
   }

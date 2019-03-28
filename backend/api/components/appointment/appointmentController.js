@@ -11,9 +11,22 @@ shortid.characters(
 const Appointment = require("./Appointment");
 const Costumer = require("../costumer/Costumer");
 const Service = require("../service/Service");
+const Employee = require("../employee/Employee");
+const User = require("../user/User");
 
 const Mail = require("../mail/Mail");
 const templates = require("../mail/templates/emailTemplates");
+
+/* ===============================================================================
+  FILTERS
+=============================================================================== */
+
+const FILTER_APPOINTMENT = `confirmationId company start end status createdAt 
+service.desc service.value service.duration user.firstName user.lastName 
+costumer.firstName costumer.lastName costumer.gender costumer.email 
+costumer.phone costumer.fullName employee.title`;
+
+/* ============================================================================ */
 
 // Aux functions
 const checkEmptyTimeInSchedule = async services => {
@@ -22,7 +35,7 @@ const checkEmptyTimeInSchedule = async services => {
   services.forEach(service => {
     jobs.push(
       Appointment.find({
-        employee: mongoose.Types.ObjectId(service.specialistId),
+        "employee._id": mongoose.Types.ObjectId(service.specialistId),
         status: { $in: ["created", "confirmed"] },
         $or: [
           {
@@ -48,88 +61,224 @@ const checkEmptyTimeInSchedule = async services => {
   result.forEach((r, index) => {
     _resultsCounter += result[index].length;
   });
-
   return _resultsCounter === 0 ? true : false;
 };
 
 // Add a new appointment via dashboard
 exports.addAppointmentViaDashboard = async (req, res) => {
-  const token = auth.verify(req.token);
-  if (!token) {
-    res.status(403).json({
-      msg: "Token inválido."
-    });
-  }
-  const { appointment, isNewClient, client } = req.body;
-
-  const _service = [
-    {
-      specialistId: appointment.employee,
-      start: appointment.start,
-      end: appointment.end
-    }
-  ];
-
-  const okToContinue = await checkEmptyTimeInSchedule(_service);
-  if (okToContinue) {
-    try {
-      const _confirmationId = shortid.generate();
-      appointment.confirmationId = _confirmationId;
-
-      const _service = await Service.findById(appointment.service);
-      appointment["value"] = _service.value;
-
-      const _costumer = {
-        firstName: client.firstName,
-        lastName: client.lastName,
-        email: client.email,
-        phone: [{ number: client.phone, whatsApp: client.whatsApp }],
-        gender: client.gender,
-        company: token.company
-      };
-
-      if (isNewClient) {
-        const costumer = await Costumer.create(_costumer);
-        appointment.costumer = costumer._id;
-
-        if (costumer) {
-          const resultAppointment = await Appointment.create(appointment);
-
-          if (resultAppointment) {
-            res.status(200).send({ msg: "OK" });
-          } else {
-            res.status(500).send({ msg: "Erro ao criar agendamento" });
-          }
-        }
-      } else {
-        const costumer = await Costumer.updateOne(
-          { _id: appointment.costumer },
-          _costumer
-        );
-
-        if (costumer.ok) {
-          const resultAppointment = await Appointment.create(appointment);
-
-          if (resultAppointment) {
-            res.status(200).send({ msg: "OK", appointment: resultAppointment });
-          } else {
-            res.status(500).send({ msg: "Erro ao criar agendamento" });
-          }
-        }
+  // Normaliza o objeto para ser compativel com o schema
+  function normalizeCostumer(costumer) {
+    let _costumer = costumer;
+    _costumer.phone = [
+      {
+        number: costumer.phone,
+        whatsApp: costumer.whatsApp
       }
-    } catch (error) {
-      res.status(500).send({ msg: `Erro ao criar agendamento: ${error}` });
+    ];
+    delete _costumer.whatsApp;
+
+    return _costumer;
+  }
+
+  // Retorna o status dependendo da configurações da empresa
+  // O sistema pode já confirmar o agendamento, ou será necessário um agendamento manual
+  function getStatus(id) {
+    // TODO: pegar configurações do banco
+
+    return "created";
+  }
+
+  // Envia email caso o agendamento já tenha o status 'confirmed'
+  function sendEmail() {}
+
+  try {
+    const token = auth.verify(req.token);
+    if (!token) {
+      res.status(403).json({
+        msg: "Token inválido."
+      });
     }
-  } else {
-    res.status(500).send({
-      msg:
-        "A data e horário escolhidos não estão mais disponíveis. Tente novamente em outro horário."
-    });
+    const { appointment, isNewClient, client } = req.body;
+
+    // Verifica se tem tempo livre no horário
+    const _service = [
+      {
+        specialistId: appointment.employee,
+        start: appointment.start,
+        end: appointment.end
+      }
+    ];
+    const okToContinue = await checkEmptyTimeInSchedule(_service);
+    if (!okToContinue) {
+      res.status(404).send({ msg: "O horário já está reservado" });
+      return false;
+    }
+
+    // Setting Costumer
+    let costumer = undefined;
+    if (isNewClient) {
+      costumer = await Costumer.create(normalizeCostumer(client));
+    } else {
+      costumer = await Costumer.findById(appointment.costumer);
+    }
+
+    // Setting Service
+    let service = await Service.findById(appointment.service);
+
+    // Setting Employee
+    let employee = await Employee.findById(appointment.employee);
+
+    // Setting User
+    let user = await User.findById(employee.user);
+
+    // Get status
+    let status = getStatus(token.company);
+
+    const _appointment = {
+      confirmationId: shortid.generate(),
+      company: token.company,
+      start: appointment.start,
+      end: appointment.end,
+      costumer,
+      service,
+      employee,
+      user,
+      status
+    };
+
+    // Salva agendamento no banco
+    const resultAppointment = await Appointment.create(_appointment);
+    if (resultAppointment) {
+      // Envia email se a configuração já setar o agendamento como confirmado
+      if (status === "confirmed") {
+        sendEmail();
+      }
+      res.status(200).send({ msg: "Agendamento concluído com sucesso" });
+    } else {
+      res
+        .status(500)
+        .send({ msg: "Não foi possível criar um novo agendamento" });
+    }
+  } catch (error) {
+    res.status(500).send({ msg: "Não foi possível criar um novo agendamento" });
   }
 };
 
 // Add a new appointment
 exports.addAppointment = async (req, res) => {
+  console.time("@addAppointment");
+
+  // Retorna o status dependendo da configurações da empresa
+  // O sistema pode já confirmar o agendamento, ou será necessário um agendamento manual
+  function getStatus(id) {
+    // TODO: pegar configurações do banco
+
+    return "created";
+  }
+
+  const okToContinue = await checkEmptyTimeInSchedule(req.body.services);
+  if (!okToContinue) {
+    res.status(500).send({
+      status: "error",
+      msg:
+        "A data e horário escolhidos não estão mais disponíveis. Tente novamente em outro horário."
+    });
+    return false;
+  }
+
+  try {
+    const _confirmationId = shortid.generate();
+    const { client, services } = req.body;
+    const costumerObj = new Costumer({
+      firstName: client.firstName,
+      lastName: client.lastName,
+      email: client.email,
+      gender: client.gender,
+      phone: [{ number: client.phone, whatsApp: client.whatsapp }],
+      company: req.body.companyId
+    });
+
+    const [costumer] = await Costumer.find({ email: client.email });
+
+    let resultCostumer = undefined;
+
+    if (costumer) {
+      resultUpdateCostumer = await Costumer.updateOne(
+        { id: costumer._id },
+        costumerObj
+      );
+      if (resultUpdateCostumer) {
+        resultCostumer = costumer;
+      }
+    } else {
+      resultCostumer = await costumerObj.save();
+    }
+
+    let appointments = [];
+    let _status = getStatus();
+    for (const _service of services) {
+      const service = await Service.findById(_service.serviceId);
+      const employee = await Employee.findById(_service.specialistId);
+      const user = await User.findById(employee.user);
+
+      const _appointment = {
+        confirmationId: _confirmationId,
+        company: req.body.companyId,
+        start: _service.start,
+        end: _service.end,
+        costumer: resultCostumer,
+        service,
+        employee,
+        user,
+        status: _status,
+        notes: client.obs
+      };
+
+      appointments.push(_appointment);
+    }
+
+    const resultAppointment = await Appointment.create(appointments);
+    if (resultAppointment) {
+      if (_status === "confirmed") {
+        console.log("enviando email...");
+        // const template = await templates.newAppointment(_confirmationId);
+        // const mail = new Mail(
+        //   "Agendamento concluído com sucesso",
+        //   template.text,
+        //   template.html,
+        //   client.email,
+        //   "Bukk Agendador <no-reply@bukk.com.br>"
+        // );
+        // mail.send(); // TODO: transformar em evento
+        res.send({
+          confirmationId: _confirmationId,
+          status: _status,
+          msg: "Agendamento concluído com sucesso",
+          client,
+          services
+        });
+      } else {
+        res.send({
+          confirmationId: _confirmationId,
+          status: _status,
+          msg: "Aguarde a confirmação do agendamento",
+          client,
+          services
+        });
+      }
+    } else {
+      res.send({
+        status: "error",
+        msg: "Houve um erro ao agendar. Tente novamente."
+      });
+    }
+
+    console.timeEnd("@addAppointment");
+  } catch (error) {}
+};
+
+// Add a new appointment
+exports.addAppointment2 = async (req, res) => {
   const okToContinue = await checkEmptyTimeInSchedule(req.body.services);
   if (okToContinue) {
     try {
@@ -219,273 +368,99 @@ exports.addAppointment = async (req, res) => {
   }
 };
 
+// Get All Appointments
 exports.getAllAppointments = async (req, res) => {
-  const token = auth.verify(req.token);
-  if (!token) {
-    res.status(403).json({
-      msg: "Token inválido."
-    });
-  }
-
   try {
-    let _match = {
-      company: mongoose.Types.ObjectId(token.company)
-    };
-    if (token.role === "employee") {
-      _match["employee"] = mongoose.Types.ObjectId(token.employee);
+    const token = auth.verify(req.token);
+    if (!token) {
+      res.status(403).json({
+        msg: "Token inválido."
+      });
     }
-    const appointments = await Appointment.aggregate([
-      {
-        $match: _match
-      },
-      {
-        $lookup: {
-          from: "employees",
-          localField: "employee",
-          foreignField: "_id",
-          as: "employee"
-        }
-      },
-      {
-        $unwind: {
-          path: "$employee"
-        }
-      },
-      {
-        $lookup: {
-          from: "users",
-          localField: "employee.user",
-          foreignField: "_id",
-          as: "user"
-        }
-      },
-      {
-        $unwind: {
-          path: "$user"
-        }
-      },
-      {
-        $lookup: {
-          from: "costumers",
-          localField: "costumer",
-          foreignField: "_id",
-          as: "costumer"
-        }
-      },
-      {
-        $unwind: {
-          path: "$costumer"
-        }
-      },
-      {
-        $lookup: {
-          from: "services",
-          localField: "service",
-          foreignField: "_id",
-          as: "service"
-        }
-      },
-      {
-        $unwind: {
-          path: "$service"
-        }
-      },
-      {
-        $sort: {
-          start: 1
-        }
-      }
-    ]);
-    res.status(200).send({ msg: "OK", appointments });
+
+    let params = {};
+    if (token.role === "employee") {
+      params = {
+        company: token.company,
+        "employee._id": mongoose.Types.ObjectId(token.employee)
+      };
+    } else {
+      params = { company: token.company };
+    }
+    let appointments = await Appointment.find(params, FILTER_APPOINTMENT);
+
+    if (appointments.length) {
+      res.status(200).send({ msg: "OK", appointments });
+    } else {
+      res.status(404).send({ msg: "Nenhum agendamento encontrado" });
+    }
   } catch (error) {
-    res.status(500).send({ msg: "Erro ao listar agendamentos" });
+    console.error(error);
+    res.status(500).send({ msg: "Erro ao procurar agendamentos", error });
   }
 };
 
+// Get All Client Appointments
 exports.getAllClientAppointments = async (req, res) => {
-  const token = auth.verify(req.token);
-  if (!token) {
-    res.status(403).json({
-      msg: "Token inválido."
-    });
-  }
-
   try {
-    let _match = {
-      company: mongoose.Types.ObjectId(token.company),
-      costumer: mongoose.Types.ObjectId(req.body.id)
-    };
-    if (token.role === "employee") {
-      _match["employee"] = mongoose.Types.ObjectId(token.employee);
+    const token = auth.verify(req.token);
+    if (!token) {
+      res.status(403).json({
+        msg: "Token inválido."
+      });
     }
-    const appointments = await Appointment.aggregate([
-      {
-        $match: _match
-      },
-      {
-        $lookup: {
-          from: "employees",
-          localField: "employee",
-          foreignField: "_id",
-          as: "employee"
-        }
-      },
-      {
-        $unwind: {
-          path: "$employee"
-        }
-      },
-      {
-        $lookup: {
-          from: "users",
-          localField: "employee.user",
-          foreignField: "_id",
-          as: "user"
-        }
-      },
-      {
-        $unwind: {
-          path: "$user"
-        }
-      },
-      {
-        $lookup: {
-          from: "costumers",
-          localField: "costumer",
-          foreignField: "_id",
-          as: "costumer"
-        }
-      },
-      {
-        $unwind: {
-          path: "$costumer"
-        }
-      },
-      {
-        $lookup: {
-          from: "services",
-          localField: "service",
-          foreignField: "_id",
-          as: "service"
-        }
-      },
-      {
-        $unwind: {
-          path: "$service"
-        }
-      },
-      {
-        $sort: {
-          start: 1
-        }
-      }
-    ]);
-    res.status(200).send({ msg: "OK", appointments });
+
+    let params = {};
+    if (token.role === "employee") {
+      params = {
+        "costumer._id": mongoose.Types.ObjectId(req.body.id),
+        company: token.company,
+        "employee._id": mongoose.Types.ObjectId(token.employee)
+      };
+    } else {
+      params = {
+        "costumer._id": mongoose.Types.ObjectId(req.body.id),
+        company: token.company
+      };
+    }
+
+    let appointments = await Appointment.find(params, FILTER_APPOINTMENT);
+    if (appointments.length) {
+      res.status(200).send({ msg: "OK", appointments });
+    } else {
+      res.status(404).send({ msg: "Nenhum agendamento encontrado" });
+    }
   } catch (error) {
-    res.status(500).send({ msg: "Erro ao listar agendamentos" });
+    console.error(error);
+    res.status(500).send({ msg: "Erro ao procurar agendamentos", error });
   }
 };
 
+// Get One Appointment
 exports.getOneAppointment = async (req, res) => {
-  const token = auth.verify(req.token);
-  if (!token) {
-    res.status(403).json({
-      msg: "Token inválido."
-    });
-  }
   try {
-    let _match = {
-      company: mongoose.Types.ObjectId(token.company),
-      _id: mongoose.Types.ObjectId(req.body.id)
-    };
-    if (token.role === "employee") {
-      _match["employee"] = mongoose.Types.ObjectId(token.employee);
+    const token = auth.verify(req.token);
+    if (!token) {
+      res.status(403).json({
+        msg: "Token inválido."
+      });
     }
 
-    const appointments = await Appointment.aggregate([
-      {
-        $match: _match
-      },
-      {
-        $lookup: {
-          from: "employees",
-          localField: "employee",
-          foreignField: "_id",
-          as: "employee"
-        }
-      },
-      {
-        $unwind: {
-          path: "$employee"
-        }
-      },
-      {
-        $lookup: {
-          from: "users",
-          localField: "employee.user",
-          foreignField: "_id",
-          as: "user"
-        }
-      },
-      {
-        $unwind: {
-          path: "$user"
-        }
-      },
-      {
-        $lookup: {
-          from: "costumers",
-          localField: "costumer",
-          foreignField: "_id",
-          as: "costumer"
-        }
-      },
-      {
-        $unwind: {
-          path: "$costumer"
-        }
-      },
-      {
-        $lookup: {
-          from: "services",
-          localField: "service",
-          foreignField: "_id",
-          as: "service"
-        }
-      },
-      {
-        $unwind: {
-          path: "$service"
-        }
-      },
-      {
-        $sort: {
-          start: 1
-        }
-      },
-      {
-        $project: {
-          "user._id": 1,
-          "user.firstName": 1,
-          "user.lastName": 1,
-          "employee.title": 1,
-          "employee._id": 1,
-          "service.desc": 1,
-          "service.value": 1,
-          "service.duration": 1,
-          "costumer.firstName": 1,
-          "costumer.lastName": 1,
-          "costumer.gender": 1,
-          "costumer.email": 1,
-          "costumer.phone": 1,
-          start: 1,
-          end: 1,
-          notes: 1,
-          status: 1
-        }
-      }
-    ]);
-    res.status(200).send({ msg: "OK", appointment: appointments[0] });
+    let params = {};
+    if (token.role === "employee") {
+      params = {
+        _id: mongoose.Types.ObjectId(req.body.id),
+        company: token.company,
+        "employee._id": mongoose.Types.ObjectId(token.employee)
+      };
+    } else {
+      params = { company: token.company, _id: req.body.id };
+    }
+    let [appointment] = await Appointment.find(params, FILTER_APPOINTMENT);
+
+    console.log(appointment);
+
+    res.status(200).send({ msg: "OK", appointment });
   } catch (error) {
     console.log(error);
     res.status(500).send({ msg: "Erro ao recuperar agendamento" });

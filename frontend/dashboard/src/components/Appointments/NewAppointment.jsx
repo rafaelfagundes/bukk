@@ -441,7 +441,7 @@ export class NewAppointment extends Component {
         );
       })
       .catch(error => {
-        console.log(error.response.data);
+        console.log(error);
       });
   };
 

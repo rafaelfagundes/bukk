@@ -84,9 +84,19 @@ export class Calendar extends Component {
     const getScrollTime = () => {
       const _hour = Number(moment().format("HH"));
 
-      return moment()
-        .hour(_hour - 3)
-        .toDate();
+      if (_hour < 5) {
+        return moment()
+          .hour(0)
+          .minute(0)
+          .second(0)
+          .toDate();
+      } else {
+        return moment()
+          .hour(_hour - 3)
+          .minute(0)
+          .second(0)
+          .toDate();
+      }
     };
 
     this.setState({

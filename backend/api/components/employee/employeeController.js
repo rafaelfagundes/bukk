@@ -363,8 +363,11 @@ exports.getSchedule = async (req, res) => {
     const date = req.params.date;
     const serviceDuration = req.params.serviceDuration;
 
-    const employee = await Employee.findOne({ _id: id });
-    const appointments = await Appointment.find({ employee: id });
+    const employee = await Employee.findById(id);
+    const appointments = await Appointment.find({
+      "employee._id": mongoose.Types.ObjectId(id)
+    });
+
     let _monthSchedule = generateMonthSchedule(date, employee.workingDays);
 
     // Scheduled times
@@ -399,8 +402,9 @@ exports.getSchedulePost = async (req, res) => {
     } else {
       employee = await Employee.findOne({ _id: employeeId });
     }
-
-    const appointments = await Appointment.find({ employee: employee._id });
+    const appointments = await Appointment.find({
+      "employee._id": mongoose.Types.ObjectId(employee._id)
+    });
     let _monthSchedule = generateMonthSchedule(date, employee.workingDays);
 
     // Scheduled times

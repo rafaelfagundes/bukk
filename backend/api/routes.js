@@ -45,9 +45,21 @@ router.post(
 );
 
 router.post(
+  BASE_URL + "/services/company/get",
+  verifyToken,
+  service.getSingleService
+);
+
+router.post(
   BASE_URL + "/services/company/update",
   verifyToken,
-  service.updateCompanyServices
+  service.updateCompanyService
+);
+
+router.post(
+  BASE_URL + "/services/company/delete",
+  verifyToken,
+  service.deleteService
 );
 
 /*============================================================
@@ -132,7 +144,7 @@ router.post(
   appointment.getAllClientAppointments
 );
 router.post(
-  BASE_URL + "/appointments/get",
+  BASE_URL + "/appointment/get",
   verifyToken,
   appointment.getOneAppointment
 );

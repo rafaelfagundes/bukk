@@ -60,11 +60,24 @@ exports.companyServices = async (req, res) => {
 // Get single service by ID
 exports.getSingleService = async (req, res) => {
   try {
-    const id = req.params.id;
-    const service = await Service.findById(id);
-    return service;
-  } catch (err) {
-    throw boom.boomify(err);
+    const token = auth.verify(req.token);
+    if (!token) {
+      res.status(403).json({
+        msg: "Token inválido."
+      });
+    } else {
+      const service = await Service.findById(
+        req.body.id,
+        "-company -createdAt"
+      );
+      if (service) {
+        res.status(200).send({ msg: "OK", service });
+      } else {
+        res.status(400).send({ msg: "Serviço não encontrado" });
+      }
+    }
+  } catch (error) {
+    res.status(500).send({ msg: error });
   }
 };
 
@@ -78,8 +91,8 @@ exports.addService = async (req, res) => {
   }
 };
 
-// Update an existing service [POST]
-exports.updateCompanyServices = async (req, res) => {
+// Update Service
+exports.updateCompanyService = async (req, res) => {
   try {
     const token = auth.verify(req.token);
     if (!token) {
@@ -87,41 +100,41 @@ exports.updateCompanyServices = async (req, res) => {
         msg: "Token inválido."
       });
     } else {
-      const _companyId = req.body.companyId;
-      const _services = req.body.services;
-
-      for (let s in _services) {
-        if (_services[s]._id === undefined) {
-          _services[s].company = _companyId;
-          await Service.create(_services[s]);
-        } else {
-          _services[s].company = _companyId;
-          await Service.update(
-            { _id: _services[s]._id, company: _companyId },
-            _services[s]
-          );
-        }
-      }
-
-      const _servicesResult = await Service.find(
-        { company: _companyId },
-        "id desc value duration display"
+      const result = await Service.updateOne(
+        { _id: req.body._id },
+        { display: req.body.display }
       );
 
-      res.send({ msg: "OK", services: _servicesResult });
+      if (result.ok) {
+        res.status(200).send({ msg: "Serviço atualizado com sucesso." });
+      } else {
+        res.status(500).send({ msg: "Erro ao atualizar o serviço." });
+      }
     }
-  } catch (err) {
-    throw boom.boomify(err);
+  } catch (error) {
+    res.status(500).send({ msg: error });
   }
 };
 
 // Delete a service
 exports.deleteService = async (req, res) => {
   try {
-    const id = req.params.id;
-    const service = await Service.findByIdAndRemove(id);
-    return service;
-  } catch (err) {
-    throw boom.boomify(err);
+    const token = auth.verify(req.token);
+    if (!token) {
+      res.status(403).json({
+        msg: "Token inválido."
+      });
+    } else {
+      const result = await Service.deleteOne({ _id: req.body.id });
+      console.log("result", result);
+
+      if (result.ok) {
+        res.status(200).send({ msg: "Serviço removido com sucesso." });
+      } else {
+        res.status(500).send({ msg: "Erro ao remover o serviço." });
+      }
+    }
+  } catch (error) {
+    res.status(500).send({ msg: error });
   }
 };

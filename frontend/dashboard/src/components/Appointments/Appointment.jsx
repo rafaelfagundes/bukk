@@ -393,7 +393,7 @@ export class Appointment extends Component {
     };
 
     Axios.post(
-      config.api + "/appointments/get",
+      config.api + "/appointment/get",
       { id: this.props.match.params.id },
       requestConfig
     )

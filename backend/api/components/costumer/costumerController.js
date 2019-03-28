@@ -26,7 +26,9 @@ exports.getAllCostumers = async (req, res) => {
         .skip(_skip)
         .limit(_limit)
         .exec();
-      costumersCount = await Costumer.count({ company: token.company });
+      costumersCount = await Costumer.countDocuments({
+        company: token.company
+      });
       if (costumers.length) {
         res
           .status(200)

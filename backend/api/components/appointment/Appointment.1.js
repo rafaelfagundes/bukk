@@ -1,18 +1,14 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const CostumerSchema = require("../costumer/Costumer").schema.obj;
-const EmployeeSchema = require("../employee/Employee").schema.obj;
-const ServiceSchema = require("../service/Service").schema.obj;
-const UserSchema = require("../user/User").schema.obj;
 
 // Appointment Schema & Model
 const AppointmentSchema = new Schema({
   confirmationId: { type: String, required: true },
+  costumer: { type: Schema.Types.ObjectId, ref: "Costumer" },
+  employee: { type: Schema.Types.ObjectId, ref: "Employee" },
   company: { type: Schema.Types.ObjectId, ref: "Company" },
-  costumer: { type: CostumerSchema },
-  employee: { type: EmployeeSchema },
-  user: { type: UserSchema },
-  service: { type: ServiceSchema },
+  service: { type: Schema.Types.ObjectId, ref: "Service" },
+  value: { type: Number, required: true },
   start: { type: Date, required: true },
   end: { type: Date, required: true },
   status: {
