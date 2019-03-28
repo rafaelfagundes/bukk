@@ -199,8 +199,6 @@ export class Calendar extends Component {
       previousEvents: this.state.events,
       modified: true
     });
-
-    // console.log(`${event.title} was dropped onto ${updatedEvent.start}`);
   };
 
   resizeEvent = ({ event, start, end }) => {
@@ -215,8 +213,6 @@ export class Calendar extends Component {
     this.setState({
       events: nextEvents
     });
-
-    //alert(`${event.title} was resized to ${start}-${end}`)
   };
 
   newEvent = event => {

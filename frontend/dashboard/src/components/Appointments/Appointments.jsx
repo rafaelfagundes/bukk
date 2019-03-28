@@ -790,7 +790,7 @@ export class Appointments extends Component {
         )}
         {this.state.activeItem === "calendar" && (
           <>
-            {this.state.events !== undefined && (
+            {this.state.events && (
               <>
                 <Calendar
                   minTime={this.state.minTime}
@@ -801,6 +801,9 @@ export class Appointments extends Component {
                   {...this.props}
                 />
               </>
+            )}
+            {!this.state.events && (
+              <NoAppointments text="Não há agendamentos" />
             )}
           </>
         )}

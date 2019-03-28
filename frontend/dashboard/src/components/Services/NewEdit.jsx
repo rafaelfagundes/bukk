@@ -22,7 +22,14 @@ const ServiceEdit = styled.div`
 
 export class NewEdit extends Component {
   state = {
-    service: undefined
+    service: {
+      cost: 0,
+      display: false,
+      desc: "",
+      value: 0.0,
+      duration: 30,
+      products: []
+    }
   };
 
   componentDidMount() {
@@ -46,7 +53,7 @@ export class NewEdit extends Component {
         .then(response => {
           const { service } = response.data;
           this.setState({ service });
-          console.log("service", service);
+          // console.log("service", service);
         })
         .catch(error => {
           console.log(error.response.data);
