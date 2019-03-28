@@ -65,7 +65,9 @@ export class NewEdit extends Component {
     return (
       <div>
         {!this.props.edit && <FormTitle text="Novo Serviço" />}
-        {this.props.edit && <FormTitle text="Editar Serviço" />}
+        {this.props.edit && (
+          <FormTitle text={`Editar - ${this.state.service.desc}`} />
+        )}
         {this.state.service && (
           <ServiceEdit>
             <Form>

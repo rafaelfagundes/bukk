@@ -3,6 +3,25 @@ import { connect } from "react-redux";
 import styled from "styled-components";
 import { colors } from "../colors";
 
+function hexToRgbA(hex, alpha) {
+  var c;
+  if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
+    c = hex.substring(1).split("");
+    if (c.length === 3) {
+      c = [c[0], c[0], c[1], c[1], c[2], c[2]];
+    }
+    c = "0x" + c.join("");
+    return (
+      "rgba(" +
+      [(c >> 16) & 255, (c >> 8) & 255, c & 255].join(",") +
+      "," +
+      alpha +
+      ")"
+    );
+  }
+  throw new Error("Bad Hex");
+}
+
 /* ===============================================================================
   STYLED COMPONENTS
 =============================================================================== */
@@ -18,6 +37,8 @@ const Statistic = styled.div`
   align-items: center;
   justify-content: center;
 
+  background-color: ${props => hexToRgbA(colors[props.color], 0.2)};
+
   width: ${props => 100 / props.numberItems}%;
 
   text-align: center;
@@ -26,7 +47,7 @@ const Statistic = styled.div`
 
   margin-right: 10px;
 
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.03);
+  /* box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.03); */
 
   &:last-child {
     margin-right: 0px !important;
@@ -94,7 +115,11 @@ export class Statistics extends Component {
     return (
       <StyledStatistics>
         {this.props.stats.map((s, index) => (
-          <Statistic key={index} numberItems={this.props.stats.length}>
+          <Statistic
+            key={index}
+            numberItems={this.props.stats.length}
+            color={s.color}
+          >
             <StatisticHolder>
               <Value>
                 <Prefix>{s.prefix}</Prefix>

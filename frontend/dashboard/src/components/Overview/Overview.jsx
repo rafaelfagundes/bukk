@@ -253,7 +253,7 @@ export class Overview extends Component {
             label: "Estimativa / Mês",
             value: month.value,
             type: "currency",
-            color: "olive"
+            color: "green"
           }
         ];
         this.setState({ appointments, clients, stats: _stats });
