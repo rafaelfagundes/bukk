@@ -57,6 +57,12 @@ router.post(
 );
 
 router.post(
+  BASE_URL + "/services/company/add",
+  verifyToken,
+  service.addCompanyService
+);
+
+router.post(
   BASE_URL + "/services/company/delete",
   verifyToken,
   service.deleteService

@@ -8,6 +8,7 @@ const ValidationError = props => {
         color: "red",
         display: props.show ? "block" : "none"
       }}
+      className={props.className}
     >
       <Icon name="exclamation circle" />
       {props.error}

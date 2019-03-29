@@ -70,7 +70,11 @@ export class Services extends Component {
         )}
         {activeItem === "novo" && (
           <>
-            <NewEdit edit={false} {...this.props} />
+            <NewEdit
+              edit={false}
+              setPage={this.handleMenuClick}
+              {...this.props}
+            />
           </>
         )}
         {activeItem === "editar" && (
@@ -78,6 +82,7 @@ export class Services extends Component {
             <NewEdit
               edit={true}
               serviceId={this.state.serviceId}
+              setPage={this.handleMenuClick}
               {...this.props}
             />
           </>

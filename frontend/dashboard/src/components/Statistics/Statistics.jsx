@@ -37,7 +37,7 @@ const Statistic = styled.div`
   align-items: center;
   justify-content: center;
 
-  background-color: ${props => hexToRgbA(colors[props.color], 0.2)};
+  background-color: ${props => hexToRgbA(colors[props.color], 0.1)};
 
   width: ${props => 100 / props.numberItems}%;
 

@@ -129,7 +129,7 @@ export class List extends Component {
           <Notification
             type="error"
             title="Erro ao carregar os serviços da empresa"
-            text={err.response.data.msg}
+            text={`${err}`}
           />
         );
       });

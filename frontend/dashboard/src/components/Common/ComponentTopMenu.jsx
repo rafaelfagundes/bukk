@@ -48,13 +48,18 @@ class ComponentTopMenu extends Component {
     };
   }
 
+  componentDidUpdate() {
+    if (this.props.activeItem !== this.state.activeItem) {
+      this.setState({ activeItem: this.props.activeItem });
+    }
+  }
+
   handleItemClick = name => {
     this.setState({ activeItem: name });
     return name;
   };
 
   render() {
-    const { activeItem } = this.state;
     return (
       <>
         {this.props.company && (
@@ -66,7 +71,7 @@ class ComponentTopMenu extends Component {
                   name={item.id}
                   content={item.text}
                   icon={item.icon}
-                  active={activeItem === item.id}
+                  active={this.state.activeItem === item.id}
                   onClick={e => {
                     this.handleItemClick(item.id);
                     this.props.onClick(item.id);
@@ -81,7 +86,7 @@ class ComponentTopMenu extends Component {
                     name={item.id}
                     content={item.text}
                     icon={item.icon}
-                    active={activeItem === item.id}
+                    active={this.state.activeItem === item.id}
                     onClick={e => {
                       this.handleItemClick(item.id);
                       this.props.onClick(item.id);

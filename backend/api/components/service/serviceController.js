@@ -22,7 +22,7 @@ exports.getServicesByCompany = async (req, res) => {
     const services = await Service.find(
       { company: companyId },
       "id desc value duration company"
-    );
+    ).sort({ desc: 1 });
     res.send(services);
   } catch (err) {
     throw boom.boomify(err);
@@ -43,12 +43,12 @@ exports.companyServices = async (req, res) => {
         services = await Service.find(
           { company: token.company },
           "id desc value duration display"
-        );
+        ).sort({ desc: 1 });
       } else {
         services = await Service.find(
           { company: token.company },
           "id desc value duration"
-        );
+        ).sort({ desc: 1 });
       }
       res.send(services);
     }
@@ -91,6 +91,29 @@ exports.addService = async (req, res) => {
   }
 };
 
+// Add Service
+exports.addCompanyService = async (req, res) => {
+  try {
+    const token = auth.verify(req.token);
+    if (!token) {
+      res.status(403).json({
+        msg: "Token inválido."
+      });
+    } else {
+      console.log("req.body", req.body);
+      req.body["company"] = token.company;
+      const result = await Service.create(req.body);
+      if (result) {
+        res.status(200).send({ msg: "Serviço atualizado com sucesso." });
+      } else {
+        res.status(500).send({ msg: "Erro ao atualizar o serviço." });
+      }
+    }
+  } catch (error) {
+    res.status(500).send({ msg: error });
+  }
+};
+
 // Update Service
 exports.updateCompanyService = async (req, res) => {
   try {
@@ -100,10 +123,7 @@ exports.updateCompanyService = async (req, res) => {
         msg: "Token inválido."
       });
     } else {
-      const result = await Service.updateOne(
-        { _id: req.body._id },
-        { display: req.body.display }
-      );
+      const result = await Service.updateOne({ _id: req.body._id }, req.body);
 
       if (result.ok) {
         res.status(200).send({ msg: "Serviço atualizado com sucesso." });
