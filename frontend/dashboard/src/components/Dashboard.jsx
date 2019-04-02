@@ -241,6 +241,15 @@ class Dashboard extends Component {
                             exact
                           />
                           <PrivateRoute
+                            path="/dashboard/funcionarios/:option"
+                            component={Staff}
+                            exact
+                          />
+                          <PrivateRoute
+                            path="/dashboard/funcionarios/:option/:id"
+                            component={Staff}
+                          />
+                          <PrivateRoute
                             path="/dashboard/perfil"
                             component={Profile}
                           />

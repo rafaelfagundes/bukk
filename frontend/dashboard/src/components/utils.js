@@ -64,8 +64,10 @@ exports.formatHour = h => {
 };
 
 exports.formatCurrency = c => {
-  c = c.replace(",", ".");
-  return parseFloat(String(c))
-    .toFixed(2)
-    .replace(".", ",");
+  if (c) {
+    c = String(c).replace(",", ".");
+    return parseFloat(c)
+      .toFixed(2)
+      .replace(".", ",");
+  }
 };

@@ -4,6 +4,7 @@ const auth = require("../../auth");
 const mongoose = require("mongoose");
 const moment = require("moment");
 const _ = require("lodash");
+const shortid = require("shortid");
 
 // Get Data Models
 const Employee = require("./Employee");
@@ -132,13 +133,53 @@ function filterIncompatibleRange(times, duration, timeFrame = 30) {
   return _filteredTimes;
 }
 
-// Get all employees
-exports.getEmployees = async (req, res) => {
+// Add Employee
+exports.addEmployee = async (req, res) => {
+  console.log("\n\n\n############# add\n\n#############");
+
+  const token = auth.verify(req.token);
+  if (!token) {
+    res.status(403).json({
+      msg: "Token inválido."
+    });
+  } else if (token.role !== "owner") {
+    res.status(403).json({
+      msg: "Permissão negada."
+    });
+  }
   try {
-    const employees = await Employee.find();
-    res.send(employees);
-  } catch (err) {
-    throw boom.boomify(err);
+    console.log("user", req.body.user);
+
+    let _user = req.body.user;
+    _user["role"] = "employee";
+    _user["company"] = token.company;
+    const password = shortid.generate();
+    _user["password"] = password;
+
+    const resultUser = await User.create(req.body.user);
+    let _employee = req.body.employee;
+    _employee["user"] = resultUser._id;
+    const resultEmployee = await Employee.create(_employee);
+
+    if (resultUser && resultEmployee) {
+      res.status(200).send({
+        msg: "OK",
+        user: resultUser,
+        employee: resultEmployee,
+        password
+      });
+    } else {
+      res.status(500).send({ msg: "Erro ao criar novo funcionário" });
+    }
+  } catch (error) {
+    console.log(error);
+    if (error.code === 11000) {
+      res
+        .status(500)
+        .send({ msg: "Já existe um usuário com o email cadastrado" });
+    } else {
+      res.status(500).send({ msg: "Erro ao criar novo funcionário" });
+    }
   }
 };
 
@@ -323,7 +364,8 @@ exports.allEmployeesByCompany = async (req, res) => {
           "employee.salary": 1,
           "employee.enabled": 1
         }
-      }
+      },
+      { $sort: { firstName: 1, lastName: 1 } }
     ]);
     res.send(employees);
   } catch (err) {
@@ -346,6 +388,60 @@ exports.getEmployeeByUserId = async (req, res) => {
     );
     if (employee) {
       res.send(employee);
+    } else {
+      res.status(404).send({
+        msg: "O usuário precisa preencher o restante dos seus dados."
+      });
+    }
+  } catch (err) {
+    res.send(boom.boomify(err));
+  }
+};
+
+// Get single employee
+exports.getEmployee = async (req, res) => {
+  try {
+    const token = auth.verify(req.token);
+    if (!token) {
+      res.status(403).json({
+        msg: "Invalid token"
+      });
+    }
+    const employee = await Employee.findById(req.body.id);
+    if (employee) {
+      res.send(employee);
+    } else {
+      res.status(404).send({
+        msg: "O usuário precisa preencher o restante dos seus dados."
+      });
+    }
+  } catch (err) {
+    res.send(boom.boomify(err));
+  }
+};
+
+// Get single user employee
+exports.getUserEmployee = async (req, res) => {
+  try {
+    const token = auth.verify(req.token);
+    if (!token) {
+      res.status(403).json({
+        msg: "Invalid token"
+      });
+    }
+    let employee = await Employee.findById(req.body.id);
+    let user = await User.findById(employee.user, "-password");
+    if (employee && user) {
+      employee = JSON.parse(JSON.stringify(employee));
+      user = JSON.parse(JSON.stringify(user));
+
+      let result = {
+        ...user,
+        employee
+      };
+
+      // console.log(result);
+      res.status(200).send(result);
     } else {
       res.status(404).send({
         msg: "O usuário precisa preencher o restante dos seus dados."
@@ -422,16 +518,6 @@ exports.getSchedulePost = async (req, res) => {
   }
 };
 
-// Add a new employee
-exports.addEmployee = async (req, res) => {
-  try {
-    const employee = new Employee(req.body);
-    return employee.save();
-  } catch (err) {
-    throw boom.boomify(err);
-  }
-};
-
 // Update Employee
 exports.updateEmployee = async (req, res) => {
   const token = auth.verify(req.token);
@@ -456,8 +542,37 @@ exports.updateEmployee = async (req, res) => {
   }
 };
 
+// Update Employee Status
+exports.updateEmployeeStatus = async (req, res) => {
+  const token = auth.verify(req.token);
+  if (!token) {
+    res.status(403).json({
+      msg: "Invalid token"
+    });
+  }
+  try {
+    const { employee } = req.body;
+    const employeeResult = await Employee.updateOne(
+      { _id: employee._id },
+      employee
+    );
+    if (employeeResult.ok) {
+      res.status(200).send({ msg: "OK" });
+    } else {
+      res.status(404).json({
+        msg: "Não foi possível atualizar o status do funcionário"
+      });
+    }
+  } catch (error) {
+    res.status(404).json({
+      msg: "Não foi possível atualizar o status do funcionário"
+    });
+  }
+};
+
 // Update User-Employee
-exports.updateUserEmployee = async (req, res) => {
+exports.updateUserAndEmployee = async (req, res) => {
+  console.log("update employee");
   const token = auth.verify(req.token);
   if (!token) {
     res.status(403).json({
@@ -485,40 +600,13 @@ exports.updateUserEmployee = async (req, res) => {
       res.status(200).send({ msg: "OK" });
     } else {
       res.status(500).json({
-        msg: "Error: can not update employee"
+        msg: "Não foi possível atualizar o funcionário"
       });
     }
   } catch (error) {
     res.status(500).json({
-      msg: "Error: can not update employee: " + error
+      msg: "Não foi possível atualizar o funcionário"
     });
-  }
-};
-
-// Employee Enabled/Disabled
-exports.updateEmployeeAvailability = async (req, res) => {
-  const token = auth.verify(req.token);
-  if (!token) {
-    res.status(403).json({
-      msg: "Invalid token"
-    });
-  }
-
-  if (token.role !== "owner") {
-    res.status(403).json({
-      msg: "Permissão negada"
-    });
-  }
-
-  try {
-    const employee = await Employee.updateOne({ _id: req.body._id }, req.body);
-    if (employee.ok) {
-      res.status(200).send({ msg: "OK" });
-    } else {
-      res.status(500).send({ msg: "Impossível atualizar estado do usuário" });
-    }
-  } catch (error) {
-    throw boom.boomify(error);
   }
 };
 
@@ -537,17 +625,18 @@ exports.removeEmployee = async (req, res) => {
     });
   }
 
-  const employee = await Employee.deleteOne({ _id: req.body.employeeId });
-  if (employee.ok) {
-    const user = await User.deleteOne({ _id: req.body.userId });
-    if (user.ok) {
+  const employee = await Employee.findById(req.body.id, "user");
+
+  if (employee) {
+    const deleteEmployee = await Employee.deleteOne({ _id: employee._id });
+    const deleteUser = await User.deleteOne({ _id: employee.user });
+
+    if (deleteEmployee.ok && deleteUser.ok) {
       res.status(200).send({ msg: "OK" });
     } else {
-      res
-        .status(500)
-        .send({ msg: "Erro ao remover usuário. Este é um erro crítico!" });
+      res.status(500).send({ msg: "Não foi possível remover o funcionário" });
     }
   } else {
-    res.status(500).send({ msg: "Erro ao remover funcionário." });
+    res.status(404).send({ msg: "Funcionário não encontrado" });
   }
 };

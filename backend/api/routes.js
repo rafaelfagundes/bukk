@@ -76,6 +76,12 @@ router.get(
   specialist.getEmployeesByCompany
 );
 
+router.get(
+  BASE_URL +
+    "/specialists/schedule/:companyId/date/:date/duration/:serviceDuration",
+  specialist.getSchedule
+);
+
 router.post(
   BASE_URL + "/specialists/company",
   verifyToken,
@@ -94,10 +100,12 @@ router.post(
   specialist.getEmployeeByUserId
 );
 
-router.get(
-  BASE_URL +
-    "/specialists/schedule/:companyId/date/:date/duration/:serviceDuration",
-  specialist.getSchedule
+router.post(BASE_URL + "/specialists/get", verifyToken, specialist.getEmployee);
+
+router.post(
+  BASE_URL + "/specialists/user/get",
+  verifyToken,
+  specialist.getUserEmployee
 );
 
 router.post(
@@ -113,15 +121,15 @@ router.patch(
 );
 
 router.patch(
-  BASE_URL + "/specialists/updateUserEmployee",
+  BASE_URL + "/specialists/update/status",
   verifyToken,
-  specialist.updateUserEmployee
+  specialist.updateEmployeeStatus
 );
 
 router.patch(
-  BASE_URL + "/specialists/availability",
+  BASE_URL + "/specialists/updateUserEmployee",
   verifyToken,
-  specialist.updateEmployeeAvailability
+  specialist.updateUserAndEmployee
 );
 
 router.post(
@@ -129,6 +137,8 @@ router.post(
   verifyToken,
   specialist.removeEmployee
 );
+
+router.post(BASE_URL + "/specialists/add", verifyToken, specialist.addEmployee);
 
 /*============================================================
   Appointment

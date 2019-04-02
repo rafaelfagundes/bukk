@@ -162,17 +162,19 @@ class SideMenu extends Component {
               <Icon name="chart line" />
               Relatórios
             </StyledLink>
-            <StyledLink
-              to="/dashboard/financeiro"
-              className={activeItem === "financeiro" ? "active item" : "item"}
-              onClick={this.handleItemClick}
-              id="financeiro"
-            >
-              <Icon name="dollar" />
-              Financeiro
-            </StyledLink>
             {this.props.user.role === "owner" && (
               <>
+                <StyledLink
+                  to="/dashboard/financeiro"
+                  className={
+                    activeItem === "financeiro" ? "active item" : "item"
+                  }
+                  onClick={this.handleItemClick}
+                  id="financeiro"
+                >
+                  <Icon name="dollar" />
+                  Financeiro
+                </StyledLink>
                 <StyledLink
                   to="/dashboard/servicos"
                   className={activeItem === "servicos" ? "active item" : "item"}

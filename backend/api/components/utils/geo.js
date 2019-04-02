@@ -5743,7 +5743,6 @@ exports.getStates = async (req, res) => {
 exports.getCities = async (req, res) => {
   try {
     const { state } = req.query;
-
     const _state = _.find(statesAndCities, function(o) {
       return o.nome === state;
     });
