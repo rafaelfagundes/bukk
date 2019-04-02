@@ -528,6 +528,7 @@ exports.updateEmployee = async (req, res) => {
   }
   try {
     const employee = await Employee.updateOne({ user: token.id }, req.body);
+    console.log("employee", employee);
     if (employee) {
       res.status(200).send(employee);
     } else {

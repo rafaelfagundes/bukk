@@ -1,17 +1,41 @@
 // External Dependancies
 const boom = require("boom");
 const auth = require("../../auth");
+const _ = require("lodash");
 
 // Get Data Models
 const Service = require("./Service");
+const Employee = require("../employee/Employee");
 
 // Get all services
-exports.getServices = async (req, res) => {
+exports.getServicesByEmployee = async (req, res) => {
   try {
-    const services = await Service.find();
-    return services;
-  } catch (err) {
-    throw boom.boomify(err);
+    const token = auth.verify(req.token);
+    if (!token) {
+      res.status(403).json({
+        msg: "Token inválido."
+      });
+    }
+    const { id } = req.body;
+    const employee = await Employee.findById(id);
+    const servicesCompany = await Service.find({ company: token.company });
+
+    const _servicesCompany = JSON.parse(JSON.stringify(servicesCompany));
+    _servicesCompany.forEach(s => {
+      s.checked = false;
+      employee.services.forEach(si => {
+        if (String(s._id) === String(si)) {
+          s.checked = true;
+        }
+      });
+    });
+
+    console.log("_servicesCompany", _servicesCompany);
+
+    res.status(200).send({ msg: "OK", services: _servicesCompany });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ msg: "Erro ao recuperar os serviços" });
   }
 };
 

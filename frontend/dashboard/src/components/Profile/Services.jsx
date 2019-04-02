@@ -17,72 +17,26 @@ class Services extends Component {
     employee: undefined
   };
 
-  syncServicesEmployee = () => {
-    let _services = JSON.parse(JSON.stringify(this.state.services));
-    _services.forEach(service => {
-      service.checked = false;
-      this.state.employee.services.forEach(eService => {
-        if (eService === service._id) {
-          service.checked = true;
-        }
-      });
-    });
+  componentDidMount() {
+    this.getServices();
+  }
 
+  handleServiceToggle = (index, value) => {
+    const _services = JSON.parse(JSON.stringify(this.state.services));
+    _services[index].checked = value;
     this.setState({ services: _services });
   };
 
-  componentDidMount() {
-    const token = localStorage.getItem("token");
-    let requestConfig = {
-      headers: {
-        Authorization: token
-      }
-    };
-
-    const _employee = JSON.parse(localStorage.getItem("employee"));
-
-    /* Why do make a request everytime?
-     - An admin could add a new service and the employee will not receive
-       the update until logout/login
-    */
-    Axios.post(config.api + "/services/company", {}, requestConfig)
-      .then(response => {
-        this.setState({ services: response.data, employee: _employee }, () => {
-          this.syncServicesEmployee();
-        });
-      })
-      .catch(error => {
-        toast(
-          <Notification
-            type="error"
-            title="Não foi possível carregar os serviços"
-            text="Tente novamente"
-          />
-        );
-      });
-  }
-
-  handleServiceToggle = (e, { id, checked }) => {
-    let _servicesId = [];
-    let _services = JSON.parse(JSON.stringify(this.state.services));
-    _services.forEach(service => {
-      if (service._id === id) {
-        service.checked = checked;
-      }
-      if (service.checked) {
-        _servicesId.push(service._id);
-      }
-    });
-    this.setState({
-      services: _services,
-      employee: {
-        ...this.state.employee,
-        services: _servicesId
-      }
-    });
-  };
   handleEmployeeServices = () => {
     this.setState({ loading: true });
+    const _employee = JSON.parse(localStorage.getItem("employee"));
+    const _servicesIds = [];
+    this.state.services.map(service => {
+      if (service.checked) {
+        _servicesIds.push(service._id);
+      }
+    });
+
     const token = localStorage.getItem("token");
     let requestConfig = {
       headers: {
@@ -92,10 +46,11 @@ class Services extends Component {
 
     Axios.patch(
       config.api + "/specialists/update",
-      this.state.employee,
+      { _id: _employee._id, services: _servicesIds },
       requestConfig
     )
       .then(response => {
+        this.getServices();
         toast(
           <Notification
             type="success"
@@ -116,6 +71,35 @@ class Services extends Component {
         this.setState({ loading: false });
       });
   };
+
+  getServices() {
+    const token = localStorage.getItem("token");
+    let requestConfig = {
+      headers: {
+        Authorization: token
+      }
+    };
+
+    const _employee = JSON.parse(localStorage.getItem("employee"));
+    Axios.post(
+      config.api + "/services/employee",
+      { id: _employee._id },
+      requestConfig
+    )
+      .then(response => {
+        this.setState({ services: response.data.services });
+      })
+      .catch(error => {
+        toast(
+          <Notification
+            type="error"
+            title="Não foi possível carregar os serviços"
+            text="Tente novamente"
+          />
+        );
+      });
+  }
+
   render() {
     return (
       <>
@@ -140,7 +124,9 @@ class Services extends Component {
                 <Table.Cell width={1}>
                   <Checkbox
                     toggle
-                    onChange={this.handleServiceToggle}
+                    onChange={() =>
+                      this.handleServiceToggle(index, !service.checked)
+                    }
                     id={service._id}
                     checked={service.checked}
                   />
@@ -155,9 +141,6 @@ class Services extends Component {
           </Table.Body>
         </Table>
         {/* <pre>{JSON.stringify(this.state.services, null, 2)}</pre> */}
-        {/* {this.state.employee !== undefined && (
-          <pre>{JSON.stringify(this.state.employee.services, null, 2)}</pre>
-        )} */}
         <Divider style={{ marginTop: "40px" }} />
         <Button
           icon

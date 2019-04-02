@@ -39,6 +39,12 @@ router.get(
 );
 
 router.post(
+  BASE_URL + "/services/employee",
+  verifyToken,
+  service.getServicesByEmployee
+);
+
+router.post(
   BASE_URL + "/services/company",
   verifyToken,
   service.companyServices
