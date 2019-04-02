@@ -75,6 +75,10 @@ export class NewEdit extends Component {
       user: "Rafael Fagundes",
       email: "rafaelcflima@gmail.com",
       password: "%$RTG$YF$R"
+    },
+    newPassword: {
+      display: false,
+      value: ""
     }
   };
 
@@ -315,7 +319,6 @@ export class NewEdit extends Component {
         requestConfig
       )
         .then(response => {
-          console.log(response.data);
           toast(
             <Notification
               type="success"
@@ -411,7 +414,6 @@ export class NewEdit extends Component {
   };
 
   handleStateChange = (e, { id, value }) => {
-    console.log("loading cities");
     this.setState({
       user: {
         ...this.state.user,
@@ -444,6 +446,36 @@ export class NewEdit extends Component {
         display: false
       }
     });
+  };
+
+  newPassword = () => {
+    const token = localStorage.getItem("token");
+    let requestConfig = {
+      headers: {
+        Authorization: token
+      }
+    };
+
+    Axios.post(
+      config.api + "/specialists/newpassword",
+      { id: this.state.user._id },
+      requestConfig
+    )
+      .then(response => {
+        console.log(response.data);
+
+        const { password } = response.data;
+
+        this.setState({
+          newPassword: {
+            display: true,
+            value: password
+          }
+        });
+      })
+      .catch(error => {
+        console.log(error);
+      });
   };
 
   render() {
@@ -485,6 +517,19 @@ export class NewEdit extends Component {
                   this.state.user.firstName + " " + this.state.user.lastName
                 }
               />
+              <FormSubTitle text="Nova Senha" first />
+              <Button
+                color="blue"
+                content="Gerar Nova Senha"
+                icon="asterisk"
+                onClick={this.newPassword}
+              />
+              {this.state.newPassword.display && (
+                <p>
+                  Nova senha do usuário:{" "}
+                  <strong>{this.state.newPassword.value}</strong>
+                </p>
+              )}
               <FormSubTitle text="Foto do Funcionário" />
               <Avatar
                 src={this.state.user.avatar}

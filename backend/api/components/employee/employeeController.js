@@ -610,6 +610,34 @@ exports.updateUserAndEmployee = async (req, res) => {
   }
 };
 
+// New Generated Password
+exports.newPassword = async (req, res) => {
+  try {
+    const token = auth.verify(req.token);
+    if (!token) {
+      res.status(403).json({
+        msg: "Token inválido."
+      });
+    }
+    const { id } = req.body;
+    const newPassword = shortid.generate();
+
+    console.log("id", id);
+    console.log("_newPassword", newPassword);
+
+    const user = await User.updateOne({ _id: id }, { password: newPassword });
+
+    console.log("user", user);
+
+    if (user.ok) {
+      res.status(200).send({ msg: "OK", password: newPassword });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ msg: "Não foi possível gerar nova senha" });
+  }
+};
+
 // Remove Employee
 exports.removeEmployee = async (req, res) => {
   const token = auth.verify(req.token);

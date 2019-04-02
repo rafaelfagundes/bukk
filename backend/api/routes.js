@@ -140,6 +140,12 @@ router.post(
 
 router.post(BASE_URL + "/specialists/add", verifyToken, specialist.addEmployee);
 
+router.post(
+  BASE_URL + "/specialists/newpassword",
+  verifyToken,
+  specialist.newPassword
+);
+
 /*============================================================
   Appointment
 ============================================================*/

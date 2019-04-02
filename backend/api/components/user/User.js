@@ -97,7 +97,7 @@ UserSchema.pre("save", function(next) {
   });
 });
 
-UserSchema.pre("update", function(next) {
+function createPassword(next) {
   const password = this.getUpdate().password;
 
   // if not password change
@@ -114,7 +114,10 @@ UserSchema.pre("update", function(next) {
   } catch (error) {
     return next(error);
   }
-});
+}
+
+UserSchema.pre("update", createPassword);
+UserSchema.pre("updateOne", createPassword);
 
 UserSchema.methods.comparePassword = function(candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
