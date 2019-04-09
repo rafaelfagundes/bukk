@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import styled from "styled-components";
 
@@ -169,8 +169,11 @@ class Dashboard extends Component {
       <div className="Dashboard">
         <BukkNotification
           hideProgressBar={true}
-          position="bottom-left"
+          position="bottom-right"
           newestOnTop={true}
+          draggable={false}
+          autoClose={3000}
+          transition={Slide}
           suppressClassNameWarning
         />
         <Container fluid>
@@ -181,7 +184,6 @@ class Dashboard extends Component {
                   <SideMenu />
                   <div id="content">
                     <TopMenu className="top-menu" />
-
                     <Pages>
                       <PagesInner>
                         <Switch>

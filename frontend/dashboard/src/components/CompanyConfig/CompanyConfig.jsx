@@ -31,7 +31,7 @@ const menuItems = [
 
 export class CompanyConfig extends Component {
   state = {
-    activeItem: "geral"
+    activeItem: "preferencias"
   };
 
   handleItemClick = name => this.setState({ activeItem: name });

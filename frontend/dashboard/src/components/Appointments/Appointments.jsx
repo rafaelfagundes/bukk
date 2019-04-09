@@ -98,7 +98,7 @@ const menuItems = [
   {
     id: "next",
     icon: "clock outline",
-    text: "Agendamentos Futuros",
+    text: "Próximos Agendamentos",
     link: "/dashboard/agendamentos/futuros"
   },
   {

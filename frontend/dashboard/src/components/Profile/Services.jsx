@@ -31,7 +31,7 @@ class Services extends Component {
     this.setState({ loading: true });
     const _employee = JSON.parse(localStorage.getItem("employee"));
     const _servicesIds = [];
-    this.state.services.map(service => {
+    this.state.services.forEach(service => {
       if (service.checked) {
         _servicesIds.push(service._id);
       }

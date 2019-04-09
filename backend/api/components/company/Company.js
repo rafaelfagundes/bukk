@@ -106,7 +106,15 @@ const CompanySchema = new Schema({
       disableLogo: { type: Boolean, required: true, default: false },
       showCompanyNickname: { type: Boolean, required: true, default: false },
       dropShadowBooker: { type: Boolean, required: true, default: false },
-      dropShadowComponents: { type: Boolean, required: true, default: false }
+      dropShadowComponents: { type: Boolean, required: true, default: false },
+      confirmationRequired: { type: Boolean, required: true, default: false },
+      multipleAppointment: { type: Boolean, required: true, default: true },
+      randomEmployeeDisplayPosition: {
+        type: Boolean,
+        required: true,
+        default: true
+      },
+      employeeRandomButton: { type: Boolean, required: true, default: true }
     },
     appointment: {
       rules: [

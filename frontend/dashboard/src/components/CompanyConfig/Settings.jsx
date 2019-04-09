@@ -319,7 +319,83 @@ class Settings extends Component {
           <>
             <div className="Settings">
               <Form onSubmit={this.saveSettings}>
-                <FormTitle text="Cores" first />
+                <FormTitle text="Agendamento" first />
+                <FormSubTitle first text="Interface do Cliente" />
+                <Form.Field>
+                  <Checkbox
+                    toggle
+                    label="Confirmar agendamento manualmente"
+                    onChange={this.toggleOption}
+                    id="confirmationRequired"
+                    checked={
+                      this.state.company.settings.options.confirmationRequired
+                    }
+                  />
+                </Form.Field>
+                <Form.Field>
+                  <Checkbox
+                    toggle
+                    label="Permitir agendar mais de um serviço por vez"
+                    onChange={this.toggleOption}
+                    id="multipleAppointment"
+                    checked={
+                      this.state.company.settings.options.multipleAppointment
+                    }
+                  />
+                </Form.Field>
+                <Form.Field>
+                  <Checkbox
+                    toggle
+                    label="Mostrar funcionários em ordem aleatória"
+                    onChange={this.toggleOption}
+                    id="randomEmployeeDisplayPosition"
+                    checked={
+                      this.state.company.settings.options
+                        .randomEmployeeDisplayPosition
+                    }
+                  />
+                </Form.Field>
+                <Form.Field>
+                  <Checkbox
+                    toggle
+                    label="Mostrar botão de escolha aleatória de especialista"
+                    onChange={this.toggleOption}
+                    id="employeeRandomButton"
+                    checked={
+                      this.state.company.settings.options.employeeRandomButton
+                    }
+                  />
+                </Form.Field>
+                <FormSubTitle text="Regras de Agendamento" />
+                {this.state.company.settings.appointment.rules.map(
+                  (rule, index) => (
+                    <FormField key={index}>
+                      <Input
+                        value={rule}
+                        action={
+                          <Button
+                            color="red"
+                            icon="delete"
+                            inverted
+                            onClick={this.removeRule}
+                            id={"rule-" + index}
+                          />
+                        }
+                        id={"index-" + index}
+                        placeholder="Nova regra"
+                        onChange={this.handleRule}
+                      />
+                    </FormField>
+                  )
+                )}
+                <Button
+                  icon="plus"
+                  content="Adicionar Regra"
+                  color="blue"
+                  compact
+                  onClick={this.addRule}
+                />
+                <FormTitle text="Cores" />
                 <ColorSettings>
                   <ColorGroup>
                     <FormSubTitle first text="Primária" />
@@ -662,7 +738,7 @@ class Settings extends Component {
                   <SettingsGroup>
                     <FormSubTitle
                       first
-                      text="Personalização da Interface do Agendador"
+                      text="Personalização da Interface do Cliente"
                     />
                     <Form.Field>
                       <Checkbox
@@ -817,35 +893,7 @@ class Settings extends Component {
                     </Form.Field>
                   </SettingsGroup>
                 </SettingsHolder>
-                <FormTitle text="Regras de Agendamento" />
-                {this.state.company.settings.appointment.rules.map(
-                  (rule, index) => (
-                    <FormField key={index}>
-                      <Input
-                        value={rule}
-                        action={
-                          <Button
-                            color="red"
-                            icon="delete"
-                            inverted
-                            onClick={this.removeRule}
-                            id={"rule-" + index}
-                          />
-                        }
-                        id={"index-" + index}
-                        placeholder="Nova regra"
-                        onChange={this.handleRule}
-                      />
-                    </FormField>
-                  )
-                )}
-                <Button
-                  icon="plus"
-                  content="Adicionar Regra"
-                  color="blue"
-                  compact
-                  onClick={this.addRule}
-                />
+
                 <Divider style={{ marginTop: "40px" }} />
                 <Button icon labelPosition="left" color="green" type="submit">
                   <Icon name="cloud" />

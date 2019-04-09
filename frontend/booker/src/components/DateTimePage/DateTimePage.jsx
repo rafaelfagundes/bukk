@@ -400,7 +400,16 @@ class DateTimePage extends Component {
         }
       );
     } else {
-      _specialistsList = _.shuffle(_specialistsList);
+      if (
+        this.props.companyData.settings.options.randomEmployeeDisplayPosition
+      ) {
+        _specialistsList = _.shuffle(_specialistsList);
+      } else {
+        _specialistsList = _.sortBy(_specialistsList, [
+          "firstName",
+          "lastName"
+        ]);
+      }
       this.setState(
         {
           serviceId: value,
@@ -565,7 +574,9 @@ class DateTimePage extends Component {
               className="booker-title-what"
               id="services-table-title"
             >
-              Serviços escolhidos
+              {this.state.servicesTable.length === 1
+                ? "Serviço escolhido"
+                : "Serviços escolhidos"}
             </Header>
             <Table celled padded className="chosen-services-table">
               <Table.Header>
@@ -627,30 +638,34 @@ class DateTimePage extends Component {
               header="Tem certeza?"
               content="Tem certeza que deseja remover o serviço?"
             />
-            <Button
-              className="confirmation"
-              labelPosition="left"
-              icon
-              onClick={this.handleAddService}
-            >
-              {this.props.isMobile
-                ? "Incluir serviço"
-                : "Incluir mais um serviço"}
-              <Icon name="plus" />
-            </Button>
-            <Popup
-              trigger={
-                <Icon
-                  className="help-tooltip"
-                  size="mini"
-                  name="help"
-                  circular
+            {this.props.companyData.settings.options.multipleAppointment && (
+              <>
+                <Button
+                  className="confirmation"
+                  labelPosition="left"
+                  icon
+                  onClick={this.handleAddService}
+                >
+                  {this.props.isMobile
+                    ? "Incluir serviço"
+                    : "Incluir mais um serviço"}
+                  <Icon name="plus" />
+                </Button>
+                <Popup
+                  trigger={
+                    <Icon
+                      className="help-tooltip"
+                      size="mini"
+                      name="help"
+                      circular
+                    />
+                  }
+                  header="Incluir mais um serviço"
+                  content="Caso queira agendar mais um serviço clique neste botão. Ele será agendado com quaisquer outro serviço já salvo."
+                  basic
                 />
-              }
-              header="Incluir mais um serviço"
-              content="Caso queira agendar mais um serviço clique neste botão. Ele será agendado com quaisquer outro serviço já salvo."
-              basic
-            />
+              </>
+            )}
           </React.Fragment>
         )}
 
@@ -753,15 +768,18 @@ class DateTimePage extends Component {
               <div id="Specialists">
                 {this.state.specialists.length > 1 && (
                   <>
-                    {true && (
-                      <Specialist
-                        onClick={this.handleRandom}
-                        firstName="Escolher"
-                        lastName="Aleatoriamente"
-                        desc="Deixe o sistema decidir por você"
-                        image="https://res.cloudinary.com/bukkapp/image/upload/v1545096912/Bukk/Assets/shuffle-square.png"
-                        random={true}
-                      />
+                    {this.props.companyData.settings.options
+                      .employeeRandomButton && (
+                      <>
+                        <Specialist
+                          onClick={this.handleRandom}
+                          firstName="Escolher"
+                          lastName="Aleatoriamente"
+                          desc="Deixe o sistema decidir por você"
+                          image="https://res.cloudinary.com/bukkapp/image/upload/v1545096912/Bukk/Assets/shuffle-square.png"
+                          random={true}
+                        />
+                      </>
                     )}
                   </>
                 )}
