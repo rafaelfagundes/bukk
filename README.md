@@ -1,4 +1,4 @@
-# Bukk Beautician Booking System
+# Bukk - Booking System
 
 Bukk is a beautician booking system designed to simplify the process of scheduling appointments with beauticians. It provides a user-friendly interface for customers to browse and book various beauty services conveniently. This repository contains the source code and documentation for the Bukk Beautician Booking System.
 
